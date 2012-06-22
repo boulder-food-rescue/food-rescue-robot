@@ -8,6 +8,11 @@
 </head>
 <body>
 
+<div class="menu" style="padding: 0.3em; border: 1px solid black; margin-bottom: 1em; font-size: 12pt; font-weight: bold; font-family: sans; text-align: right; text-decoration: none; color: #999999;">
+<%= link_to "Schedule", schedules_path %> | <%= link_to "Volunteers", volunteers_path %> | <%= link_to "Donors/Recipients", locations_path %> | <%= link_to "Rescue Log", logs_path %>
+</ul>
+</div>
+
 <%= yield %>
 
 </body>

@@ -1,7 +1,7 @@
 class LocationsController < ApplicationController
   active_scaffold :location do |conf|
     conf.columns[:donor_type].form_ui = :select
-    conf.columns[:donor_type].options = {:options => [["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]]}
+    conf.columns[:donor_type].options = {:options => [["",nil],["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]]}
     conf.columns[:recip_category].form_ui = :select
     conf.columns[:recip_category].options = {:options => [["",nil],["A","A"],["B","B"],["C","C"],["D","D"]]}
     conf.columns[:recip_category].label = 'Recipient Category'

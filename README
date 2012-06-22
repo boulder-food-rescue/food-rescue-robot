@@ -1,3 +1,10 @@
+Models:
+   
+   Volunteer (people, user accounts, you know...)
+   Location (donors and recipients)
+   Schedule (associates a volunteer, time, recipient & donor)
+   Log (log entry for each scheduled pick-up)
+
 Outside of the normal rails-fu, this project uses...
 
   active_scaffold

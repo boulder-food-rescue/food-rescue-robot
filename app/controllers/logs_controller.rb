@@ -1,5 +1,6 @@
 class LogsController < ApplicationController
   active_scaffold :log do |conf|
+    conf.columns = [:when,:volunteer,:weight,:weighed_by,:description,:transport,:notes,:flag_for_admin,:num_reminders]
     conf.columns[:transport].form_ui = :select
     conf.columns[:transport].label = "Transportation Used"
     conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}
@@ -9,6 +10,10 @@ class LogsController < ApplicationController
     conf.columns[:num_reminders].form_ui = :select
     conf.columns[:num_reminders].label = "Reminders Sent"
     conf.columns[:num_reminders].options = {:options => [[0,0],[1,1],[2,2],[3,3],[4,4]]}
-
+    conf.columns[:schedule].form_ui = :select
+    conf.columns[:volunteer].form_ui = :select
+    conf.columns[:orig_volunteer].form_ui = :select
+    conf.columns[:orig_volunteer].label = "Original Volunteer"
+    conf.columns[:orig_volunteer].description = "If the shift was covered by someone else, put the original volunteer here"
   end
 end 

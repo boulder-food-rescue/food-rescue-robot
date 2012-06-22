@@ -1,0 +1,13 @@
+Outside of the normal rails-fu, this project uses...
+
+  active_scaffold
+
+Initial scaffolding was generated with these commands
+
+rails generate active_scaffold Volunteer email:string name:string phone:string preferred_contact:string transport:string has_car:boolean admin_notes:text pickup_prefs:text gone_until:date is_disabled:boolean on_email_list:boolean
+
+rails generate active_scaffold Location is_donor:boolean recip_category:string donor_type:string address:text name:string lat:decimal lng:decimal contact:text website:string admin_notes:text public_notes:text hours:text
+
+rails generate active_scaffold Schedule recipient_id:integer donor_id:integer volunteer:references prior_volunteer_id:integer day_of_week:integer time_start:integer time_stop:integer admin_notes:text public_notes:text needs_training:boolean
+
+rails generate active_scaffold Log schedule:references when:date volunteer:references orig_volunteer_id:integer weight:decimal description:text transport:string notes:text num_reminders:integer flag_for_admin:boolean weighed_by:string

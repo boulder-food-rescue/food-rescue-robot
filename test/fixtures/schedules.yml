@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  recipient_id: 1
+  donor_id: 1
+  volunteer: 
+  prior_volunteer_id: 1
+  day_of_week: 1
+  time_start: 1
+  time_stop: 1
+  admin_notes: MyText
+  public_notes: MyText
+  needs_training: false
+
+two:
+  recipient_id: 1
+  donor_id: 1
+  volunteer: 
+  prior_volunteer_id: 1
+  day_of_week: 1
+  time_start: 1
+  time_stop: 1
+  admin_notes: MyText
+  public_notes: MyText
+  needs_training: false

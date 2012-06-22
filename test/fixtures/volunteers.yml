@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  email: MyString
+  name: MyString
+  phone: MyString
+  preferred_contact: MyString
+  transport: MyString
+  has_car: false
+  admin_notes: MyText
+  pickup_prefs: MyText
+  gone_until: 2012-06-22
+  is_disabled: false
+  on_email_list: false
+
+two:
+  email: MyString
+  name: MyString
+  phone: MyString
+  preferred_contact: MyString
+  transport: MyString
+  has_car: false
+  admin_notes: MyText
+  pickup_prefs: MyText
+  gone_until: 2012-06-22
+  is_disabled: false
+  on_email_list: false

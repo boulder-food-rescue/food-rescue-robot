@@ -8,4 +8,8 @@ class VolunteersController < ApplicationController
     conf.columns[:preferred_contact].form_ui = :select
     conf.columns[:preferred_contact].options = {:options => [["Email","Email"],["Phone","Phone"],["Text","Text"]]}
   end
+
+  def home
+
+  end
 end 

@@ -1,4 +1,20 @@
 Webapp::Application.routes.draw do
+  resources :logs do as_routes end
+
+  resources :logs
+
+  resources :schedules do as_routes end
+
+  resources :schedules
+
+  resources :locations do as_routes end
+
+  resources :locations
+
+  resources :volunteers do as_routes end
+
+  resources :volunteers
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

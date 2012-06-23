@@ -5,6 +5,11 @@ Models:
    Schedule (associates a volunteer, time, recipient & donor)
    Log (log entry for each scheduled pick-up)
 
+Rake directives (eventually to be called on crontabs)
+
+  generate_logs - generates logs for today (run at 1am?)
+  send_reminders - sends out reminder emails for any outstanding logs (run at midnight?)
+
 Outside of the normal rails-fu, this project uses...
 
   active_scaffold

@@ -1,0 +1,5 @@
+These volunteers need to enter their data:
+
+<% @logs.each{ |l| %>
+  <%= l.volunteer.name %>, <%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %> (<%= l.num_reminders %> reminders sent)
+<% } %> 

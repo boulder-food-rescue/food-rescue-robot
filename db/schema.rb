@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120622223758) do
+ActiveRecord::Schema.define(:version => 20120622233237) do
 
   create_table "locations", :force => true do |t|
     t.boolean  "is_donor"
@@ -43,6 +43,8 @@ ActiveRecord::Schema.define(:version => 20120622223758) do
     t.string   "weighed_by"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.integer  "donor_id"
+    t.integer  "recipient_id"
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"

@@ -5,3 +5,13 @@
 require File.expand_path('../config/application', __FILE__)
 
 Webapp::Application.load_tasks
+
+task(:generate_logs => :environment) do
+  include LogsHelper
+  generate_log_entries
+end
+
+task(:send_reminders => :environment) do
+  include LogsHelper
+  send_reminder_emails
+end

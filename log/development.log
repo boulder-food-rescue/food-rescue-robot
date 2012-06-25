@@ -17295,3 +17295,733 @@ These volunteers need to enter their data:
   Chris Wailes, Sunflower Market -> Bridge House Community Table @ FUMC on 2012-06-24 (13 reminders sent)
   Rhonda Hoenigman, Whole Foods Baseline -> Bridge House Community Table @ FUMC on 2012-06-24 (12 reminders sent)
 
+Connecting to database specified by database.yml
+  [1m[36mLog Load (0.6ms)[0m  [1mSELECT "logs".* FROM "logs" WHERE "logs"."weight" IS NULL[0m
+  [1m[35mVolunteer Load (0.5ms)[0m  SELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" = 4 LIMIT 1
+  [1m[36mLocation Load (0.5ms)[0m  [1mSELECT "locations".* FROM "locations" WHERE "locations"."id" = 6 LIMIT 1[0m
+  [1m[35mLocation Load (0.5ms)[0m  SELECT "locations".* FROM "locations" WHERE "locations"."id" = 5 LIMIT 1
+  Rendered notifier/volunteer_log_reminder.text.erb (86.7ms)
+
+Sent mail to cphillips@smallwhitecube.com (251ms)
+Date: Mon, 25 Jun 2012 12:53:50 -0600
+From: robot@boulderfoodrescue.org
+To: cphillips@smallwhitecube.com
+Message-ID: <4fe8b3be63d44_4aaa2444f72a2722b@dante.mail>
+Subject: BFR Data Entry Reminder
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi there,
+
+This is a friendly reminder from the BFR robot that you need to enter
+some data for your recent pickup on 2012-06-24 from Sunflower Market
+to Bridge House Community Table @ FUMC.
+
+This is your 14th reminder.
+
+Thanks!
+
+  [1m[36m (0.2ms)[0m  [1mbegin transaction[0m
+  [1m[35m (1.2ms)[0m  UPDATE "logs" SET "updated_at" = '2012-06-25 18:53:50.646651', "num_reminders" = 14 WHERE "logs"."id" = 3
+  [1m[36m (11.3ms)[0m  [1mcommit transaction[0m
+  [1m[35mVolunteer Load (0.5ms)[0m  SELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" = 7 LIMIT 1
+  [1m[36mLocation Load (0.8ms)[0m  [1mSELECT "locations".* FROM "locations" WHERE "locations"."id" = 2 LIMIT 1[0m
+  [1m[35mLocation Load (0.6ms)[0m  SELECT "locations".* FROM "locations" WHERE "locations"."id" = 5 LIMIT 1
+  Rendered notifier/volunteer_log_reminder.text.erb (13.2ms)
+
+Sent mail to cphillips@smallwhitecube.com (68ms)
+Date: Mon, 25 Jun 2012 12:53:50 -0600
+From: robot@boulderfoodrescue.org
+To: cphillips@smallwhitecube.com
+Message-ID: <4fe8b3becdfcc_4aaa2444f72a27364@dante.mail>
+Subject: BFR Data Entry Reminder
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi there,
+
+This is a friendly reminder from the BFR robot that you need to enter
+some data for your recent pickup on 2012-06-24 from Whole Foods Baseline
+to Bridge House Community Table @ FUMC.
+
+This is your 13th reminder.
+
+Thanks!
+
+  [1m[36m (0.2ms)[0m  [1mbegin transaction[0m
+  [1m[35m (0.9ms)[0m  UPDATE "logs" SET "updated_at" = '2012-06-25 18:53:50.909065', "num_reminders" = 13 WHERE "logs"."id" = 4
+  [1m[36m (14.7ms)[0m  [1mcommit transaction[0m
+  Rendered notifier/admin_reminder_summary.text.erb (2.3ms)
+
+Sent mail to cphillips@smallwhitecube.com (98ms)
+Date: Mon, 25 Jun 2012 12:53:50 -0600
+From: robot@boulderfoodrescue.org
+To: cphillips@smallwhitecube.com
+Message-ID: <4fe8b3bef05c5_4aaa2444f72a27420@dante.mail>
+Subject: BFR Data Entry Reminder Summary
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+These volunteers need to enter their data:
+
+  Chris Wailes, Sunflower Market -> Bridge House Community Table @ FUMC on 2012-06-24 (14 reminders sent)
+  Rhonda Hoenigman, Whole Foods Baseline -> Bridge House Community Table @ FUMC on 2012-06-24 (13 reminders sent)
+
+Connecting to database specified by database.yml
+
+
+Started GET "/schedules" for 127.0.0.1 at Mon Jun 25 14:02:57 -0600 2012
+Processing by SchedulesController#index as HTML
+  [1m[35m (0.3ms)[0m  SELECT COUNT(*) FROM "schedules" 
+  [1m[36mSchedule Load (0.5ms)[0m  [1mSELECT "schedules".* FROM "schedules" ORDER BY "schedules"."id" ASC LIMIT 15 OFFSET 0[0m
+  [1m[35mLocation Load (0.6ms)[0m  SELECT "locations".* FROM "locations" WHERE "locations"."id" IN (6, 2)
+  [1m[36mLocation Load (0.6ms)[0m  [1mSELECT "locations".* FROM "locations" WHERE "locations"."id" IN (5)[0m
+  [1m[35mVolunteer Load (0.6ms)[0m  SELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" IN (4, 7)
+  [1m[36mVolunteer Load (0.5ms)[0m  [1mSELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" IN (9, 10)[0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (8.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_header.html.erb (26.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_column_headings.html.erb (42.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_messages.html.erb (1.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_messages.html.erb (18.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (350.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (16.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (31.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (179.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (24.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (40.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (23.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record.html.erb (865.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_pagination.html.erb (2.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list.html.erb (975.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_with_header.html.erb (1025.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/list.html.erb within layouts/application (1046.4ms)
+Completed 200 OK in 1241ms (Views: 1126.5ms | ActiveRecord: 4.0ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /application.css - 304 Not Modified (2ms)
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /jquery.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /jquery-ui.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui-timepicker-addon.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /jquery-ui-timepicker-addon.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /jquery/active_scaffold.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/jquery.editinplace.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /jquery/jquery.editinplace.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/date_picker_bridge.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /jquery/date_picker_bridge.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/draggable_lists.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /jquery/draggable_lists.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /application.js - 304 Not Modified (3ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /jquery_ujs.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /active_scaffold.js - 304 Not Modified (2ms)
+
+
+Started GET "/assets/active_scaffold.css?body=1" for 127.0.0.1 at Mon Jun 25 14:03:00 -0600 2012
+Served asset /active_scaffold.css - 304 Not Modified (1ms)
+
+
+Started GET "/assets/active_scaffold/add.png" for 127.0.0.1 at Mon Jun 25 14:03:01 -0600 2012
+Served asset /active_scaffold/add.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/magnifier.png" for 127.0.0.1 at Mon Jun 25 14:03:01 -0600 2012
+Served asset /active_scaffold/magnifier.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/indicator.gif" for 127.0.0.1 at Mon Jun 25 14:03:01 -0600 2012
+Served asset /active_scaffold/indicator.gif - 304 Not Modified (0ms)
+
+
+Started GET "/volunteers" for 127.0.0.1 at Mon Jun 25 14:03:21 -0600 2012
+Processing by VolunteersController#index as HTML
+  [1m[35m (0.3ms)[0m  SELECT COUNT(*) FROM "volunteers" 
+  [1m[36mVolunteer Load (0.6ms)[0m  [1mSELECT "volunteers".* FROM "volunteers" ORDER BY "volunteers"."id" ASC LIMIT 15 OFFSET 0[0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (9.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_header.html.erb (196.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_column_headings.html.erb (50.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_messages.html.erb (1.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_messages.html.erb (19.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (43.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (14.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (29.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (173.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (24.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (31.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (23.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (30.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (9.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (22.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (178.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (24.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (32.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (23.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (30.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (23.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record.html.erb (862.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_pagination.html.erb (2.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list.html.erb (985.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_with_header.html.erb (1205.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/list.html.erb within layouts/application (1215.0ms)
+Completed 200 OK in 1273ms (Views: 1255.3ms | ActiveRecord: 0.9ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /application.css - 304 Not Modified (2ms)
+
+
+Started GET "/assets/active_scaffold.css?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /active_scaffold.css - 304 Not Modified (2ms)
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /jquery.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /jquery_ujs.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /jquery-ui.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui-timepicker-addon.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /jquery-ui-timepicker-addon.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /jquery/active_scaffold.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/jquery.editinplace.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /jquery/jquery.editinplace.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/date_picker_bridge.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /jquery/date_picker_bridge.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/draggable_lists.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /jquery/draggable_lists.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /active_scaffold.js - 304 Not Modified (2ms)
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /application.js - 304 Not Modified (3ms)
+
+
+Started GET "/assets/active_scaffold/add.png" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /active_scaffold/add.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/magnifier.png" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /active_scaffold/magnifier.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/indicator.gif" for 127.0.0.1 at Mon Jun 25 14:03:23 -0600 2012
+Served asset /active_scaffold/indicator.gif - 304 Not Modified (0ms)
+
+
+Started GET "/schedules" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Processing by SchedulesController#index as HTML
+  [1m[35m (0.3ms)[0m  SELECT COUNT(*) FROM "schedules" 
+  [1m[36mSchedule Load (0.5ms)[0m  [1mSELECT "schedules".* FROM "schedules" ORDER BY "schedules"."id" ASC LIMIT 15 OFFSET 0[0m
+  [1m[35mLocation Load (0.6ms)[0m  SELECT "locations".* FROM "locations" WHERE "locations"."id" IN (6, 2)
+  [1m[36mLocation Load (0.6ms)[0m  [1mSELECT "locations".* FROM "locations" WHERE "locations"."id" IN (5)[0m
+  [1m[35mVolunteer Load (0.6ms)[0m  SELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" IN (4, 7)
+  [1m[36mVolunteer Load (0.5ms)[0m  [1mSELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" IN (9, 10)[0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (6.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_header.html.erb (20.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_column_headings.html.erb (39.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_messages.html.erb (0.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_messages.html.erb (15.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (38.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (11.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (169.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (39.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (24.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (38.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (23.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record.html.erb (407.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_pagination.html.erb (1.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list.html.erb (509.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_with_header.html.erb (551.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/list.html.erb within layouts/application (561.7ms)
+Completed 200 OK in 636ms (Views: 601.9ms | ActiveRecord: 3.2ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /application.css - 304 Not Modified (2ms)
+
+
+Started GET "/assets/active_scaffold.css?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /active_scaffold.css - 304 Not Modified (1ms)
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /jquery.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /jquery_ujs.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /jquery-ui.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui-timepicker-addon.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /jquery-ui-timepicker-addon.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /jquery/active_scaffold.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/jquery.editinplace.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /jquery/jquery.editinplace.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/date_picker_bridge.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /jquery/date_picker_bridge.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/draggable_lists.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /jquery/draggable_lists.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /active_scaffold.js - 304 Not Modified (2ms)
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /application.js - 304 Not Modified (3ms)
+
+
+Started GET "/assets/active_scaffold/add.png" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /active_scaffold/add.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/magnifier.png" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /active_scaffold/magnifier.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/indicator.gif" for 127.0.0.1 at Mon Jun 25 14:03:31 -0600 2012
+Served asset /active_scaffold/indicator.gif - 304 Not Modified (0ms)
+
+
+Started GET "/schedules/new?adapter=_list_inline_adapter" for 127.0.0.1 at Mon Jun 25 14:03:53 -0600 2012
+Processing by SchedulesController#new as JS
+  Parameters: {"adapter"=>"_list_inline_adapter"}
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_messages.html.erb (2.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (5.8ms)
+  [1m[35mLocation Load (0.7ms)[0m  SELECT "locations".* FROM "locations" 
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (9.5ms)
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "locations".* FROM "locations" [0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (8.5ms)
+  [1m[35mVolunteer Load (0.7ms)[0m  SELECT "volunteers".* FROM "volunteers" 
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (9.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (3.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.6ms)
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "volunteers".* FROM "volunteers" [0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (8.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form.html.erb (405.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_base_form.html.erb (598.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_create_form.html.erb (613.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_messages.html.erb (1.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_inline_adapter.html.erb (20.8ms)
+Completed 200 OK in 665ms (Views: 33.7ms | ActiveRecord: 1.3ms)
+
+
+Started GET "/assets/active_scaffold/indicator.gif" for 127.0.0.1 at Mon Jun 25 14:03:54 -0600 2012
+Served asset /active_scaffold/indicator.gif - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/close.png" for 127.0.0.1 at Mon Jun 25 14:03:54 -0600 2012
+Served asset /active_scaffold/close.png - 304 Not Modified (0ms)
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVolunteers (20120622193310)
+Migrating to CreateLocations (20120622193334)
+Migrating to CreateSchedules (20120622193705)
+Migrating to CreateLogs (20120622193752)
+Migrating to AddTransportToSchedules (20120622223758)
+Migrating to AddDonorAndRecipientToLog (20120622233237)
+Migrating to AddIrregularToSchedule (20120625200838)
+  [1m[35m (16.9ms)[0m  select sqlite_version(*)
+  [1m[36m (0.2ms)[0m  [1mbegin transaction[0m
+  [1m[35m (1.1ms)[0m  ALTER TABLE "schedules" ADD "irregular" boolean
+  [1m[36m (0.4ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('20120625200838')[0m
+  [1m[35m (20.4ms)[0m  commit transaction
+  [1m[36m (0.2ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.3ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+  [1m[36m (0.6ms)[0m  [1mPRAGMA index_list("locations")[0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_list("logs")
+  [1m[36m (0.2ms)[0m  [1mPRAGMA index_info('index_logs_on_volunteer_id')[0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_info('index_logs_on_schedule_id')
+  [1m[36m (0.2ms)[0m  [1mPRAGMA index_list("schedules")[0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_info('index_schedules_on_volunteer_id')
+  [1m[36m (0.1ms)[0m  [1mPRAGMA index_list("volunteers")[0m
+Connecting to database specified by database.yml
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+  [1m[35m (0.3ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Migrating to AddIrregularToSchedule (20120625200838)
+  [1m[36m (0.2ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (1.3ms)[0m  [1mCREATE TEMPORARY TABLE "altered_schedules" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "recipient_id" integer, "donor_id" integer, "volunteer_id" integer, "prior_volunteer_id" integer, "day_of_week" integer, "time_start" integer, "time_stop" integer, "admin_notes" text, "public_notes" text, "needs_training" boolean, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL, "transport" varchar(255), "irregular" boolean) [0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_list("schedules")
+  [1m[36m (0.1ms)[0m  [1mPRAGMA index_info('index_schedules_on_volunteer_id')[0m
+  [1m[35m (0.1ms)[0m  PRAGMA index_list("altered_schedules")
+  [1m[36m (0.4ms)[0m  [1mCREATE INDEX "temp_index_altered_schedules_on_volunteer_id" ON "altered_schedules" ("volunteer_id")[0m
+  [1m[35m (0.5ms)[0m  SELECT * FROM "schedules"
+  [1m[36m (0.4ms)[0m  [1mINSERT INTO "altered_schedules" ("id","recipient_id","donor_id","volunteer_id","prior_volunteer_id","day_of_week","time_start","time_stop","admin_notes","public_notes","needs_training","created_at","updated_at","transport","irregular") VALUES (1, 5, 6, 4, 9, 0, 1600, 1700, NULL, NULL, 'f', '2012-06-22 21:56:17.837926', '2012-06-22 22:42:01.060817', 'Car', NULL)[0m
+  [1m[35m (0.2ms)[0m  INSERT INTO "altered_schedules" ("id","recipient_id","donor_id","volunteer_id","prior_volunteer_id","day_of_week","time_start","time_stop","admin_notes","public_notes","needs_training","created_at","updated_at","transport","irregular") VALUES (2, 5, 2, 7, 10, 0, 1600, 1800, NULL, NULL, 'f', '2012-06-22 21:58:18.205016', '2012-06-22 22:42:07.575087', 'Bike', NULL)
+  [1m[36m (0.2ms)[0m  [1mINSERT INTO "altered_schedules" ("id","recipient_id","donor_id","volunteer_id","prior_volunteer_id","day_of_week","time_start","time_stop","admin_notes","public_notes","needs_training","created_at","updated_at","transport","irregular") VALUES (3, NULL, 6, NULL, NULL, 1, 1200, 1400, NULL, NULL, 'f', '2012-06-22 22:47:14.761636', '2012-06-22 22:47:35.002547', 'Bike', NULL)[0m
+  [1m[35m (1.1ms)[0m  DROP TABLE "schedules"
+  [1m[36m (0.7ms)[0m  [1mCREATE TABLE "schedules" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "recipient_id" integer, "donor_id" integer, "volunteer_id" integer, "prior_volunteer_id" integer, "day_of_week" integer, "time_start" integer, "time_stop" integer, "admin_notes" text, "public_notes" text, "needs_training" boolean, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL, "transport" varchar(255)) [0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_list("altered_schedules")
+  [1m[36m (0.1ms)[0m  [1mPRAGMA index_info('temp_index_altered_schedules_on_volunteer_id')[0m
+  [1m[35m (0.1ms)[0m  PRAGMA index_list("schedules")
+  [1m[36m (0.4ms)[0m  [1mCREATE INDEX "index_schedules_on_volunteer_id" ON "schedules" ("volunteer_id")[0m
+  [1m[35m (0.4ms)[0m  SELECT * FROM "altered_schedules"
+  [1m[36m (0.2ms)[0m  [1mINSERT INTO "schedules" ("id","recipient_id","donor_id","volunteer_id","prior_volunteer_id","day_of_week","time_start","time_stop","admin_notes","public_notes","needs_training","created_at","updated_at","transport") VALUES (1, 5, 6, 4, 9, 0, 1600, 1700, NULL, NULL, 'f', '2012-06-22 21:56:17.837926', '2012-06-22 22:42:01.060817', 'Car')[0m
+  [1m[35m (0.2ms)[0m  INSERT INTO "schedules" ("id","recipient_id","donor_id","volunteer_id","prior_volunteer_id","day_of_week","time_start","time_stop","admin_notes","public_notes","needs_training","created_at","updated_at","transport") VALUES (2, 5, 2, 7, 10, 0, 1600, 1800, NULL, NULL, 'f', '2012-06-22 21:58:18.205016', '2012-06-22 22:42:07.575087', 'Bike')
+  [1m[36m (0.2ms)[0m  [1mINSERT INTO "schedules" ("id","recipient_id","donor_id","volunteer_id","prior_volunteer_id","day_of_week","time_start","time_stop","admin_notes","public_notes","needs_training","created_at","updated_at","transport") VALUES (3, NULL, 6, NULL, NULL, 1, 1200, 1400, NULL, NULL, 'f', '2012-06-22 22:47:14.761636', '2012-06-22 22:47:35.002547', 'Bike')[0m
+  [1m[35m (1.0ms)[0m  DROP TABLE "altered_schedules"
+  [1m[36m (0.3ms)[0m  [1mDELETE FROM "schema_migrations" WHERE "schema_migrations"."version" = '20120625200838'[0m
+  [1m[35m (25.6ms)[0m  commit transaction
+  [1m[36m (0.2ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.4ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+  [1m[36m (0.1ms)[0m  [1mPRAGMA index_list("locations")[0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_list("logs")
+  [1m[36m (0.2ms)[0m  [1mPRAGMA index_info('index_logs_on_volunteer_id')[0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_info('index_logs_on_schedule_id')
+  [1m[36m (0.2ms)[0m  [1mPRAGMA index_list("schedules")[0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_info('index_schedules_on_volunteer_id')
+  [1m[36m (0.1ms)[0m  [1mPRAGMA index_list("volunteers")[0m
+Connecting to database specified by database.yml
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVolunteers (20120622193310)
+Migrating to CreateLocations (20120622193334)
+Migrating to CreateSchedules (20120622193705)
+Migrating to CreateLogs (20120622193752)
+Migrating to AddTransportToSchedules (20120622223758)
+Migrating to AddDonorAndRecipientToLog (20120622233237)
+Migrating to AddIrregularToSchedule (20120625200838)
+  [1m[35m (0.2ms)[0m  select sqlite_version(*)
+  [1m[36m (0.2ms)[0m  [1mbegin transaction[0m
+  [1m[35m (1.2ms)[0m  ALTER TABLE "schedules" ADD "irregular" boolean
+  [1m[36m (0.6ms)[0m  [1mALTER TABLE "schedules" ADD "backup" boolean[0m
+  [1m[35m (0.4ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20120625200838')
+  [1m[36m (20.6ms)[0m  [1mcommit transaction[0m
+  [1m[35m (0.2ms)[0m  select sqlite_version(*)
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+  [1m[35m (0.1ms)[0m  PRAGMA index_list("locations")
+  [1m[36m (0.2ms)[0m  [1mPRAGMA index_list("logs")[0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_info('index_logs_on_volunteer_id')
+  [1m[36m (0.2ms)[0m  [1mPRAGMA index_info('index_logs_on_schedule_id')[0m
+  [1m[35m (0.2ms)[0m  PRAGMA index_list("schedules")
+  [1m[36m (0.2ms)[0m  [1mPRAGMA index_info('index_schedules_on_volunteer_id')[0m
+  [1m[35m (0.1ms)[0m  PRAGMA index_list("volunteers")
+
+
+Started GET "/schedules" for 127.0.0.1 at Mon Jun 25 14:12:42 -0600 2012
+Processing by SchedulesController#index as HTML
+  [1m[35m (0.4ms)[0m  SELECT COUNT(*) FROM "schedules" 
+  [1m[36mSchedule Load (0.6ms)[0m  [1mSELECT "schedules".* FROM "schedules" ORDER BY "schedules"."id" ASC LIMIT 15 OFFSET 0[0m
+  [1m[35mLocation Load (0.6ms)[0m  SELECT "locations".* FROM "locations" WHERE "locations"."id" IN (6, 2)
+  [1m[36mLocation Load (0.6ms)[0m  [1mSELECT "locations".* FROM "locations" WHERE "locations"."id" IN (5)[0m
+  [1m[35mVolunteer Load (0.6ms)[0m  SELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" IN (4, 7)
+  [1m[36mVolunteer Load (0.5ms)[0m  [1mSELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" IN (9, 10)[0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (9.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_header.html.erb (27.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_column_headings.html.erb (46.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_messages.html.erb (1.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_messages.html.erb (19.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (484.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (17.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (33.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (41.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (22.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (41.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (166.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record.html.erb (862.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_pagination.html.erb (2.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list.html.erb (981.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_with_header.html.erb (1033.2ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/list.html.erb within layouts/application (1196.8ms)
+Completed 200 OK in 1347ms (Views: 1238.4ms | ActiveRecord: 4.0ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /application.css - 304 Not Modified (2ms)
+
+
+Started GET "/assets/active_scaffold.css?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /active_scaffold.css - 304 Not Modified (2ms)
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /jquery.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /jquery_ujs.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /jquery-ui.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui-timepicker-addon.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /jquery-ui-timepicker-addon.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /jquery/active_scaffold.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/jquery.editinplace.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /jquery/jquery.editinplace.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/date_picker_bridge.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /jquery/date_picker_bridge.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/draggable_lists.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /jquery/draggable_lists.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /active_scaffold.js - 304 Not Modified (2ms)
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /application.js - 304 Not Modified (3ms)
+
+
+Started GET "/assets/active_scaffold/add.png" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /active_scaffold/add.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/magnifier.png" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /active_scaffold/magnifier.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/indicator.gif" for 127.0.0.1 at Mon Jun 25 14:12:44 -0600 2012
+Served asset /active_scaffold/indicator.gif - 304 Not Modified (0ms)
+
+
+Started GET "/schedules/new?adapter=_list_inline_adapter" for 127.0.0.1 at Mon Jun 25 14:12:45 -0600 2012
+Processing by SchedulesController#new as JS
+  Parameters: {"adapter"=>"_list_inline_adapter"}
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_messages.html.erb (2.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (5.5ms)
+  [1m[35mLocation Load (0.6ms)[0m  SELECT "locations".* FROM "locations" 
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (9.3ms)
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "locations".* FROM "locations" [0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (8.1ms)
+  [1m[35mVolunteer Load (0.6ms)[0m  SELECT "volunteers".* FROM "volunteers" 
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (9.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (3.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (3.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.7ms)
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "volunteers".* FROM "volunteers" [0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (8.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form.html.erb (448.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_base_form.html.erb (484.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_create_form.html.erb (500.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_messages.html.erb (1.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_inline_adapter.html.erb (20.6ms)
+Completed 200 OK in 550ms (Views: 32.3ms | ActiveRecord: 1.3ms)
+
+
+Started GET "/assets/active_scaffold/indicator.gif" for 127.0.0.1 at Mon Jun 25 14:12:45 -0600 2012
+Served asset /active_scaffold/indicator.gif - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/close.png" for 127.0.0.1 at Mon Jun 25 14:12:45 -0600 2012
+Served asset /active_scaffold/close.png - 304 Not Modified (0ms)
+
+
+Started GET "/schedules" for 127.0.0.1 at Mon Jun 25 14:13:04 -0600 2012
+Processing by SchedulesController#index as HTML
+  [1m[35m (0.3ms)[0m  SELECT COUNT(*) FROM "schedules" 
+  [1m[36mSchedule Load (0.6ms)[0m  [1mSELECT "schedules".* FROM "schedules" ORDER BY "schedules"."id" ASC LIMIT 15 OFFSET 0[0m
+  [1m[35mLocation Load (0.6ms)[0m  SELECT "locations".* FROM "locations" WHERE "locations"."id" IN (6, 2)
+  [1m[36mLocation Load (0.6ms)[0m  [1mSELECT "locations".* FROM "locations" WHERE "locations"."id" IN (5)[0m
+  [1m[35mVolunteer Load (0.6ms)[0m  SELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" IN (4, 7)
+  [1m[36mVolunteer Load (0.6ms)[0m  [1mSELECT "volunteers".* FROM "volunteers" WHERE "volunteers"."id" IN (9, 10)[0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (8.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_header.html.erb (25.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_column_headings.html.erb (48.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_messages.html.erb (1.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_messages.html.erb (18.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (356.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (16.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (30.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (180.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (24.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record_columns.html.erb (44.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_action_group.html.erb (10.0ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_actions.html.erb (22.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_record.html.erb (868.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_pagination.html.erb (2.6ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list.html.erb (983.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_with_header.html.erb (1031.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/list.html.erb within layouts/application (1041.5ms)
+Completed 200 OK in 1200ms (Views: 1082.9ms | ActiveRecord: 4.1ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /application.css - 304 Not Modified (2ms)
+
+
+Started GET "/assets/active_scaffold.css?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /active_scaffold.css - 304 Not Modified (1ms)
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /jquery.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /jquery_ujs.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /jquery-ui.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery-ui-timepicker-addon.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /jquery-ui-timepicker-addon.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /jquery/active_scaffold.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/jquery.editinplace.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /jquery/jquery.editinplace.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/date_picker_bridge.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /jquery/date_picker_bridge.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/jquery/draggable_lists.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /jquery/draggable_lists.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /active_scaffold.js - 304 Not Modified (2ms)
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /application.js - 304 Not Modified (3ms)
+
+
+Started GET "/assets/active_scaffold/add.png" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /active_scaffold/add.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/magnifier.png" for 127.0.0.1 at Mon Jun 25 14:13:05 -0600 2012
+Served asset /active_scaffold/magnifier.png - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/indicator.gif" for 127.0.0.1 at Mon Jun 25 14:13:06 -0600 2012
+Served asset /active_scaffold/indicator.gif - 304 Not Modified (0ms)
+
+
+Started GET "/schedules/new?adapter=_list_inline_adapter" for 127.0.0.1 at Mon Jun 25 14:13:07 -0600 2012
+Processing by SchedulesController#new as JS
+  Parameters: {"adapter"=>"_list_inline_adapter"}
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_messages.html.erb (1.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (5.8ms)
+  [1m[35mLocation Load (0.7ms)[0m  SELECT "locations".* FROM "locations" 
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (9.8ms)
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "locations".* FROM "locations" [0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (8.6ms)
+  [1m[35mVolunteer Load (0.7ms)[0m  SELECT "volunteers".* FROM "volunteers" 
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (9.4ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (3.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.9ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (2.6ms)
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "volunteers".* FROM "volunteers" [0m
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (8.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form_attribute.html.erb (3.5ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_form.html.erb (448.1ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_base_form.html.erb (652.3ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_create_form.html.erb (666.8ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_messages.html.erb (1.7ms)
+  Rendered /usr/lib/ruby/gems/1.8/gems/active_scaffold-3.2.12/frontends/default/views/_list_inline_adapter.html.erb (20.9ms)
+Completed 200 OK in 717ms (Views: 33.0ms | ActiveRecord: 1.4ms)
+
+
+Started GET "/assets/active_scaffold/indicator.gif" for 127.0.0.1 at Mon Jun 25 14:13:08 -0600 2012
+Served asset /active_scaffold/indicator.gif - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_scaffold/close.png" for 127.0.0.1 at Mon Jun 25 14:13:08 -0600 2012
+Served asset /active_scaffold/close.png - 304 Not Modified (0ms)

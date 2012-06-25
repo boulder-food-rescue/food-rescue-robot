@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120622233237) do
+ActiveRecord::Schema.define(:version => 20120625200838) do
 
   create_table "locations", :force => true do |t|
     t.boolean  "is_donor"
@@ -64,6 +64,8 @@ ActiveRecord::Schema.define(:version => 20120622233237) do
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
     t.string   "transport"
+    t.boolean  "irregular"
+    t.boolean  "backup"
   end
 
   add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"

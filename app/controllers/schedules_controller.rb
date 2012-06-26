@@ -13,6 +13,7 @@ class SchedulesController < ApplicationController
     conf.columns[:time_stop].description = "e.g., 1600"
     conf.columns[:donor].form_ui = :select
     conf.columns[:volunteer].form_ui = :select
+    conf.columns[:volunteer].clear_link
     conf.columns[:recipient].form_ui = :select
     conf.columns[:prior_volunteer].form_ui = :select
     conf.columns[:transport].label = "Mode of Transport"
@@ -45,6 +46,13 @@ class SchedulesController < ApplicationController
 
   def conditions_for_collection
     @conditions
+  end
+
+  def take
+    l = Schedule.find(params[:id])
+    l.volunteer = current_volunteer
+    l.save
+    index
   end
 
 end 

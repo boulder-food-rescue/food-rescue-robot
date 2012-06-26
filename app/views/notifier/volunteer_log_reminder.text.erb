@@ -1,8 +1,13 @@
 Hi there,
 
 This is a friendly reminder from the BFR robot that you need to enter
-some data for your recent pickup on <%= @log.when %> from <%= @log.donor.name %>
-to <%= @log.recipient.name %>.
+some data for your recent pickup:
+
+<%= @log.when %>: <%= @log.donor.name %> to <%= @log.recipient.name %>
+
+Here's a direct link to enter the data:
+
+http://localhost:3002/logs/<%= @log.id %>/edit
 
 This is your <%= @log.num_reminders.ordinalize %> reminder.
 

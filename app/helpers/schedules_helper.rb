@@ -26,4 +26,11 @@ module SchedulesHelper
       {}
     end
   end
+  def schedule_volunteer_column(record)
+    if record.volunteer.nil?
+      link_to "Take Shift", "/schedules/#{record.id}/take"
+    else
+      record.volunteer.name
+    end
+  end
 end

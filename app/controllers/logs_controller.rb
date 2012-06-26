@@ -3,7 +3,7 @@ class LogsController < ApplicationController
 
   active_scaffold :log do |conf|
     conf.columns = [:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
-                    :description,:transport,:notes,:flag_for_admin,:num_reminders]
+                    :description,:transport,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
     conf.columns[:transport].form_ui = :select
     conf.columns[:transport].label = "Transportation Used"
     conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}
@@ -16,6 +16,7 @@ class LogsController < ApplicationController
     conf.columns[:num_reminders].options = {:options => [[0,0],[1,1],[2,2],[3,3],[4,4]]}
     conf.columns[:schedule].form_ui = :select
     conf.columns[:volunteer].form_ui = :select
+    conf.columns[:volunteer].clear_link
     conf.columns[:orig_volunteer].form_ui = :select
     conf.columns[:orig_volunteer].label = "Original Volunteer"
     conf.columns[:orig_volunteer].description = "If the shift was covered by someone else, put the original volunteer here"
@@ -47,5 +48,47 @@ class LogsController < ApplicationController
     @conditions
   end
 
+  def new_absence
+    respond_to do |format|
+      format.html # new_absence.html.erb
+    end
+  end
+ 
+  def create_absence
+    from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
+    to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
+    pickups = Schedule.where("volunteer_id = #{current_volunteer.id}")
+    n = 0
+    while from <= to
+      pickups.each{ |p|
+        if from.wday.to_i == p.day_of_week.to_i
+          # make sure we don't create more than one for the same absence
+          found = Log.where('"when" = ? AND schedule_id = ?',from,p.id)
+          next if found.length > 0
 
-end 
+          # create the null record
+          lo = Log.new
+          lo.orig_volunteer = current_volunteer
+          lo.volunteer = nil
+          lo.schedule = p
+          lo.donor = p.donor
+          lo.recipient = p.recipient
+          lo.when = from
+          lo.save
+          n += 1
+        end
+      }      
+      from += 1
+    end
+    flash[:notice] = "Scheduled #{n} absences"
+    render :new_absence
+  end
+
+  def take
+    l = Log.find(params[:id])
+    l.volunteer = current_volunteer
+    l.save
+    index
+  end
+ 
+end

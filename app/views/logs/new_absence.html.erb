@@ -1,0 +1,7 @@
+<h2>Schedule an Absence</h2>
+
+<%= form_tag("/logs/create_absence", :method => "get") do %>
+Starting On: <%= select_date Date.today, :prefix => :start_date %><br />
+Ending On: <%= select_date Date.today, :prefix => :stop_date %><br /><br />
+<%= submit_tag %>
+<% end %>

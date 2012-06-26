@@ -1,5 +1,21 @@
 module LogsHelper
 
+def log_volunteer_column(record)
+  if record.volunteer.nil?
+    link_to "Take Shift", "/logs/#{record.id}/take"
+  else
+    record.volunteer.name
+  end
+end
+
+def log_volunteer_column_attributes(record)
+  if record.volunteer.nil?
+    {:style => 'background: yellow;'}
+  else
+    {}
+  end
+end
+
 # Given a date, generates the corresponding log entries for that
 # date based on the /current/ schedule
 def generate_log_entries(d=Date.today)
@@ -28,7 +44,7 @@ def send_reminder_emails(n=2,r=3)
   n = 0
   Log.where(:weight => nil).each{ |l| 
     days_past = (Date.today - l.when).to_i
-    #next unless days_past >= n
+    next unless days_past >= n
     l.num_reminders = 0 if l.num_reminders.nil?
     l.num_reminders += 1
 

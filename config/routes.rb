@@ -6,6 +6,11 @@ Webapp::Application.routes.draw do
     collection do
       get :open
       get :mine
+      get :new_absence
+      get :create_absence
+    end
+    member do
+      get :take
     end
   end
 
@@ -14,6 +19,9 @@ Webapp::Application.routes.draw do
     collection do
       get :open
       get :mine
+    end
+    member do
+      get :take
     end
   end
 

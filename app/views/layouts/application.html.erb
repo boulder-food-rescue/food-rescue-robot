@@ -8,10 +8,30 @@
 </head>
 <body>
 
+<% if volunteer_signed_in? %>
 <div class="menu" style="padding: 0.3em; border: 1px solid black; margin-bottom: 1em; font-size: 12pt; font-weight: bold; font-family: sans; text-align: right; text-decoration: none; color: #999999;">
-<%= link_to "Schedule", schedules_path %> | <%= link_to "Volunteers", volunteers_path %> | <%= link_to "Donors/Recipients", locations_path %> | <%= link_to "Rescue Log", logs_path %>
-</ul>
+  Logged in as <%= current_volunteer.name %> |
+  <%= link_to "My Schedule", mine_schedules_path %> | 
+  <%= link_to "My Logs", mine_logs_path %> |  
+  <%= link_to "Open Shifts", open_logs_path %> |
+  <%= link_to('Settings', edit_volunteer_registration_path) %> |
+  <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %>
 </div>
+<% end %>
+
+<% if volunteer_signed_in? and current_volunteer.admin %>
+<div class="menu" style="padding: 0.3em; border: 1px solid black; margin-bottom: 1em; font-size: 12pt; font-weight: bold; font-family: sans; text-align: right; text-decoration: none; color: #999999;">
+  Admin Menu |
+  <%= link_to "Schedule", schedules_path %> |
+  <%= link_to "Volunteers", volunteers_path %> |
+  <%= link_to "Donors/Recipients", locations_path %> |
+  <%= link_to "Rescue Log", logs_path %>
+</div>
+<% end %>
+
+
+<p class="notice"><%= notice %></p>
+<p class="alert"><%= alert %></p>
 
 <%= yield %>
 

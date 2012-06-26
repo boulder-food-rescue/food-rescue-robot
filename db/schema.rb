@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120625200838) do
+ActiveRecord::Schema.define(:version => 20120625210639) do
 
   create_table "locations", :force => true do |t|
     t.boolean  "is_donor"
@@ -82,8 +82,21 @@ ActiveRecord::Schema.define(:version => 20120625200838) do
     t.date     "gone_until"
     t.boolean  "is_disabled"
     t.boolean  "on_email_list"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+    t.string   "encrypted_password",     :default => "",    :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.boolean  "admin",                  :default => false
   end
+
+  add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true
+  add_index "volunteers", ["reset_password_token"], :name => "index_volunteers_on_reset_password_token", :unique => true
 
 end

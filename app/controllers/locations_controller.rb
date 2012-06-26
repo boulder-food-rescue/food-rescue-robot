@@ -1,4 +1,16 @@
 class LocationsController < ApplicationController
+  before_filter :authenticate_volunteer!
+
+  def create_authorized?
+    current_volunteer.admin
+  end
+  def update_authorized?(record=nil)
+    current_volunteer.admin
+  end
+  def delete_authorized?(record=nil)
+    current_volunteer.admin
+  end
+
   active_scaffold :location do |conf|
     conf.columns[:donor_type].form_ui = :select
     conf.columns[:donor_type].options = {:options => [["",nil],["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]]}

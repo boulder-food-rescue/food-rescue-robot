@@ -12,7 +12,9 @@ Rake directives (eventually to be called on crontabs)
 
 Outside of the normal rails-fu, this project uses...
 
-  active_scaffold
+  active_scaffold (all over the damn place)
+  devise (on the Volunteer model)
+  geocoder (on the Location model)
 
 Initial scaffolding was generated with these commands
 

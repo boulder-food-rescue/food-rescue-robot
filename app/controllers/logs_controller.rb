@@ -20,6 +20,7 @@ class LogsController < ApplicationController
     conf.columns[:orig_volunteer].form_ui = :select
     conf.columns[:orig_volunteer].label = "Original Volunteer"
     conf.columns[:orig_volunteer].description = "If the shift was covered by someone else, put the original volunteer here"
+    conf.columns[:orig_volunteer].clear_link
     conf.columns[:donor].form_ui = :select
     conf.columns[:recipient].form_ui = :select
   end
@@ -28,9 +29,14 @@ class LogsController < ApplicationController
   def create_authorized?
     current_volunteer.admin
   end
-  def update_authorized?(record=nil)
-    current_volunteer.admin or record.volunteer.email == current_volunteer.email
-  end
+  #def update_authorized?(record=nil)
+  #  return true if current_volunteer.admin
+  #  unless params[:id].nil?
+  #    return Log.find(params[:id]).volunteer == current_volunteer
+  #  else
+  #    return false
+  #  end
+  #end
   def delete_authorized?(record=nil)
     current_volunteer.admin
   end

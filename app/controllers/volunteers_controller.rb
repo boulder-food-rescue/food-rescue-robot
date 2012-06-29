@@ -13,7 +13,7 @@ class VolunteersController < ApplicationController
 
   active_scaffold :volunteer do |conf|
     conf.list.sorting = {:name => 'ASC'}
-    conf.columns = [:name,:email,:phone,:preferred_contact,:gone_until,:has_car,:is_disabled,:admin,:on_email_list,:pickup_prefs,:transport,:admin_notes]
+    conf.columns = [:name,:email,:phone,:preferred_contact,:gone_until,:has_car,:is_disabled,:admin,:on_email_list,:pickup_prefs,:transport,:admin_notes,:password,:password_confirmation]
     conf.columns[:is_disabled].label = "Account Deactivated"
     conf.columns[:transport].form_ui = :select
     conf.columns[:transport].label = "Preferred Transportation"

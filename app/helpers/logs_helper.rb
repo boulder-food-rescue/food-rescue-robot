@@ -20,9 +20,12 @@ end
 # date based on the /current/ schedule
 def generate_log_entries(d=Date.today)
   n = 0
-  Schedule.where(:day_of_week => d.wday).each{ |s|
+  Schedule.where("day_of_week = ?",d.wday).each{ |s|
+    puts s.id
     # don't insert a duplicate log entry if one already exists
-    next if Log.where(:when => d, :schedule_id => s.id).length > 0
+    check = Log.where('"when" = ? AND schedule_id = ?',d,s.id)
+    puts check.length
+    next if check.length > 0
     # create each scheduled log entry for the given day
     log = Log.new{ |l|
       l.schedule = s
@@ -41,7 +44,7 @@ end
 # all logs that have seen at least r reminders.
 def send_reminder_emails(n=2,r=3)
   naughty_list = []
-  n = 0
+  c = 0
   Log.where(:weight => nil).each{ |l| 
     days_past = (Date.today - l.when).to_i
     next unless days_past >= n
@@ -52,7 +55,7 @@ def send_reminder_emails(n=2,r=3)
 
     m = Notifier.volunteer_log_reminder(l)
     m.deliver
-    n += 1
+    c += 1
 
     l.save
     if l.num_reminders >= r
@@ -64,7 +67,7 @@ def send_reminder_emails(n=2,r=3)
     puts m
     m.deliver
   end
-  return n
+  return c
 end
 
 end

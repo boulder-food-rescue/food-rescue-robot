@@ -8,10 +8,10 @@ class Log < ActiveRecord::Base
 
   # ActiveScaffold CRUD-level restrictions
   def authorized_for_update?
-    current_user.admin or self.volunteer.nil? or (current_user.email == self.volunteer.email)
+    current_user.admin or self.volunteer.nil? or (current_user == self.volunteer)
   end
   def authorized_for_create?
-    current_user.admin or current_user.email == self.volunteer.email
+    current_user.admin or (current_user == self.volunteer)
   end
   def authorized_for_delete?
     current_user.admin

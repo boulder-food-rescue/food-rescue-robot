@@ -12,10 +12,11 @@
 <div class="menu" style="padding: 0.3em; border: 1px solid black; margin-bottom: 1em; font-size: 12pt; font-weight: bold; font-family: sans; text-align: right; text-decoration: none; color: #999999;">
   Logged in as <%= current_volunteer.name %> |
   <%= link_to "My Schedule", mine_schedules_path %> | 
-  <%= link_to "My Upcoming Shifts", mine_logs_path %> |  
+  <%= link_to "My Shifts", mine_logs_path %> |  
   <%= link_to "Cover Shifts", open_logs_path %> |
 <!-- <%= link_to "Open Shifts", open_schedules_path %> | -->
   <%= link_to "Schedule Absence", new_absence_logs_path %> |
+  <%= link_to "Volunteers", volunteers_path %> |
   <%= link_to('Settings', edit_volunteer_registration_path) %> |
   <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %>
 </div>

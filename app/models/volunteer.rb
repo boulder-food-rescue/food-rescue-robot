@@ -5,6 +5,11 @@ class Volunteer < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  # column-level restrictions
+  def admin_notes_authorized?
+    current_user.admin
+  end
+
   # ActiveScaffold CRUD-level restrictions
   def authorized_for_update?
     current_user.admin or self.email == current_user.email

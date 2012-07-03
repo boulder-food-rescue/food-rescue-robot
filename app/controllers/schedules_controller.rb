@@ -2,6 +2,7 @@ class SchedulesController < ApplicationController
   before_filter :authenticate_volunteer!
 
   active_scaffold :schedule do |conf|
+    conf.list.sorting = {:day_of_week => 'ASC'}
     conf.columns = [:day_of_week,:donor,:recipient,:volunteer,:time_start,:time_stop,
                     :irregular,:backup,:transport,:needs_training,:public_notes,
                     :prior_volunteer,:admin_notes]
@@ -16,6 +17,7 @@ class SchedulesController < ApplicationController
     conf.columns[:volunteer].clear_link
     conf.columns[:recipient].form_ui = :select
     conf.columns[:prior_volunteer].form_ui = :select
+    conf.columns[:prior_volunteer].clear_link
     conf.columns[:transport].label = "Mode of Transport"
     conf.columns[:transport].form_ui = :select
     conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}

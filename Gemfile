@@ -27,6 +27,7 @@ gem 'jquery-rails'
 gem 'active_scaffold'
 gem 'geocoder'
 gem 'devise'
+gem 'thin'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

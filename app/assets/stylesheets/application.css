@@ -12,6 +12,3 @@
  *= require_tree .
  *= require active_scaffold
  */
-body{
-  margin: 5px;
-}

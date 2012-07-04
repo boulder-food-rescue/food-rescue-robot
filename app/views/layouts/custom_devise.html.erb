@@ -32,22 +32,36 @@
       <h2 class="section_title">Facts</h2>
       <div class="fact_section">
         <div>
-          <p>Total Food Rescued To Date: </p>
+          <p>Total Food Pickups To Date: <%= Log.count %> pickups</p>
         </div>
         <div>
-          <p>Average Weekly Food Rescue: </p>
+          <p>Total Food Rescued: 
+            <% logs = Log.all %>
+            <% count = 0.0%>
+            <% logs.each do |log|%>
+            <%   if log.weight != nil%>
+            <%     count += log.weight%>
+            <%   end%>
+            <% end%>
+            <%= count.to_i%>
+          lbs
+          </p>
         </div>
         <div>  
-          <p>Number of Volunteers: </p>
+          <p>Number of Volunteers: <%= Volunteer.count %> volunteers</p>
         </div>
         <div>
-          <p>Number of Recipients: </p>
+          <p>Number of Recipients: <%= Location.count(:conditions => { :is_donor => false }) %></p>
         </div>
         <div>  
-          <p>Number of Donors: </p>
+          <p>Number of Donors: <%= Location.count(:conditions => { :is_donor => true }) %></p>
         </div>  
         <div>
-          <p>Percent of Trips by Bike: </p>
+          <p>Percent of Trips by Bike: 
+            <% percent = (Log.count(:conditions => { :transport => 'Bike' })/(Log.count()*1.0)*100).to_i  %>
+            <%= percent %>
+            %
+          </p>
         </div>  
       </div>
     </div>

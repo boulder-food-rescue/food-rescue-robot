@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webapp</title>
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+  <%= stylesheet_link_tag    "devise", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+
+<body>
+  <div class="header">
+    <div>
+      <h2 id="bfr_title">Boulder Food Rescue</h2>
+      <h3>Sustainable Just-In-Time Food Rescue in Boulder, Colorado</h3>
+    </div>  
+    <%= link_to image_tag("logo.png", :class => 'logo_image')%>
+  </div>
+  <div class="wrap">
+    <div class="info_section">
+      <h2 class="section_title"> About BFR </h2>
+      <p>
+        Boulder Food Rescue is an all volunteer non-profit organization located in Boulder, CO. 
+        We rescue and redistribute perishable food "waste" to charities that serve homeless and 
+        at-risk individuals. Our goal is to help solve the problems of hunger, malnutrition, and 
+        food waste in our community.
+      </p>
+      <div>
+        <p>Read more at <a href="http://www.boulderfoodrescue.org">www.boulderfoodrescue.org</a></p>
+      </div>
+      <h2 class="section_title">Facts</h2>
+      <div class="fact_section">
+        <div>
+          <p>Total Food Rescued To Date: </p>
+        </div>
+        <div>
+          <p>Average Weekly Food Rescue: </p>
+        </div>
+        <div>  
+          <p>Number of Volunteers: </p>
+        </div>
+        <div>
+          <p>Number of Recipients: </p>
+        </div>
+        <div>  
+          <p>Number of Donors: </p>
+        </div>  
+        <div>
+          <p>Percent of Trips by Bike: </p>
+        </div>  
+      </div>
+    </div>
+    <div class="sign_in_section">
+      <div>
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>Copyright © <a href="http:www.boulderfoodrescue.org">Boulder Food Rescue 2012</a></p>
+  </div>
+</body>
+</html>

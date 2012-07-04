@@ -1,0 +1,143 @@
+/* Common */
+body{
+  font-family: 'Droid Sans', sans-serif;
+}
+
+/* Header */
+.header{
+  background: #F1F1F1;
+  border: 2px solid #E5E5E5;
+  padding: 10px;
+  overflow: auto;
+}
+
+.header .logo_image{
+  float: right;
+  height: 50px;
+}
+
+#bfr_title{
+  font-size: 1.5em;
+  color: #0E30B7;
+  padding: 0px;
+  font-weight: bold;
+}
+
+.header div{
+  float: left;
+}
+
+/* Overall View */
+.wrap{
+  width: 900px;
+  margin: 10px auto 0px auto;
+  font-size: .92em;
+}
+
+/*Sign in Section*/
+.sign_in_section{
+  float: right;
+  background: #F1F1F1; 
+  border: 1px solid #E5E5E5;
+  width: 273px;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+label{
+  font-weight: bold;
+  font-size: .95em;
+  margin-top: 5px;
+}
+
+input[type=submit] {
+	background-color: #4B8CF5;
+	border-radius:3px;
+	border:1px solid #3278F0;
+	display:inline-block;
+	color:#ffffff;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+}
+
+input[type=submit]:hover {
+	background-color: #3278E6;
+}
+
+input[type=submit]:active {
+	position:relative;
+	top:1px;
+}
+
+input[type=email], input[type=password], input[type=text]{
+  padding: 4px;
+  width: 267px;
+}
+
+form div input[type=checkbox]{
+  display: inline;
+}
+
+input{
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 1.25em;
+  padding: 10px 0px;
+}
+
+a {
+  color: #0F55CD;
+  text-decoration: none;
+}
+
+a:hover{
+  text-decoration: underline;
+}
+/*Info Section*/
+.info_section{
+  float: left;
+  width: 575px;
+  padding: 0px;
+  margin: 0px;
+}
+
+form div label{
+  display: inline;
+}
+
+.fact_section img{
+  height: 100px;
+  display: inline;
+  margin-top: 25px;
+}
+
+.fact_section p{
+  display: inline;
+}
+
+.section_title{
+  color: red;
+}
+/* Footer */
+.footer{
+  position: absolute;
+  bottom: 0;
+  border-top: 1px solid #B3B3B3;
+  width: 100%;
+}
+
+.footer p{
+  margin: 3px;
+  font-size: .75em;
+  color: grey;
+}
+
+.footer a{
+  color: grey;
+}
+

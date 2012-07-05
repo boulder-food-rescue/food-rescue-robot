@@ -7,9 +7,9 @@
 
 /* Navigation Bar */
 .navigation {
-  background-color: #333333;
+  background-color: #E1E1E1;
   overflow: auto;
-  padding: 5px;
+  padding: 5px 10px 5px 10px;
 }
 
 .navigation .nav_sections{
@@ -17,7 +17,7 @@
 }
 
 .navigation a{
-  color: #FFFFFF;
+  color: grey;
   margin-right: 10px;
   text-decoration: none;
 }

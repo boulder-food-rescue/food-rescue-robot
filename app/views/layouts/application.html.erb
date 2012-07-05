@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Webapp</title>
+  <title>BFR Webapp</title>
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
   <%= stylesheet_link_tag    "active_scaffold", "common", "main", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
@@ -12,19 +13,19 @@
   <div class="navigation">
     <div class="nav_sections">
       <% if volunteer_signed_in? %>
-        <a href=<%= mine_schedules_path %> class="<%= "selected" if request.url.include? mine_schedules_path %>">My Schedule</a>
-        <a href=<%= mine_logs_path %> class="<%= "selected" if request.url.include? mine_logs_path %>">My Shifts</a>
-        <a href=<%= open_logs_path %> class="<%= "selected" if request.url.include? open_logs_path %>">Cover Shifts</a>
-        <a href=<%= new_absence_logs_path %> class="<%= "selected" if request.url.include? new_absence_logs_path %>">Schedule Absence</a>
-        <a href=<%= volunteers_path %> class="<%= "selected" if request.url.include? volunteers_path %>">Volunteers</a>
+        <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">My Schedule</a>
+        <a href=<%= mine_logs_path %> class="<%= "selected" if request.fullpath == mine_logs_path %>">My Shifts</a>
+        <a href=<%= open_logs_path %> class="<%= "selected" if request.fullpath == open_logs_path %>">Cover Shifts</a>
+        <a href=<%= new_absence_logs_path %> class="<%= "selected" if request.fullpath == new_absence_logs_path %>">Schedule Absence</a>
+        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Volunteers</a>
         <%= link_to('Settings', edit_volunteer_registration_path) %>
       <% end %>
       <% if volunteer_signed_in? and current_volunteer.admin %>
-        <a href=<%= schedules_path %> class="<%= "selected" if request.url.include? schedules_path %>">Schedule</a>
-        <a href=<%= volunteers_path %> class="<%= "selected" if request.url.include? volunteers_path %>">Volunteers</a>
-        <a href=<%= locations_path %> class="<%= "selected" if request.url.include? locations_path %>">onors/Recipients</a>
-        <a href=<%= logs_path %> class="<%= "selected" if request.url.include? logs_path %>">Rescue Log</a>
-        <a href=<%= volunteers_path %> class="<%= "selected" if request.url.include? volunteers_path %>">Rescue Log</a>
+        <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">Schedule</a>
+        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Volunteers</a>
+        <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">onors/Recipients</a>
+        <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">Rescue Log</a>
+        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Rescue Log</a>
       <% end %>
     </div>
     <div class="nav_user">
@@ -48,7 +49,7 @@
   </div>
   
   <div class="footer">
-    <p>Copyright © <a href="http:www.boulderfoodrescue.org">Boulder Food Rescue 2012</a></p>
+    <p>Copyright © <a href="http:www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
   </div>
 </body>
 </html>

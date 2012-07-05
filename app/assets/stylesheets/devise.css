@@ -1,5 +1,9 @@
 /* Overall View */
-.wrap{
+html, body {
+height: 100%;
+}
+
+.wrap {
   width: 900px;
   margin: 10px auto 0px auto;
   font-size: .92em;
@@ -15,13 +19,13 @@
   border-radius: 10px;
 }
 
-label{
+.sign_in_section label{
   font-weight: bold;
   font-size: .95em;
   margin-top: 5px;
 }
 
-input[type=submit] {
+.sign_in_section input[type=submit] {
 	background-color: #4B8CF5;
 	border-radius:3px;
 	border:1px solid #3278F0;
@@ -34,39 +38,41 @@ input[type=submit] {
 	text-decoration:none;
 }
 
-input[type=submit]:hover {
+.sign_in_section input[type=submit]:hover {
 	background-color: #3278E6;
 }
 
-input[type=submit]:active {
+.sign_in_section input[type=submit]:active {
 	position:relative;
 	top:1px;
 }
 
-input[type=email], input[type=password], input[type=text]{
+.sign_in_section input[type=email], 
+.sign_in_section input[type=password], 
+.sign_in_section input[type=text]{
   padding: 4px;
   width: 267px;
 }
 
-form div input[type=checkbox]{
+.sign_in_section form div input[type=checkbox]{
   display: inline;
 }
 
-input{
+.sign_in_section input{
   margin-bottom: 10px;
 }
 
-h2 {
+.sign_in_section h2 {
   font-size: 1.25em;
   padding: 10px 0px;
 }
 
-a {
+.sign_in_section a {
   color: #0F55CD;
   text-decoration: none;
 }
 
-a:hover{
+.sign_in_section a:hover{
   text-decoration: underline;
 }
 /*Info Section*/
@@ -77,14 +83,50 @@ a:hover{
   margin: 0px;
 }
 
+.info_section h2{
+  font-size: 1.25em;
+  padding: 10px 0px;
+}
+
 form div label{
   display: inline;
 }
 
+.text_link{
+  color: blue;
+  cursor:pointer;
+  cursor:hand;
+  float: right;
+  margin-right: 40px;
+  background: #F1F1F1;
+  width: 7.5em;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #E5E5E5;
+}
+
+.text_link.selected{
+  border-radius: 10px 10px 0px 0px;
+}
+
+.text_link:hover{
+  background: #E1E1E1;
+}
+
+.a_fact_section{
+	margin-bottom: 10px;
+}
+
+.fact_info{
+  background: #F1F1F1; 
+  border: 1px solid #E5E5E5;
+  padding: 25px;
+  border-radius: 10px;
+  margin-right: 30px
+}
+
 .fact_section img{
-  height: 100px;
   display: inline;
-  margin-top: 25px;
 }
 
 .fact_section p{

@@ -3,6 +3,7 @@ class SchedulesController < ApplicationController
 
   active_scaffold :schedule do |conf|
     conf.list.sorting = {:day_of_week => 'ASC'}
+    conf.list.per_page = 500
     conf.columns = [:day_of_week,:donor,:recipient,:volunteer,:time_start,:time_stop,
                     :irregular,:backup,:transport,:needs_training,:public_notes,
                     :prior_volunteer,:admin_notes]

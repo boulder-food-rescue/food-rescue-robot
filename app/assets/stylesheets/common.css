@@ -1,0 +1,64 @@
+/* Common */
+body{
+  font-family: 'Droid Sans', sans-serif;
+}
+
+html, body {
+	height: 100%;
+}
+.wrap {
+	overflow: auto;
+	padding-bottom: 1.5em;
+}
+
+.container{
+  min-height: 100%;
+  position: relative;
+}
+
+/* Header */
+.header{
+  background: #F1F1F1;
+  border-bottom: 2px solid #E5E5E5;
+  padding: 10px;
+  overflow: auto;
+}
+
+.header .logo_image{
+  float: right;
+  height: 50px;
+}
+
+#bfr_title{
+  font-size: 1.5em;
+  color: #0E30B7;
+  padding: 0px;
+  font-weight: bold;
+}
+
+.header div{
+  float: left;
+}
+
+/* Footer */
+.footer{
+  /*position: absolute; */
+  /*bottom: 0; */
+  border-top: 1px solid #B3B3B3;
+  width: 100%;
+}
+
+.footer p{
+  margin: 3px;
+  font-size: .75em;
+  color: grey;
+}
+
+.footer a {
+  color: grey;
+  text-decoration: none;
+}
+
+.footer a:hover{
+  text-decoration: underline;
+}

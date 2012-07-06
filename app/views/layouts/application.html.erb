@@ -23,7 +23,7 @@
       <% if volunteer_signed_in? and current_volunteer.admin %>
         <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">Schedule</a>
         <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Volunteers</a>
-        <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">onors/Recipients</a>
+        <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">Donors/Recipients</a>
         <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">Rescue Log</a>
         <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Rescue Log</a>
       <% end %>

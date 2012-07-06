@@ -1,42 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Webapp</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <title>BFR Webapp</title>
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
+  <%= stylesheet_link_tag    "active_scaffold", "common", "main", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-<% if volunteer_signed_in? %>
-<div class="menu" style="padding: 0.3em; border: 1px solid black; margin-bottom: 1em; font-size: 12pt; font-weight: bold; font-family: sans; text-align: right; text-decoration: none; color: #999999;">
-  Logged in as <%= current_volunteer.name %> |
-  <%= link_to "My Schedule", mine_schedules_path %> | 
-  <%= link_to "My Shifts", mine_logs_path %> |  
-  <%= link_to "Cover Shifts", open_logs_path %> |
-<!-- <%= link_to "Open Shifts", open_schedules_path %> | -->
-  <%= link_to "Schedule Absence", new_absence_logs_path %> |
-  <%= link_to "Volunteers", volunteers_path %> |
-  <%= link_to('Settings', edit_volunteer_registration_path) %> |
-  <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %>
-</div>
-<% end %>
-
-<% if volunteer_signed_in? and current_volunteer.admin %>
-<div class="menu" style="padding: 0.3em; border: 1px solid black; margin-bottom: 1em; font-size: 12pt; font-weight: bold; font-family: sans; text-align: right; text-decoration: none; color: #999999;">
-  Admin Menu |
-  <%= link_to "Schedule", schedules_path %> |
-  <%= link_to "Volunteers", volunteers_path %> |
-  <%= link_to "Donors/Recipients", locations_path %> |
-  <%= link_to "Rescue Log", logs_path %>
-</div>
-<% end %>
-
-
-<p class="notice"><%= notice %></p>
-<p class="alert"><%= alert %></p>
-
-<%= yield %>
-
+  <div class="navigation">
+    <div class="nav_sections">
+      <% if volunteer_signed_in? %>
+        <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">My Schedule</a>
+        <a href=<%= mine_logs_path %> class="<%= "selected" if request.fullpath == mine_logs_path %>">My Shifts</a>
+        <a href=<%= open_logs_path %> class="<%= "selected" if request.fullpath == open_logs_path %>">Cover Shifts</a>
+        <a href=<%= new_absence_logs_path %> class="<%= "selected" if request.fullpath == new_absence_logs_path %>">Schedule Absence</a>
+        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Volunteers</a>
+        <%= link_to('Settings', edit_volunteer_registration_path) %>
+      <% end %>
+      <% if volunteer_signed_in? and current_volunteer.admin %>
+        <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">Schedule</a>
+        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Volunteers</a>
+        <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">onors/Recipients</a>
+        <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">Rescue Log</a>
+        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Rescue Log</a>
+      <% end %>
+    </div>
+    <div class="nav_user">
+      <% if volunteer_signed_in? %>
+        <p><%= current_volunteer.name%> : </p>
+        <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %>
+      <% end %>
+    </div>
+  </div>
+  <div class="header">
+    <div>
+      <h2 id="bfr_title">Boulder Food Rescue</h2>
+      <h3>Sustainable Just-In-Time Food Rescue in Boulder, Colorado</h3>
+    </div>  
+    <%= link_to image_tag("logo.png", :class => 'logo_image')%>
+  </div>
+  <div class="wrap">    
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
+    <%= yield %>
+  </div>
+  
+  <div class="footer">
+    <p>Copyright © <a href="http:www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
+  </div>
 </body>
 </html>

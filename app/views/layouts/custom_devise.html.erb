@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BFR Webapp</title>
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+  <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
+  <%= stylesheet_link_tag "common", "devise", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+
+<body>
+  <div class="container">
+	  <div class="header">
+		<div>
+		  <h2 id="bfr_title">Boulder Food Rescue</h2>
+		  <h3>Sustainable Just-In-Time Food Rescue in Boulder, Colorado</h3>
+		</div>  
+		<%= link_to image_tag("logo.png", :class => 'logo_image')%>
+	  </div>
+	  <div class="wrap">
+		<div class="info_section">
+		  <h2 class="section_title"> About BFR </h2>
+		  <p>
+			Boulder Food Rescue is an all volunteer non-profit organization located in Boulder, CO. 
+			We rescue and redistribute perishable food "waste" to charities that serve homeless and 
+			at-risk individuals. Our goal is to help solve the problems of hunger, malnutrition, and 
+			food waste in our community.
+		  </p>
+		  <div>
+			<p>Read more at <a href="http://www.boulderfoodrescue.org">www.boulderfoodrescue.org</a></p>
+		  </div>
+		  <h2 class="section_title">Facts</h2>
+		  <div class="fact_section">
+			<div class="a_fact_section">
+			  <p>Total Food Pickups To Date: <%= Log.count() %> pickups</p>
+			  <p class="show_pickups_to_date text_link"> chart </p>
+			  <div class="fact_info">
+			    <% 
+				time = Time.new
+				date = Date.new(time.year, time.month, time.day)
+				pickups_today = Log.count(:conditions => {:when => date})
+				pickups_week = Log.count(:conditions => {:when => date.at_beginning_of_week(start_day = :sunday)...date.at_end_of_week(start_day = :sunday)})
+				pickups_month = Log.count(:conditions => {:when => date.at_beginning_of_month()...date.at_end_of_month()})
+				pickups_year = Log.count(:conditions => {:when => date.at_beginning_of_year()...date.at_end_of_year()})
+				%>
+				<div><p> Pickups today :  <%= pickups_today %></p></div>
+				<div><p> Pickups this week : <%= pickups_week %></p></div>
+				<div><p> Pickups this month: <%= pickups_month %></p></div>
+				<div><p> Pickups this year: <%= pickups_year %></p></div>
+			  </div>
+			</div>
+			<div class="a_fact_section">
+			  <p>Total Food Rescued: 
+				<% logs = Log.all %>
+				<% count = 0.0%>
+				<% logs.each do |log|%>
+				<%   if log.weight != nil%>
+				<%     count += log.weight%>
+				<%   end%>
+				<% end%>
+				<%= count.to_i%>
+			  lbs
+			  </p>
+			  <p class="food_pickup text_link"> chart </p>
+			  <div class="fact_info">
+				<% 
+				current_month = time.month
+				current_year = time.year
+				months = []
+				labels = ''
+				for i in 0..11
+				  start_year = current_year
+				  start_month = current_month - i
+				  if start_month < 1
+					start_month += 12
+					start_year += -1
+				  elsif start_month > 12
+					start_month -= 12
+					start_year += 1
+				  end
+				  end_year = start_year
+				  end_month = start_month + 1
+				  if end_month < 1
+					end_month += 12 
+					end_year += -1
+				  elsif end_month > 12
+					end_month -= 12 
+					end_year += 1
+				  end
+				  m_start = Date.new(start_year, start_month)
+				  m_end = Date.new(end_year, end_month)
+				  months << [m_start, m_end]
+				  labels += m_start.strftime('%B')[0...3] +'|'
+				end
+				monthly_lbs = []
+				months.each do |query|
+				  logs = Log.where(:when => query[0]...query[1])
+				  weight = 0
+				  logs.each do |log|
+				  if log.weight != nil
+					weight += log.weight
+				  end
+				end
+				monthly_lbs << weight
+				end 
+				%>
+				
+				<img src="<%= Gchart.bar(:size => '493x300', 
+				  :title => "Food Collected By Month",
+				  :bg => 'e4e4e4',
+				  :data => monthly_lbs,
+				  :bar_width_and_spacing => '25,14',
+				  :axis_with_labels => 'x,y',
+				  :axis_labels => [labels, ''],
+				  :axis_range => [nil, [0,monthly_lbs.max,250]]) %>"
+				  alt="pickup chart"/>
+			  </div>
+			</div>
+			<div class="a_fact_section">  
+			  <p>Number of Volunteers: <%= Volunteer.count %> volunteers</p>
+			  <p class="volunteer_facts text_link"> fun facts </p>
+			  <div class="fact_info">
+				<div><p> Fact about our Volunteers </p></div>
+				<div><p> Fact about our Volunteers </p></div>
+				<div><p> Fact about our Volunteers </p></div>
+				<div><p> Fact about our Volunteers </p></div>
+				<div><p> Fact about our Volunteers </p></div>
+			  </div>
+			</div>
+			<div class="a_fact_section">
+			  <p>Number of Recipients: <%= Location.count(:conditions => { :is_donor => false }) %></p>
+			  <p class="show_recipient_facts text_link"> fun facts </p>
+			  <div class="fact_info">
+				<div><p>
+				  See a list of some of our recipients at 
+				  <a href="http://www.boulderfoodrescue.org/index.php/recipients/"> Recipient List </a>
+				</p></div>
+			  </div>
+			</div>
+			<div class="a_fact_section">  
+			  <p>Number of Donors: <%= Location.count(:conditions => { :is_donor => true }) %></p>
+			  <p class="show_donor_list text_link">list</p>
+			  <div class="fact_info donor_list">
+				<% donors = Location.where(:is_donor => true) %>
+				<% donors.each do |donor| %>
+				<div> <p class="donor_name"> <%= donor.name %> </p> </div>
+				<% end %>
+			  </div>
+			</div>  
+			<div class="a_fact_section">
+			  <p>Percent of Trips by Bike: 
+			    <%
+				non_nil_values = Log.count()*1.0-Log.count(:conditions => { :transport => nil })
+				percent = (Log.count(:conditions => { :transport => 'Bike' })/(non_nil_values)*100.0).to_i  %>
+				<%= percent %> %
+			  </p>
+			  <p class="show_trans_chart text_link"> chart </p>
+			  <div class="fact_info transportation_chart">
+				<% 
+				bike_trips = Log.count(:conditions => { :transport => 'Bike' })
+				car_trips = Log.count(:conditions => { :transport => 'Car' })
+				walking_trips = Log.count(:conditions => { :transport => 'Foot' })
+				nil_values = Log.count(:conditions => { :transport => nil })
+				other_trips = Log.count() - walking_trips - car_trips - bike_trips - nil_values
+				%>
+				<img src="
+				<%= 
+				Gchart.pie( :data => [bike_trips, car_trips, walking_trips, other_trips], 
+							:title => 'Transportation Type', 
+							:size => '493x200', 
+							:labels => ['Bike', 'Car', 'Foot', 'Other'],
+							:bg => 'e4e4e4') 
+				%>
+				" alt="Google Chart"/>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<div class="sign_in_section">
+		  <div>
+			<%= yield %>
+		  </div>
+		</div>
+	  </div>
+	  <div class="push"></div>
+	  <div class="footer">
+		<p>Copyright © <a href="http:www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
+	  </div>
+  </div>
+</body>
+</html>

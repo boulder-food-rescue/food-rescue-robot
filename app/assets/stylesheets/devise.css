@@ -1,0 +1,139 @@
+/* Overall View */
+html, body {
+height: 100%;
+}
+
+.wrap {
+  width: 900px;
+  margin: 10px auto 0px auto;
+  font-size: .92em;
+}
+
+/*Sign in Section*/
+.sign_in_section{
+  float: right;
+  background: #F1F1F1; 
+  border: 1px solid #E5E5E5;
+  width: 273px;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.sign_in_section label{
+  font-weight: bold;
+  font-size: .95em;
+  margin-top: 5px;
+}
+
+.sign_in_section input[type=submit] {
+	background-color: #4B8CF5;
+	border-radius:3px;
+	border:1px solid #3278F0;
+	display:inline-block;
+	color:#ffffff;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+}
+
+.sign_in_section input[type=submit]:hover {
+	background-color: #3278E6;
+}
+
+.sign_in_section input[type=submit]:active {
+	position:relative;
+	top:1px;
+}
+
+.sign_in_section input[type=email], 
+.sign_in_section input[type=password], 
+.sign_in_section input[type=text]{
+  padding: 4px;
+  width: 267px;
+}
+
+.sign_in_section form div input[type=checkbox]{
+  display: inline;
+}
+
+.sign_in_section input{
+  margin-bottom: 10px;
+}
+
+.sign_in_section h2 {
+  font-size: 1.25em;
+  padding: 10px 0px;
+}
+
+.sign_in_section a {
+  color: #0F55CD;
+  text-decoration: none;
+}
+
+.sign_in_section a:hover{
+  text-decoration: underline;
+}
+/*Info Section*/
+.info_section{
+  float: left;
+  width: 575px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.info_section h2{
+  font-size: 1.25em;
+  padding: 10px 0px;
+}
+
+form div label{
+  display: inline;
+}
+
+.text_link{
+  color: blue;
+  cursor:pointer;
+  cursor:hand;
+  float: right;
+  margin-right: 40px;
+  background: #F1F1F1;
+  width: 7.5em;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #E5E5E5;
+}
+
+.text_link.selected{
+  border-radius: 10px 10px 0px 0px;
+}
+
+.text_link:hover{
+  background: #E1E1E1;
+}
+
+.a_fact_section{
+	margin-bottom: 10px;
+}
+
+.fact_info{
+  background: #F1F1F1; 
+  border: 1px solid #E5E5E5;
+  padding: 25px;
+  border-radius: 10px;
+  margin-right: 30px
+}
+
+.fact_section img{
+  display: inline;
+}
+
+.fact_section p{
+  display: inline;
+}
+
+.section_title{
+  color: red;
+}
+

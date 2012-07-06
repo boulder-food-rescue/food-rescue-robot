@@ -18,20 +18,19 @@
         <a href=<%= open_logs_path %> class="<%= "selected" if request.fullpath == open_logs_path %>">Cover Shifts</a>
         <a href=<%= new_absence_logs_path %> class="<%= "selected" if request.fullpath == new_absence_logs_path %>">Schedule Absence</a>
         <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Volunteers</a>
-        <%= link_to('Settings', edit_volunteer_registration_path) %>
       <% end %>
       <% if volunteer_signed_in? and current_volunteer.admin %>
-        <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">Schedule</a>
-        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Volunteers</a>
+        <div id="admin_nav_section">
+        <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">Full Schedule</a>
         <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">Donors/Recipients</a>
         <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">Rescue Log</a>
-        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Rescue Log</a>
+        </div>
       <% end %>
     </div>
     <div class="nav_user">
       <% if volunteer_signed_in? %>
         <p><%= current_volunteer.name%> : </p>
-        <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %>
+        <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %> | <%= link_to('Settings', edit_volunteer_registration_path) %>
       <% end %>
     </div>
   </div>

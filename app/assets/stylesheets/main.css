@@ -16,6 +16,10 @@
   float: left;
 }
 
+.nav_sections #admin_nav_section{
+  width: 100%;
+}
+
 .navigation a{
   color: grey;
   margin-right: 10px;

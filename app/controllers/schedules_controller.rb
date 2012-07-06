@@ -21,7 +21,7 @@ class SchedulesController < ApplicationController
     conf.columns[:transport].label = "Mode of Transport"
     conf.columns[:transport].form_ui = :select
     conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}
-    conf.columns[:irregular].label = "Periodic/Irregular"
+    conf.columns[:irregular].label = "Irregular"
     conf.columns[:backup].label = "Backup Pickup"
   end
 

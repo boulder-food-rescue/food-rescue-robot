@@ -28,7 +28,6 @@ gem 'active_scaffold'
 gem 'geocoder'
 gem 'devise'
 gem 'thin'
-gem 'googlecharts'
 gem 'lazy_high_charts'
 
 # To use ActiveModel has_secure_password

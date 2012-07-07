@@ -87,6 +87,15 @@ height: 100%;
   margin: 0px;
 }
 
+.info_section a{
+  text-decoration: none;
+  color: blue;
+}
+
+.info_section a:hover{
+  text-decoration: underline;
+}
+
 .info_section h2{
   font-size: 1.25em;
   padding: 10px 0px;

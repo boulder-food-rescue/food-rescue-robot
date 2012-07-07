@@ -185,15 +185,21 @@ end
 				</div>
 				<div class="fun_fact">
 				  <h3>Pickups This Week</h3>
-				  <div><p> <%= pickups_this_week %> </p></div>
+				  <div>
+				    <p> <%= pickups_this_week %> </p>
+				  </div>
 				</div>
 				<div class="fun_fact">
 				  <h3>Pickups This Month</h3>
-				  <div><p> <%= pickups_this_month %></p></div>
+				  <div>
+				    <p> <%= pickups_this_month %></p>
+				  </div>
 				</div>
 				<div class="fun_fact">
 				  <h3>Pickups This Year</h3>
-				  <div><p> <%= pickups_this_year %></p></div>
+				  <div>
+				    <p> <%= pickups_this_year %></p>
+				  </div>
 				</div>
 			  </div>
 			</div>
@@ -215,7 +221,22 @@ end
 			  	<% if largest_pickup.volunteer != nil %>
 			  	  <div class="fun_fact">
 			  	    <h3>Largest Pickup</h3>
-				    <div><p><%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from <%= Location.find(largest_pickup.donor_id).name %></p></div>
+			  	    <%
+			  	    donor = Location.find(largest_pickup.donor_id)
+			  	    if donor.website != nil %>
+			  	      <div>
+			  	        <p>
+			  	          <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from 
+			  	          <a href="<% donor.website %>"><%= donor.name %></a>
+			  	        </p>
+			  	      </div>
+			  	    <% else %>
+			  	      <div>
+			  	      	<p>
+			  	      	  <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from <%= donor.name %>
+			  	        </p>
+			  	      </div>
+			  	    <%end%>
 				  </div>
 				<% end %>
 				<div class="fun_fact">
@@ -223,12 +244,22 @@ end
 				  <% 
 				  pickups_today.each do |pickup|
 				    if pickup.volunteer != nil
-				  %>
-				  <div><p> <%= pickup.volunteer.name %> - <%= Location.find(pickup.donor_id).name %></p></div>
-				  <% 
-				    end 
-				  end
-				  %>
+				      donor = Location.find(pickup.donor_id)
+				      if donor.website != nil%>
+				        <div>
+				          <p>
+				            <%= pickup.volunteer.name %> - <a href="<%= donor.website %>"><%= donor.name %></a>
+				          </p>
+				        </div>
+				    <% else %>
+				        <div>
+				          <p>
+				            <%= pickup.volunteer.name %> - <%= donor.name %>
+				          </p>
+				        </div>
+				    <% end %>
+				  <% end %> 
+				  <% end %>
 				</div>
 			  </div>
 			</div>
@@ -252,9 +283,15 @@ end
 				  donors = Location.where(:is_donor => true)
 				  donors.each do |donor|
 				    if donor.website != nil%>
-				      <div> <p class="donor_name"> </p> <a href="<%= donor.website %>"><%= donor.name %></a></div>
+				      <div>
+				        <p class> 
+				          <a href="<%= donor.website %>"><%= donor.name %></a>
+				        </p>
+				      </div>
 				    <% else %>
-				      <div> <p class="donor_name"> <%= donor.name %> </p> </div>
+				      <div> 
+				        <p> <%= donor.name %> </p>
+				      </div>
 				    <% end %>
 				  <% end %>
 				</div>

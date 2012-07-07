@@ -137,3 +137,16 @@ form div label{
   color: red;
 }
 
+.fun_fact{
+  margin-bottom: 5px;
+}
+
+.fun_fact h3{
+  color: green;
+  font-size: 1.25em;
+}
+
+#trans_chart, #food_chart_day, #food_chart_month{
+  width: 493px;
+  background: none;
+}

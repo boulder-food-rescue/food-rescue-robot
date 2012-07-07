@@ -5,8 +5,8 @@ gem 'rails'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3', :group -> [:developement, :test]
-gem 'pg', :group -> :production
+gem 'pg', :group => :production
+gem 'sqlite3', :group => [:development, :test]
 
 gem 'json'
 

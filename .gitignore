@@ -1,3 +1,4 @@
 *.log
 *.sqlite
 tmp
+db/development.sqlite3

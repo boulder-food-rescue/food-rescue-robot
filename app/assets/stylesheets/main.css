@@ -9,44 +9,6 @@
   min-width: 980px;
 }
 
-/* Navigation Bar */
-.navigation {
-  background-color: #E1E1E1;
-  overflow: auto;
-  padding: 5px 10px 5px 10px;
-}
-
-.navigation .nav_sections{
-  float: left;
-}
-
-.nav_sections #admin_nav_section{
-  width: 100%;
-}
-
-.navigation a{
-  color: grey;
-  margin-right: 10px;
-  text-decoration: none;
-}
-
-.navigation a:hover{
-  color: #FF1324;
-}
-
-.navigation a.selected{
-  color: #FF1234;
-}
-
-.navigation .nav_user{
-  float: right;
-}
-
-.navigation .nav_user p{
-  color: #808080;
-  display: inline;
-}
-
 /* Schedule Absence */
 .absence_table td{
   padding: 5px 5px 5px 0px;

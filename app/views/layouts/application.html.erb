@@ -5,33 +5,89 @@
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-  <%= stylesheet_link_tag    "active_scaffold", "common", "main", :media => "all" %>
+  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
   <div class="container">
   <div class="navigation">
-    <div class="nav_sections">
+    <div id="cssmenu">
       <% if volunteer_signed_in? %>
-        <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">My Schedule</a>
-        <a href=<%= mine_logs_path %> class="<%= "selected" if request.fullpath == mine_logs_path %>">My Shifts</a>
-        <a href=<%= open_logs_path %> class="<%= "selected" if request.fullpath == open_logs_path %>">Cover Shifts</a>
-        <a href=<%= new_absence_logs_path %> class="<%= "selected" if request.fullpath == new_absence_logs_path %>">Schedule Absence</a>
-        <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">Volunteers</a>
+        <li class='active '>
+          <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
+            <span>Home</span>
+          </a>
+        </li>
+        <li>
+          <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
+            <span>My Schedule</span>
+          </a>
+        </li>
+        <li class="has-sub">
+          <a href=<%= mine_logs_path %> class="<%= "selected" if request.fullpath == mine_logs_path %>">
+            <span>Shifts</span>
+          </a>
+          <ul>
+            <li>
+              <a href=<%= mine_logs_path %> class="<%= "selected" if request.fullpath == mine_logs_path %>">
+                <span>My Shifts</span>
+              </a>
+            </li>
+            <li>
+              <a href=<%= open_logs_path %> class="<%= "selected" if request.fullpath == open_logs_path %>">
+                <span>Cover Shifts</span>
+              </a>
+            </li>
+            <li>
+              <a href=<%= new_absence_logs_path %> class="<%= "selected" if request.fullpath == new_absence_logs_path %>">
+                <span>Schedule Absence</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">
+            <span>Volunteers</span>
+          </a>
+        </li>
       <% end %>
       <% if volunteer_signed_in? and current_volunteer.admin %>
-        <div id="admin_nav_section">
-        <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">Full Schedule</a>
-        <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">Donors/Recipients</a>
-        <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">Rescue Log</a>
-        </div>
+        <li class='has-sub '>
+          <a href='#'><span>Administration</span></a>
+		  <ul>
+		    <li>
+		      <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">
+		        <span>Full Schedule</span>
+		      </a>
+		    </li>
+		    <li>
+		      <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">
+		        <span>Donors & Recipients</span>
+		      </a>
+		    </li>
+		    <li>
+		      <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">
+		        <span>Rescue Log</span>
+		      </a>
+		    </li>
+		  </ul>
+        </li>
+        <% if volunteer_signed_in? %>
+        <li id="user_controls" class="has-sub">
+          <a href="#">
+          	<span><%= current_volunteer.name%></span>
+          </a>
+          <ul>
+            <li>
+          	  <%= link_to('Settings', edit_volunteer_registration_path) %>
+           </li>
+           <li>
+          	  <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %>
+           </li>
+          </ul>
+        </li>
       <% end %>
-    </div>
-    <div class="nav_user">
-      <% if volunteer_signed_in? %>
-        <p><%= current_volunteer.name%> : </p>
-        <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %> | <%= link_to('Settings', edit_volunteer_registration_path) %>
       <% end %>
     </div>
   </div>

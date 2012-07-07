@@ -3,6 +3,10 @@ html, body {
 height: 100%;
 }
 
+.container{
+  min-width: 900px;
+}
+
 .wrap {
   width: 900px;
   margin: 10px auto 0px auto;

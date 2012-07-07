@@ -250,8 +250,12 @@ end
 			  	  <h3>List of Donors</h3>
 				  <% 
 				  donors = Location.where(:is_donor => true)
-				  donors.each do |donor| %>
-				    <div> <p class="donor_name"> <%= donor.name %> </p> </div>
+				  donors.each do |donor|
+				    if donor.website != nil%>
+				      <div> <p class="donor_name"> </p> <a href="<%= donor.website %>"><%= donor.name %></a></div>
+				    <% else %>
+				      <div> <p class="donor_name"> <%= donor.name %> </p> </div>
+				    <% end %>
 				  <% end %>
 				</div>
 			  </div>
@@ -275,7 +279,7 @@ end
 	  </div>
 	  <div class="push"></div>
 	  <div class="footer">
-		<p>Copyright © <a href="http:www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
+		<p>Copyright © <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
 	  </div>
   </div>
 </body>

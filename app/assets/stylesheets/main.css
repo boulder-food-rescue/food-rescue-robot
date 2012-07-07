@@ -1,8 +1,10 @@
 /* Overall View */
 .wrap{
-  min-width: 900px;
   font-size: .92em;
-  padding: 10px;
+}
+
+.container{
+  min-width: 980px;
 }
 
 /* Navigation Bar */

@@ -6,6 +6,7 @@ body{
 html, body {
 	height: 100%;
 }
+
 .wrap {
 	overflow: auto;
 	padding-bottom: 1.5em;
@@ -42,8 +43,8 @@ html, body {
 
 /* Footer */
 .footer{
-  /*position: absolute; */
-  /*bottom: 0; */
+  position: absolute;
+  bottom: 0;
   border-top: 1px solid #B3B3B3;
   width: 100%;
 }

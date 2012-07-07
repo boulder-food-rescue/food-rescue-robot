@@ -1,6 +1,8 @@
 /* Overall View */
 .wrap{
   font-size: .92em;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .container{
@@ -44,3 +46,9 @@
   color: #808080;
   display: inline;
 }
+
+/* Schedule Absence */
+.absence_table td{
+  padding: 5px 5px 5px 0px;
+}
+

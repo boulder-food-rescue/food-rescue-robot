@@ -29,32 +29,9 @@ height: 100%;
   margin-top: 5px;
 }
 
-.sign_in_section input[type=submit] {
-	background-color: #4B8CF5;
-	border-radius:3px;
-	border:1px solid #3278F0;
-	display:inline-block;
-	color:#ffffff;
-	font-family:arial;
-	font-size:15px;
-	font-weight:bold;
-	padding:6px 24px;
-	text-decoration:none;
-}
-
-.sign_in_section input[type=submit]:hover {
-	background-color: #3278E6;
-}
-
-.sign_in_section input[type=submit]:active {
-	position:relative;
-	top:1px;
-}
-
 .sign_in_section input[type=email], 
 .sign_in_section input[type=password], 
 .sign_in_section input[type=text]{
-  padding: 4px;
   width: 267px;
 }
 

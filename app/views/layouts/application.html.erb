@@ -73,7 +73,8 @@
 		    </li>
 		  </ul>
         </li>
-        <% if volunteer_signed_in? %>
+      <% end %>
+      <% if volunteer_signed_in? %>
         <li id="user_controls" class="has-sub">
           <a href="#">
           	<span><%= current_volunteer.name%></span>
@@ -87,8 +88,7 @@
            </li>
           </ul>
         </li>
-      <% end %>
-      <% end %>
+    <% end %>
     </div>
   </div>
   <div class="header">

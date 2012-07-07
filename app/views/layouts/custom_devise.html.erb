@@ -57,7 +57,7 @@ end
 food_chart_day = LazyHighCharts::HighChart.new('area') do |f|
   f.options[:chart][:defaultSeriesType] = "area"
   f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Food Collected Since June 26, 2012"
+  f.options[:title][:text] = "Food Rescued Since June 26, 2012"
   f.options[:xAxis][:title] = {:enabled => true, :text => "Days Since 06/26/2012"}
   f.options[:yAxis][:title][:text] = "lbs of food"
   f.plot_options(:area => {
@@ -74,7 +74,7 @@ food_chart_day = LazyHighCharts::HighChart.new('area') do |f|
   	}
   })
   f.series(
-    :name => 'Food Collected',
+    :name => 'Pounds of Food Rescued',
     :data => food_per_day
   )
 end
@@ -88,14 +88,14 @@ end
 food_chart_month = LazyHighCharts::HighChart.new('column') do |f|
   f.options[:chart][:defaultSeriesType] = "column"
   f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Food Colleced By Month"
+  f.options[:title][:text] = "Food Rescued By Month"
     f.options[:xAxis] = {
     :plot_bands => "none",
-    :title=>{:text=>"Time"},
+    :title=>{:text=>"Month"},
     :categories => month_labels}
   f.options[:yAxis][:title][:text] = "lbs of food"
   f.series(
-    :name => 'Food Collected',
+    :name => 'Pounds of Food Rescued',
     :data => food_per_month
   )
 end
@@ -265,7 +265,7 @@ end
 			</div>
 			<div class="a_fact_section">
 			  <p>Number of Recipients: <%= recipient_count %></p>
-			  <p class="show_recipient_facts text_link"> fun facts </p>
+			  <p class="show_recipient_facts text_link"> list </p>
 			  <div class="fact_info">
 				<div><p>
 				  See a list of some of our recipients at 
@@ -298,7 +298,7 @@ end
 			  </div>
 			</div>  
 			<div class="a_fact_section">
-			  <p>Percent of trips human powered: 
+			  <p>Percent of Trips Human Powered: 
 				<%= human_power_percent %> %
 			  </p>
 			  <p class="show_trans_chart text_link"> chart </p>

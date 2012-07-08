@@ -6,6 +6,7 @@ body{
 html, body {
 	height: 100%;
 }
+
 .wrap {
 	overflow: auto;
 	padding-bottom: 1.5em;
@@ -42,8 +43,8 @@ html, body {
 
 /* Footer */
 .footer{
-  /*position: absolute; */
-  /*bottom: 0; */
+  position: absolute;
+  bottom: 0;
   border-top: 1px solid #B3B3B3;
   width: 100%;
 }
@@ -61,4 +62,51 @@ html, body {
 
 .footer a:hover{
   text-decoration: underline;
+}
+
+/* Button */
+input[type=submit] {
+	background-color: #4B8CF5;
+	border-radius:3px;
+	border:1px solid #3278F0;
+	display:inline-block;
+	color:#ffffff;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+}
+
+input[type=submit]:hover {
+	background-color: #3278E6;
+}
+
+input[type=submit]:active {
+	position:relative;
+	top:1px;
+}
+
+input[type=email], 
+input[type=password], 
+input[type=text]{
+  padding: 4px;
+}
+
+/* Webkit Scrollbar */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.3); 
+    border-radius: 5px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+    background: #C5C5C5;
 }

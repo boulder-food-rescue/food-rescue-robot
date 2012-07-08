@@ -1,0 +1,88 @@
+<div class="home_sections">
+  <div class="home_section">
+    <h2> Upcoming Pickups </h2>
+    <div class="home_section_content">
+      <table>
+      	<tr>
+      	  <th>Location</th>
+      	  <th>Date</th>
+      	  <th>Link</th>
+      	</tr>
+        <% @upcoming_pickups.each do |pickup| %>
+        <tr>
+          <td> <%= link_to pickup.donor.name, pickup.donor %> </td>
+          <td> <%= pickup.when %> </td>
+          <td> <%= link_to "view", pickup %> </td>
+        </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+  <div class="home_section">
+  	<h2> To Do Pickup Reports </h2>
+  	<div class="home_section_content">
+      <table>
+      	<tr>
+      	  <th>Donor</th>
+      	  <th>Date</th>
+      	  <th>Link</th>
+      	</tr>
+        <% @to_do_reports.each do |report| %>
+        <tr>
+          <td> <%= link_to report.donor.name, report.donor %> </td>
+          <td> <%= report.when %> </td>
+          <td> <%= link_to "view", report %> </td>
+        </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+  <div class="home_section">
+  	<h2> Next Meeting Info </h2>
+  	<div class="home_section_content">
+  	  <table>
+  	    <tr>
+  	      <td> Date </td>
+  	      <td> 2/2/2222 </td> 
+  	    </tr>
+  	    <tr>
+  	      <td> Location </td>
+  	      <td> West Elm Street <a href="#"> Map </a> </td>
+  	    </tr>
+  	    <tr>
+  	      <td> Topics </td>
+  	      <td> Topic, Topic, Topic, Topic, Topci </td>
+  	    </tr>
+  	  </table>
+  	</div>
+  </div>
+  <div class="home_section">
+    <h2> Pickup Stats </h2>
+    <div class="home_section_content">
+      <table>
+        <tr>
+          <th> Stat </th>
+          <th> Value </th>
+        </tr>
+        <tr>
+          <td> Completed Pickups </td>
+          <td> @CompletedPickupsNumber </td>
+        </tr>
+        <tr>
+          <td> Amount of Food Rescued </td>
+          <td> @AmountOfFoodResuced </td>
+        </tr>
+        <tr>
+          <td> Geospacial Distance Traveled </td>
+          <td> @GeospacialDistanceTraveled </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="home_section">
+  	<h2> Your Donor/Recipient Map </h2>
+  	<div class="home_section_content">
+  	  <p> A Map Of Donor and Recipients </p>
+  	</div>
+  </div>
+</div>

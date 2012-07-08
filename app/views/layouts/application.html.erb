@@ -5,7 +5,7 @@
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", :media => "all" %>
+  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "home", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
@@ -15,7 +15,7 @@
     <div id="cssmenu">
       <% if volunteer_signed_in? %>
         <li class='active '>
-          <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
+          <a href="/home/hello" class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
             <span>Home</span>
           </a>
         </li>

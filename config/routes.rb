@@ -1,4 +1,6 @@
 Webapp::Application.routes.draw do
+  get "home/hello"
+
   devise_for :volunteers
 
   resources :logs do 

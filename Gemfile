@@ -29,6 +29,12 @@ gem 'geocoder'
 gem 'devise'
 gem 'thin'
 gem 'googlecharts'
+gem 'pg'
+
+# This gem is for moving data easily between databases
+# use rake db:data:dump to dump the data in your current db into a db/data.yaml
+# use rake db:data:load to load the data in that file into your current db
+gem 'yaml_db' 
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

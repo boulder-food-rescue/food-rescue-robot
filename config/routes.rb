@@ -1,5 +1,11 @@
 Webapp::Application.routes.draw do
-  get "home/hello"
+  get "test/cover"
+
+  get "test/shifts"
+
+  get "test/schedule"
+
+  get "home/welcome"
 
   devise_for :volunteers
 

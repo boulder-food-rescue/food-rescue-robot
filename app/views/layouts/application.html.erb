@@ -5,9 +5,11 @@
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "home", :media => "all" %>
+  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "welcome", "test", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+  <script type="text/javascript" language="javascript" src="/DataTables-1.9.2/media/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/DataTables-1.9.2/media/css/demo_table.css">
 </head>
 <body>
   <div class="container">
@@ -15,9 +17,25 @@
     <div id="cssmenu">
       <% if volunteer_signed_in? %>
         <li class='active '>
-          <a href="/home/hello" class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
+          <a href="/home/welcome" class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
             <span>Home</span>
           </a>
+        </li>
+        <li class="has-sub">
+          <a href="#">
+            <span>Testing</span>
+          </a>
+          <ul>
+            <li>
+              <a href="/test/schedule">My Schedule</a>
+            </li>
+            <li>
+              <a href="/test/shifts">My Shifts</a>
+            </li>
+            <li>
+              <a href="/test/cover">Cover Shifts</a>
+            </li>
+          </ul>
         </li>
         <li>
           <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">

@@ -2,6 +2,9 @@
   <div class="home_section">
     <h2> Upcoming Pickups </h2>
     <div class="home_section_content">
+      <% if @upcoming_pickups.length == 0 %>
+      <p> No upcoming pickups. </p>
+      <% else %>
       <table>
       	<tr>
       	  <th>Location</th>
@@ -16,11 +19,15 @@
         </tr>
         <% end %>
       </table>
+      <% end %>
     </div>
   </div>
   <div class="home_section">
-  	<h2> To Do Pickup Reports </h2>
+  	<h2> to do pickup reports </h2>
   	<div class="home_section_content">
+  	  <% if @to_do_reports.length == 0 %>
+  	  <p> No To Do Pickup Reports. Good Work! </p>
+  	  <% else %>
       <table>
       	<tr>
       	  <th>Donor</th>
@@ -35,6 +42,32 @@
         </tr>
         <% end %>
       </table>
+      <% end %>
+    </div>
+  </div>
+  <div class="home_section">
+    <h2> Last 10 Pickups </h2>
+    <div class="home_section_content">
+      <% if @last_ten_pickups.length == 0 %>
+        <p> No pickup reports found </p>
+      <% else %>
+        <table>
+          <tr>
+            <th> Date </th>
+            <th> Donor </th>
+            <th> Size </th>
+            <th> Link </th>
+          </tr>
+          <% @last_ten_pickups.each do |pickup| %>
+          <tr>
+            <td> <%= pickup.when %> </td>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> </td>
+            <td> <%= pickup.weight %> </td>
+            <td> <%= link_to "view", pickup %> </td>
+          </tr>
+          <% end %>
+        </table>
+      <% end %>
     </div>
   </div>
   <div class="home_section">
@@ -66,19 +99,32 @@
         </tr>
         <tr>
           <td> Completed Pickups </td>
-          <td> @CompletedPickupsNumber </td>
+          <td> <%= @completed_pickup_count %> </td>
         </tr>
         <tr>
           <td> Amount of Food Rescued </td>
-          <td> @AmountOfFoodResuced </td>
+          <td> <%= @total_food_rescued %> </td>
         </tr>
-        <tr>
-          <td> Geospacial Distance Traveled </td>
-          <td> @GeospacialDistanceTraveled </td>
+        <tr title="Distance is calculated based on the geospacial distance between your pickups and delivaries. This underestimates your distance traveled.">
+          <td> Distance traveled (Estimate) </td>
+          <td> <%= @dis_traveled.round(2) %> km</td>
         </tr>
       </table>
     </div>
   </div>
+  <div class="home_section">
+    <h2> Food Collected by Day </h2>
+    <div class="home_section_content">
+      <%= high_chart("chart_food_per_day", @food_chart_day)  %>
+    </div>
+  </div>
+  <div class="home_section">
+    <h2> Food Collected by Month </h2>
+    <div class="home_section_content">
+      <%= high_chart("chart_food_per_month", @food_chart_month)  %>
+    </div>
+  </div>
+  <div cla
   <div class="home_section">
   	<h2> Your Donor/Recipient Map </h2>
   	<div class="home_section_content">

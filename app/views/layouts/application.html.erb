@@ -5,8 +5,10 @@
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "home", :media => "all" %>
+  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "home", "gmaps4rails", :media => "all" %>
+  <%= yield :scripts %>
   <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag :highcharts  %>
   <%= csrf_meta_tags %>
 </head>
 <body>

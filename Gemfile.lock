@@ -53,6 +53,7 @@ GEM
     execjs (1.4.0)
       multi_json (~> 1.0)
     geocoder (1.1.2)
+    googlecharts (1.6.8)
     hike (1.2.1)
     i18n (0.6.0)
     journey (1.0.4)
@@ -136,10 +137,11 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   devise
   geocoder
+  googlecharts
   jquery-rails
   json
-  pg
   lazy_high_charts
+  pg
   rails
   sass-rails (~> 3.2.3)
   sqlite3

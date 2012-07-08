@@ -21,10 +21,9 @@ end
 def generate_log_entries(d=Date.today)
   n = 0
   Schedule.where("day_of_week = ?",d.wday).each{ |s|
-    puts s.id
+    next if s.recipient.nil? or s.donor.nil? 
     # don't insert a duplicate log entry if one already exists
     check = Log.where('"when" = ? AND schedule_id = ?',d,s.id)
-    puts check.length
     next if check.length > 0
     # create each scheduled log entry for the given day
     log = Log.new{ |l|

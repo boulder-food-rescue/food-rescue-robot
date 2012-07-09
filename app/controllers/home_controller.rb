@@ -105,9 +105,4 @@ class HomeController < ApplicationController
       f.series(:name=>'Your Pounds of Food Rescued', :data=> v_food_per_month)
     end
   end
-  
-  #Google Map
-  @locations = Location.all
-  @json = Location.all.to_gmaps4rails
-  
 end

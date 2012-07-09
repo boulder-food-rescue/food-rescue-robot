@@ -64,6 +64,13 @@ html, body {
   text-decoration: underline;
 }
 
+h2 {
+  color: #333333;
+  padding: 2px 0px;
+  margin: 0;
+  font: bold 160% arial, sans-serif;
+}
+
 /* Button */
 input[type=submit] {
 	background-color: #4B8CF5;

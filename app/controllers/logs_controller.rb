@@ -4,6 +4,7 @@ class LogsController < ApplicationController
   active_scaffold :log do |conf|
     conf.columns = [:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
                     :description,:transport,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
+    conf.list.per_page = 50
     conf.columns[:transport].form_ui = :select
     conf.columns[:transport].label = "Transportation Used"
     conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}
@@ -64,7 +65,11 @@ class LogsController < ApplicationController
   def create_absence
     from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-    pickups = Schedule.where("volunteer_id = #{current_volunteer.id}")
+    if current_volunteer.admin and !params[:volunteer_id].nil?
+      pickups = Schedule.where("volunteer_id = #{params[:volunteer_id].to_i}")
+    else
+      pickups = Schedule.where("volunteer_id = #{current_volunteer.id}")
+    end
     n = 0
     while from <= to
       pickups.each{ |p|
@@ -75,7 +80,11 @@ class LogsController < ApplicationController
 
           # create the null record
           lo = Log.new
-          lo.orig_volunteer = current_volunteer
+          if current_volunteer.admin and !params[:volunteer_id].nil?
+            lo.orig_volunteer = Volunteer.find(params[:volunteer_id].to_i)
+          else
+            lo.orig_volunteer = current_volunteer
+          end
           lo.volunteer = nil
           lo.schedule = p
           lo.donor = p.donor

@@ -17,6 +17,8 @@ class SchedulesController < ApplicationController
     conf.columns[:volunteer].form_ui = :select
     conf.columns[:volunteer].clear_link
     conf.columns[:recipient].form_ui = :select
+    conf.columns[:food_types].form_ui = :select
+    conf.columns[:transport_type].form_ui = :select
     conf.columns[:prior_volunteer].form_ui = :select
     conf.columns[:prior_volunteer].clear_link
     conf.columns[:irregular].label = "Irregular"

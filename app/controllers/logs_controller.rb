@@ -3,7 +3,7 @@ class LogsController < ApplicationController
 
   active_scaffold :log do |conf|
     conf.columns = [:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
-                    :description,:transport_type,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
+                    :description,:transport_type,:food_type,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
     conf.list.per_page = 50
     conf.columns[:weighed_by].form_ui = :select
     conf.columns[:weighed_by].options = {:options => [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],
@@ -15,6 +15,8 @@ class LogsController < ApplicationController
     conf.columns[:schedule].form_ui = :select
     conf.columns[:volunteer].form_ui = :select
     conf.columns[:volunteer].clear_link
+    conf.columns[:food_type].form_ui = :select
+    conf.columns[:transport_type].form_ui = :select
     conf.columns[:orig_volunteer].form_ui = :select
     conf.columns[:orig_volunteer].label = "Original Volunteer"
     conf.columns[:orig_volunteer].description = "If the shift was covered by someone else, put the original volunteer here"

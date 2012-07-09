@@ -18,11 +18,6 @@ ActiveRecord::Schema.define(:version => 20120709010156) do
     t.datetime "updated_at", :null => false
   end
 
-  create_table "food_types_logs", :force => true do |t|
-    t.integer "food_type_id"
-    t.integer "log_id"
-  end
-
   create_table "food_types_schedules", :force => true do |t|
     t.integer "food_type_id"
     t.integer "schedule_id"
@@ -61,6 +56,7 @@ ActiveRecord::Schema.define(:version => 20120709010156) do
     t.integer  "donor_id"
     t.integer  "recipient_id"
     t.integer  "transport_type_id"
+    t.integer  "food_type_id"
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"

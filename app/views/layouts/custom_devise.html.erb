@@ -114,12 +114,15 @@ donor_count = list_of_donors.length
 
 #Transportation Stats
 total_trips = Log.count()
-bike_trips = Log.count(:conditions => { :transport => 'Bike' })
-car_trips = Log.count(:conditions => { :transport => 'Car' })
-walking_trips = Log.count(:conditions => { :transport => 'Foot' })
-nil_values = Log.count(:conditions => { :transport => nil })
-other_trips = total_trips - walking_trips - car_trips - bike_trips - nil_values
-human_power_percent = (((bike_trips + walking_trips).to_f / (total_trips - nil_values))*100).to_i
+pie_data = []
+human_count = 0
+TransportType.all.each{ |tt|
+  thecount = Log.count(:conditions => {:transport_type_id => tt.id})
+  human_count += thecount if tt.name !~ /Car/i
+  pie_data.push([tt.name,thecount])
+}
+nil_values = Log.count(:conditions => { :transport_type_id => nil })
+human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
 
 #Transporation Pie Chart
 h = LazyHighCharts::HighChart.new('pie') do |f|
@@ -141,12 +144,7 @@ h = LazyHighCharts::HighChart.new('pie') do |f|
   series = {
   	:type => 'pie',
   	:name => 'Tansportation Type',
-  	:data => [
-  		['Car', car_trips],
-  		['Foot', walking_trips],
-  		['Bike', bike_trips],
-  		['Other', other_trips],
-  	]
+  	:data => pie_data
   }
   f.series(series)
 end
@@ -299,7 +297,7 @@ end
 			</div>  
 			<div class="a_fact_section">
 			  <p>Percent of Trips Human Powered: 
-				<%= human_power_percent %> %
+				<%= human_power_percent.round %> %
 			  </p>
 			  <p class="show_trans_chart text_link"> chart </p>
 			  <div class="fact_info transportation_chart">

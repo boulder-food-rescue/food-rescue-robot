@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  def hello
+  def welcome
     today = Date.today
     current_volunteer = Volunteer.where(:email => 'cphillips@smallwhitecube.com').first
     

@@ -1,0 +1,95 @@
+// Place all the styles related to the test controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+table{
+  width: 100%;
+}
+
+table tbody{
+  font-size: 0.95em;
+}
+
+
+.dataTables_wrapper{
+  padding-top: 10px;
+}
+
+div.dataTables_wrapper input{
+  padding: 0px;
+}
+
+
+th, td{
+  padding: 5px;
+}
+
+table a{
+  text-decoration: none;
+}
+
+table a:hover{
+  text-decoration: underline;
+}
+
+thead{
+  border-bottom: 2px solid #B5B5B5;
+}
+
+table tbody tr.even{
+  background-color: #F6F6F6;
+}
+
+table tbody tr.odd{
+  background: #FFFFFF;
+}
+
+table tbody tr.even td.sorting_1{
+  background-color: #E0E0E0;
+}
+
+table tbody tr.odd td.sorting_1{
+  background: #EDEDED;
+}
+
+
+
+.ex_highlight #example tbody tr.even:hover, #example tbody tr.even td.highlighted {
+  background-color: #ECFFB3;
+}
+
+.ex_highlight #example tbody tr.odd:hover, #example tbody tr.odd td.highlighted {
+  background-color: #E6FF99;
+}
+
+.ex_highlight_row #example tr.even:hover {
+  background-color: #ECFFB3;
+}
+
+.ex_highlight_row #example tr.even:hover td.sorting_1 {
+  background-color: #DDFF75;
+}
+
+.ex_highlight_row #example tr.even:hover td.sorting_2 {
+  background-color: #E7FF9E;
+}
+
+.ex_highlight_row #example tr.even:hover td.sorting_3 {
+  background-color: #E2FF89;
+}
+
+.ex_highlight_row #example tr.odd:hover {
+  background-color: #E6FF99;
+}
+
+.ex_highlight_row #example tr.odd:hover td.sorting_1 {
+  background-color: #D6FF5C;
+}
+
+.ex_highlight_row #example tr.odd:hover td.sorting_2 {
+  background-color: #E0FF84;
+}
+
+.ex_highlight_row #example tr.odd:hover td.sorting_3 {
+  background-color: #DBFF70;
+}

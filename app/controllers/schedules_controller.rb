@@ -5,7 +5,7 @@ class SchedulesController < ApplicationController
     conf.list.sorting = {:day_of_week => 'ASC'}
     conf.list.per_page = 500
     conf.columns = [:day_of_week,:donor,:recipient,:volunteer,:time_start,:time_stop,
-                    :irregular,:backup,:transport,:needs_training,:public_notes,
+                    :irregular,:backup,:transport_type,:food_types,:needs_training,:public_notes,
                     :prior_volunteer,:admin_notes]
     conf.columns[:day_of_week].form_ui = :select
     conf.columns[:day_of_week].options = {:options => [["Unknown/varies",nil],["Sunday",0],
@@ -19,9 +19,6 @@ class SchedulesController < ApplicationController
     conf.columns[:recipient].form_ui = :select
     conf.columns[:prior_volunteer].form_ui = :select
     conf.columns[:prior_volunteer].clear_link
-    conf.columns[:transport].label = "Mode of Transport"
-    conf.columns[:transport].form_ui = :select
-    conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}
     conf.columns[:irregular].label = "Irregular"
     conf.columns[:backup].label = "Backup Pickup"
   end

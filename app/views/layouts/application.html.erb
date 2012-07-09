@@ -71,6 +71,17 @@
 		        <span>Rescue Log</span>
 		      </a>
 		    </li>
+                    <li>
+                      <a href=<%= food_types_path %> class="<%= "selected" if request.fullpath == food_types_path %>">
+                        <span>Food Types</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href=<%= transport_types_path %> class="<%= "selected" if request.fullpath == transport_types_path %>">
+                        <span>Transport Types</span>
+                      </a>
+                    </li>
+
 		  </ul>
         </li>
       <% end %>
@@ -99,8 +110,13 @@
     <%= link_to image_tag("logo.png", :class => 'logo_image')%>
   </div>
   <div class="wrap">    
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
+    <% if notice %>
+     <div class="notice"><%= notice %></div>
+    <% end %>
+    <% if alert %>
+     <div class="alert"><%= alert %></div>
+    <% end %>
+
     <%= yield %>
   </div>
   

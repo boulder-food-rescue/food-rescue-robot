@@ -1,4 +1,12 @@
 Webapp::Application.routes.draw do
+  resources :transport_types do as_routes end
+
+  resources :transport_types
+
+  resources :food_types do as_routes end
+
+  resources :food_types
+
   devise_for :volunteers
 
   resources :logs do 

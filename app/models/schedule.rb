@@ -3,6 +3,8 @@ class Schedule < ActiveRecord::Base
   belongs_to :prior_volunteer, :class_name => "Volunteer", :foreign_key => "prior_volunteer_id"
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
+  belongs_to :transport_type
+  has_and_belongs_to_many :food_types
 
   # column-level restrictions
   def admin_notes_authorized?

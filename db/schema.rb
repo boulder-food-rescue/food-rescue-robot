@@ -10,7 +10,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120625210639) do
+ActiveRecord::Schema.define(:version => 20120709010156) do
+
+  create_table "food_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "food_types_logs", :force => true do |t|
+    t.integer "food_type_id"
+    t.integer "log_id"
+  end
+
+  create_table "food_types_schedules", :force => true do |t|
+    t.integer "food_type_id"
+    t.integer "schedule_id"
+  end
 
   create_table "locations", :force => true do |t|
     t.boolean  "is_donor"
@@ -36,7 +52,6 @@ ActiveRecord::Schema.define(:version => 20120625210639) do
     t.integer  "orig_volunteer_id"
     t.decimal  "weight"
     t.text     "description"
-    t.string   "transport"
     t.text     "notes"
     t.integer  "num_reminders"
     t.boolean  "flag_for_admin"
@@ -45,6 +60,7 @@ ActiveRecord::Schema.define(:version => 20120625210639) do
     t.datetime "updated_at",        :null => false
     t.integer  "donor_id"
     t.integer  "recipient_id"
+    t.integer  "transport_type_id"
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"
@@ -63,19 +79,24 @@ ActiveRecord::Schema.define(:version => 20120625210639) do
     t.boolean  "needs_training"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
-    t.string   "transport"
     t.boolean  "irregular"
     t.boolean  "backup"
+    t.integer  "transport_type_id"
   end
 
   add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"
+
+  create_table "transport_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "volunteers", :force => true do |t|
     t.string   "email"
     t.string   "name"
     t.string   "phone"
     t.string   "preferred_contact"
-    t.string   "transport"
     t.boolean  "has_car"
     t.text     "admin_notes"
     t.text     "pickup_prefs"
@@ -94,6 +115,7 @@ ActiveRecord::Schema.define(:version => 20120625210639) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.boolean  "admin",                  :default => false
+    t.integer  "transport_type_id"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

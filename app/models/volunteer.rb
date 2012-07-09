@@ -1,4 +1,5 @@
 class Volunteer < ActiveRecord::Base
+  belongs_to :transport_type
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable

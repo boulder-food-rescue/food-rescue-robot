@@ -3,11 +3,8 @@ class LogsController < ApplicationController
 
   active_scaffold :log do |conf|
     conf.columns = [:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
-                    :description,:transport,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
+                    :description,:transport_type,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
     conf.list.per_page = 50
-    conf.columns[:transport].form_ui = :select
-    conf.columns[:transport].label = "Transportation Used"
-    conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}
     conf.columns[:weighed_by].form_ui = :select
     conf.columns[:weighed_by].options = {:options => [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],
                                                       ["Guesstimate","Guesstimate"]]}

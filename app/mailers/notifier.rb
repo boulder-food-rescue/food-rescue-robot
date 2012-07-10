@@ -10,8 +10,11 @@ class Notifier < ActionMailer::Base
     #mail(:to => AdminEmail, :subject => "BFR Data Entry Reminder"){ |format| format.text }
   end
 
-  def admin_reminder_summary(logs)
-    @logs = logs
-    mail(:to => AdminEmail, :subject => "BFR Data Entry Reminder Summary"){ |format| format.text }
+  def admin_reminder_summary(logs_by_region)
+    logs_by_region.each{ |region,logs|
+      @logs = logs
+      to = Assignments.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.email }.join(",")
+      mail(:to => to, :subject => "BFR Data Entry Reminder Summary"){ |format| format.text }
+    }
   end
 end

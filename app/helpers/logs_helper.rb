@@ -32,6 +32,7 @@ def generate_log_entries(d=Date.today)
         l.volunteer = s.volunteer
         l.donor = s.donor
         l.recipient = s.recipient
+        l.region = s.region
         l.when = d
         l.food_type = f
       }
@@ -45,7 +46,7 @@ end
 # from n or more days ago. Also sends an email to the admin summarizing
 # all logs that have seen at least r reminders.
 def send_reminder_emails(n=2,r=3)
-  naughty_list = []
+  naughty_list = {}
   reminder_list = {}
   c = 0
   Log.where(:weight => nil).each{ |l| 
@@ -62,17 +63,20 @@ def send_reminder_emails(n=2,r=3)
     l.save
 
     if l.num_reminders >= r
-      naughty_list.push(l)
+      naughty_list[l.region] = [] if naughty_list[l.region].nil?
+      naughty_list[l.region].push(l)
     end
   }
   reminder_list.each{ |v,logs|
     m = Notifier.volunteer_log_reminder(v,logs)
-    m.deliver
+    puts m
+#    m.deliver
     c += 1
   }
   if naughty_list.length > 0
     m = Notifier.admin_reminder_summary(naughty_list)
-    m.deliver
+    puts m
+#    m.deliver
   end
   return c
 end

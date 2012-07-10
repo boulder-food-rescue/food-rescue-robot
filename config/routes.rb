@@ -1,11 +1,13 @@
 Webapp::Application.routes.draw do
+  resources :assignments do as_routes end
+
+  resources :assignments
+
+  resources :regions do as_routes end
+
   resources :transport_types do as_routes end
 
-  resources :transport_types
-
   resources :food_types do as_routes end
-
-  resources :food_types
 
   devise_for :volunteers
 
@@ -39,6 +41,9 @@ Webapp::Application.routes.draw do
 
   resources :volunteers do 
     as_routes 
+    collection do
+      get :unassigned
+    end
   end
 
   # The priority is based upon order of creation:

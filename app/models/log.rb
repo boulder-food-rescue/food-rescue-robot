@@ -6,17 +6,18 @@ class Log < ActiveRecord::Base
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
   belongs_to :food_type
   belongs_to :transport_type
+  belongs_to :region
   attr_accessible :description, :flag_for_admin, :notes, :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :weight, :when
 
-  # ActiveScaffold CRUD-level restrictions
+  # CRUD-level restrictions
   def authorized_for_update?
-    current_user.admin or self.volunteer.nil? or (current_user == self.volunteer)
+    current_user.admin or current_user.region_admin?(self.region) or (current_user == self.volunteer)
   end
   def authorized_for_create?
-    current_user.admin or (current_user == self.volunteer)
+    current_user.admin or current_user.region_admin?(self.region) or (current_user == self.volunteer)
   end
   def authorized_for_delete?
-    current_user.admin
+    current_user.admin or current_user.region_admin?(self.region)
   end
 
 end

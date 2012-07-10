@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  volunteer: 
+  region: 
+  admin: false
+
+two:
+  volunteer: 
+  region: 
+  admin: false

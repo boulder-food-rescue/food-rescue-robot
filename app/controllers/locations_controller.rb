@@ -5,12 +5,12 @@ class LocationsController < ApplicationController
   def create_authorized?
     current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-  def update_authorized?(record=nil)
-    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-  end
-  def delete_authorized?(record=nil)
-    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-  end
+#  def update_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
+#  def delete_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
 
   active_scaffold :location do |conf|
     conf.columns[:donor_type].form_ui = :select

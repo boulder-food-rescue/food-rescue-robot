@@ -4,20 +4,20 @@ class VolunteersController < ApplicationController
   def create_authorized?
     current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-  def update_authorized?(record=nil)
-    return true if current_volunteer.super_admin?
-    record.regions.each{ |r|
-      return true if current_volunteer.region_admin?(r)
-    }
-    return false
-  end
-  def delete_authorized?(record=nil)
-    return true if current_volunteer.super_admin?
-    record.regions.each{ |r|
-      return true if current_volunteer.region_admin?(r)
-    }
-    return false
-  end
+#  def update_authorized?(record=nil)
+#    return true if current_volunteer.super_admin?
+#    record.regions.each{ |r|
+#      return true if current_volunteer.region_admin?(r)
+#    }
+#    return false
+#  end
+#  def delete_authorized?(record=nil)
+#    return true if current_volunteer.super_admin?
+#    record.regions.each{ |r|
+#      return true if current_volunteer.region_admin?(r)
+#    }
+#    return false
+#  end
 
   active_scaffold :volunteer do |conf|
     conf.list.sorting = {:name => 'ASC'}

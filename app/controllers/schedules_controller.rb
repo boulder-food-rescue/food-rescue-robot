@@ -30,12 +30,12 @@ class SchedulesController < ApplicationController
   def create_authorized?
     current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-  def update_authorized?(record=nil)
-    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-  end
-  def delete_authorized?(record=nil)
-    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-  end
+#  def update_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
+#  def delete_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
 
   # Custom views of the index table
   def open

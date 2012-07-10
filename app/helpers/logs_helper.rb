@@ -69,14 +69,12 @@ def send_reminder_emails(n=2,r=3)
   }
   reminder_list.each{ |v,logs|
     m = Notifier.volunteer_log_reminder(v,logs)
-    puts m
-#    m.deliver
+    m.deliver
     c += 1
   }
   if naughty_list.length > 0
     m = Notifier.admin_reminder_summary(naughty_list)
-    puts m
-#    m.deliver
+    m.deliver
   end
   return c
 end

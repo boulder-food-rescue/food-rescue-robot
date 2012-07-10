@@ -21,7 +21,9 @@ module SchedulesHelper
   end
   def schedule_volunteer_column_attributes(record)
     if record.volunteer.nil?
-      {:style => 'background: yellow;'}
+      {:style => 'background: #F57A7A;'}
+    elsif record.needs_training
+      {:style => 'background: lightgreen;'}
     else
       {}
     end

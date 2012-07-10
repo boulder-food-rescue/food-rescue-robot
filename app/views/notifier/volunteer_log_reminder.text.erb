@@ -4,7 +4,7 @@ This is a friendly reminder from the BFR robot that you need to enter
 some data for your recent pickup<%= @logs.length > 1 ? "s" : "" %>:
 
 <% @logs.each{ |l| %>
-<%= l.when %>: <%= l.donor.name %> to <%= l.recipient.name %> (<%= l.food_type.name %>)
+<%= l.when %>: <%= l.donor.name %> to <%= l.recipient.name %> (<%= l.food_type.nil? ? "Produce/Baked Goods" : l.food_type.name %>)
 Link: http://alpha.boulderfoodrescue.org/logs/<%= l.id %>/edit
 This is your <%= l.num_reminders.ordinalize %> reminder.
 

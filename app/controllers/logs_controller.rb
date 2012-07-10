@@ -23,7 +23,7 @@ class LogsController < ApplicationController
     conf.columns[:orig_volunteer].clear_link
     conf.columns[:donor].form_ui = :select
     conf.columns[:recipient].form_ui = :select
-    conf.update.columns = [:when,:volunteer,:donor,:recipient,:weight,:weighed_by,:description,:transport,:notes,:flag_for_admin]
+    conf.update.columns = [:when,:volunteer,:donor,:recipient,:weight,:weighed_by,:description,:transport_type,:food_type,:notes,:flag_for_admin]
   end
 
   # Permissions

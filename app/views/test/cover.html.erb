@@ -1,2 +1,56 @@
-<h1>Test#cover</h1>
-<p>Find me in app/views/test/cover.html.erb</p>
+<% open_shifts = Log.where("volunteer_id IS NULL AND recipient_id IS NOT NULL") %>
+<% if open_shifts.length == 0 %>
+<p> 
+  There are no shifts to cover at this time.
+</p>
+<% else %>
+<table id="my_schedule_table">
+  <thead>
+  <tr>
+    <th> Take Shift </th>
+    <th> Date </th>
+    <th> Donor </th>
+    <th> Recipient </th>
+    <th> Start Time </th>
+    <th> End Time </th>
+    <th> Description </th>
+    <th> Notes </th>
+    <th> Original Volunteer </th>
+    <th> Link </th>
+  </tr>
+  </thead>
+  <tbody>
+  <%
+  open_shifts.each do |shift|
+  %>
+  <tr>
+    <td> <%= link_to 'Take Shift', shift.take %> </td>
+    <td> <%= shift.when %> </td>
+    <td> <%= link_to shift.donor.name, shift.donor %> </td>
+    <td> <%= link_to shift.recipient.name, shift.recipient %> </td>
+    <td> <%= shift.schedule.time_start %> </td>
+    <td> <%= shift.schedule.time_stop %> </td>
+    <td>
+      <% if shift.description != nil && shift.description.length > 47 %>
+      <%= shift.description[0...47] + '...'%>
+      <% else %>
+      <%= shift.description %>
+      <% end %>
+    </td>
+    <td>
+      <% if shift.notes != nil && shift.notes.length > 47 %>
+      <%= shift.notes[0...47] + '...'%>
+      <% else %>
+      <%= shift.notes %>
+      <% end %>
+    </td>
+    <td>
+      <% org_volunteer = Volunteer.find(shift.orig_volunteer_id) %> 
+      <%= link_to org_volunteer.name, org_volunteer %>
+    </td>
+    <td> <%= link_to 'view',  shift %> </td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<% end %>

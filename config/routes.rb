@@ -3,6 +3,8 @@ Webapp::Application.routes.draw do
 
   get "test/shifts"
 
+  get "test/myschedules"
+
   get "test/schedule"
 
   get "home/welcome"

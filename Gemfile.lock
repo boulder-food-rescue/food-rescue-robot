@@ -53,7 +53,6 @@ GEM
     execjs (1.4.0)
       multi_json (~> 1.0)
     geocoder (1.1.2)
-    gmaps4rails (1.5.2)
     hike (1.2.1)
     i18n (0.6.0)
     journey (1.0.4)
@@ -134,7 +133,6 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   devise
   geocoder
-  gmaps4rails
   jquery-rails
   json
   lazy_high_charts

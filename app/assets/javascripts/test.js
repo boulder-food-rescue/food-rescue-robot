@@ -14,30 +14,30 @@
   if weekday.toLowerCase() == 'saturday'
     return 6
 }
-*/
-/* Define two custom functions (asc and desc) for string sorting */
-/*jQuery.fn.dataTableExt.oSort['weekday-case-asc']  = function(x,y) {
-	return ((x < y) ? -1 : ((x > y) ?  1 : 0));
-};
 
-jQuery.fn.dataTableExt.oSort['weekday-case-desc'] = function(x,y) {
-	return ((x < y) ?  1 : ((x > y) ? -1 : 0));
-};
-*/
+/* Define two custom functions (asc and desc) for string sorting */
+//jQuery.fn.dataTableExt.oSort['string-case-asc']  = function(x,y) {
+//	return ((x < y) ? -1 : ((x > y) ?  1 : 0));
+//};
+//
+//jQuery.fn.dataTableExt.oSort['string-case-desc'] = function(x,y) {
+//	return ((x < y) ?  1 : ((x > y) ? -1 : 0));
+//};
+
 var schedule_table_init = function(){
   $('#my_schedule_table').dataTable( {
     'iDisplayLength' : 25,
-    /*"aoColumns": [ 
-                  { "sType": 'weekday-case' },
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null
-                ]*/
+//    "aoColumns": [ 
+//                  { "sType": 'weekday-case' },
+//                  null,
+//                  null,
+//                  null,
+//                  null,
+//                  null,
+//                  null,
+//                  null,
+//                  null
+//                ]
   });
 }
 

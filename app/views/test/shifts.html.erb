@@ -40,8 +40,9 @@
       <% end %>
     </td>
     <td>
-      <% org_volunteer = Volunteer.find(shift.orig_volunteer_id) %> 
-      <%= link_to org_volunteer.name, org_volunteer %>
+      <% if schedule.prior_volunteer_id != nil && Volunteer.where(:id => schedule.prior_volunteer_id).present? %> 
+      <%= Volunteer.find(schedule.prior_volunteer_id).name %>
+      <% end %>
     </td>
     <td> <%= link_to 'view',  schedule %> </td>
   </tr>

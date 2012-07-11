@@ -4,10 +4,10 @@ class HomeController < ApplicationController
     current_volunteer = Volunteer.where(:email => 'cphillips@smallwhitecube.com').first
     
     #Upcoming pickup list
-    @upcoming_pickups = Log.where(:when => today...(today + 7)).where(:volunteer_id => current_volunteer)
+    @upcoming_pickups = Log.where(:when => today...(today + 7))
     
     #To Do Pickup Reports
-    @to_do_reports = Log.where('"logs"."when" <= ?', today).where("weight IS NULL").where(:volunteer_id => current_volunteer)
+    @to_do_reports = Log.where('"logs"."when" <= ?', today).where("weight IS NULL")
     
     #Last 10 pickups
     @last_ten_pickups = Log.where(:volunteer_id => current_volunteer).where("weight IS NOT NULL").order('"logs"."when" DESC').limit(10)

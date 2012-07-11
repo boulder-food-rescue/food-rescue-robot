@@ -29,7 +29,6 @@ gem 'geocoder'
 gem 'devise'
 gem 'thin'
 gem 'lazy_high_charts'
-gem 'gmaps4rails'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

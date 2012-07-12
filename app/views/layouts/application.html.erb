@@ -14,11 +14,6 @@
   <div class="navigation">
     <div id="cssmenu">
       <% if volunteer_signed_in? %>
-        <li class='active '>
-          <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
-            <span>Home</span>
-          </a>
-        </li>
         <li>
           <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
             <span>My Schedule</span>

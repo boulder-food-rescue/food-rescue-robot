@@ -52,7 +52,11 @@ class SchedulesController < ApplicationController
   end
 
   def conditions_for_collection
-    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    unless current_volunteer.assignments.length == 0
+      @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    else
+      @base_conditions = "region_id IS NULL"
+    end
     @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
   end
 

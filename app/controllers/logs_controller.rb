@@ -47,15 +47,32 @@ class LogsController < ApplicationController
     index
   end
   def open
-    if current_volunteer.assignments.length == 0
-      @conditions = "1 = 0"
-    else
-      @conditions = "volunteer_id is NULL"
-    end
+    @conditions = "volunteer_id is NULL"
     index
   end
+  def today
+    @conditions = "\"when\" = DATE '#{Date.today.to_s}'"
+    index 
+  end
+  def tomorrow
+    @conditions = "\"when\" = DATE '#{(Date.today+1).to_s}'"
+    index
+  end
+  def yesterday
+    @conditions = "\"when\" = DATE '#{(Date.today-1).to_s}'"
+    index
+  end
+  def tardy
+    @conditions = "\"when\" < DATE '#{(Date.today).to_s}' AND num_reminders >= 3"
+    index
+  end
+
   def conditions_for_collection
-    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    if current_volunteer.assignments.length == 0
+      @base_conditions = "1 = 0"
+    else
+      @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    end
     @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
   end
 

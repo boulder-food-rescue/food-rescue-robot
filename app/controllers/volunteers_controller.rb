@@ -35,6 +35,10 @@ class VolunteersController < ApplicationController
     @conditions = "(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0"
     index
   end
+  def shiftless
+    @conditions = "(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0"
+    index
+  end
   def conditions_for_collection
     @conditions
   end

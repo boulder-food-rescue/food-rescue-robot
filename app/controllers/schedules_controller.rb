@@ -39,20 +39,32 @@ class SchedulesController < ApplicationController
 
   # Custom views of the index table
   def open
-    if current_volunteer.assignments.length == 0
-      @conditions = "1 = 0"
-    else
-      @conditions = "volunteer_id is NULL"
-    end
+    @conditions = "volunteer_id is NULL AND recipient_id IS NOT NULL and donor_id IS NOT NULL"
     index
   end
   def mine
     @conditions = "volunteer_id = '#{current_volunteer.id}'"
     index
   end
+  def today
+    @conditions = "day_of_week = #{Date.today.wday}"
+    index
+  end
+  def tomorrow
+    @conditions = "day_of_week = #{Date.today.wday + 1 % 6}"
+    index
+  end
+  def yesterday
+    @conditions = "day_of_week = #{Date.today.wday - 1 % 6}"
+    index
+  end
 
   def conditions_for_collection
-    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    if current_volunteer.assignments.length == 0
+      @base_conditions = "1 = 0"
+    else
+      @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    end
     @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
   end
 

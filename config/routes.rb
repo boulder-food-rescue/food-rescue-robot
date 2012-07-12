@@ -14,6 +14,10 @@ Webapp::Application.routes.draw do
   resources :logs do 
     as_routes 
     collection do
+      get :today
+      get :tomorrow
+      get :yesterday
+      get :tardy
       get :open
       get :mine
       get :new_absence
@@ -27,6 +31,9 @@ Webapp::Application.routes.draw do
   resources :schedules do 
     as_routes
     collection do
+      get :today
+      get :tomorrow
+      get :yesterday
       get :open
       get :mine
     end
@@ -43,6 +50,7 @@ Webapp::Application.routes.draw do
     as_routes 
     collection do
       get :unassigned
+      get :shiftless
     end
   end
 

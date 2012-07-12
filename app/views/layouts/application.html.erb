@@ -14,13 +14,51 @@
   <div class="navigation">
     <div id="cssmenu">
       <% if volunteer_signed_in? %>
-        <li>
-          <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
-            <span>My Schedule</span>
+        <li class='has-sub'>
+          <a href="#" class="<%= "selected" if request.fullpath == logs_path %>">
+            <span>Schedule</span>
           </a>
+          <ul>
+                   <li>
+                    <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path %>">
+                    <span>My Schedule</span>
+                    </a>
+                   </li>
+
+                   <li>
+                    <a href=<%= open_schedules_path %> class="<%= "selected" if request.fullpath == open_schedules_path %>">
+                    <span>Unassigned</span>
+                    </a>
+                   </li>
+                    <% if current_volunteer.any_admin? %>
+                    <li>
+                      <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">
+                        <span>Full Schedule</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href=<%= yesterday_schedules_path %> class="<%= "selected" if request.fullpath == yesterday_schedules_path %>">
+                        <span>Yesterday</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href=<%= today_schedules_path %> class="<%= "selected" if request.fullpath == today_schedules_path %>">
+                        <span>Today</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href=<%= tomorrow_schedules_path %> class="<%= "selected" if request.fullpath == tomorrow_schedules_path %>">
+                        <span>Tomorrow</span>
+                      </a>
+                    </li>
+                    <% end %>
+          </ul>
         </li>
+      <% end %>
+
+      <% if volunteer_signed_in? %>
         <li class="has-sub">
-          <a href=<%= mine_logs_path %> class="<%= "selected" if request.fullpath == mine_logs_path %>">
+          <a href="#" class="<%= "selected" if request.fullpath == mine_logs_path %>">
             <span>Shifts</span>
           </a>
           <ul>
@@ -35,11 +73,6 @@
               </a>
             </li>
             <li>
-              <a href=<%= open_schedules_path %> class="<%= "selected" if request.fullpath == open_schedules_path %>">
-                <span>Unassigned Shifts</span>
-              </a>
-            </li>
-            <li>
               <a href=<%= new_absence_logs_path %> class="<%= "selected" if request.fullpath == new_absence_logs_path %>">
                 <span>Schedule Absence</span>
               </a>
@@ -49,10 +82,19 @@
       <% end %>
       <% if volunteer_signed_in? and current_volunteer.any_admin? %>
         <li class='has-sub'>
-          <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">
+          <a href="#" class="<%= "selected" if request.fullpath == volunteers_path %>">
             <span>Volunteers</span>
           </a>
           <ul>
+                    <li>
+                     <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">
+                     <span>Full List</span>
+                    </a>
+                    <li>
+                      <a href=<%= shiftless_volunteers_path %> class="<%= "selected" if request.fullpath == shiftless_volunteers_path %>">
+                        <span>Shiftless</span>
+                      </a>
+                    </li>
                     <li>
                       <a href=<%= unassigned_volunteers_path %> class="<%= "selected" if request.fullpath == unassigned_volunteers_path %>">
                         <span>Unassigned</span>
@@ -69,22 +111,48 @@
         </li>
       <% end %>
       <% if volunteer_signed_in? and current_volunteer.any_admin? %>
+        <li class='has-sub'>
+          <a href="#" class="<%= "selected" if request.fullpath == logs_path %>">
+            <span>Rescue Log</span>
+          </a>
+          <ul>
+                    <li>
+                      <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">
+                        <span>Entire Log</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href=<%= yesterday_logs_path %> class="<%= "selected" if request.fullpath == yesterday_logs_path %>">
+                        <span>Yesterday</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href=<%= today_logs_path %> class="<%= "selected" if request.fullpath == today_logs_path %>">
+                        <span>Today</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href=<%= tomorrow_logs_path %> class="<%= "selected" if request.fullpath == tomorrow_logs_path %>">
+                        <span>Tomorrow</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href=<%= tardy_logs_path %> class="<%= "selected" if request.fullpath == tardy_logs_path %>">
+                        <span>Tardy</span>
+                      </a>
+                    </li>
+
+          </ul>
+        </li>
+      <% end %>
+
+      <% if volunteer_signed_in? and current_volunteer.any_admin? %>
         <li class='has-sub '>
           <a href='#'><span>Administration</span></a>
 		  <ul>
 		    <li>
-		      <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">
-		        <span>Schedule</span>
-		      </a>
-		    </li>
-		    <li>
 		      <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">
 		        <span>Donors & Recipients</span>
-		      </a>
-		    </li>
-		    <li>
-		      <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">
-		        <span>Rescue Log</span>
 		      </a>
 		    </li>
                     <% if current_volunteer.super_admin? %>

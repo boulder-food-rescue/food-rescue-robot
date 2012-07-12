@@ -10,7 +10,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120709010156) do
+ActiveRecord::Schema.define(:version => 20120710214118) do
+
+  create_table "assignments", :force => true do |t|
+    t.integer  "volunteer_id"
+    t.integer  "region_id"
+    t.boolean  "admin"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "assignments", ["region_id"], :name => "index_assignments_on_region_id"
+  add_index "assignments", ["volunteer_id"], :name => "index_assignments_on_volunteer_id"
 
   create_table "food_types", :force => true do |t|
     t.string   "name"
@@ -38,6 +49,7 @@ ActiveRecord::Schema.define(:version => 20120709010156) do
     t.text     "hours"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+    t.integer  "region_id"
   end
 
   create_table "logs", :force => true do |t|
@@ -57,10 +69,22 @@ ActiveRecord::Schema.define(:version => 20120709010156) do
     t.integer  "recipient_id"
     t.integer  "transport_type_id"
     t.integer  "food_type_id"
+    t.integer  "region_id"
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"
   add_index "logs", ["volunteer_id"], :name => "index_logs_on_volunteer_id"
+
+  create_table "regions", :force => true do |t|
+    t.decimal  "lat"
+    t.decimal  "lng"
+    t.string   "name"
+    t.string   "website"
+    t.text     "address"
+    t.text     "notes"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "schedules", :force => true do |t|
     t.integer  "recipient_id"
@@ -78,6 +102,7 @@ ActiveRecord::Schema.define(:version => 20120709010156) do
     t.boolean  "irregular"
     t.boolean  "backup"
     t.integer  "transport_type_id"
+    t.integer  "region_id"
   end
 
   add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"

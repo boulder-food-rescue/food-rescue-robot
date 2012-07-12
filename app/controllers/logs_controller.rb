@@ -27,20 +27,17 @@ class LogsController < ApplicationController
   end
 
   # Permissions
+
+  # Only admins can change things in the schedule table
   def create_authorized?
-    current_volunteer.admin
+    current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-  #def update_authorized?(record=nil)
-  #  return true if current_volunteer.admin
-  #  unless params[:id].nil?
-  #    return Log.find(params[:id]).volunteer == current_volunteer
-  #  else
-  #    return false
-  #  end
-  #end
-  def delete_authorized?(record=nil)
-    current_volunteer.admin
-  end
+#  def update_authorized?(record=nil)
+#    current_volunteer == record.volunteer or current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
+#  def delete_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
 
   # Custom views of the index table
   def mine
@@ -48,11 +45,16 @@ class LogsController < ApplicationController
     index
   end
   def open
-    @conditions = "volunteer_id is NULL"
+    if current_volunteer.assignments.length == 0
+      @conditions = "1 = 0"
+    else
+      @conditions = "volunteer_id is NULL"
+    end
     index
   end
   def conditions_for_collection
-    @conditions
+    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
   end
 
   def new_absence

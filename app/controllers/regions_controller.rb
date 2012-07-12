@@ -1,5 +1,6 @@
-class TransportTypesController < ApplicationController
-  active_scaffold :transport_type do |conf|
+class RegionsController < ApplicationController
+  active_scaffold :region do |conf|
+    conf.columns = [:name,:address,:lat,:lng,:notes,:website]
   end
   def create_authorized?
     current_volunteer.super_admin?

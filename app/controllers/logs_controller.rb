@@ -16,6 +16,8 @@ class LogsController < ApplicationController
     conf.columns[:volunteer].form_ui = :select
     conf.columns[:volunteer].clear_link
     conf.columns[:food_type].form_ui = :select
+    conf.columns[:food_type].clear_link
+    conf.columns[:transport_type].clear_link
     conf.columns[:transport_type].form_ui = :select
     conf.columns[:orig_volunteer].form_ui = :select
     conf.columns[:orig_volunteer].label = "Original Volunteer"

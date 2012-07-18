@@ -13,6 +13,11 @@
   <div class="container">
   <div class="navigation">
     <div id="cssmenu">
+      <li>
+        <a href="<%= home_volunteers_path %>" class="<%= "selected" if request.fullpath == home_volunteers_path %>">
+          <span>Home</span>
+        </a>
+      </li>
       <% if volunteer_signed_in? %>
         <li class='has-sub'>
           <a href="#" class="<%= "selected" if request.fullpath == logs_path %>">

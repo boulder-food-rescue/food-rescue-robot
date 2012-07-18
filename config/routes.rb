@@ -49,6 +49,7 @@ Webapp::Application.routes.draw do
   resources :volunteers do 
     as_routes 
     collection do
+      get :home
       get :unassigned
       get :shiftless
     end
@@ -103,7 +104,7 @@ Webapp::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => 'schedules#mine'
+  root :to => 'volunteers#home'
 
   # See how all your routes lay out with "rake routes"
 

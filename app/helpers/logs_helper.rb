@@ -22,6 +22,7 @@ def generate_log_entries(d=Date.today)
   n = 0
   Schedule.where("day_of_week = ?",d.wday).each{ |s|
     next if s.recipient.nil? or s.donor.nil? 
+    next if s.irregular
     s.food_types.each{ |f|
       # don't insert a duplicate log entry if one already exists
       check = Log.where('"when" = ? AND schedule_id = ? AND food_type_id = ?',d,s.id,f.id)
@@ -73,8 +74,10 @@ def send_reminder_emails(n=2,r=3)
     c += 1
   }
   if naughty_list.length > 0
-    m = Notifier.admin_reminder_summary(naughty_list)
-    m.deliver
+    naughty_list.each{ |region,logs|
+      m = Notifier.admin_reminder_summary(region,logs)
+      m.deliver
+    }
   end
   return c
 end

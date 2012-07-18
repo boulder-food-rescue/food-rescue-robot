@@ -21,7 +21,7 @@ class Notifier < ActionMailer::Base
     @biggest = biggest
     @num_logs = num_logs
     @num_entered = num_entered
-    to = Assignment.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.email }.join(",")
+    to = Assignment.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.nil? ? nil : a.volunteer.email }.compact.join(",")
     mail(:to => to, :subject => "#{region.name} Weekly Summary"){ |format| format.text }
   end
 end

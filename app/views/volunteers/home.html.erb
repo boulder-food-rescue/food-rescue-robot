@@ -12,12 +12,14 @@ You currently have <%= @num_shifts %> <a href="/schedules/mine">regularly schedu
 <br><br>
 There are <%= @num_to_cover %> shifts that need covering if you'd like to <a href="/logs/open">pick one up</a>.
 <br><br>
+<% unless @earliest.nil? %>
 Since <%= @earliest.when.strftime("%B %-d, %Y")%>, you've done <%= @pickups.length %> pick-ups, for a total of <%= @lbs.round %> lbs of food rescued, averaging <%= sprintf("%.02f",(@lbs/((Date.today-(@earliest.when))/7.0))) %> lbs per week, and <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> per pick-up.<br>
 Of those, <%= @num_covered %> were ones you covered for other volunteers. <br><br>
 Your biggest pick-up was on <%= @biggest.when.strftime("%B %-d, %Y") %> from <%= @biggest.donor.name %> to <%= @biggest.recipient.name %>, totaling <%= @biggest.weight %> lbs.<br>
 You can see a list of all your pick-ups, past and future, <a href="/logs/mine">here</a>.
 <br><br>
 You've used human-powered transportation <%= @human_pct.round %>% of the time<%= @human_pct > 90 ? " :)" : "" %>.
+<% end %>
 <% else %>
 You're not yet assigned to any regions. Things will get more interesting around here once an admin assigns you :).
 <% end %>

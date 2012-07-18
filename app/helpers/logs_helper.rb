@@ -82,4 +82,22 @@ def send_reminder_emails(n=2,r=3)
   return c
 end
 
+def send_weekly_pickup_summary
+  Region.all.each{ |r|
+    lbs = 0.0
+    flagged_logs = []
+    biggest = nil
+    num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?',r.id,Date.today-7,Date.today).count
+    num_entered = 0
+    Log.where('region_id = ? AND "when" > ? AND "when" < ? AND weight IS NOT NULL',r.id,Date.today-7,Date.today).each{ |l|
+      lbs += l.weight
+      flagged_logs << l if l.flag_for_admin
+      biggest = l if biggest.nil? or l.weight > biggest.weight
+      num_entered += 1
+    }
+    m = Notifier.admin_weekly_summary(r,lbs,flagged_logs,biggest,num_logs,num_entered)
+    m.deliver
+  }
+end
+
 end

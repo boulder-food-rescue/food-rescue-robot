@@ -17,3 +17,9 @@ task(:send_reminders => :environment) do
   include LogsHelper
   send_reminder_emails(1) # email day-after-pickup
 end
+
+task(:send_weekly_summary => :environment) do
+  include LogsHelper
+  send_weekly_pickup_summary # email day-after-pickup
+end
+

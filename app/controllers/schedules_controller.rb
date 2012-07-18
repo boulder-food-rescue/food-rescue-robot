@@ -24,6 +24,8 @@ class SchedulesController < ApplicationController
     conf.columns[:region].form_ui = :select
     conf.columns[:irregular].label = "Irregular"
     conf.columns[:backup].label = "Backup Pickup"
+    # if marking isn't enabled it creates errors on delete :(
+    conf.actions.add :mark
   end
 
   # Only admins can change things in the schedule table

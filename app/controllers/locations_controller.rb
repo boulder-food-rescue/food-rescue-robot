@@ -26,6 +26,8 @@ class LocationsController < ApplicationController
     conf.columns[:lng].description = 'Decimal degrees, WGS84, EPSG:4326, Leave blank for geo-coding'
     conf.columns[:is_donor].description = "If this isn't checked, it must be a recipient"
     conf.columns[:region].form_ui = :select
+    # if marking isn't enabled it creates errors on delete :(
+    conf.actions.add :mark
   end
 
   def conditions_for_collection

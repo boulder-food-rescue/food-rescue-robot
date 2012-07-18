@@ -3,6 +3,8 @@ class AssignmentsController < ApplicationController
     conf.columns = [:admin,:region,:volunteer]
     conf.columns[:region].form_ui = :select
     conf.columns[:volunteer].form_ui = :select
+    # if marking isn't enabled it creates errors on delete :(
+    conf.actions.add :mark
   end
 
   # Only admins can change things in the schedule table

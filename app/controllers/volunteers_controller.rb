@@ -31,6 +31,8 @@ class VolunteersController < ApplicationController
     conf.columns[:transport_type].form_ui = :select
     conf.columns[:preferred_contact].options = {:options => [["Email","Email"],["Phone","Phone"],["Text","Text"]]}
     conf.actions.exclude :create
+    # if marking isn't enabled it creates errors on delete :(
+    conf.actions.add :mark
   end
 
   # Custom views of the index table

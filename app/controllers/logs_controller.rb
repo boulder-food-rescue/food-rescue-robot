@@ -31,6 +31,8 @@ class LogsController < ApplicationController
     conf.columns[:donor].form_ui = :select
     conf.columns[:recipient].form_ui = :select
     conf.update.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,:description,:transport_type,:food_type,:notes,:flag_for_admin,:orig_volunteer]
+    # if marking isn't enabled it creates errors on delete :(
+    conf.actions.add :mark
   end
 
   # Permissions

@@ -1,5 +1,7 @@
 class TransportTypesController < ApplicationController
   active_scaffold :transport_type do |conf|
+    # if marking isn't enabled it creates errors on delete :(
+    conf.actions.add :mark
   end
   def create_authorized?
     current_volunteer.super_admin?

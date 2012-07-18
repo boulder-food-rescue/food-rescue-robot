@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120710214118) do
+ActiveRecord::Schema.define(:version => 20120718161839) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -22,6 +22,11 @@ ActiveRecord::Schema.define(:version => 20120710214118) do
 
   add_index "assignments", ["region_id"], :name => "index_assignments_on_region_id"
   add_index "assignments", ["volunteer_id"], :name => "index_assignments_on_volunteer_id"
+
+  create_table "cell_carriers", :force => true do |t|
+    t.string "name"
+    t.string "format"
+  end
 
   create_table "food_types", :force => true do |t|
     t.string   "name"
@@ -137,6 +142,8 @@ ActiveRecord::Schema.define(:version => 20120710214118) do
     t.string   "last_sign_in_ip"
     t.boolean  "admin",                  :default => false
     t.integer  "transport_type_id"
+    t.integer  "cell_carrier_id"
+    t.boolean  "sms_too"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

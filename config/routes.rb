@@ -1,4 +1,8 @@
 Webapp::Application.routes.draw do
+  resources :cell_carriers do as_routes end
+
+  resources :cell_carriers
+
   resources :assignments do as_routes end
 
   resources :assignments

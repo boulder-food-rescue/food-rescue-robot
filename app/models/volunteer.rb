@@ -1,5 +1,6 @@
 class Volunteer < ActiveRecord::Base
   belongs_to :transport_type
+  belongs_to :cell_carrier
   has_many :assignments
   has_many :regions, :through => :assignments
 

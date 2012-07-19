@@ -24,6 +24,7 @@ Webapp::Application.routes.draw do
       get :tardy
       get :open
       get :mine
+      get :being_covered
       get :new_absence
       get :create_absence
     end

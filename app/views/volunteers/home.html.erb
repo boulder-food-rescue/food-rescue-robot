@@ -25,8 +25,12 @@ You're not yet assigned to any regions. Things will get more interesting around 
 <% end %>
 <br><br>
 <h2>Your Info</h2>
+<br>You are a volunteer in: <%= @me.regions.collect{ |r| r.name }.join(", ") %>.<br>
+<br>Your preferred transportation is <%= @me.transport_type.nil? ? "unknown" : "a #{@me.transport_type.name}" %>.<br>
+
 <br>You <%= @me.sms_too ? "are" : "are not" %> setup to receive SMS messages (in addition to emails)
 <% unless @me.sms_email.nil? %>
 at <%= @me.sms_email %>
-<% end %>.
+<% end %> and are <%= @me.pre_reminders_too ? "" : "not " %>setup to recieve pre-pick-up reminders.<br>
 
+<br>You can change these settings <a href="/volunteers/<%= @me.id %>/edit">here</a>.

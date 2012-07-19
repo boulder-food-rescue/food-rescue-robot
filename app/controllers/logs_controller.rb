@@ -69,10 +69,15 @@ class LogsController < ApplicationController
     @conditions = "\"when\" = DATE '#{(Date.today-1).to_s}'"
     index
   end
+  def being_covered
+    @conditions = "\"when\" > DATE '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
+    index
+  end
   def tardy
     @conditions = "\"when\" < DATE '#{(Date.today).to_s}' AND num_reminders >= 3 AND weight IS NULL"
     index
   end
+
 
   def conditions_for_collection
     if current_volunteer.assignments.length == 0

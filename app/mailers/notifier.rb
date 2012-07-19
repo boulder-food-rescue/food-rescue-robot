@@ -1,6 +1,10 @@
 class Notifier < ActionMailer::Base
   default :from => "robot@boulderfoodrescue.org"
-  
+
+  # Helper method
+  def admin_emails_for_region(region)
+    Assignment.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.nil? ? nil : a.volunteer.email }.compact.join(",")
+  end
 
   def volunteer_log_reminder(volunteer,logs)
     @logs = logs
@@ -8,9 +12,17 @@ class Notifier < ActionMailer::Base
     mail(:to => volunteer.email, :subject => "Data Entry Reminder"){ |format| format.text }
   end
 
+  def volunteer_log_sms_reminder(volunteer,logs)
+    @logs = logs
+    @volunteer = volunteer
+    return nil if volunteer.nil?
+    return nil if volunteer.sms_email.nil?
+    mail(:to => volunteer.sms_email, :subject => "Reminder"){ |format| format.text }
+  end
+
   def admin_reminder_summary(region,logs)
     @logs = logs
-    to = Assignment.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.email }.join(",")
+    to = admin_emails_for_region(region) 
     mail(:to => to, :subject => "#{region.name} Data Entry Reminder Summary"){ |format| format.text }
   end
 
@@ -21,7 +33,7 @@ class Notifier < ActionMailer::Base
     @biggest = biggest
     @num_logs = num_logs
     @num_entered = num_entered
-    to = Assignment.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.nil? ? nil : a.volunteer.email }.compact.join(",")
+    to = admin_emails_for_region(region) 
     mail(:to => to, :subject => "#{region.name} Weekly Summary"){ |format| format.text }
   end
 end

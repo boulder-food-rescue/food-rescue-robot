@@ -1,0 +1,1 @@
+Need data for: <%= @logs.collect{ |l| "#{l.when}: #{l.donor.name}->#{l.recipient.name} (#{l.food_type.nil? ? "Produce/Baked Goods" : l.food_type.name}), http://alpha.boulderfoodrescue.org/logs/#{l.id}/edit" }.join(" :: ") %>

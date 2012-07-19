@@ -21,10 +21,10 @@ class VolunteersController < ApplicationController
 
   active_scaffold :volunteer do |conf|
     conf.list.sorting = {:name => 'ASC'}
-    conf.columns = [:name,:email,:phone,:cell_carrier,:preferred_contact,:gone_until,:has_car,:is_disabled, 
+    conf.columns = [:name,:email,:phone,:cell_carrier,:sms_too,:preferred_contact,:gone_until,:has_car,:is_disabled, 
                     :admin,:on_email_list,:pickup_prefs,:transport_type,:admin_notes,:regions,:created_at]
     conf.update.columns = [:name,:email,:phone,:cell_carrier,:preferred_contact,:sms_too,:gone_until,:has_car,:is_disabled,
-                    :admin,:on_email_list,:pickup_prefs,:transport_type,:admin_notes,:regions,:password]
+                    :admin,:on_email_list,:pickup_prefs,:transport_type,:admin_notes,:regions]
     conf.columns[:is_disabled].label = "Account Deactivated"
     conf.columns[:sms_too].label = "Recieve Texts"
     conf.columns[:sms_too].description = "In addition to emails..."

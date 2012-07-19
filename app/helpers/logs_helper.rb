@@ -1,5 +1,7 @@
 module LogsHelper
 
+DontDeliverEmails = false
+
 def log_volunteer_column(record)
   if record.volunteer.nil?
     link_to "Take Shift", "/logs/#{record.id}/take"
@@ -51,17 +53,16 @@ def send_reminder_emails(n=2,r=3)
   reminder_list = {}
   c = 0
   Log.where(:weight => nil).each{ |l| 
+    next if l.volunteer.nil?
     days_past = (Date.today - l.when).to_i
     next unless days_past >= n
+
     l.num_reminders = 0 if l.num_reminders.nil?
     l.num_reminders += 1
-
-    next if l.volunteer.nil?
+    l.save
 
     reminder_list[l.volunteer] = [] if reminder_list[l.volunteer].nil?
     reminder_list[l.volunteer].push(l)
-
-    l.save
 
     if l.num_reminders >= r
       naughty_list[l.region] = [] if naughty_list[l.region].nil?
@@ -70,13 +71,30 @@ def send_reminder_emails(n=2,r=3)
   }
   reminder_list.each{ |v,logs|
     m = Notifier.volunteer_log_reminder(v,logs)
-    m.deliver
+    if DontDeliverEmails
+      puts m
+    else
+      m.deliver
+    end
     c += 1
+
+    if v.sms_too and !v.sms_email.nil?
+      m = Notifier.volunteer_log_sms_reminder(v,logs)
+      if DontDeliverEmails
+        puts m
+      else
+        m.deliver
+      end
+    end
   }
   if naughty_list.length > 0
     naughty_list.each{ |region,logs|
       m = Notifier.admin_reminder_summary(region,logs)
-      m.deliver
+      if DontDeliverEmails
+        puts m
+      else
+        m.deliver
+      end
     }
   end
   return c
@@ -96,7 +114,12 @@ def send_weekly_pickup_summary
       num_entered += 1
     }
     m = Notifier.admin_weekly_summary(r,lbs,flagged_logs,biggest,num_logs,num_entered)
-    m.deliver
+    if DontDeliverEmails
+      puts m
+    else
+      m.deliver
+    end
+
   }
 end
 

@@ -15,11 +15,12 @@ class AddEmailToTextEmailToVolunteer < ActiveRecord::Migration
 
     change_table :volunteers do |t|
       t.references :cell_carrier
-      t.boolean :sms_too
+      t.boolean :sms_too, :default => false
     end
   end
   def down
     remove_column :volunteers, :cell_carrier_id
+    remove_column :volunteers, :sms_too
     drop_table :cell_carriers
   end
 end

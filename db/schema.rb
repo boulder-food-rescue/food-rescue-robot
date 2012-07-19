@@ -143,7 +143,7 @@ ActiveRecord::Schema.define(:version => 20120718161839) do
     t.boolean  "admin",                  :default => false
     t.integer  "transport_type_id"
     t.integer  "cell_carrier_id"
-    t.boolean  "sms_too"
+    t.boolean  "sms_too",                :default => false
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

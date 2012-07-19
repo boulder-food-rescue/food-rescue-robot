@@ -23,3 +23,10 @@ You've used human-powered transportation <%= @human_pct.round %>% of the time<%=
 <% else %>
 You're not yet assigned to any regions. Things will get more interesting around here once an admin assigns you :).
 <% end %>
+<br><br>
+<h2>Your Info</h2>
+<br>You <%= @me.sms_too ? "are" : "are not" %> setup to receive SMS messages (in addition to emails)
+<% unless @me.sms_email.nil? %>
+at <%= @me.sms_email %>
+<% end %>.
+

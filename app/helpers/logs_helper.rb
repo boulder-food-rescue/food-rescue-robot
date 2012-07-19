@@ -1,6 +1,7 @@
 module LogsHelper
 
-DontDeliverEmails = false
+# Set to true to disable emailing and just print the emails to STDOUT
+DontDeliverEmails = true
 
 def log_volunteer_column(record)
   if record.volunteer.nil?
@@ -51,8 +52,23 @@ end
 def send_reminder_emails(n=2,r=3)
   naughty_list = {}
   reminder_list = {}
+  short_term_cover_list = {}
+  pre_reminder_list = {}
   c = 0
   Log.where(:weight => nil).each{ |l| 
+
+    # FUTURE reminders...
+    days_future = (l.when - Date.today).to_i
+    if days_future == 1 and !l.volunteer.nil? and l.volunteer.pre_reminders_too
+      pre_reminder_list[l.volunteer] = [] if pre_reminder_list[l.volunteer].nil?
+      pre_reminder_list[l.volunteer].push(l)
+      next
+    elsif (days_future == 1 or days_future == 2) and l.volunteer.nil?
+      short_term_cover_list[l.region] = [] if short_term_cover_list[l.region].nil?
+      short_term_cover_list[l.region].push(l)
+    end
+
+    # PAST reminders...
     next if l.volunteer.nil?
     days_past = (Date.today - l.when).to_i
     next unless days_past >= n
@@ -69,6 +85,7 @@ def send_reminder_emails(n=2,r=3)
       naughty_list[l.region].push(l)
     end
   }
+  # Send reminders to enter data for PAST pickups
   reminder_list.each{ |v,logs|
     m = Notifier.volunteer_log_reminder(v,logs)
     if DontDeliverEmails
@@ -87,6 +104,37 @@ def send_reminder_emails(n=2,r=3)
       end
     end
   }
+  # Send reminders to do FUTURE pickups
+  pre_reminder_list.each{ |v,logs|
+    m = Notifier.volunteer_log_pre_reminder(v,logs)
+    if DontDeliverEmails
+      puts m
+    else
+      m.deliver
+    end
+    c += 1
+
+    if v.sms_too and !v.sms_email.nil?
+      m = Notifier.volunteer_log_sms_pre_reminder(v,logs)
+      if DontDeliverEmails
+        puts m
+      else
+        m.deliver
+      end
+    end
+  }
+  # Remind the admins to cover things without a volunteer...
+  if short_term_cover_list.length > 0
+    short_term_cover_list.each{ |region,logs|
+      m = Notifier.admin_short_term_cover_summary(region,logs)
+      if DontDeliverEmails
+        puts m
+      else
+        m.deliver
+      end
+    }
+  end
+  # Let the admin know about tardy data entry
   if naughty_list.length > 0
     naughty_list.each{ |region,logs|
       m = Notifier.admin_reminder_summary(region,logs)

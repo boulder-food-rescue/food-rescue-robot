@@ -12,7 +12,21 @@ class Notifier < ActionMailer::Base
     mail(:to => volunteer.email, :subject => "Data Entry Reminder"){ |format| format.text }
   end
 
+  def volunteer_log_pre_reminder(volunteer,logs)
+    @logs = logs
+    @volunteer = volunteer
+    mail(:to => volunteer.email, :subject => "Pick-up Reminder"){ |format| format.text }
+  end
+
   def volunteer_log_sms_reminder(volunteer,logs)
+    @logs = logs
+    @volunteer = volunteer
+    return nil if volunteer.nil?
+    return nil if volunteer.sms_email.nil?
+    mail(:to => volunteer.sms_email, :subject => "Reminder"){ |format| format.text }
+  end
+
+  def volunteer_log_sms_pre_reminder(volunteer,logs)
     @logs = logs
     @volunteer = volunteer
     return nil if volunteer.nil?
@@ -24,6 +38,12 @@ class Notifier < ActionMailer::Base
     @logs = logs
     to = admin_emails_for_region(region) 
     mail(:to => to, :subject => "#{region.name} Data Entry Reminder Summary"){ |format| format.text }
+  end
+
+  def admin_short_term_cover_summary(region,logs)
+    @logs = logs
+    to = admin_emails_for_region(region)
+    mail(:to => to, :subject => "#{region.name} Shifts Needing Coverage Soon (SNCS!)"){ |format| format.text }
   end
 
   def admin_weekly_summary(region,lbs,flagged_logs,biggest,num_logs,num_entered)

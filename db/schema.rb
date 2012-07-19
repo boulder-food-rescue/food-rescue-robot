@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120718161839) do
+ActiveRecord::Schema.define(:version => 20120719230241) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(:version => 20120718161839) do
     t.integer  "transport_type_id"
     t.integer  "cell_carrier_id"
     t.boolean  "sms_too",                :default => false
+    t.boolean  "pre_reminders_too",      :default => false
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

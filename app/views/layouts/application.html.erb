@@ -68,10 +68,16 @@
           </a>
           <ul>
             <li>
-              <a href=<%= mine_logs_path %> class="<%= "selected" if request.fullpath == mine_logs_path %>">
-                <span>My Shifts</span>
+              <a href=<%= mine_upcoming_logs_path %> class="<%= "selected" if request.fullpath == mine_upcoming_logs_path %>">
+                <span>Upcoming Shifts</span>
               </a>
             </li>
+            <li>
+              <a href=<%= mine_past_logs_path %> class="<%= "selected" if request.fullpath == mine_past_logs_path %>">
+                <span>Past Shifts</span>
+              </a>
+            </li>
+
             <li>
               <a href=<%= open_logs_path %> class="<%= "selected" if request.fullpath == open_logs_path %>">
                 <span>Cover Shifts</span>

@@ -53,6 +53,14 @@ class LogsController < ApplicationController
     @conditions = "volunteer_id = '#{current_volunteer.id}'"
     index
   end
+  def mine_upcoming
+    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" >= DATE '#{(Date.today).to_s}'"
+    index
+  end
+  def mine_past
+    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" < DATE '#{(Date.today).to_s}'"
+    index
+  end
   def open
     @conditions = "volunteer_id is NULL"
     index
@@ -70,7 +78,7 @@ class LogsController < ApplicationController
     index
   end
   def being_covered
-    @conditions = "\"when\" > DATE '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
+    @conditions = "\"when\" >= DATE '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
     index
   end
   def tardy

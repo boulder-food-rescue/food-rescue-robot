@@ -19,6 +19,37 @@ def log_volunteer_column_attributes(record)
   end
 end
 
+# These add "show" links for donor, recipient, and orig_volunteer
+def log_donor_column(record)
+  if record.donor.nil?
+    "-"
+  else
+    link_to record.donor.name, "/locations/#{record.donor.id}?association=donor&log_id=#{record.id}&parent_scaffold=logs", 
+            "class" => "show as_action donor", "data-action" => "show", "data-remote" => "true", "data-position" => "after", 
+            "id" => "as_logs-show-donor-#{record.donor.id}-#{record.id}-link"
+  end
+end
+
+def log_recipient_column(record)
+  if record.recipient.nil?
+    "-"
+  else
+    link_to record.recipient.name, "/locations/#{record.recipient.id}?association=recipient&log_id=#{record.id}&parent_scaffold=logs", 
+            "class" => "show as_action recipient", "data-action" => "show", "data-remote" => "true", "data-position" => "after", 
+            "id" => "as_logs-show-recipient-#{record.recipient.id}-#{record.id}-link"
+  end
+end
+
+def log_orig_volunteer_column(record)
+  if record.orig_volunteer.nil?
+    "-"
+  else
+    link_to record.orig_volunteer.name, "/volunteers/#{record.orig_volunteer.id}?association=orig_volunteer&log_id=#{record.id}&parent_scaffold=logs",
+            "class" => "show as_action orig_volunteer", "data-action" => "show", "data-remote" => "true", "data-position" => "after",
+            "id" => "as_logs-show-orig_volunteer-#{record.orig_volunteer.id}-#{record.id}-link"
+  end
+end
+
 # Given a date, generates the corresponding log entries for that
 # date based on the /current/ schedule
 def generate_log_entries(d=Date.today)

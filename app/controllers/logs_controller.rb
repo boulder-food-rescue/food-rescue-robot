@@ -29,7 +29,9 @@ class LogsController < ApplicationController
     conf.columns[:notes].description = "e.g., Trailer wheel is out of true, bin is busted, most raddest pickup evar"
     conf.columns[:flag_for_admin].description = "Click this if you'd like to make sure we read your note :)"
     conf.columns[:donor].form_ui = :select
+    conf.columns[:donor].clear_link
     conf.columns[:recipient].form_ui = :select
+    conf.columns[:recipient].clear_link
     conf.update.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,:description,:transport_type,:food_type,:notes,:flag_for_admin,:orig_volunteer]
     # if marking isn't enabled it creates errors on delete :(
     conf.actions.add :mark

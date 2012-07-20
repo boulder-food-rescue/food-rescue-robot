@@ -4,6 +4,7 @@ class LogsController < ApplicationController
   active_scaffold :log do |conf|
     conf.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
                     :description,:transport_type,:food_type,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
+    conf.list.columns = [:when,:volunteer,:donor,:recipient,:weight,:transport_type,:food_type,:orig_volunteer,:schedule]
     conf.list.per_page = 50
     conf.columns[:weighed_by].form_ui = :select
     conf.columns[:weighed_by].options = {:options => [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],
@@ -32,6 +33,7 @@ class LogsController < ApplicationController
     conf.columns[:donor].clear_link
     conf.columns[:recipient].form_ui = :select
     conf.columns[:recipient].clear_link
+    conf.columns[:schedule].clear_link
     conf.update.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,:description,:transport_type,:food_type,:notes,:flag_for_admin,:orig_volunteer]
     # if marking isn't enabled it creates errors on delete :(
     conf.actions.add :mark

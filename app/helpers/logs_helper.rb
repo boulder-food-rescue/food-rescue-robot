@@ -30,6 +30,17 @@ def log_donor_column(record)
   end
 end
 
+def log_schedule_column(record)
+  if record.schedule.nil?
+    "-"
+  else
+    link_to "Details", "/schedules/#{record.schedule.id}?association=schedule&log_id=#{record.id}&parent_scaffold=logs",
+            "class" => "show as_action schedule", "data-action" => "show", "data-remote" => "true", "data-position" => "after",
+            "id" => "as_logs-show-donor-#{record.schedule.id}-#{record.id}-link"
+  end
+end
+
+
 def log_recipient_column(record)
   if record.recipient.nil?
     "-"

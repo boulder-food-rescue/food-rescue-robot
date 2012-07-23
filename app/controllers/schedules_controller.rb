@@ -75,7 +75,7 @@ class SchedulesController < ApplicationController
     l = Schedule.find(params[:id])
     l.volunteer = current_volunteer
     l.save
-    index
+    mine
   end
 
 end 

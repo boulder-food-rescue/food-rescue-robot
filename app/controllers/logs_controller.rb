@@ -154,7 +154,7 @@ class LogsController < ApplicationController
     l = Log.find(params[:id])
     l.volunteer = current_volunteer
     l.save
-    index
+    mine_upcoming
   end
  
 end

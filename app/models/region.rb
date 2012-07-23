@@ -3,7 +3,7 @@ class Region < ActiveRecord::Base
   has_many :volunteers, :through => :assignments
   geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
   after_validation :geocode
-  attr_accessible :address, :lat, :lng, :name, :notes, :website
+  attr_accessible :address, :lat, :lng, :name, :notes, :website, :handbook_url
 
   # ActiveScaffold CRUD-level restrictions
   def authorized_for_update?

@@ -1,6 +1,6 @@
 class RegionsController < ApplicationController
   active_scaffold :region do |conf|
-    conf.columns = [:name,:address,:lat,:lng,:notes,:website]
+    conf.columns = [:name,:address,:lat,:lng,:notes,:website,:handbook_url]
     # if marking isn't enabled it creates errors on delete :(
     conf.actions.add :mark
   end

@@ -23,11 +23,13 @@ def log_donor_form_column(record,options)
   if current_volunteer.regions.length == 0
     where = "1 = 0"
   else
-    where = "is_donor AND region_id IN (#{current_volunteer.regions.collect{ |r| r.id }.join(",")})"
+    where = "is_donor='t' AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
   end
   r = "<select name=\"record[donor]\">"
   r += "<option value=\"\" #{record.donor.nil? ? "selected" : ""}></option>"
-  r += Location.where(where).collect{ |l| "<option value=\"#{l.id}\" #{record.donor.id == l.id ? "selected" : "" }>#{l.name}</option>" }.join("\n")
+  r += Location.where(where).collect{ |l| 
+    "<option value=\"#{l.id}\" #{!record.donor.nil? and record.donor.id == l.id ? "selected" : "" }>#{l.name}</option>" 
+  }.join("\n")
   r += "</select>"
   r
 end
@@ -40,7 +42,7 @@ def log_recipient_form_column(record,options)
   end
   r = "<select name=\"record[recipient]\">"
   r += "<option value=\"\" #{record.recipient.nil? ? "selected" : ""}></option>"
-  r += Location.where(where).collect{ |l| "<option value=\"#{l.id}\" #{record.recipient.id == l.id ? "selected" : "" }>#{l.name}</option>" }.join("\n")
+  r += Location.where(where).collect{ |l| "<option value=\"#{l.id}\" #{!record.recipient.nil? and record.recipient.id == l.id ? "selected" : "" }>#{l.name}</option>" }.join("\n")
   r += "</select>"
   r
 end
@@ -49,7 +51,7 @@ def log_volunteer_form_column(record,options)
   r = "<select name=\"record[volunteer]\">"
   r += "<option value=\"\" #{record.volunteer.nil? ? "selected" : ""}></option>"
   r += Volunteer.all.collect{ |l|
-    if l.regions.collect{ |r| r.id }.include? record.region.id
+    if record.region.nil? or l.regions.collect{ |r| r.id }.include? record.region.id
       "<option value=\"#{l.id}\" #{!record.volunteer.nil? and record.volunteer.id == l.id ? "selected" : "" }>#{l.name}</option>" 
     else
       ""

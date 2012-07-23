@@ -26,7 +26,7 @@ list_of_donors = []
 donor_count = 0
 
 #Get the pickup stats
-total_number_pickups = Log.count
+total_number_pickups = Log.count + Region.all.collect{ |r| r.prior_num_pickups }.compact.sum
 time = Time.new
 date = Date.new(time.year, time.month, time.day)
 pickups_this_day = Log.count(:conditions => {:when => date})
@@ -35,7 +35,8 @@ pickups_this_month = Log.count(:conditions => {:when => date.at_beginning_of_mon
 pickups_this_year = Log.count(:conditions => {:when => date.at_beginning_of_year()...date.at_end_of_year()})
   
 #Amount of food stats
-running_total = 0.0
+starting_amount = Region.all.collect{ |r| r.prior_lbs_rescued }.compact.sum
+running_total = starting_amount
 current_month = time.month
 current_year = time.year
 current_day = time.day
@@ -51,7 +52,7 @@ for i in 0..range
   	running_total += total
   	food_per_month[start_date.month - 1] += total
   end
-  food_per_day << running_total
+  food_per_day << running_total/1000.0
 end
 
 food_chart_day = LazyHighCharts::HighChart.new('area') do |f|
@@ -59,7 +60,7 @@ food_chart_day = LazyHighCharts::HighChart.new('area') do |f|
   f.options[:chart][:plotBackgroundColor] = nil
   f.options[:title][:text] = "Food Rescued Since June 26, 2012"
   f.options[:xAxis][:title] = {:enabled => true, :text => "Days Since 06/26/2012"}
-  f.options[:yAxis][:title][:text] = "lbs of food"
+  f.options[:yAxis][:title][:text] = "thousand lbs of food"
   f.plot_options(:area => {
   	:pointStart => 0,
   	:marker => {
@@ -88,7 +89,7 @@ end
 food_chart_month = LazyHighCharts::HighChart.new('column') do |f|
   f.options[:chart][:defaultSeriesType] = "column"
   f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Food Rescued By Month"
+  f.options[:title][:text] = "Food Rescued By Month (since 6/26/2012)"
     f.options[:xAxis] = {
     :plot_bands => "none",
     :title=>{:text=>"Month"},
@@ -167,6 +168,7 @@ end
 			We rescue and redistribute perishable food "waste" to charities that serve homeless and 
 			at-risk individuals. Our goal is to help solve the problems of hunger, malnutrition, and 
 			food waste in our community.
+
 		  </p>
 		  <div>
 			<p>Read more at <a href="http://www.boulderfoodrescue.org">www.boulderfoodrescue.org</a></p>
@@ -177,10 +179,10 @@ end
 			  <p>Total Food Pickups To Date: <%= total_number_pickups %> pickups</p>
 			  <p class="show_pickups_to_date text_link"> fun facts </p>
 			  <div class="fact_info">
-			  	<div class="fun_fact">
+<!--			  	<div class="fun_fact">
 			  	  <h3>Pickups Today</h3>
 			  	  <div><p> <%= pickups_this_day %></p></div>
-				</div>
+				</div>-->
 				<div class="fun_fact">
 				  <h3>Pickups This Week</h3>
 				  <div>
@@ -193,12 +195,12 @@ end
 				    <p> <%= pickups_this_month %></p>
 				  </div>
 				</div>
-				<div class="fun_fact">
+<!--				<div class="fun_fact">
 				  <h3>Pickups This Year</h3>
 				  <div>
 				    <p> <%= pickups_this_year %></p>
 				  </div>
-				</div>
+				</div>-->
 			  </div>
 			</div>
 			<div class="a_fact_section">
@@ -263,13 +265,29 @@ end
 			</div>
 			<div class="a_fact_section">
 			  <p>Number of Recipients: <%= recipient_count %></p>
-			  <p class="show_recipient_facts text_link"> list </p>
-			  <div class="fact_info">
-				<div><p>
-				  See a list of some of our recipients at 
-				  <a href="http://www.boulderfoodrescue.org/index.php/recipients/"> Recipient List </a>
-				</p></div>
-			  </div>
+ 			  <p class="show_recipient_facts text_link"> list </p>
+                          <div class="fact_info donor_list">
+                                <div class="fun_fact">
+                                  <h3>List of Recipients</h3>
+                                  <%
+                                  recips = Location.where(:is_donor => false)
+                                  recips.each do |recip|
+                                    next if recip.name =~ /Individuals/i
+                                    if recip.website != nil%>
+                                      <div>
+                                        <p class>
+                                          <a href="<%= recip.website %>"><%= recip.name %></a>
+                                        </p>
+                                      </div>
+                                    <% else %>
+                                      <div>
+                                        <p> <%= recip.name %> </p>
+                                      </div>
+                                    <% end %>
+                                  <% end %>
+                                </div>
+                          </div>
+
 			</div>
 			<div class="a_fact_section">  
 			  <p>Number of Donors: <%= donor_count %></p>

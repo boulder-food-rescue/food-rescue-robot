@@ -10,7 +10,7 @@
 <% unless @unassigned %>
 You currently have <%= @num_shifts %> <a href="/schedules/mine">regularly scheduled pick-ups</a>. There are <%= @num_unassigned %> regular pick-ups that need a volunteer right now, if you'd like to <a href="/schedules/open">grab one of them</a>.
 <br><br>
-There are <%= @num_to_cover %> shifts that need covering if you'd like to <a href="/logs/open">pick one up</a>.
+You have <%= @num_upcoming %> <a href="/logs/mine_upcoming">upcoming shifts</a>. There are <%= @num_to_cover %> shifts that need covering if you'd like to <a href="/logs/open">pick one up</a>.
 <br><br>
 <% unless @earliest.nil? %>
 Since <%= @earliest.when.strftime("%B %-d, %Y")%>, you've done <%= @pickups.length %> pick-ups, for a total of <%= @lbs.round %> lbs of food rescued, averaging <%= sprintf("%.02f",(@lbs/((Date.today-(@earliest.when))/7.0))) %> lbs per week, and <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> per pick-up.<br>
@@ -29,9 +29,9 @@ You're not yet assigned to any regions. Things will get more interesting around 
 <br>Your preferred transportation is <%= @me.transport_type.nil? ? "unknown" : "a #{@me.transport_type.name}" %> and your preferred method of contact is <%= @me.preferred_contact.nil? ? "unknown" : @me.preferred_contact %>.<br>
 
 <br>You <%= @me.sms_too ? "are" : "are not" %> setup to receive SMS messages (in addition to emails)
-<% unless @me.sms_email.nil? %>
+<% if !@me.sms_email.nil? %>
 at <%= @me.sms_email %>
-<% else %>
+<% elsif @me.sms_too %>
 but we don't have your phone number or cell carrier, so we can't actually send them
 <% end %>.<br>
 

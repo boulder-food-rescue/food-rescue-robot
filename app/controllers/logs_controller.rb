@@ -90,7 +90,6 @@ class LogsController < ApplicationController
     index
   end
 
-
   def conditions_for_collection
     if current_volunteer.assignments.length == 0
       @base_conditions = "1 = 0"
@@ -156,5 +155,5 @@ class LogsController < ApplicationController
     l.save
     mine_upcoming
   end
- 
+
 end

@@ -14,6 +14,10 @@ class Volunteer < ActiveRecord::Base
   def admin_notes_authorized?
     current_user.admin
   end
+  # column-level restrictions
+  def admin_authorized?
+    current_user.admin
+  end
 
   # ActiveScaffold CRUD-level restrictions
   def authorized_for_update?

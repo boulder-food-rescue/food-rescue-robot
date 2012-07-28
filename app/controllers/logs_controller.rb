@@ -3,10 +3,8 @@ class LogsController < ApplicationController
 
   active_scaffold :log do |conf|
     conf.columns = [:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
-                    :description,:transport,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
-    conf.columns[:transport].form_ui = :select
-    conf.columns[:transport].label = "Transportation Used"
-    conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}
+                    :description,:transport_type,:food_type,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
+    conf.list.per_page = 50
     conf.columns[:weighed_by].form_ui = :select
     conf.columns[:weighed_by].options = {:options => [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],
                                                       ["Guesstimate","Guesstimate"]]}
@@ -17,29 +15,29 @@ class LogsController < ApplicationController
     conf.columns[:schedule].form_ui = :select
     conf.columns[:volunteer].form_ui = :select
     conf.columns[:volunteer].clear_link
+    conf.columns[:food_type].form_ui = :select
+    conf.columns[:transport_type].form_ui = :select
     conf.columns[:orig_volunteer].form_ui = :select
     conf.columns[:orig_volunteer].label = "Original Volunteer"
     conf.columns[:orig_volunteer].description = "If the shift was covered by someone else, put the original volunteer here"
     conf.columns[:orig_volunteer].clear_link
     conf.columns[:donor].form_ui = :select
     conf.columns[:recipient].form_ui = :select
+    conf.update.columns = [:when,:volunteer,:donor,:recipient,:weight,:weighed_by,:description,:transport_type,:food_type,:notes,:flag_for_admin]
   end
 
   # Permissions
+
+  # Only admins can change things in the schedule table
   def create_authorized?
-    current_volunteer.admin
+    current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-  #def update_authorized?(record=nil)
-  #  return true if current_volunteer.admin
-  #  unless params[:id].nil?
-  #    return Log.find(params[:id]).volunteer == current_volunteer
-  #  else
-  #    return false
-  #  end
-  #end
-  def delete_authorized?(record=nil)
-    current_volunteer.admin
-  end
+#  def update_authorized?(record=nil)
+#    current_volunteer == record.volunteer or current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
+#  def delete_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
 
   # Custom views of the index table
   def mine
@@ -47,11 +45,16 @@ class LogsController < ApplicationController
     index
   end
   def open
-    @conditions = "volunteer_id is NULL"
+    if current_volunteer.assignments.length == 0
+      @conditions = "1 = 0"
+    else
+      @conditions = "volunteer_id is NULL"
+    end
     index
   end
   def conditions_for_collection
-    @conditions
+    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
   end
 
   def new_absence
@@ -63,7 +66,11 @@ class LogsController < ApplicationController
   def create_absence
     from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-    pickups = Schedule.where("volunteer_id = #{current_volunteer.id}")
+    if current_volunteer.admin and !params[:volunteer_id].nil?
+      pickups = Schedule.where("volunteer_id = #{params[:volunteer_id].to_i}")
+    else
+      pickups = Schedule.where("volunteer_id = #{current_volunteer.id}")
+    end
     n = 0
     while from <= to
       pickups.each{ |p|
@@ -74,7 +81,11 @@ class LogsController < ApplicationController
 
           # create the null record
           lo = Log.new
-          lo.orig_volunteer = current_volunteer
+          if current_volunteer.admin and !params[:volunteer_id].nil?
+            lo.orig_volunteer = Volunteer.find(params[:volunteer_id].to_i)
+          else
+            lo.orig_volunteer = current_volunteer
+          end
           lo.volunteer = nil
           lo.schedule = p
           lo.donor = p.donor

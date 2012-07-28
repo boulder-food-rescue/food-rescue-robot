@@ -4,8 +4,8 @@ class SchedulesController < ApplicationController
   active_scaffold :schedule do |conf|
     conf.list.sorting = {:day_of_week => 'ASC'}
     conf.list.per_page = 500
-    conf.columns = [:day_of_week,:donor,:recipient,:volunteer,:time_start,:time_stop,
-                    :irregular,:backup,:transport,:needs_training,:public_notes,
+    conf.columns = [:region,:day_of_week,:donor,:recipient,:volunteer,:time_start,:time_stop,
+                    :irregular,:backup,:transport_type,:food_types,:needs_training,:public_notes,
                     :prior_volunteer,:admin_notes]
     conf.columns[:day_of_week].form_ui = :select
     conf.columns[:day_of_week].options = {:options => [["Unknown/varies",nil],["Sunday",0],
@@ -17,29 +17,33 @@ class SchedulesController < ApplicationController
     conf.columns[:volunteer].form_ui = :select
     conf.columns[:volunteer].clear_link
     conf.columns[:recipient].form_ui = :select
+    conf.columns[:food_types].form_ui = :select
+    conf.columns[:transport_type].form_ui = :select
     conf.columns[:prior_volunteer].form_ui = :select
     conf.columns[:prior_volunteer].clear_link
-    conf.columns[:transport].label = "Mode of Transport"
-    conf.columns[:transport].form_ui = :select
-    conf.columns[:transport].options = {:options => [["Bike","Bike"],["Car","Car"],["Foot","Foot"]]}
-    conf.columns[:irregular].label = "Periodic/Irregular"
+    conf.columns[:region].form_ui = :select
+    conf.columns[:irregular].label = "Irregular"
     conf.columns[:backup].label = "Backup Pickup"
   end
 
   # Only admins can change things in the schedule table
   def create_authorized?
-    current_volunteer.admin
+    current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-  def update_authorized?(record=nil)
-    current_volunteer.admin
-  end
-  def delete_authorized?(record=nil)
-    current_volunteer.admin
-  end
+#  def update_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
+#  def delete_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
 
   # Custom views of the index table
   def open
-    @conditions = "volunteer_id is NULL"
+    if current_volunteer.assignments.length == 0
+      @conditions = "1 = 0"
+    else
+      @conditions = "volunteer_id is NULL"
+    end
     index
   end
   def mine
@@ -48,7 +52,8 @@ class SchedulesController < ApplicationController
   end
 
   def conditions_for_collection
-    @conditions
+    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
   end
 
   def take

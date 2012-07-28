@@ -1,15 +1,16 @@
 class LocationsController < ApplicationController
   before_filter :authenticate_volunteer!
 
+  # Only admins can change things in the schedule table
   def create_authorized?
-    current_volunteer.admin
+    current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-  def update_authorized?(record=nil)
-    current_volunteer.admin
-  end
-  def delete_authorized?(record=nil)
-    current_volunteer.admin
-  end
+#  def update_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
+#  def delete_authorized?(record=nil)
+#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
+#  end
 
   active_scaffold :location do |conf|
     conf.columns[:donor_type].form_ui = :select
@@ -24,7 +25,11 @@ class LocationsController < ApplicationController
     conf.columns[:lat].description = 'Decimal degrees, WGS84, EPSG:4326, Leave blank for geo-coding'
     conf.columns[:lng].description = 'Decimal degrees, WGS84, EPSG:4326, Leave blank for geo-coding'
     conf.columns[:is_donor].description = "If this isn't checked, it must be a recipient"
+    conf.columns[:region].form_ui = :select
+  end
 
- 
+  def conditions_for_collection
+    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
   end
 end 

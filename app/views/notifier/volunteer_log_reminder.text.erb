@@ -1,14 +1,12 @@
-Hi there,
+Hi <%= @volunteer.name %>,
 
 This is a friendly reminder from the BFR robot that you need to enter
-some data for your recent pickup:
+some data for your recent pickup<%= @logs.length > 1 ? "s" : "" %>:
 
-<%= @log.when %>: <%= @log.donor.name %> to <%= @log.recipient.name %>
+<% @logs.each{ |l| %>
+<%= l.when %>: <%= l.donor.name %> to <%= l.recipient.name %> (<%= l.food_type.nil? ? "Produce/Baked Goods" : l.food_type.name %>)
+Link: http://alpha.boulderfoodrescue.org/logs/<%= l.id %>/edit
+This is your <%= l.num_reminders.ordinalize %> reminder.
 
-Here's a direct link to enter the data:
-
-http://alpha.boulderfoodrescue.org/logs/<%= @log.id %>/edit
-
-This is your <%= @log.num_reminders.ordinalize %> reminder.
-
+<% } %>
 Thanks!

@@ -18,12 +18,15 @@ class SchedulesController < ApplicationController
     conf.columns[:volunteer].clear_link
     conf.columns[:recipient].form_ui = :select
     conf.columns[:food_types].form_ui = :select
+    conf.columns[:food_types].clear_link
     conf.columns[:transport_type].form_ui = :select
     conf.columns[:prior_volunteer].form_ui = :select
     conf.columns[:prior_volunteer].clear_link
     conf.columns[:region].form_ui = :select
     conf.columns[:irregular].label = "Irregular"
     conf.columns[:backup].label = "Backup Pickup"
+    # if marking isn't enabled it creates errors on delete :(
+    conf.actions.add :mark
   end
 
   # Only admins can change things in the schedule table
@@ -39,20 +42,32 @@ class SchedulesController < ApplicationController
 
   # Custom views of the index table
   def open
-    if current_volunteer.assignments.length == 0
-      @conditions = "1 = 0"
-    else
-      @conditions = "volunteer_id is NULL"
-    end
+    @conditions = "volunteer_id is NULL AND recipient_id IS NOT NULL and donor_id IS NOT NULL"
     index
   end
   def mine
     @conditions = "volunteer_id = '#{current_volunteer.id}'"
     index
   end
+  def today
+    @conditions = "day_of_week = #{Date.today.wday}"
+    index
+  end
+  def tomorrow
+    @conditions = "day_of_week = #{Date.today.wday + 1 % 6}"
+    index
+  end
+  def yesterday
+    @conditions = "day_of_week = #{Date.today.wday - 1 % 6}"
+    index
+  end
 
   def conditions_for_collection
-    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    if current_volunteer.assignments.length == 0
+      @base_conditions = "1 = 0"
+    else
+      @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    end
     @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
   end
 
@@ -60,7 +75,7 @@ class SchedulesController < ApplicationController
     l = Schedule.find(params[:id])
     l.volunteer = current_volunteer
     l.save
-    index
+    mine
   end
 
 end 

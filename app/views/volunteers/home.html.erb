@@ -1,0 +1,40 @@
+<% if @me.phone.nil? %>
+  <span style="color: green;">
+  Hey! We currently don't have a phone number for you, please <a href="/volunteers/edit">add one</a> when you get a moment.
+  </span>
+  <br><br>
+<% end %>
+
+<h2>Your Stats</h2>
+<br>Hi <%= @me.name %>,<br><br>
+<% unless @unassigned %>
+You currently have <%= @num_shifts %> <a href="/schedules/mine">regularly scheduled pick-ups</a>. There are <%= @num_unassigned %> regular pick-ups that need a volunteer right now, if you'd like to <a href="/schedules/open">grab one of them</a>.
+<br><br>
+You have <%= @num_upcoming %> <a href="/logs/mine_upcoming">upcoming shifts</a>. There are <%= @num_to_cover %> shifts that need covering if you'd like to <a href="/logs/open">pick one up</a>.
+<br><br>
+<% unless @earliest.nil? %>
+Since <%= @earliest.when.strftime("%B %-d, %Y")%>, you've done <%= @pickups.length %> pick-ups, for a total of <%= @lbs.round %> lbs of food rescued, averaging <%= sprintf("%.02f",(@lbs/((Date.today-(@earliest.when))/7.0))) %> lbs per week, and <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> per pick-up.<br>
+Of those, <%= @num_covered %> were ones you covered for other volunteers. <br><br>
+Your biggest pick-up was on <%= @biggest.when.strftime("%B %-d, %Y") %> from <%= @biggest.donor.name %> to <%= @biggest.recipient.name %>, totaling <%= @biggest.weight %> lbs.<br>
+You can see a list of all your pick-ups, past and future, <a href="/logs/mine">here</a>.
+<br><br>
+You've used human-powered transportation <%= @human_pct.round %>% of the time<%= @human_pct > 90 ? " :)" : "" %>.
+<% end %>
+<% else %>
+You're not yet assigned to any regions. Things will get more interesting around here once an admin assigns you :).
+<% end %>
+<br><br>
+<h2>Your Info</h2>
+<br>You are a volunteer in: <%= @me.regions.collect{ |r| r.name }.join(", ") %>.<br>
+<br>Your preferred transportation is <%= @me.transport_type.nil? ? "unknown" : "a #{@me.transport_type.name}" %> and your preferred method of contact is <%= @me.preferred_contact.nil? ? "unknown" : @me.preferred_contact %>.<br>
+
+<br>You <%= @me.sms_too ? "are" : "are not" %> setup to receive SMS messages (in addition to emails)
+<% if !@me.sms_email.nil? %>
+at <%= @me.sms_email %>
+<% elsif @me.sms_too %>
+but we don't have your phone number or cell carrier, so we can't actually send them
+<% end %>.<br>
+
+<br>You are <%= @me.pre_reminders_too ? "" : "not " %>setup to recieve pre-pick-up reminders.<br>
+
+<br>You can change these settings <a href="/volunteers/<%= @me.id %>/edit">here</a>.

@@ -3,25 +3,6 @@
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
   <%= devise_error_messages! %>
 
-  <div><%= f.label :name %><br />
-  <%= f.text_field :name %></div>
-
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email %></div>
-
-  <div><%= f.label :phone %><br />
-  <%= f.text_field :phone %></div>
-
-  <div>
-    <%= f.check_box :on_email_list %>
-    <%= f.label :on_email_list %>
-  </div>
-
-  <div>
-    <%= f.check_box :has_car %>
-    <%= f.label :has_car %>
-  </div>
-
   <div><%= f.label :password, "New Password" %>
   <%= f.password_field :password, :autocomplete => "off" %></div>
 

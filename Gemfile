@@ -29,6 +29,7 @@ gem 'geocoder'
 gem 'devise'
 gem 'thin'
 gem 'pg'
+gem 'twitter'
 # This gem is for moving data easily between databases
 # use rake db:data:dump to dump the data in your current db into a db/data.yaml
 # use rake db:data:load to load the data in that file into your current db

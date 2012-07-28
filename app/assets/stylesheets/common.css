@@ -71,6 +71,13 @@ h2 {
   font: bold 160% arial, sans-serif;
 }
 
+h3 {
+  color: #444444
+  padding: 2px 0px;
+  margin: 0;
+  font: 100% arial, sans-serif;
+}
+
 .notice {
   background: lightblue;
   padding: 0.2em;

@@ -1,5 +1,6 @@
 class Volunteer < ActiveRecord::Base
   belongs_to :transport_type
+  belongs_to :cell_carrier
   has_many :assignments
   has_many :regions, :through => :assignments
 
@@ -25,6 +26,7 @@ class Volunteer < ActiveRecord::Base
     current_user.admin or self.email == current_user.email
   end
 
+  # Admin info accessors
   def super_admin?
     current_user.admin
   end
@@ -38,7 +40,14 @@ class Volunteer < ActiveRecord::Base
     self.super_admin? or self.region_admin?
   end
 
+  def sms_email
+    return nil if self.cell_carrier.nil? or self.phone.nil? or self.phone.strip == ""
+    return nil unless self.phone.tr('^0-9','') =~ /^(\d{10})$/
+    # a little scary that we're blindly assuming the format is reasonable, but only admin can edit it...
+    return sprintf(self.cell_carrier.format,$1) 
+  end 
+
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me
-  attr_accessible :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport
+  attr_accessible :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id
 end

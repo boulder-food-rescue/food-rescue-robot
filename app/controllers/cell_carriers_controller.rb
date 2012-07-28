@@ -1,8 +1,6 @@
-class FoodTypesController < ApplicationController
-  active_scaffold :food_type do |conf|
-    conf.columns = [:name]
-    # if marking isn't enabled it creates errors on delete :(
-    conf.actions.add :mark
+class CellCarriersController < ApplicationController
+  active_scaffold :cell_carrier do |conf|
+    conf.columns = [:name,:format]
   end
   def create_authorized?
     current_volunteer.super_admin?

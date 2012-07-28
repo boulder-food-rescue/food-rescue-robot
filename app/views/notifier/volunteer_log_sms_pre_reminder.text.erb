@@ -1,0 +1,1 @@
+Upcoming pickups: <%= @logs.collect{ |l|  "#{l.when.strftime("%A")}: #{l.donor.name} to #{l.recipient.name} #{l.food_type.nil? ? "Produce/Baked Goods" : l.food_type.name}" }.join(" :: ") %>

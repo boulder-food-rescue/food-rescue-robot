@@ -1,6 +1,11 @@
 class RegionsController < ApplicationController
+
   active_scaffold :region do |conf|
-    conf.columns = [:name,:address,:lat,:lng,:notes,:website]
+    conf.columns = [:name,:address,:lat,:lng,:notes,:website,:handbook_url,:prior_lbs_rescued,:prior_num_pickups]
+    conf.update.columns = [:name,:address,:lat,:lng,:notes,:website,:handbook_url,:prior_lbs_rescued,
+                           :prior_num_pickups,:twitter_key,:twitter_secret,:twitter_token,:twitter_token_secret]
+    # if marking isn't enabled it creates errors on delete :(
+    conf.actions.add :mark
   end
   def create_authorized?
     current_volunteer.super_admin?

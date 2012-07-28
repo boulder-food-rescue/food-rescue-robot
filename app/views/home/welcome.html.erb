@@ -84,6 +84,53 @@
   <div class="home_section">
     <h1>Additional Information</h1>
     <div class="home_sub_section">
+      <h2> Your Info </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th> Info </th>
+            <th> Value </th>
+          </tr>
+          <tr>
+            <td> Location </td>
+            <td> <%= current_volunteer.regions.collect{ |r| r.name }.join(", ") %> </td> 
+          </tr>
+          <tr>
+            <td> Preferred Transporation </td>
+            <td> <%= current_volunteer.transport_type.nil? ? "unknown" : "a #{@me.transport_type.name}" %> </td>
+          </tr>
+          <tr>
+            <td> Preferred Method of Contact </td>
+            <td> <%= current_volunteer.preferred_contact.nil? ? "unknown" : current_volunteer.preferred_contact %> </td>
+          </tr>
+          <tr>
+            <td> SMS Setup </td>
+            <td> <%= current_volunteer.sms_too ? "Yes" : "No" %> </td>
+          </tr>
+          <tr>
+            <td> SMS Active </td>
+            <td> 
+              <% if current_volunteer.sms_email.nil? %>
+                <p> No : Missing your cellphone carrier </p>
+              <% elsif current_volunteer.sms_too %>
+                <p> No : Missing your cellphone number </p>
+              <% else %>
+                <p> Yes </p>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <td> Recieving pre-pick-up reminders </td>
+            <td> <%= current_volunteer.pre_reminders_too ? "Yes" : "No" %> </td>
+          </tr>
+          <tr>
+            <td> Changed settings </td>
+            <td> <a href="/volunteers/<%= current_volunteer.id %>/edit"> Click Here </a> </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="home_sub_section">
     	<h2> Your Donor/Recipient Map </h2>
     	<div class="home_section_content">
     	  <p> A Map Of Donor and Recipients </p>

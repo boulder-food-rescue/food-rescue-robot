@@ -84,7 +84,7 @@ class VolunteersController < ApplicationController
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
     @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count
     @num_to_cover = Log.where("volunteer_id IS NULL#{@base_conditions}").count
-    @num_upcoming = Log.where('volunteer_id = ? AND "when" >= DATE ?',current_volunteer.id,Date.today.to_s).count
+    @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Date.today.to_s).count
     @num_unassigned = Schedule.where("volunteer_id IS NULL AND donor_id IS NOT NULL and recipient_id IS NOT NULL#{@base_conditions}").count
     respond_to do |format|
       format.html # home.html.erb

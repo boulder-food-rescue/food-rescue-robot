@@ -58,11 +58,11 @@ class LogsController < ApplicationController
     index
   end
   def mine_upcoming
-    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" >= DATE '#{(Date.today).to_s}'"
+    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" >= '#{(Date.today).to_s}'"
     index
   end
   def mine_past
-    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" < DATE '#{(Date.today).to_s}'"
+    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" < '#{(Date.today).to_s}'"
     index
   end
   def open

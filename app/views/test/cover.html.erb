@@ -24,7 +24,7 @@
   open_shifts.each do |shift|
   %>
   <tr>
-    <td> link_to "Update my username please!", update_username_job_path </td>
+    <td> <%= link_to "Take Shift", shift %> </td>
     <td> <%= shift.when %> </td>
     <td> <%= link_to shift.donor.name, shift.donor %> </td>
     <td> <%= link_to shift.recipient.name, shift.recipient %> </td>

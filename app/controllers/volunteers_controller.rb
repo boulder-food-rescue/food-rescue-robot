@@ -41,6 +41,10 @@ class VolunteersController < ApplicationController
     conf.actions.add :mark
   end
 
+  def nested?
+    return false
+  end
+
   # Custom views of the index table
   def unassigned
     @conditions = "(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0"

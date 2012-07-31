@@ -45,8 +45,10 @@
       <% end %>
     </td>
     <td>
-      <% org_volunteer = Volunteer.find(shift.orig_volunteer_id) %> 
-      <%= link_to org_volunteer.name, org_volunteer %>
+      <% unless shift.orig_volunteer.nil? 
+           org_volunteer = Volunteer.find(shift.orig_volunteer_id) %> 
+      <%=  link_to org_volunteer.name, org_volunteer %>
+      <% end %>
     </td>
     <td> <%= link_to 'view',  shift %> </td>
   </tr>

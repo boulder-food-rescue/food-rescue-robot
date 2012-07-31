@@ -3,3 +3,4 @@
 tmp
 db/development.sqlite3
 db/data.yml
+config/database.yaml

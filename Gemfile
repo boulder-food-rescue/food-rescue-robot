@@ -29,13 +29,13 @@ gem 'geocoder'
 gem 'devise'
 gem 'thin'
 gem 'pg'
+gem 'twitter'
 # This gem is for moving data easily between databases
 # use rake db:data:dump to dump the data in your current db into a db/data.yaml
 # use rake db:data:load to load the data in that file into your current db
 gem 'yaml_db' 
 
 # Added by Sean
-gem 'googlecharts'
 gem 'lazy_high_charts'
 
 # To use ActiveModel has_secure_password

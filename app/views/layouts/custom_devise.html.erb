@@ -49,8 +49,8 @@ for i in 0..range
   start_date += 1
   total = Log.where(:when => start_date).where("weight IS NOT NULL").sum(:weight)
   if total != nil
-  	running_total += total
-  	food_per_month[start_date.month - 1] += total
+    running_total += total
+    food_per_month[start_date.month - 1] += total
   end
   food_per_day << running_total/1000.0
 end
@@ -62,17 +62,17 @@ food_chart_day = LazyHighCharts::HighChart.new('area') do |f|
   f.options[:xAxis][:title] = {:enabled => true, :text => "Days Since 06/26/2012"}
   f.options[:yAxis][:title][:text] = "thousand lbs of food"
   f.plot_options(:area => {
-  	:pointStart => 0,
-  	:marker => {
-  	  :enabled => false,
-  	  :symbol => 'circle',
-  	  :radius => 2,
-  	  :states => {
-  	  	:hover => {
-  	  	  :enabled => true
-  	  	}
-  	  }
-  	}
+    :pointStart => 0,
+    :marker => {
+      :enabled => false,
+      :symbol => 'circle',
+      :radius => 2,
+      :states => {
+        :hover => {
+          :enabled => true
+        }
+      }
+    }
   })
   f.series(
     :name => 'Pounds of Food Rescued',
@@ -143,9 +143,9 @@ h = LazyHighCharts::HighChart.new('pie') do |f|
     }
   })
   series = {
-  	:type => 'pie',
-  	:name => 'Tansportation Type',
-  	:data => pie_data
+    :type => 'pie',
+    :name => 'Tansportation Type',
+    :data => pie_data
   }
   f.series(series)
 end
@@ -153,119 +153,119 @@ end
 %>
 <body>
   <div class="container">
-	  <div class="header">
-		<div>
-		  <h2 id="bfr_title">Boulder Food Rescue</h2>
-		  <h3>Sustainable Just-In-Time Food Rescue in Boulder, Colorado</h3>
-		</div>  
-		<%= link_to image_tag("logo.png", :class => 'logo_image')%>
-	  </div>
-	  <div class="wrap">
-		<div class="info_section">
-		  <h2 class="section_title"> About BFR </h2>
-		  <p>
-			Boulder Food Rescue is an all volunteer non-profit organization located in Boulder, CO. 
-			We rescue and redistribute perishable food "waste" to charities that serve homeless and 
-			at-risk individuals. Our goal is to help solve the problems of hunger, malnutrition, and 
-			food waste in our community.
+    <div class="header">
+    <div>
+      <h2 id="bfr_title">Boulder Food Rescue</h2>
+      <h3>Sustainable Just-In-Time Food Rescue in Boulder, Colorado</h3>
+    </div>  
+    <%= link_to image_tag("logo.png", :class => 'logo_image')%>
+    </div>
+    <div class="wrap">
+    <div class="info_section">
+      <h2 class="section_title"> About BFR </h2>
+      <p>
+      Boulder Food Rescue is an all volunteer non-profit organization located in Boulder, CO. 
+      We rescue and redistribute perishable food "waste" to charities that serve homeless and 
+      at-risk individuals. Our goal is to help solve the problems of hunger, malnutrition, and 
+      food waste in our community.
 
-		  </p>
-		  <div>
-			<p>Read more at <a href="http://www.boulderfoodrescue.org">www.boulderfoodrescue.org</a></p>
-		  </div>
-		  <h2 class="section_title">Facts</h2>
-		  <div class="fact_section">
-			<div class="a_fact_section">
-			  <p>Total Food Pickups To Date: <%= total_number_pickups %> pickups</p>
-			  <p class="show_pickups_to_date text_link"> fun facts </p>
-			  <div class="fact_info">
-<!--			  	<div class="fun_fact">
-			  	  <h3>Pickups Today</h3>
-			  	  <div><p> <%= pickups_this_day %></p></div>
-				</div>-->
-				<div class="fun_fact">
-				  <h3>Pickups This Week</h3>
-				  <div>
-				    <p> <%= pickups_this_week %> </p>
-				  </div>
-				</div>
-				<div class="fun_fact">
-				  <h3>Pickups This Month</h3>
-				  <div>
-				    <p> <%= pickups_this_month %></p>
-				  </div>
-				</div>
-<!--				<div class="fun_fact">
-				  <h3>Pickups This Year</h3>
-				  <div>
-				    <p> <%= pickups_this_year %></p>
-				  </div>
-				</div>-->
-			  </div>
-			</div>
-			<div class="a_fact_section">
-			  <p>Total Food Rescued: 
-				<%= running_total.to_i %>
-			  lbs
-			  </p>
-			  <p class="food_pickup text_link"> chart </p>
-			  <div class="fact_info">
-				<%= high_chart("food_chart_day", food_chart_day) %>
-				<%= high_chart("food_chart_month", food_chart_month) %>
-			  </div>
-			</div>
-			<div class="a_fact_section">  
-			  <p>Number of Volunteers: <%= number_of_volunteers %> volunteers</p>
-			  <p class="volunteer_facts text_link"> fun facts </p>
-			  <div class="fact_info">
-			  	<% if largest_pickup.volunteer != nil %>
-			  	  <div class="fun_fact">
-			  	    <h3>Largest Pickup</h3>
-			  	    <%
-			  	    donor = Location.find(largest_pickup.donor_id)
-			  	    if donor.website != nil %>
-			  	      <div>
-			  	        <p>
-			  	          <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from 
-			  	          <a href="<% donor.website %>"><%= donor.name %></a>
-			  	        </p>
-			  	      </div>
-			  	    <% else %>
-			  	      <div>
-			  	      	<p>
-			  	      	  <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from <%= donor.name %>
-			  	        </p>
-			  	      </div>
-			  	    <%end%>
-				  </div>
-				<% end %>
-				<div class="fun_fact">
-				  <h3>Volunteers Working Today</h3>
-				  <% 
-				  pickups_today.each do |pickup|
-				    if pickup.volunteer != nil
-				      donor = Location.find(pickup.donor_id)
-				      if donor.website != nil%>
-				        <div>
-				          <p>
-				            <%= pickup.volunteer.name %> - <a href="<%= donor.website %>"><%= donor.name %></a>
-				          </p>
-				        </div>
-				    <% else %>
-				        <div>
-				          <p>
-				            <%= pickup.volunteer.name %> - <%= donor.name %>
-				          </p>
-				        </div>
-				    <% end %>
-				  <% end %> 
-				  <% end %>
-				</div>
-			  </div>
-			</div>
-			<div class="a_fact_section">
-			  <p>Number of Recipients: <%= recipient_count %></p>
- 			  <p class="show_recipient_facts text_link"> list </p>
+      </p>
+      <div>
+      <p>Read more at <a href="http://www.boulderfoodrescue.org">www.boulderfoodrescue.org</a></p>
+      </div>
+      <h2 class="section_title">Facts</h2>
+      <div class="fact_section">
+      <div class="a_fact_section">
+        <p>Total Food Pickups To Date: <%= total_number_pickups %> pickups</p>
+        <p class="show_pickups_to_date text_link"> fun facts </p>
+        <div class="fact_info">
+<!--          <div class="fun_fact">
+            <h3>Pickups Today</h3>
+            <div><p> <%= pickups_this_day %></p></div>
+        </div>-->
+        <div class="fun_fact">
+          <h3>Pickups This Week</h3>
+          <div>
+            <p> <%= pickups_this_week %> </p>
+          </div>
+        </div>
+        <div class="fun_fact">
+          <h3>Pickups This Month</h3>
+          <div>
+            <p> <%= pickups_this_month %></p>
+          </div>
+        </div>
+<!--        <div class="fun_fact">
+          <h3>Pickups This Year</h3>
+          <div>
+            <p> <%= pickups_this_year %></p>
+          </div>
+        </div>-->
+        </div>
+      </div>
+      <div class="a_fact_section">
+        <p>Total Food Rescued: 
+        <%= running_total.to_i %>
+        lbs
+        </p>
+        <p class="food_pickup text_link"> chart </p>
+        <div class="fact_info">
+        <%= high_chart("food_chart_day", food_chart_day) %>
+        <%= high_chart("food_chart_month", food_chart_month) %>
+        </div>
+      </div>
+      <div class="a_fact_section">  
+        <p>Number of Volunteers: <%= number_of_volunteers %> volunteers</p>
+        <p class="volunteer_facts text_link"> fun facts </p>
+        <div class="fact_info">
+          <% if largest_pickup.volunteer != nil %>
+            <div class="fun_fact">
+              <h3>Largest Pickup</h3>
+              <%
+              donor = Location.find(largest_pickup.donor_id)
+              if donor.website != nil %>
+                <div>
+                  <p>
+                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from 
+                    <a href="<% donor.website %>"><%= donor.name %></a>
+                  </p>
+                </div>
+              <% else %>
+                <div>
+                  <p>
+                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from <%= donor.name %>
+                  </p>
+                </div>
+              <%end%>
+          </div>
+        <% end %>
+        <div class="fun_fact">
+          <h3>Volunteers Working Today</h3>
+          <% 
+          pickups_today.each do |pickup|
+            if pickup.volunteer != nil
+              donor = Location.find(pickup.donor_id)
+              if donor.website != nil%>
+                <div>
+                  <p>
+                    <%= pickup.volunteer.name %> - <a href="<%= donor.website %>"><%= donor.name %></a>
+                  </p>
+                </div>
+            <% else %>
+                <div>
+                  <p>
+                    <%= pickup.volunteer.name %> - <%= donor.name %>
+                  </p>
+                </div>
+            <% end %>
+          <% end %> 
+          <% end %>
+        </div>
+        </div>
+      </div>
+      <div class="a_fact_section">
+        <p>Number of Recipients: <%= recipient_count %></p>
+        <p class="show_recipient_facts text_link"> list </p>
                           <div class="fact_info donor_list">
                                 <div class="fun_fact">
                                   <h3>List of Recipients</h3>
@@ -288,52 +288,52 @@ end
                                 </div>
                           </div>
 
-			</div>
-			<div class="a_fact_section">  
-			  <p>Number of Donors: <%= donor_count %></p>
-			  <p class="show_donor_list text_link">list</p>
-			  <div class="fact_info donor_list">
-			  	<div class="fun_fact">
-			  	  <h3>List of Donors</h3>
-				  <% 
-				  donors = Location.where(:is_donor => true)
-				  donors.each do |donor|
-				    if donor.website != nil%>
-				      <div>
-				        <p class> 
-				          <a href="<%= donor.website %>"><%= donor.name %></a>
-				        </p>
-				      </div>
-				    <% else %>
-				      <div> 
-				        <p> <%= donor.name %> </p>
-				      </div>
-				    <% end %>
-				  <% end %>
-				</div>
-			  </div>
-			</div>  
-			<div class="a_fact_section">
-			  <p>Percent of Trips Human Powered: 
-				<%= human_power_percent.round %> %
-			  </p>
-			  <p class="show_trans_chart text_link"> chart </p>
-			  <div class="fact_info transportation_chart">
-				<%= high_chart("trans_chart", h) %>
-			  </div>
-			</div>
-		  </div>
-		</div>
-		<div class="sign_in_section">
-		  <div>
-			<%= yield %>
-		  </div>
-		</div>
-	  </div>
-	  <div class="push"></div>
-	  <div class="footer">
-		<p>Copyright © <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
-	  </div>
+      </div>
+      <div class="a_fact_section">  
+        <p>Number of Donors: <%= donor_count %></p>
+        <p class="show_donor_list text_link">list</p>
+        <div class="fact_info donor_list">
+          <div class="fun_fact">
+            <h3>List of Donors</h3>
+          <% 
+          donors = Location.where(:is_donor => true)
+          donors.each do |donor|
+            if donor.website != nil%>
+              <div>
+                <p class> 
+                  <a href="<%= donor.website %>"><%= donor.name %></a>
+                </p>
+              </div>
+            <% else %>
+              <div> 
+                <p> <%= donor.name %> </p>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        </div>
+      </div>  
+      <div class="a_fact_section">
+        <p>Percent of Trips Human Powered: 
+        <%= human_power_percent.round %> %
+        </p>
+        <p class="show_trans_chart text_link"> chart </p>
+        <div class="fact_info transportation_chart">
+        <%= high_chart("trans_chart", h) %>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="sign_in_section">
+      <div>
+      <%= yield %>
+      </div>
+    </div>
+    </div>
+    <div class="push"></div>
+    <div class="footer">
+    <p>Copyright (c) <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
+    </div>
   </div>
 </body>
 </html>

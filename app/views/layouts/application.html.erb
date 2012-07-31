@@ -5,9 +5,13 @@
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", :media => "all" %>
+  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "welcome", "test", "gmaps4rails", :media => "all" %>
+  <%= yield :scripts %>
   <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag :highcharts  %>
   <%= csrf_meta_tags %>
+  <script type="text/javascript" language="javascript" src="/DataTables-1.9.2/media/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/DataTables-1.9.2/media/css/demo_table.css">
 </head>
 <body>
   <div class="container">
@@ -18,7 +22,6 @@
           <span>Home</span>
         </a>
       </li>
-      <% if volunteer_signed_in? %>
         <li class='has-sub'>
           <a href="#" class="<%= "selected" if request.fullpath == logs_path %>">
             <span>Schedule</span>
@@ -59,8 +62,6 @@
                     <% end %>
           </ul>
         </li>
-      <% end %>
-
       <% if volunteer_signed_in? %>
         <li class="has-sub">
           <a href="#" class="<%= "selected" if request.fullpath == mine_logs_path %>">
@@ -231,6 +232,32 @@
            </li>
           </ul>
         </li>
+    <% end %>
+    <% if volunteer_signed_in? and current_volunteer.super_admin? %>
+      <li class="has-sub">
+        <a href="#">
+          <span>Testing</span>
+        </a>
+        <ul>
+          <li class='active '>
+            <a href="/home/welcome" class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
+              <span>Home</span>
+            </a>
+          </li>
+          <li>
+            <a href="/test/myschedules">My Schedule</a>
+          </li>
+          <li>
+            <a href="/test/schedule">All Schedules</a>
+          </li>
+          <li>
+              <a href="/test/shifts">My Shifts</a>
+          </li>
+          <li>
+            <a href="/test/cover">Cover Shifts</a>
+          </li>
+        </ul>
+      </li>
     <% end %>
     </div>
   </div>

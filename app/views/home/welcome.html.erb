@@ -1,0 +1,163 @@
+<div class="home_sidebar">
+  <h1> Sections <h2>
+</div>
+<div class="home_sections">
+  <div class="home_section">
+    <h1> My Pickups </h1>
+    <div class="home_sub_section">
+      <h2> Upcoming Pickups </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th>Location</th>
+            <th>Date</th>
+            <th>Link</th>
+          </tr>
+          <% @upcoming_pickups.each do |pickup| %>
+          <tr>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> </td>
+            <td> <%= pickup.when %> </td>
+            <td> <%= link_to "view", pickup %> </td>
+          </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> To Do Pickup Reports </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th>Donor</th>
+            <th>Date</th>
+            <th>Link</th>
+          </tr>
+          <% @to_do_reports.each do |report| %>
+          <tr>
+            <td> <%= link_to report.donor.name, report.donor %> </td>
+            <td> <%= report.when %> </td>
+            <td> <%= link_to "view", report %> </td>
+          </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="home_section">
+    <h1> Pickup Stats </h1>
+    <div class="home_sub_section">
+      <h2> Pickup Stats </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th> Stat </th>
+            <th> Value </th>
+          </tr>
+          <tr>
+            <td> Completed Pickups </td>
+            <td> <%= @completed_pickup_count %> </td>
+          </tr>
+          <tr>
+            <td> Amount of Food Rescued </td>
+            <td> <%= @total_food_rescued %> </td>
+          </tr>
+          <tr title="Distance is calculated based on the geospacial distance between your pickups and delivaries. This underestimates your distance traveled.">
+            <td> Distance traveled (Estimate) </td>
+            <td> <%= @dis_traveled.round(2) %> km</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Food Collected by Day </h2>
+      <div class="home_section_content">
+        <%= high_chart("chart_food_per_day", @food_chart_day)  %>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Food Collected by Month </h2>
+      <div class="home_section_content">
+        <%= high_chart("chart_food_per_month", @food_chart_month)  %>
+      </div>
+    </div>
+  </div>
+  <div class="home_section">
+    <h1>Additional Information</h1>
+    <div class="home_sub_section">
+      <h2> Your Info </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th> Info </th>
+            <th> Value </th>
+          </tr>
+          <tr>
+            <td> Location </td>
+            <td> <%= current_volunteer.regions.collect{ |r| r.name }.join(", ") %> </td> 
+          </tr>
+          <tr>
+            <td> Preferred Transporation </td>
+            <td> <%= current_volunteer.transport_type.nil? ? "unknown" : "a #{current_volunteer.transport_type.name}" %> </td>
+          </tr>
+          <tr>
+            <td> Preferred Method of Contact </td>
+            <td> <%= current_volunteer.preferred_contact.nil? ? "unknown" : current_volunteer.preferred_contact %> </td>
+          </tr>
+          <tr>
+            <td> SMS Setup </td>
+            <td> <%= current_volunteer.sms_too ? "Yes" : "No" %> </td>
+          </tr>
+          <tr>
+            <td> SMS Active </td>
+            <td> 
+              <% if current_volunteer.sms_email.nil? %>
+                <p> No : Missing your cellphone carrier </p>
+              <% elsif current_volunteer.sms_too %>
+                <p> No : Missing your cellphone number </p>
+              <% else %>
+                <p> Yes </p>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <td> Recieving pre-pick-up reminders </td>
+            <td> <%= current_volunteer.pre_reminders_too ? "Yes" : "No" %> </td>
+          </tr>
+          <tr>
+            <td> Changed settings </td>
+            <td> <a href="/volunteers/<%= current_volunteer.id %>/edit"> Click Here </a> </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="home_sub_section">
+    	<h2> Your Donor/Recipient Map </h2>
+    	<div class="home_section_content">
+    	  <p> A Map Of Donor and Recipients </p>
+    	</div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Next Meeting Info </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th> Info </th>
+            <th> Value </th>
+          </tr>
+          <tr>
+            <td> Date </td>
+            <td> 2/2/2222 </td> 
+          </tr>
+          <tr>
+            <td> Location </td>
+            <td> West Elm Street <a href="#"> Map </a> </td>
+          </tr>
+          <tr>
+            <td> Topics </td>
+            <td> Topic, Topic, Topic, Topic, Topci </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

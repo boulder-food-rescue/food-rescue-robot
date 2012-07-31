@@ -14,4 +14,6 @@ class Location < ActiveRecord::Base
   def authorized_for_delete?
     current_user.admin or current_user.region_admin?(self.region)
   end
+  
+  @json = '[{"description": "", "title": "", "sidebar": "", "lng": "28.8701", "lat": "47.0345", "picture": "", "width": "", "height": ""},{"lng": "28.9", "lat": "47" }]'
 end

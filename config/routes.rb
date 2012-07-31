@@ -1,11 +1,18 @@
 Webapp::Application.routes.draw do
+
+  get "test/cover"
+
+  get "test/shifts"
+
+  get "test/myschedules"
+
+  get "test/schedule"
+
+  get "home/welcome"
+  
   resources :cell_carriers do as_routes end
 
-  resources :cell_carriers
-
   resources :assignments do as_routes end
-
-  resources :assignments
 
   resources :regions do as_routes end
 

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -10,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120723193043) do
+ActiveRecord::Schema.define(:version => 20120724220339) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -55,6 +56,7 @@ ActiveRecord::Schema.define(:version => 20120723193043) do
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "region_id"
+    t.string   "twitter_handle"
   end
 
   create_table "logs", :force => true do |t|
@@ -87,11 +89,17 @@ ActiveRecord::Schema.define(:version => 20120723193043) do
     t.string   "website"
     t.text     "address"
     t.text     "notes"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
     t.string   "handbook_url"
     t.integer  "prior_lbs_rescued"
     t.integer  "prior_num_pickups"
+    t.string   "twitter_key"
+    t.string   "twitter_secret"
+    t.string   "twitter_token"
+    t.string   "twitter_token_secret"
+    t.integer  "twitter_last_poundage"
+    t.datetime "twitter_last_timestamp"
   end
 
   create_table "schedules", :force => true do |t|

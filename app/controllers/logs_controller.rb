@@ -58,11 +58,11 @@ class LogsController < ApplicationController
     index
   end
   def mine_upcoming
-    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" >= DATE '#{(Date.today).to_s}'"
+    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" >= '#{(Date.today).to_s}'"
     index
   end
   def mine_past
-    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" < DATE '#{(Date.today).to_s}'"
+    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" < '#{(Date.today).to_s}'"
     index
   end
   def open
@@ -89,7 +89,6 @@ class LogsController < ApplicationController
     @conditions = "\"when\" < DATE '#{(Date.today).to_s}' AND num_reminders >= 3 AND weight IS NULL"
     index
   end
-
 
   def conditions_for_collection
     if current_volunteer.assignments.length == 0
@@ -156,5 +155,5 @@ class LogsController < ApplicationController
     l.save
     mine_upcoming
   end
- 
+
 end

@@ -42,6 +42,7 @@ class Log < ActiveRecord::Base
     else
       t += " Thanks to @#{record.donor.twitter_handle} for the donation!"
     end
+    return true if t.length > 140
     Twitter.update(t)
     record.region.twitter_last_poundage = poundage
     record.region.twitter_last_timestamp = Time.now

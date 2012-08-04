@@ -1,7 +1,7 @@
 These shifts are coming up and need to be covered...
 
 <% @logs.each{ |l| %>
-  <%= l.when.strftime("%A") %>: <%= l.donor.name %> -> <%= l.recipient.name %>
+  <%= l.when.strftime("%A") %>: <%= l.donor.name %> -> <%= l.recipient.name %> (<%= l.food_type.name %>)
 <% } %> 
 
 Thanks!

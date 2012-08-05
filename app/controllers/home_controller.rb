@@ -17,20 +17,53 @@ class HomeController < ApplicationController
     completed_pickups = Log.where(:volunteer_id => current_volunteer).where("weight IS NOT NULL")
     @dis_traveled = 0.0
     completed_pickups.each do |pickup|
-      donor = Location.find(pickup.schedule.donor_id)
-      recipient = Location.find(pickup.schedule.recipient_id)
-      if donor.lng != nil && donor.lat != nil && recipient.lng != nil && recipient.lat != nil
-        radius = 6371.0
-        dLat = (donor.lat - recipient.lat) * Math::PI / 180.0
-        dLon = (donor.lng - recipient.lng) * Math::PI / 180.0
-        lat1 = recipient.lat * Math::PI / 180.0
-        lat2 = donor.lat * Math::PI / 180.0
-        
-        a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
-        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-        @dis_traveled += radius * c
-      end
+      if pickup.schedule != nil
+        donor = Location.find(pickup.schedule.donor_id)
+        recipient = Location.find(pickup.schedule.recipient_id)
+        if donor.lng != nil && donor.lat != nil && recipient.lng != nil && recipient.lat != nil
+          radius = 6371.0
+          dLat = (donor.lat - recipient.lat) * Math::PI / 180.0
+          dLon = (donor.lng - recipient.lng) * Math::PI / 180.0
+          lat1 = recipient.lat * Math::PI / 180.0
+          lat2 = donor.lat * Math::PI / 180.0
+          
+          a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
+          c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+          @dis_traveled += radius * c
+        end
+        end
     end
+    if current_volunteer.assignments.length == 0
+      @unassigned = true
+      @base_conditions = nil
+    else
+      @unassigned = false
+      @base_conditions = " AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+    end
+    @me = current_volunteer
+    @pickups = Log.where("volunteer_id = ? AND weight IS NOT NULL",current_volunteer.id)
+    @lbs = 0.0
+    @human_pct = 0.0
+    @num_pickups = {}
+    @num_covered = 0
+    @biggest = nil
+    @earliest = nil
+    @bike = TransportType.where("name = 'Bike'").shift
+    @pickups.each{ |l|
+      l.transport_type = @bike if l.transport_type.nil?
+      @num_pickups[l.transport_type] = 0 if @num_pickups[l.transport_type].nil?
+      @num_pickups[l.transport_type] += 1
+      @num_covered += 1 if l.orig_volunteer != @me and !l.orig_volunteer.nil?
+      @lbs += l.weight
+      @biggest = l if @biggest.nil? or l.weight > @biggest.weight
+      @earliest = l if @earliest.nil? or l.when < @earliest.when
+    }
+    @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
+    @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count
+    @num_to_cover = Log.where("volunteer_id IS NULL#{@base_conditions}").count
+    @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Date.today.to_s).count
+    @num_unassigned = Schedule.where("volunteer_id IS NULL AND donor_id IS NOT NULL and recipient_id IS NOT NULL#{@base_conditions}").count
+    
     
     #Food Collected Graphs
     running_total = 0.0

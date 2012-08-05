@@ -1,5 +1,4 @@
-<% open_shifts = Log.where("volunteer_id IS NULL AND recipient_id IS NOT NULL") %>
-<% if open_shifts.length == 0 %>
+<% if @open_shifts.length == 0 %>
 <p> 
   There are no shifts to cover at this time.
 </p>
@@ -21,7 +20,7 @@
   </thead>
   <tbody>
   <%
-  open_shifts.each do |shift|
+  @open_shifts.each do |shift|
   %>
   <tr>
     <td> <%= link_to "Take Shift", shift %> </td>

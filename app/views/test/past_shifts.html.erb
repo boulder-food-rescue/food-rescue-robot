@@ -1,0 +1,51 @@
+<% if @past_shifts.length == 0 %>
+<p> 
+  You have no shifts logged.
+</p>
+<% else %>
+<table id="my_schedule_table">
+  <thead>
+  <tr>
+    <th> When </th>
+    <th> Donor </th>
+    <th> Recipient </th>
+    <th> Weight </th>
+    <th> Transport Type </th>
+    <th> Food Type </th>
+    <th> Original Volunteer </th>
+    <th> Schedule </th>
+    <th>  </th>
+  </tr>
+  </thead>
+  <tbody>
+  <%
+  @past_shifts.each do |shift|
+  %>
+  <tr>
+    <td> <%= shift.when %> </td>
+    <td> <%= link_to shift.donor.name, shift.donor %> </td>
+    <td> <%= link_to shift.recipient.name, shift.recipient %> </td>
+    <td> <%= shift.weight %> </td>
+    <td>
+      <% if shift.transport_type != nil %>
+        <%= shift.transport_type.name %>
+      <% end %>
+    </td>
+    <td>
+      <% if shift.food_type != nil %>
+        <%= shift.food_type.name %>
+      <% end %>
+    </td>
+    <td>
+      <% if shift.orig_volunteer_id != nil %>
+        <% orig_volunteer = Volunteer.find(shift.orig_volunteer_id) %>
+        <%= link_to orig_volunteer.name, orig_volunteer %>
+      <% end %>
+    </td>
+    <td> <%= link_to "schedule", shift.schedule %> </td>
+    <td> <%= link_to "view", shift %> <%= link_to "edit", edit_log_path(shift) %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<% end %>

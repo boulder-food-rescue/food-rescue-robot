@@ -1,6 +1,3 @@
-// Place all the styles related to the test controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
 
 table{
   width: 100%;
@@ -51,8 +48,6 @@ table tbody tr.even td.sorting_1{
 table tbody tr.odd td.sorting_1{
   background: #EDEDED;
 }
-
-
 
 .ex_highlight #example tbody tr.even:hover, #example tbody tr.even td.highlighted {
   background-color: #ECFFB3;

@@ -1,0 +1,68 @@
+<div class="home_sidebar">
+  <h1> Sections <h2>
+</div>
+<div class="home_sections">
+  <div class="home_section">
+    <h1> User Controls </h1>
+    <div class="home_sub_section">
+      <h2> Switch to User </h2>
+      <div class="home_section_content">
+        <p> 
+          Select a volunteer from the list below to swtich to.
+          After switching you will have logout and login to get back to your
+          real user.
+        </p>
+        <%= form_tag("/test/switch_user", :method => "get") do %>
+        <table class>
+          <tr>
+            <td>Volunteer:</td>
+            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| [v.name,v.id] })) %></td>
+          </tr>
+        </table>
+        <%= submit_tag %>
+        <% end %>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> To Do Pickup Reports </h2>
+      <div class="home_section_content">
+      </div>
+    </div>
+  </div>
+  <div class="home_section">
+    <h1> Pickup Stats </h1>
+    <div class="home_sub_section">
+      <h2> Pickup Stats </h2>
+      <div class="home_section_content">
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Food Collected by Day </h2>
+      <div class="home_section_content">
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Food Collected by Month </h2>
+      <div class="home_section_content">
+      </div>
+    </div>
+  </div>
+  <div class="home_section">
+    <h1>Additional Information</h1>
+    <div class="home_sub_section">
+      <h2> Your Info </h2>
+      <div class="home_section_content">
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Your Donor/Recipient Map </h2>
+      <div class="home_section_content">
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Next Meeting Info </h2>
+      <div class="home_section_content">
+      </div>
+    </div>
+  </div>
+</div>

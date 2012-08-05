@@ -1,5 +1,4 @@
-<% volunteer_schedules = Schedule.all %>
-<% if volunteer_schedules.length == 0 %>
+<% if @volunteer_schedules.length == 0 %>
 <p> 
   You have no schedules to view. Please talk to an admin about getting assgined
    a pickup or pickup some open shifts at <%= link_to "cover shifts.", "/test/cover"%>
@@ -22,7 +21,7 @@
   </thead>
   <tbody>
   <%
-  volunteer_schedules.each do |schedule|
+  @volunteer_schedules.each do |schedule|
     if schedule.recipient != nil && schedule.volunteer != nil
   %>
   <tr>

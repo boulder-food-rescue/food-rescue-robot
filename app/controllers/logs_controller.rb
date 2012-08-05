@@ -70,23 +70,23 @@ class LogsController < ApplicationController
     index
   end
   def today
-    @conditions = "\"when\" = DATE '#{Date.today.to_s}'"
+    @conditions = "\"when\" = '#{Date.today.to_s}'"
     index 
   end
   def tomorrow
-    @conditions = "\"when\" = DATE '#{(Date.today+1).to_s}'"
+    @conditions = "\"when\" = '#{(Date.today+1).to_s}'"
     index
   end
   def yesterday
-    @conditions = "\"when\" = DATE '#{(Date.today-1).to_s}'"
+    @conditions = "\"when\" = '#{(Date.today-1).to_s}'"
     index
   end
   def being_covered
-    @conditions = "\"when\" >= DATE '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
+    @conditions = "\"when\" >= '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
     index
   end
   def tardy
-    @conditions = "\"when\" < DATE '#{(Date.today).to_s}' AND num_reminders >= 3 AND weight IS NULL"
+    @conditions = "\"when\" < '#{(Date.today).to_s}' AND num_reminders >= 3 AND weight IS NULL"
     index
   end
 

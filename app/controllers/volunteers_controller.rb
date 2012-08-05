@@ -94,5 +94,4 @@ class VolunteersController < ApplicationController
       format.html # home.html.erb
     end
   end
-
 end 

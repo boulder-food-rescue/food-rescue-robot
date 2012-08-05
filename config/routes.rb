@@ -7,6 +7,12 @@ Webapp::Application.routes.draw do
   get "test/myschedules"
 
   get "test/schedule"
+  
+  get "test/admin"
+  
+  get "test/switch_user"
+  
+  get "test/past_shifts"
 
   get "home/welcome"
   

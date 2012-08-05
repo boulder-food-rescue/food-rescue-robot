@@ -1,18 +1,26 @@
 Webapp::Application.routes.draw do
 
-  get "test/cover"
+  get "test/myschedules"
+
+  get "test/unassigned"
+
+  get "test/take_pickup"
+  
+  get "test/upcoming_shifts"
+  
+  get "test/past_shifts"
+  
+  get "test/cover_shifts"
+
+  get "test/take_shift"
 
   get "test/shifts"
-
-  get "test/myschedules"
 
   get "test/schedule"
   
   get "test/admin"
   
   get "test/switch_user"
-  
-  get "test/past_shifts"
 
   get "home/welcome"
   
@@ -124,7 +132,7 @@ Webapp::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => 'volunteers#home'
+  root :to => 'home#welcome'
 
   # See how all your routes lay out with "rake routes"
 

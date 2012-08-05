@@ -1,7 +1,7 @@
-<h2>Past Shifts</h2>
-<% if @past_shifts.length == 0 %>
+<h2>Upcoming Shifts</h2>
+<% if @upcoming_shifts.length == 0 %>
 <p> 
-  You have no shifts logged.
+  You have no shifts within the next 2 weeks.
 </p>
 <% else %>
 <table id="my_schedule_table">
@@ -20,12 +20,12 @@
   </thead>
   <tbody>
   <%
-  @past_shifts.each do |shift|
+  @upcoming_shifts.each do |shift|
   %>
   <tr>
     <td> <%= shift.when %> </td>
-    <td> <%= shift.donor != nil ? (link_to shift.donor.name, shift.donor) : ""%> </td>
-    <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
+    <td> <%= link_to shift.donor.name, shift.donor %> </td>
+    <td> <%= link_to shift.recipient.name, shift.recipient %> </td>
     <td> <%= shift.weight %> </td>
     <td>
       <% if shift.transport_type != nil %>

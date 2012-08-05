@@ -33,20 +33,24 @@ thead{
   border-bottom: 2px solid #B5B5B5;
 }
 
-table tbody tr.even{
+table tr.even{
   background-color: #F6F6F6;
 }
 
-table tbody tr.odd{
+table tr.odd{
   background: #FFFFFF;
 }
 
-table tbody tr.even td.sorting_1{
+table tr.even td.sorting_1{
   background-color: #E0E0E0;
 }
 
-table tbody tr.odd td.sorting_1{
+table tr.odd td.sorting_1{
   background: #EDEDED;
+}
+
+table tbody tr.odd td.special_col, table tbody tr.even td.special_col{
+  background: #F57A7A;
 }
 
 .ex_highlight #example tbody tr.even:hover, #example tbody tr.even td.highlighted {

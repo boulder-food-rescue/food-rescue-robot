@@ -1,9 +1,17 @@
 module SchedulesHelper
   def schedule_time_start_column(record)
-    sprintf("%04d",record.time_start)
+    if record.time_start == nil
+      sprintf("")
+    else
+      sprintf("%04d",record.time_start)
+    end
   end
   def schedule_time_stop_column(record)
-    sprintf("%04d",record.time_stop)
+    if record.time_start == nil
+      sprintf("")
+    else
+      sprintf("%04d",record.time_stop)
+    end
   end
   def schedule_recipient_column_attributes(record)
     if record.recipient.nil?

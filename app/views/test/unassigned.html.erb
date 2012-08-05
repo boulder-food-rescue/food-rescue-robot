@@ -1,15 +1,14 @@
-<h2>My Schedule</h2>
-<% volunteer_schedules = Schedule.where(:volunteer_id => current_volunteer) %>
-<% if volunteer_schedules.length == 0 %>
+<h2>Unassigned Pickups</h2>
+<% if @open_schedules.length == 0 %>
 <p> 
-  You have no schedules to view. Please talk to an admin about getting assgined
-   a pickup or pickup some open shifts at <%= link_to "cover shifts.", "/test/cover"%>
+  There are no open schedules at this time. Please check back later.
 </p>
 <% else %>
 <% days_of_week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ] %>
 <table id="my_schedule_table">
   <thead>
   <tr>
+    <th> Region </th>
     <th> Day of Week </th>
     <th> Donor </th>
     <th> Recipient </th>
@@ -18,19 +17,19 @@
     <th> End Time </th>
     <th> Notes </th>
     <th> Prior Volunteer </th>
-    <th> Link </th>
+    <th></th>
   </tr>
   </thead>
   <tbody>
   <%
-  volunteer_schedules.each do |schedule|
-    if schedule.recipient != nil && schedule.volunteer != nil
+    @open_schedules.each do |schedule|
   %>
   <tr>
+    <td> <%= schedule.region.name %>
     <td> <%= days_of_week[schedule.day_of_week] %> </td>
     <td> <%= link_to schedule.donor.name, schedule.donor %> </td>
     <td> <%= link_to schedule.recipient.name, schedule.recipient %> </td>
-    <td> <%= link_to schedule.volunteer.name, schedule.volunteer %> </td>
+    <td class="special_col"> <%= link_to "Take Pickup", {:controller => "test", :action => "take_shift", :id => schedule.id} %></td>
     <td> <%= schedule.time_start %> </td>
     <td> <%= schedule.time_stop %> </td>
     <td>
@@ -48,7 +47,6 @@
     </td>
     <td> <%= link_to 'view',  schedule %> </td>
   </tr>
-  <%   end %>
   <% end %>
   </tbody>
 </table>

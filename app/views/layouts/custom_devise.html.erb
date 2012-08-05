@@ -27,8 +27,7 @@ donor_count = 0
 
 #Get the pickup stats
 total_number_pickups = Log.count + Region.all.collect{ |r| r.prior_num_pickups }.compact.sum
-time = Time.new
-date = Date.new(time.year, time.month, time.day)
+date = Date.today
 pickups_this_day = Log.count(:conditions => {:when => date})
 pickups_this_week = Log.count(:conditions => {:when => date.at_beginning_of_week(start_day = :sunday)...date.at_end_of_week(start_day = :sunday)})
 pickups_this_month = Log.count(:conditions => {:when => date.at_beginning_of_month()...date.at_end_of_month()})
@@ -37,9 +36,9 @@ pickups_this_year = Log.count(:conditions => {:when => date.at_beginning_of_year
 #Amount of food stats
 starting_amount = Region.all.collect{ |r| r.prior_lbs_rescued }.compact.sum
 running_total = starting_amount
-current_month = time.month
-current_year = time.year
-current_day = time.day
+current_month = date.month
+current_year = date.year
+current_day = date.day
 
 food_per_day = []
 food_per_month = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
@@ -104,7 +103,7 @@ end
 #Volunteer info
 number_of_volunteers = Volunteer.count()
 largest_pickup = Log.where("logs.weight IS NOT NULL").order("weight DESC").first
-pickups_today = Schedule.where(:day_of_week => time.wday)
+pickups_today = Schedule.where(:day_of_week => date.wday)
   
 #Recipient Stats
 recipient_count = Location.count(:conditions => {:is_donor => false})

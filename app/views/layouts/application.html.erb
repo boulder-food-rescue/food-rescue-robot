@@ -20,74 +20,62 @@
   <div class="navigation">
     <div id="cssmenu">
       <li>
-        <a href="<%= home_volunteers_path %>" class="<%= "selected" if request.fullpath == home_volunteers_path %>">
+        <a href="/home/welcome">
           <span>Home</span>
         </a>
       </li>
         <li class='has-sub'>
-          <a href="#" class="<%= "selected" if request.fullpath == logs_path %>">
+          <a href="#">
             <span>Schedule</span>
           </a>
           <ul>
-                   <li>
-                    <a href=<%= mine_schedules_path %> class="<%= "selected" if request.fullpath == mine_schedules_path %>">
-                    <span>My Schedule</span>
-                    </a>
-                   </li>
-
-                   <li>
-                    <a href=<%= open_schedules_path %> class="<%= "selected" if request.fullpath == open_schedules_path %>">
-                    <span>Unassigned</span>
-                    </a>
-                   </li>
-                    <% if current_volunteer.any_admin? %>
-                    <li>
-                      <a href=<%= schedules_path %> class="<%= "selected" if request.fullpath == schedules_path %>">
-                        <span>Full Schedule</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href=<%= yesterday_schedules_path %> class="<%= "selected" if request.fullpath == yesterday_schedules_path %>">
-                        <span>Yesterday</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href=<%= today_schedules_path %> class="<%= "selected" if request.fullpath == today_schedules_path %>">
-                        <span>Today</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href=<%= tomorrow_schedules_path %> class="<%= "selected" if request.fullpath == tomorrow_schedules_path %>">
-                        <span>Tomorrow</span>
-                      </a>
-                    </li>
-                    <% end %>
+          <li>
+            <a href="/test/myschedules">My Schedule</a>
+          </li>
+          <li>
+            <a href="/test/unassigned">Unassigned</a>
+          </li>
+          <% if current_volunteer.any_admin? %>
+          <li>
+            <a href=<%= schedules_path %>>
+              <span>Full Schedule</span>
+            </a>
+            </li>
+          <li>
+            <a href=<%= yesterday_schedules_path %>>
+              <span>Yesterday</span>
+            </a>
+          </li>
+          <li>
+            <a href=<%= today_schedules_path %>>
+              <span>Today</span>
+            </a>
+          </li>
+          <li>
+            <a href=<%= tomorrow_schedules_path %>>
+              <span>Tomorrow</span>
+            </a>
+          </li>
+  <% end %>
           </ul>
         </li>
       <% if volunteer_signed_in? %>
         <li class="has-sub">
-          <a href="#" class="<%= "selected" if request.fullpath == mine_logs_path %>">
+          <a href="#">
             <span>Shifts</span>
           </a>
           <ul>
             <li>
-              <a href=<%= mine_upcoming_logs_path %> class="<%= "selected" if request.fullpath == mine_upcoming_logs_path %>">
-                <span>Upcoming Shifts</span>
-              </a>
+              <a href="/test/upcoming_shifts">Upcoming Shifts</a>
             </li>
             <li>
-              <a href=<%= mine_past_logs_path %> class="<%= "selected" if request.fullpath == mine_past_logs_path %>">
-                <span>Past Shifts</span>
-              </a>
-            </li>
-
-            <li>
-              <a href=<%= open_logs_path %> class="<%= "selected" if request.fullpath == open_logs_path %>">
-                <span>Cover Shifts</span>
-              </a>
+              <a href="/test/past_shifts">Past Shifts</a>
             </li>
             <li>
-              <a href=<%= new_absence_logs_path %> class="<%= "selected" if request.fullpath == new_absence_logs_path %>">
+              <a href="/test/cover_shifts">Cover Shifts</a>
+            </li>
+            <li>
+              <a href=<%= new_absence_logs_path %>>
                 <span>Schedule Absence</span>
               </a>
             </li>
@@ -112,7 +100,6 @@
           </ul>
         </li>
       <% end %>
-
       <% if volunteer_signed_in? and current_volunteer.any_admin? %>
         <li class='has-sub'>
           <a href="#" class="<%= "selected" if request.fullpath == volunteers_path %>">

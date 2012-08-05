@@ -30,13 +30,13 @@
           <tr>
             <th>Donor</th>
             <th>Date</th>
-            <th>Link</th>
+            <th></th>
           </tr>
           <% @to_do_reports.each do |report| %>
           <tr>
             <td> <%= link_to report.donor.name, report.donor %> </td>
             <td> <%= report.when %> </td>
-            <td> <%= link_to "view", report %> </td>
+            <td> <%= link_to "view", report %> | <%= link_to "edit", edit_log_path(report) %></td>
           </tr>
           <% end %>
         </table>

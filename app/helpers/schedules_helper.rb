@@ -1,9 +1,9 @@
 module SchedulesHelper
   def schedule_time_start_column(record)
-    sprintf("%04d",record.time_start)
+    record.time_start.nil? ? "?" : sprintf("%04d",record.time_start)
   end
   def schedule_time_stop_column(record)
-    sprintf("%04d",record.time_stop)
+    record.time_stop.nil? ? "?" : sprintf("%04d",record.time_stop)
   end
   def schedule_recipient_column_attributes(record)
     if record.recipient.nil?

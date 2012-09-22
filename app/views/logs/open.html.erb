@@ -1,5 +1,6 @@
-<% open_shifts = Log.where("volunteer_id IS NULL AND recipient_id IS NOT NULL") %>
-<% if open_shifts.length == 0 %>
+<h2>Cover a Shift</h2>
+
+<% if @open_shifts.length == 0 %>
 <p> 
   There are no shifts to cover at this time.
 </p>
@@ -21,10 +22,10 @@
   </thead>
   <tbody>
   <%
-  open_shifts.each do |shift|
+  @open_shifts.each do |shift|
   %>
   <tr>
-    <td> <%= link_to "Take Shift", shift %> </td>
+    <td class="special_col"> <%= link_to "Take Shift", {:controller => "logs", :action => "take", :id => shift.id} %> </td>
     <td> <%= shift.when %> </td>
     <td> <%= link_to shift.donor.name, shift.donor %> </td>
     <td> <%= link_to shift.recipient.name, shift.recipient %> </td>

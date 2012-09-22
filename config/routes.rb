@@ -1,14 +1,10 @@
 Webapp::Application.routes.draw do
-
-  get "test/cover"
-
-  get "test/shifts"
-
-  get "test/myschedules"
-
-  get "test/schedule"
-
-  get "home/welcome"
+ 
+  resources :home do
+    collection do
+      get :welcome
+    end
+  end
   
   resources :cell_carriers do as_routes end
 
@@ -30,9 +26,11 @@ Webapp::Application.routes.draw do
       get :yesterday
       get :tardy
       get :open
-      get :mine
       get :mine_past
       get :mine_upcoming
+      get :mine_past_old
+      get :mine_upcoming_old
+      get :open_old
       get :being_covered
       get :new_absence
       get :create_absence
@@ -49,7 +47,10 @@ Webapp::Application.routes.draw do
       get :tomorrow
       get :yesterday
       get :open
+      get :open_old
       get :mine
+      get :mine_old
+      get :fast_schedule
     end
     member do
       get :take
@@ -66,6 +67,8 @@ Webapp::Application.routes.draw do
       get :home
       get :unassigned
       get :shiftless
+      get :admin
+      get :switch_user
     end
   end
 
@@ -118,7 +121,7 @@ Webapp::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => 'volunteers#home'
+  root :to => 'home#welcome'
 
   # See how all your routes lay out with "rake routes"
 

@@ -52,41 +52,49 @@ class LogsController < ApplicationController
 #    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
 #  end
 
-  # Custom views of the index table
-  def mine
-    @conditions = "volunteer_id = '#{current_volunteer.id}'"
-    index
-  end
   def mine_upcoming
+    date = Date.today
+    @upcoming_shifts = Log.where(:volunteer_id => current_volunteer.id).where(:when => date...(date + 7))
+  end
+  def open
+    @open_shifts = Log.where("volunteer_id IS NULL AND recipient_id IS NOT NULL").where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
+  end
+  def mine_past
+    @past_shifts = Log.where(:volunteer_id => current_volunteer.id).where("\"when\" <= '#{(Date.today).to_s}'")
+  end
+
+
+  # Custom views of the index table
+  def mine_upcoming_old
     @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" >= '#{(Date.today).to_s}'"
     index
   end
-  def mine_past
+  def mine_past_old
     @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" < '#{(Date.today).to_s}'"
     index
   end
-  def open
+  def open_old
     @conditions = "volunteer_id is NULL"
     index
   end
   def today
-    @conditions = "\"when\" = DATE '#{Date.today.to_s}'"
+    @conditions = "\"when\" = '#{Date.today.to_s}'"
     index 
   end
   def tomorrow
-    @conditions = "\"when\" = DATE '#{(Date.today+1).to_s}'"
+    @conditions = "\"when\" = '#{(Date.today+1).to_s}'"
     index
   end
   def yesterday
-    @conditions = "\"when\" = DATE '#{(Date.today-1).to_s}'"
+    @conditions = "\"when\" = '#{(Date.today-1).to_s}'"
     index
   end
   def being_covered
-    @conditions = "\"when\" >= DATE '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
+    @conditions = "\"when\" >= '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
     index
   end
   def tardy
-    @conditions = "\"when\" < DATE '#{(Date.today).to_s}' AND num_reminders >= 3 AND weight IS NULL"
+    @conditions = "\"when\" < '#{(Date.today).to_s}' AND num_reminders >= 3 AND weight IS NULL"
     index
   end
 
@@ -154,6 +162,7 @@ class LogsController < ApplicationController
     l.volunteer = current_volunteer
     l.save
     mine_upcoming
+    render :mine_upcoming
   end
 
 end

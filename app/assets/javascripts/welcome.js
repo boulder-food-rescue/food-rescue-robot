@@ -37,6 +37,9 @@ var floating_side = function(){
   if(w_top >= top_size && !$('.home_sidebar').hasClass('floating')){
     $('.home_sidebar').addClass('floating')
   }
+  else if(w_top >= top_size && $('.home_sidebar').hasClass('floating')){
+		$('.home_sidebar').css({'top' : $(this).scrollTop()})
+  }
   else if(w_top < top_size){
     $('.home_sidebar').removeClass('floating')
   }

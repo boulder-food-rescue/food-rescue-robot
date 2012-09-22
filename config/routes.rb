@@ -1,27 +1,32 @@
 Webapp::Application.routes.draw do
+ 
+  resources :test do
+    collection do
+      get :myschedules
+      get :unassigned
+      get :take_pickup
+      get :upcoming_shifts
+      get :past_shifts
+      get :cover_shifts
+      get :take_shift
+      get :shifts
+      get :schedule
+      get :admin
+      get :switch_user
+    end
+  end
 
-  get "test/myschedules"
-
-  get "test/unassigned"
-
-  get "test/take_pickup"
-  
-  get "test/upcoming_shifts"
-  
-  get "test/past_shifts"
-  
-  get "test/cover_shifts"
-
-  get "test/take_shift"
-
-  get "test/shifts"
-
-  get "test/schedule"
-  
-  get "test/admin"
-  
-  get "test/switch_user"
-
+  #get "test/myschedules"
+  #get "test/unassigned"
+  #get "test/take_pickup"
+  #get "test/upcoming_shifts"
+  #get "test/past_shifts"
+  #get "test/cover_shifts"
+  #get "test/take_shift"
+  #get "test/shifts"
+  #get "test/schedule"
+  #get "test/admin"
+  #get "test/switch_user"
   get "home/welcome"
   
   resources :cell_carriers do as_routes end

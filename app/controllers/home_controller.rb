@@ -1,4 +1,6 @@
 class HomeController < ApplicationController
+  before_filter :authenticate_volunteer!
+
   def welcome
     today = Date.today
     

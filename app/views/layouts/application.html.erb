@@ -37,11 +37,13 @@
           </li>
           <% if current_volunteer.any_admin? %>
           <li>
-            <a href=<%= schedules_path %>>
-              <span>Full Schedule</span>
-            </a>
-            </li>
+           <a href=<%= schedules_path %>>
+             <span>Full Schedule</span>
+           </a>
+          </li>
           <li>
+            <a href="/test/schedule"><span>Fast Full Schedule (Testing)</span></a>
+          </li>
             <a href=<%= yesterday_schedules_path %>>
               <span>Yesterday</span>
             </a>
@@ -197,6 +199,9 @@
               <span>Regions</span>
             </a>
           </li>
+          <li>
+              <a href="/test/admin">Controls & Stats (Testing)</a>
+          </li>
           <% end %>
 		  </ul>
         </li>
@@ -218,38 +223,6 @@
            </li>
           </ul>
         </li>
-    <% end %>
-    <% if volunteer_signed_in? and current_volunteer.super_admin? %>
-      <li class="has-sub">
-        <a href="#">
-          <span>Testing</span>
-        </a>
-        <ul>
-          <li class='active '>
-            <a href="/home/welcome" class="<%= "selected" if request.fullpath == mine_schedules_path  || request.fullpath == '/' %>">
-              <span>Home</span>
-            </a>
-          </li>
-          <li>
-            <a href="/test/myschedules">My Schedule</a>
-          </li>
-          <li>
-            <a href="/test/schedule">All Schedules</a>
-          </li>
-          <li>
-              <a href="/test/shifts">My Shifts</a>
-          </li>
-          <li>
-            <a href="/test/cover">Cover Shifts</a>
-          </li>
-          <li>
-            <a href="/test/past_shifts">Past Shifts</a>
-          </li>
-          <li>
-              <a href="/test/admin">Admin Only Controls</a>
-            </li>
-        </ul>
-      </li>
     <% end %>
     </div>
   </div>

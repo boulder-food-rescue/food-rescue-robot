@@ -25,7 +25,7 @@
   @open_shifts.each do |shift|
   %>
   <tr>
-    <td class="special_col"> <%= link_to "Take Shift", {:controller => "test", :action => "take_shift", :id => shift.id} %> </td>
+    <td class="special_col"> <%= link_to "Take Shift", {:controller => "logs", :action => "take", :id => shift.id} %> </td>
     <td> <%= shift.when %> </td>
     <td> <%= link_to shift.donor.name, shift.donor %> </td>
     <td> <%= link_to shift.recipient.name, shift.recipient %> </td>

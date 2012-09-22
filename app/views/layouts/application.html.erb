@@ -30,19 +30,16 @@
           </a>
           <ul>
           <li>
-            <a href="/test/myschedules">My Schedule</a>
+            <a href="/schedules/mine">My Schedule</a>
           </li>
           <li>
-            <a href="/test/unassigned">Unassigned</a>
+            <a href="/schedules/open">Unassigned</a>
           </li>
           <% if current_volunteer.any_admin? %>
           <li>
            <a href=<%= schedules_path %>>
              <span>Full Schedule</span>
            </a>
-          </li>
-          <li>
-            <a href="/test/schedule"><span>Fast Full Schedule (Testing)</span></a>
           </li>
             <a href=<%= yesterday_schedules_path %>>
               <span>Yesterday</span>
@@ -58,6 +55,9 @@
               <span>Tomorrow</span>
             </a>
           </li>
+          <li>
+            <a href="/schedules/fast_schedule"><span>Faster Full Schedule (Testing)</span></a>
+          </li>
   <% end %>
           </ul>
         </li>
@@ -68,13 +68,13 @@
           </a>
           <ul>
             <li>
-              <a href="/test/upcoming_shifts">Upcoming Shifts</a>
+              <a href="/logs/mine_upcoming">Upcoming Shifts</a>
             </li>
             <li>
-              <a href="/test/past_shifts">Past Shifts</a>
+              <a href="/logs/mine_past">Past Shifts</a>
             </li>
             <li>
-              <a href="/test/cover_shifts">Cover Shifts</a>
+              <a href="/logs/open">Cover Shifts</a>
             </li>
             <li>
               <a href=<%= new_absence_logs_path %>>
@@ -200,7 +200,7 @@
             </a>
           </li>
           <li>
-              <a href="/test/admin">Controls & Stats (Testing)</a>
+              <a href="/volunteers/admin">Controls & Stats (Testing)</a>
           </li>
           <% end %>
 		  </ul>

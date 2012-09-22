@@ -58,40 +58,21 @@ class VolunteersController < ApplicationController
     @conditions
   end
 
-  # Other views entirely
-  def home
-    if current_volunteer.assignments.length == 0
-      @unassigned = true
-      @base_conditions = nil
-    else
-      @unassigned = false
-      @base_conditions = " AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+  # switch to a particular user
+  def switch_user
+    if current_volunteer.admin
+      sign_out(current_volunteer)
+      sign_in(Volunteer.find(params[:volunteer_id].to_i))
     end
-    @me = current_volunteer
-    @pickups = Log.where("volunteer_id = ? AND weight IS NOT NULL",current_volunteer.id)
-    @lbs = 0.0
-    @human_pct = 0.0
-    @num_pickups = {}
-    @num_covered = 0
-    @biggest = nil
-    @earliest = nil
-    @bike = TransportType.where("name = 'Bike'").shift
-    @pickups.each{ |l|
-      l.transport_type = @bike if l.transport_type.nil?
-      @num_pickups[l.transport_type] = 0 if @num_pickups[l.transport_type].nil?
-      @num_pickups[l.transport_type] += 1
-      @num_covered += 1 if l.orig_volunteer != @me and !l.orig_volunteer.nil?
-      @lbs += l.weight
-      @biggest = l if @biggest.nil? or l.weight > @biggest.weight
-      @earliest = l if @earliest.nil? or l.when < @earliest.when
-    }
-    @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
-    @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count
-    @num_to_cover = Log.where("volunteer_id IS NULL#{@base_conditions}").count
-    @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Date.today.to_s).count
-    @num_unassigned = Schedule.where("volunteer_id IS NULL AND donor_id IS NOT NULL and recipient_id IS NOT NULL#{@base_conditions}").count
-    respond_to do |format|
-      format.html # home.html.erb
+    if not current_volunteer.admin
+      redirect_to "/"
+    else
+      render :admin
     end
   end
+
+  # special settings/stats page for admins only
+  def admin
+  end
+
 end 

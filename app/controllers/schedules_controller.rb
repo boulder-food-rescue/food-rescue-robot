@@ -40,15 +40,25 @@ class SchedulesController < ApplicationController
 #    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
 #  end
 
-  # Custom views of the index table
   def open
+    @open_schedules = Schedule.where("volunteer_id IS NULL AND recipient_id IS NOT NULL")
+  end
+  def open_old
     @conditions = "volunteer_id is NULL AND recipient_id IS NOT NULL and donor_id IS NOT NULL"
     index
   end
+
   def mine
+  end
+  def mine_old
     @conditions = "volunteer_id = '#{current_volunteer.id}'"
     index
   end
+
+  def fast_schedule
+    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
+  end
+
   def today
     @conditions = "day_of_week = #{Date.today.wday}"
     index
@@ -72,10 +82,10 @@ class SchedulesController < ApplicationController
   end
 
   def take
-    l = Schedule.find(params[:id])
-    l.volunteer = current_volunteer
-    l.save
-    mine
+    s = Schedule.find(params[:id])
+    s.volunteer = current_volunteer
+    s.save
+    render "mine"
   end
 
 end 

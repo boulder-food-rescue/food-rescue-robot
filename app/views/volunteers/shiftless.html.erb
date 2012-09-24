@@ -1,0 +1,35 @@
+<h2>Volunteers without Shifts</h2>
+<% if @volunteers.length == 0 %>
+<p> 
+No shiftless volunteers in your region(s).
+</p>
+<% else %>
+<table id="my_volunteer_table">
+  <thead>
+  <tr>
+    <th> Name </th>
+    <th> Email </th>
+    <th> Phone </th>
+    <th> Regions </th>
+    <th> Member since </th>
+    <th> Link </th>
+  </tr>
+  </thead>
+  <tbody>
+  <%
+  @volunteers.each do |v|
+  %>
+  <tr>
+    <td> <%= v.name %>
+    <td> <%= v.email %>
+    <td> <%= v.phone %>
+    <td> <%= v.regions.collect{ |r| r.name }.join(", ") %>
+    <td> <%= v.created_at %>
+    <td> <%= link_to 'view', v %> </td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<br><br>
+Email List: <%= @volunteers.collect{ |v| v.email }.join(", ") %>
+<% end %>

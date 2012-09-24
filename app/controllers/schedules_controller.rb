@@ -41,10 +41,10 @@ class SchedulesController < ApplicationController
 #  end
 
   def open
-    @open_schedules = Schedule.where("volunteer_id IS NULL AND recipient_id IS NOT NULL")
+    @open_schedules = Schedule.where("volunteer_id IS NULL AND recipient_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
   end
   def open_old
-    @conditions = "volunteer_id is NULL AND recipient_id IS NOT NULL and donor_id IS NOT NULL"
+    @conditions = "volunteer_id is NULL AND recipient_id IS NOT NULL and donor_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
     index
   end
 

@@ -51,6 +51,12 @@ class VolunteersController < ApplicationController
     index
   end
   def shiftless
+    my_rids = current_volunteer.regions.collect{ |r| r.id }
+    @volunteers = Volunteer.where("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
+                                   (gone_until IS NULL or gone_until < current_date)").collect{ |v| 
+      (v.regions.collect{ |r| r.id } & my_rids).length > 0 ? v : nil }.compact
+  end
+  def shiftless_old
     @conditions = "(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0"
     index
   end

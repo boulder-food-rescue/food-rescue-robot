@@ -48,6 +48,7 @@ class Log < ActiveRecord::Base
       record.region.twitter_last_poundage = poundage
       record.region.twitter_last_timestamp = Time.now
       record.region.save
+      flash[:notice] = "Tweeted: #{t}"
     rescue
       flash[:notice] = "Twitter update didn't work for some reason, but everything else seems to have..."
     end

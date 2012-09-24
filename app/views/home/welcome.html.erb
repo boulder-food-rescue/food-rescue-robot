@@ -119,6 +119,18 @@
             <td> Picture: </td>
             <td> <%= current_volunteer.photo_file_name.nil? ? "none" : link_to(current_volunteer.photo(:medium)){ image_tag(current_volunteer.photo(:thumb)) } %> </td>
           </tr>
+          <% if current_volunteer.region_admin? %>
+          <tr>
+            <td> Admin For: </td>
+            <td> <%= current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact.join(", ") %> </td>
+          </tr>
+          <% end %>
+          <% if current_volunteer.super_admin? %>
+          <tr>
+            <td> Superpowers: </td>
+            <td> You are omnipotent. Your power is without parallel. </td>
+          </td>
+          <% end %>
           <tr>
             <td> Region(s): </td>
             <td> <%= current_volunteer.regions.collect{ |r| r.name }.join(", ") %> </td> 

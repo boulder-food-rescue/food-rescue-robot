@@ -67,6 +67,7 @@ Webapp::Application.routes.draw do
       get :home
       get :unassigned
       get :shiftless
+      get :shiftless_old
       get :admin
       get :switch_user
     end

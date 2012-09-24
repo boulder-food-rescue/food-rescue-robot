@@ -51,6 +51,10 @@ class Volunteer < ActiveRecord::Base
     return sprintf(self.cell_carrier.format,$1) 
   end 
 
+  def main_region
+    self.regions[0]
+  end
+
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me
   attr_accessible :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id

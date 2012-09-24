@@ -10,6 +10,8 @@ class Volunteer < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
+
   # column-level restrictions
   def admin_notes_authorized?
     current_user.admin

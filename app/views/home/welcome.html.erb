@@ -116,6 +116,10 @@
             <th> Value </th>
           </tr>
           <tr>
+            <td> Picture: </td>
+            <td> <%= current_volunteer.photo_file_name.nil? ? "none" : link_to(current_volunteer.photo(:medium)){ image_tag(current_volunteer.photo(:thumb)) } %> </td>
+          </tr>
+          <tr>
             <td> Region(s): </td>
             <td> <%= current_volunteer.regions.collect{ |r| r.name }.join(", ") %> </td> 
           </tr>

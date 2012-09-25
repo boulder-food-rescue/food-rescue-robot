@@ -1,40 +1,181 @@
-<% if @me.phone.nil? %>
-  <span style="color: green;">
-  Hey! We currently don't have a phone number for you, please <a href="/volunteers/edit">add one</a> when you get a moment.
-  </span>
-  <br><br>
-<% end %>
-
-<h2>Your Stats</h2>
-<br>Hi <%= @me.name %>,<br><br>
-<% unless @unassigned %>
-You currently have <%= @num_shifts %> <a href="/schedules/mine">regularly scheduled pick-ups</a>. There are <%= @num_unassigned %> regular pick-ups that need a volunteer right now, if you'd like to <a href="/schedules/open">grab one of them</a>.
-<br><br>
-You have <%= @num_upcoming %> <a href="/logs/mine_upcoming">upcoming shifts</a>. There are <%= @num_to_cover %> shifts that need covering if you'd like to <a href="/logs/open">pick one up</a>.
-<br><br>
-<% unless @earliest.nil? %>
-Since <%= @earliest.when.strftime("%B %-d, %Y")%>, you've done <%= @pickups.length %> pick-ups, for a total of <%= @lbs.round %> lbs of food rescued, averaging <%= sprintf("%.02f",(@lbs/((Date.today-(@earliest.when))/7.0))) %> lbs per week, and <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> per pick-up.<br>
-Of those, <%= @num_covered %> were ones you covered for other volunteers. <br><br>
-Your biggest pick-up was on <%= @biggest.when.strftime("%B %-d, %Y") %> from <%= @biggest.donor.name %> to <%= @biggest.recipient.name %>, totaling <%= @biggest.weight %> lbs.<br>
-You can see a list of all your pick-ups, past and future, <a href="/logs/mine">here</a>.
-<br><br>
-You've used human-powered transportation <%= @human_pct.round %>% of the time<%= @human_pct > 90 ? " :)" : "" %>.
-<% end %>
-<% else %>
-You're not yet assigned to any regions. Things will get more interesting around here once an admin assigns you :).
-<% end %>
-<br><br>
-<h2>Your Info</h2>
-<br>You are a volunteer in: <%= @me.regions.collect{ |r| r.name }.join(", ") %>.<br>
-<br>Your preferred transportation is <%= @me.transport_type.nil? ? "unknown" : "a #{@me.transport_type.name}" %> and your preferred method of contact is <%= @me.preferred_contact.nil? ? "unknown" : @me.preferred_contact %>.<br>
-
-<br>You <%= @me.sms_too ? "are" : "are not" %> setup to receive SMS messages (in addition to emails)
-<% if !@me.sms_email.nil? %>
-at <%= @me.sms_email %>
-<% elsif @me.sms_too %>
-but we don't have your phone number or cell carrier, so we can't actually send them
-<% end %>.<br>
-
-<br>You are <%= @me.pre_reminders_too ? "" : "not " %>setup to recieve pre-pick-up reminders.<br>
-
-<br>You can change these settings <a href="/volunteers/<%= @me.id %>/edit">here</a>.
+<div class="home_sidebar">
+  <h1> Sections <h2>
+</div>
+<div class="home_sections">
+  <div class="home_section">
+    <h1> My Pickups </h1>
+    <div class="home_sub_section">
+      <h2> Upcoming Pickups </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th>Location</th>
+            <th>Date</th>
+            <th>Link</th>
+          </tr>
+          <% @upcoming_pickups.each do |pickup| %>
+          <tr>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> </td>
+            <td> <%= pickup.when %> </td>
+            <td> <%= link_to "view", pickup %> </td>
+          </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> To Do Pickup Reports </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th>Donor</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+          <% @to_do_reports.each do |report| %>
+          <tr>
+            <td> <%= link_to report.donor.name, report.donor %> </td>
+            <td> <%= report.when %> </td>
+            <td> <%= link_to "view", report %> | <%= link_to "edit", edit_log_path(report) %></td>
+          </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="home_section">
+    <h1> Pickup Stats </h1>
+    <div class="home_sub_section">
+      <h2> Pickup Stats </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th> Stat </th>
+            <th> Value </th>
+          </tr>
+          <tr>
+            <td> Stats Start Date </td>
+            <td> <%= @earliest == nil ? "No Pickups Logged" : @earliest.when %> </td>
+          </tr>
+          <tr>
+            <td> Completed Pickups </td>
+            <td> <%= @completed_pickup_count %> </td>
+          </tr>
+          <tr>
+            <td> Amount of Food Rescued </td>
+            <td> <%= @total_food_rescued %> lbs</td>
+          </tr>
+          <tr title="Distance is calculated based on the geospacial distance between your pickups and delivaries. This underestimates your distance traveled.">
+            <td> Distance traveled (Estimate) </td>
+            <td> <%= @dis_traveled.round(2) %> km</td>
+          </tr>
+          <tr>
+            <td> Weekly Avg </td>
+            <td> <%= sprintf("%.02f", @earliest != nil ? (@lbs/((Date.today-(@earliest.when))/7.0)): "0" ) %> lbs</td>
+          </tr>
+          <tr>
+            <td> Pickup Avg </td>
+            <td> <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> lbs</td>
+          </tr>
+          <tr>
+            <td># of Shifts Covered </td>
+            <td> <%= @num_covered %> </td>
+          </tr>
+          <tr>
+            <td> % Human Powered </td>
+            <% if @human_pct > -1 %>
+            <td> <%= @human_pct.round %>%<%= @human_pct > 90 ? " :)" : "" %> </td>
+            <% else %>
+            <td> You have no pickups logged </td>
+            <% end %>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Food Collected by Day </h2>
+      <div class="home_section_content">
+        <%= high_chart("chart_food_per_day", @food_chart_day)  %>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Food Collected by Month </h2>
+      <div class="home_section_content">
+        <%= high_chart("chart_food_per_month", @food_chart_month)  %>
+      </div>
+    </div>
+  </div>
+  <div class="home_section">
+    <h1>Additional Information</h1>
+    <div class="home_sub_section">
+      <h2> Your Info </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th> Info </th>
+            <th> Value </th>
+          </tr>
+          <tr>
+            <td> Picture: </td>
+            <td> <%= current_volunteer.photo_file_name.nil? ? "none" : link_to(current_volunteer.photo(:medium)){ image_tag(current_volunteer.photo(:thumb)) } %> </td>
+          </tr>
+          <% if current_volunteer.region_admin? %>
+          <tr>
+            <td> Admin For: </td>
+            <td> <%= current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact.join(", ") %> </td>
+          </tr>
+          <% end %>
+          <% if current_volunteer.super_admin? %>
+          <tr>
+            <td> Superpowers: </td>
+            <td> You are omnipotent. Your power is without parallel. </td>
+          </td>
+          <% end %>
+          <tr>
+            <td> Region(s): </td>
+            <td> <%= current_volunteer.regions.collect{ |r| r.name }.join(", ") %> </td> 
+          </tr>
+          <tr>
+            <td> Preferred Transporation </td>
+            <td> <%= current_volunteer.transport_type.nil? ? "unknown" : "a #{current_volunteer.transport_type.name}" %> </td>
+          </tr>
+          <tr>
+            <td> Preferred Method of Contact </td>
+            <td> <%= current_volunteer.preferred_contact.nil? ? "unknown" : current_volunteer.preferred_contact %> </td>
+          </tr>
+          <tr>
+            <td> SMS Setup </td>
+            <td> <%= current_volunteer.sms_too ? "Yes" : "No" %> </td>
+          </tr>
+          <tr>
+            <td> SMS Active </td>
+            <td> 
+              <% if current_volunteer.sms_email.nil? %>
+                <p> No : Missing your cellphone carrier </p>
+              <% elsif current_volunteer.sms_too %>
+                <p> No : Missing your cellphone number </p>
+              <% else %>
+                <p> Yes </p>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <td> Recieving pre-pick-up reminders </td>
+            <td> <%= current_volunteer.pre_reminders_too ? "Yes" : "No" %> </td>
+          </tr>
+          <tr>
+            <td> Change settings </td>
+            <td> <a href="/volunteers/<%= current_volunteer.id %>/edit"> Click Here </a> </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Your Schedule Donor/Recipient Map </h2>
+      <div class="home_section_content">
+        <p> A Map Of Donor and Recipients (coming)</p>
+        <div id="my_recipient_map"></div>
+      </div>
+    </div>
+  </div>
+</div>

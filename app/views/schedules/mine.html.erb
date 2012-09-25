@@ -1,9 +1,8 @@
 <h2>My Schedule</h2>
-<% volunteer_schedules = Schedule.where(:volunteer_id => current_volunteer) %>
-<% if volunteer_schedules.length == 0 %>
+<% if @volunteer_schedules.length == 0 %>
 <p> 
-  You have no schedules to view. Please talk to an admin about getting assgined
-   a pickup or pickup some open shifts at <%= link_to "cover shifts.", "/test/cover"%>
+  You have no scheduled pickups to view. Please talk to an admin about getting assgined
+   a pickup or pickup some open shifts at <%= link_to "cover shifts", open_logs_path %>.
 </p>
 <% else %>
 <% days_of_week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ] %>
@@ -23,7 +22,7 @@
   </thead>
   <tbody>
   <%
-  volunteer_schedules.each do |schedule|
+  @volunteer_schedules.each do |schedule|
     if schedule.recipient != nil && schedule.volunteer != nil
   %>
   <tr>

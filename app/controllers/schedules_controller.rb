@@ -1,5 +1,6 @@
 class SchedulesController < ApplicationController
   before_filter :authenticate_volunteer!
+  before_filter :admin_only, :only => [:fast_schedule,:today,:tomorrow,:yesterday]
 
   active_scaffold :schedule do |conf|
     conf.list.sorting = {:day_of_week => 'ASC'}
@@ -33,15 +34,10 @@ class SchedulesController < ApplicationController
   def create_authorized?
     current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-#  def update_authorized?(record=nil)
-#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-#  end
-#  def delete_authorized?(record=nil)
-#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-#  end
 
   def open
     @open_schedules = Schedule.where("volunteer_id IS NULL AND recipient_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
+    render :open
   end
   def open_old
     @conditions = "volunteer_id is NULL AND recipient_id IS NOT NULL and donor_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
@@ -49,6 +45,7 @@ class SchedulesController < ApplicationController
   end
 
   def mine
+    @volunteer_schedules = Schedule.where(:volunteer_id => current_volunteer)
   end
   def mine_old
     @conditions = "volunteer_id = '#{current_volunteer.id}'"
@@ -58,7 +55,6 @@ class SchedulesController < ApplicationController
   def fast_schedule
     @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
   end
-
   def today
     @conditions = "day_of_week = #{Date.today.wday}"
     index
@@ -83,9 +79,18 @@ class SchedulesController < ApplicationController
 
   def take
     s = Schedule.find(params[:id])
-    s.volunteer = current_volunteer
-    s.save
-    render "mine"
+    if current_volunteer.regions.collect{ |r| r.id }.include? s.region_id
+      s.volunteer = current_volunteer
+      s.save
+      flash[:notice] = "Successfully took 1 shift."
+    else
+      flash[:notice] = "Cannot take that pickup since you are not a member of that region."
+    end
+    open
+  end
+
+  def admin_only
+    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
   end
 
 end 

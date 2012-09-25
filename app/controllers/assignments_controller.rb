@@ -1,4 +1,6 @@
 class AssignmentsController < ApplicationController
+  before_filter :authenticate_volunteer!
+
   active_scaffold :assignment do |conf|
     conf.columns = [:admin,:region,:volunteer]
     conf.columns[:region].form_ui = :select

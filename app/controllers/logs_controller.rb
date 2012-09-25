@@ -1,5 +1,6 @@
 class LogsController < ApplicationController
   before_filter :authenticate_volunteer!
+  before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt]
 
   active_scaffold :log do |conf|
     conf.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
@@ -58,6 +59,7 @@ class LogsController < ApplicationController
   end
   def open
     @open_shifts = Log.where("volunteer_id IS NULL AND recipient_id IS NOT NULL").where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
+    render :open
   end
   def mine_past
     @past_shifts = Log.where(:volunteer_id => current_volunteer.id).where("\"when\" <= '#{(Date.today).to_s}'")
@@ -76,6 +78,7 @@ class LogsController < ApplicationController
     @conditions = "volunteer_id is NULL"
     index
   end
+
   def today
     @conditions = "\"when\" = '#{Date.today.to_s}'"
     index 
@@ -128,7 +131,6 @@ class LogsController < ApplicationController
           p.food_types.each{ |ft|
             # make sure we don't create more than one for the same absence
             found = Log.where('"when" = ? AND schedule_id = ? AND food_type_id = ?',from,p.id,ft.id)
-            flash[:notice] = "#{from} #{p.id} #{ft.id} #{found.to_s.length}"
             next if found.length > 0
 
             # create the null record
@@ -152,22 +154,30 @@ class LogsController < ApplicationController
       }      
       from += 1
     end
-#    flash[:notice] = "Scheduled #{n} absences"
+    flash[:notice] = "Scheduled #{n} absences"
     render :new_absence
   end
 
   def take
     l = Log.find(params[:id])
-    l.volunteer = current_volunteer
-    l.save
-    mine_upcoming
-    render :mine_upcoming
+    if current_volunteer.regions.collect{ |r| r.id }.include? l.region_id
+      l.volunteer = current_volunteer
+      l.save
+      flash[:notice] = "Successfully took one shift."
+    else
+      flash[:notice] = "Cannot take shifts for regions that you aren't assigned to!"
+    end
+    open
   end
 
   def receipt
     @start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     @stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
     @loc = Location.find(params[:location_id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin?(@loc.region)  
+      flash[:notice] = "Cannot generate receipt for donors/receipients in other regions than your own!"
+      redirect_to(root_path)
+    end
     @logs = Log.where("#{@loc.is_donor ? "donor_id" : "recipient_id"} = ? AND \"when\" >= ? AND \"when\" <= ?",@loc.id,@start_date,@stop_date)
     respond_to do |format|
       format.html
@@ -205,6 +215,10 @@ class LogsController < ApplicationController
         send_data pdf.render
       end
     end
+  end
+
+  def admin_only
+    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
   end
 
 end

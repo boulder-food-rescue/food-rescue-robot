@@ -16,7 +16,14 @@
         <table class>
           <tr>
             <td>Volunteer:</td>
-            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| [v.name,v.id] })) %></td>
+            <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+            if current_volunteer.super_admin? %>
+            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
+                      ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] })) %></td> 
+            <% else %>
+            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
+                      ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact)) %></td>
+            <% end %>
           </tr>
         </table>
         <%= submit_tag "Switch" %>
@@ -30,7 +37,14 @@
       <table>
       <tr>
         <td>Donor/Recipient:</td>
-        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| r.id }.join(",")})").collect{ |v| [v.name,v.id] })) %></td>
+        <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+        if current_volunteer.super_admin? %>
+        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| 
+                 r.id }.join(",")})").collect{ |v| [v.name,v.id] })) %></td>
+        <% else %>
+        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{adminrids.join(",")})").collect{ |l|
+                  [l.name,l.id] })) %></td>
+        <% end %>
       </tr>
       <tr>
         <td>Starting On: </td>

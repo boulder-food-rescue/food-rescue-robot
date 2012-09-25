@@ -10,6 +10,8 @@ class Volunteer < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
+
   # column-level restrictions
   def admin_notes_authorized?
     current_user.admin
@@ -50,6 +52,10 @@ class Volunteer < ActiveRecord::Base
     # a little scary that we're blindly assuming the format is reasonable, but only admin can edit it...
     return sprintf(self.cell_carrier.format,$1) 
   end 
+
+  def main_region
+    self.regions[0]
+  end
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me

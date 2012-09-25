@@ -34,6 +34,7 @@ Webapp::Application.routes.draw do
       get :being_covered
       get :new_absence
       get :create_absence
+      get :receipt
     end
     member do
       get :take
@@ -67,6 +68,7 @@ Webapp::Application.routes.draw do
       get :home
       get :unassigned
       get :shiftless
+      get :shiftless_old
       get :admin
       get :switch_user
     end

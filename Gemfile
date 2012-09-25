@@ -34,6 +34,8 @@ gem 'twitter'
 # use rake db:data:dump to dump the data in your current db into a db/data.yaml
 # use rake db:data:load to load the data in that file into your current db
 gem 'yaml_db' 
+gem "paperclip", "~> 3.1"
+gem "prawn"
 
 # Added by Sean
 gem 'lazy_high_charts'

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BFR Webapp</title>
+  <title>The Food Rescue Robot</title>
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
@@ -227,11 +227,18 @@
     </div>
   </div>
   <div class="header">
+    <% if volunteer_signed_in? %>
     <div>
-      <h2 id="bfr_title">Boulder Food Rescue</h2>
-      <h3>Sustainable Just-In-Time Food Rescue in Boulder, Colorado</h3>
-    </div>  
-    <%= link_to image_tag("logo.png", :class => 'logo_image')%>
+      <h2 id="bfr_title"><%= current_volunteer.main_region.title %></h2>
+      <h3><%= current_volunteer.main_region.tagline %></h3>
+    </div>
+    <%= link_to image_tag(current_volunteer.main_region.logo(:thumb), :class => 'logo_image') %>
+    <% else %>
+    <div>
+      <h2 id="bfr_title">The Food Rescue Robot</h2>
+      <h3>Just-in-Time Food Rescue Logistics</h3>
+    </div> 
+    <% end %> 
   </div>
   <div class="wrap">    
     <% if notice %>

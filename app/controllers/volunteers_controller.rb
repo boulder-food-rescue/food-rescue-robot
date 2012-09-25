@@ -21,9 +21,9 @@ class VolunteersController < ApplicationController
 
   active_scaffold :volunteer do |conf|
     conf.list.sorting = {:name => 'ASC'}
-    conf.columns = [:name,:email,:phone,:cell_carrier,:sms_too,:preferred_contact,:gone_until,:has_car,:is_disabled, 
+    conf.columns = [:name,:photo,:email,:phone,:cell_carrier,:sms_too,:preferred_contact,:gone_until,:has_car,:is_disabled, 
                     :admin,:on_email_list,:pickup_prefs,:transport_type,:admin_notes,:regions,:created_at]
-    conf.update.columns = [:name,:email,:phone,:cell_carrier,:preferred_contact,:sms_too,:pre_reminders_too,:gone_until,:has_car,:is_disabled,
+    conf.update.columns = [:name,:photo,:email,:phone,:cell_carrier,:preferred_contact,:sms_too,:pre_reminders_too,:gone_until,:has_car,:is_disabled,
                     :admin,:on_email_list,:pickup_prefs,:transport_type,:admin_notes,:regions]
     conf.columns[:is_disabled].label = "Account Deactivated"
     conf.columns[:sms_too].label = "Recieve Texts"
@@ -51,6 +51,12 @@ class VolunteersController < ApplicationController
     index
   end
   def shiftless
+    my_rids = current_volunteer.regions.collect{ |r| r.id }
+    @volunteers = Volunteer.where("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
+                                   (gone_until IS NULL or gone_until < current_date)").collect{ |v| 
+      (v.regions.collect{ |r| r.id } & my_rids).length > 0 ? v : nil }.compact
+  end
+  def shiftless_old
     @conditions = "(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0"
     index
   end

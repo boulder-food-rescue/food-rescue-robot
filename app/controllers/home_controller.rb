@@ -82,7 +82,7 @@ class HomeController < ApplicationController
     range = Date.today - start_date
     for i in 0..range
       start_date += 1
-      total = Log.where(:when => start_date).where("weight IS NOT NULL").sum(:weight)
+      total = Log.where(:when => start_date).where("weight IS NOT NULL").where(:region_id => current_volunteer.main_region).sum(:weight)
       v_total = Log.where(:when => start_date).where("weight IS NOT NULL").where(:volunteer_id => current_volunteer).sum(:weight)
       if total != nil
         running_total += total
@@ -115,8 +115,8 @@ class HomeController < ApplicationController
           }
         }
       })
-      f.series(:name=>'BFR Pounds of Food Rescued', :data=> food_per_day)
-      f.series(:name=>'Your Pounds of Food Rescued', :data=> v_food_per_day)
+      f.series(:name=>'Pounds of Food Rescued in Your Main Region', :data=> food_per_day)
+      f.series(:name=>'Pounds of Food Rescued by You', :data=> v_food_per_day)
     end
     
     month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -135,8 +135,8 @@ class HomeController < ApplicationController
         :title=>{:text=>"Month"},
         :categories => month_labels}
       f.options[:yAxis][:title][:text] = "lbs of food"
-      f.series(:name=>'BFR Pounds of Food Rescued', :data=> food_per_month)
-      f.series(:name=>'Your Pounds of Food Rescued', :data=> v_food_per_month)
+      f.series(:name=>'Pounds of Food Rescued in Your Main Region', :data=> food_per_month)
+      f.series(:name=>'Pounds of Food Rescued by You', :data=> v_food_per_month)
     end
   end
 end

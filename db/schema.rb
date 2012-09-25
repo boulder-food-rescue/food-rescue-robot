@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120724220339) do
+ActiveRecord::Schema.define(:version => 20120925003342) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(:version => 20120724220339) do
     t.datetime "updated_at",     :null => false
     t.integer  "region_id"
     t.string   "twitter_handle"
+    t.string   "receipt_key"
   end
 
   create_table "logs", :force => true do |t|
@@ -99,6 +100,14 @@ ActiveRecord::Schema.define(:version => 20120724220339) do
     t.string   "twitter_token_secret"
     t.integer  "twitter_last_poundage"
     t.datetime "twitter_last_timestamp"
+    t.string   "title"
+    t.string   "tagline"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.datetime "logo_updated_at"
+    t.string   "phone"
+    t.string   "tax_id"
   end
 
   create_table "schedules", :force => true do |t|
@@ -155,6 +164,10 @@ ActiveRecord::Schema.define(:version => 20120724220339) do
     t.integer  "cell_carrier_id"
     t.boolean  "sms_too",                :default => false
     t.boolean  "pre_reminders_too",      :default => false
+    t.string   "photo_file_name"
+    t.string   "photo_content_type"
+    t.integer  "photo_file_size"
+    t.datetime "photo_updated_at"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

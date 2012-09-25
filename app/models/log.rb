@@ -36,8 +36,12 @@ class Log < ActiveRecord::Base
       poundage = Log.where("weight IS NOT NULL AND weight > 0 AND region_id = ?",region.id).collect{ |l| l.weight }.sum
       poundage += record.region.prior_lbs_rescued
       last_poundage = region.twitter_last_poundage.nil? ? 0.0 : region.twitter_last_poundage
-      return true if poundage <= last_poundage
-      t = "#{record.volunteer.name} picked up #{record.weight.round} lbs of food, bringing us to #{poundage.round} lbs of food rescued to date."
+      if poundage <= last_poundage
+        region.twitter_last_poundage = poundage
+        region.save
+        return true
+      end
+      t = "#{record.volunteer.name} picked up #{record.weight.round} lbs of food, bringing us to #{poundage.round} lbs of food rescued to date in #{record.region.name}."
       if record.donor.twitter_handle.nil?
         t += "Thanks to #{record.donor.name} for the donation!"
       else
@@ -49,7 +53,7 @@ class Log < ActiveRecord::Base
       record.region.twitter_last_timestamp = Time.now
       record.region.save
     rescue
-      flash[:notice] = "Twitter update didn't work for some reason, but everything else seems to have..."
+      # Twitter update didn't work for some reason, but everything else seems to have...
     end
     return true
   end

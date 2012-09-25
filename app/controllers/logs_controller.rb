@@ -118,12 +118,21 @@ class LogsController < ApplicationController
   def create_absence
     from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
+    volunteer = Volunteer.find(params[:volunteer_id].to_i)
+    vrids = volunteer.regions.collect{ |r| r.id }
+    adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+
+    unless volunteer.id == current_volunteer.id or current_volunteer.super_admin? or (vrids & adminrids).length > 0
+      flash[:notice] = "Cannot schedule an absence for that person, mmmmk."
+      redirect_to(root_path)
+    end
+
     if current_volunteer.admin and !params[:volunteer_id].nil?
       pickups = Schedule.where("volunteer_id = #{params[:volunteer_id].to_i}")
     else
       pickups = Schedule.where("volunteer_id = #{current_volunteer.id}")
     end
-    flash[:notice] = pickups.length
+    
     n = 0
     while from <= to
       pickups.each{ |p|

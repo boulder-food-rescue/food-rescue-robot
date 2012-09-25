@@ -1,0 +1,47 @@
+<h2><%= @header %></h2>
+<% if @shifts.length == 0 %>
+<p> 
+  No shifts found.
+</p>
+<% else %>
+<table id="my_schedule_table">
+  <thead>
+  <tr>
+    <th> When </th>
+    <th> Volunteer </th>
+    <th> Donor </th>
+    <th> Recipient </th>
+    <th> Weight </th>
+    <th> Transport Type </th>
+    <th> Food Type </th>
+    <th> Original Volunteer </th>
+    <th> Description </th>
+    <th> Notes </th>
+    <th> Link </th>
+  </tr>
+  </thead>
+  <tbody>
+  <%
+  @shifts.each do |shift|
+  %>
+  <tr>
+    <td> <%= shift.when %> </td>
+    <td> <% if shift.volunteer.nil? %>
+         <%= link_to '(Take)', :controller => "logs", :action => "take", :id => shift.id %>
+         <% else %>
+         <%= link_to shift.volunteer.name, shift.volunteer unless shift.volunteer.nil? %>
+         <% end %>
+    <td> <%= shift.donor != nil ? (link_to shift.donor.name, shift.donor) : ""%> </td>
+    <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
+    <td> <%= shift.weight %> </td>
+    <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
+    <td> <%= shift.food_type.name unless shift.food_type.nil? %>
+    <td> <%= link_to shift.orig_volunteer.name, shift.orig_volunteer unless shift.orig_volunteer.nil? %>
+    <td> <%= word_wrap(shift.description,:line_width => 20).gsub("\n","<br>").html_safe unless shift.description.nil? %>
+    <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
+    <td> <%= link_to "edit", edit_log_path(shift) %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<% end %>

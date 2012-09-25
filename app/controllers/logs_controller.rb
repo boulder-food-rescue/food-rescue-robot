@@ -46,67 +46,37 @@ class LogsController < ApplicationController
   def create_authorized?
     current_volunteer.super_admin? or current_volunteer.region_admin?
   end
-#  def update_authorized?(record=nil)
-#    current_volunteer == record.volunteer or current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-#  end
-#  def delete_authorized?(record=nil)
-#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-#  end
 
+  def mine_past
+    index("volunteer_id = #{current_volunteer.id} AND \"when\" < current_date","My Past Shifts")
+  end
   def mine_upcoming
-    date = Date.today
-    @upcoming_shifts = Log.where(:volunteer_id => current_volunteer.id).where(:when => date...(date + 7))
+    index("volunteer_id = #{current_volunteer.id} AND \"when\" >= current_date","My Upcoming Shifts")
   end
   def open
-    @open_shifts = Log.where("volunteer_id IS NULL AND recipient_id IS NOT NULL").where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
-    render :open
+    index("volunteer_id IS NULL AND \"when\" >= current_date","Open Shifts")
   end
-  def mine_past
-    @past_shifts = Log.where(:volunteer_id => current_volunteer.id).where("\"when\" <= '#{(Date.today).to_s}'")
-  end
-
-  # Custom views of the index table
-  def mine_upcoming_old
-    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" >= '#{(Date.today).to_s}'"
-    index
-  end
-  def mine_past_old
-    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" < '#{(Date.today).to_s}'"
-    index
-  end
-  def open_old
-    @conditions = "volunteer_id is NULL"
-    index
-  end
-
   def today
-    @conditions = "\"when\" = '#{Date.today.to_s}'"
-    index 
+    index("\"when\" = '#{Date.today.to_s}'","Today's Shifts")
   end
   def tomorrow
-    @conditions = "\"when\" = '#{(Date.today+1).to_s}'"
-    index
+    index("\"when\" = '#{(Date.today+1).to_s}'","Tomorrow's Shifts")
   end
   def yesterday
-    @conditions = "\"when\" = '#{(Date.today-1).to_s}'"
-    index
+    index("\"when\" = '#{(Date.today-1).to_s}'","Yesterday's Shifts")
   end
   def being_covered
-    @conditions = "\"when\" >= '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
-    index
+    index("\"when\" >= current_date AND orig_volunteer_id IS NOT NULL AND orig_volunteer_id != volunteer_id","Shifts Being Covered")
   end
   def tardy
-    @conditions = "\"when\" < '#{(Date.today).to_s}' AND num_reminders >= 3 AND weight IS NULL"
-    index
+    index("\"when\" < current_date AND weight IS NULL and num_reminders >= 3","Missing Data (>= 3 Reminders)")
   end
 
-  def conditions_for_collection
-    if current_volunteer.assignments.length == 0
-      @base_conditions = "1 = 0"
-    else
-      @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
-    end
-    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
+  def index(filter=nil,header="Entire Log")
+    filter = filter.nil? ? "" : " AND #{filter}"
+    @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
+    @header = header
+    render :index
   end
 
   def new_absence

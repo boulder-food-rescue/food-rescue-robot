@@ -41,6 +41,7 @@ Webapp::Application.routes.draw do
       get :new_absence
       get :create_absence
       get :receipt
+      get :index
     end
     member do
       get :take

@@ -34,6 +34,7 @@ Webapp::Application.routes.draw do
       get :being_covered
       get :new_absence
       get :create_absence
+      get :receipt
     end
     member do
       get :take

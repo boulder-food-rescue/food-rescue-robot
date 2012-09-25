@@ -19,16 +19,35 @@
             <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| [v.name,v.id] })) %></td>
           </tr>
         </table>
-        <%= submit_tag %>
+        <%= submit_tag "Switch" %>
         <% end %>
       </div>
     </div>
     <div class="home_sub_section">
-      <h2> To Do Pickup Reports </h2>
+      <h2> Generate Receipts </h2>
       <div class="home_section_content">
+      <%= form_tag("/logs/receipt.pdf", :method => "get") do %>
+      <table>
+      <tr>
+        <td>Donor/Recipient:</td>
+        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| r.id }.join(",")})").collect{ |v| [v.name,v.id] })) %></td>
+      </tr>
+      <tr>
+        <td>Starting On: </td>
+        <td><%= select_date Date.today, :prefix => :start_date %></td>
+      </tr>
+      <tr>
+        <td>Ending On: </td>
+        <td><%= select_date Date.today, :prefix => :stop_date %></td>
+      </tr>
+    </table>
+    <%= submit_tag "Generate" %>
+<% end %>
+
       </div>
     </div>
   </div>
+
   <div class="home_section">
     <h1> Pickup Stats </h1>
     <div class="home_sub_section">

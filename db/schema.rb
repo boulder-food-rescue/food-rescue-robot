@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120924203545) do
+ActiveRecord::Schema.define(:version => 20120925003342) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(:version => 20120924203545) do
     t.datetime "updated_at",     :null => false
     t.integer  "region_id"
     t.string   "twitter_handle"
+    t.string   "receipt_key"
   end
 
   create_table "logs", :force => true do |t|
@@ -106,6 +107,8 @@ ActiveRecord::Schema.define(:version => 20120924203545) do
     t.string   "logo_content_type"
     t.integer  "logo_file_size"
     t.datetime "logo_updated_at"
+    t.string   "phone"
+    t.string   "tax_id"
   end
 
   create_table "schedules", :force => true do |t|

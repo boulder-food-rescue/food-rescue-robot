@@ -1,6 +1,6 @@
 class VolunteersController < ApplicationController
   before_filter :authenticate_volunteer!
-  before_filter :admin_only, :only => [:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
+  before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
 
   def create_authorized?
     current_volunteer.super_admin? or current_volunteer.region_admin?
@@ -69,6 +69,17 @@ class VolunteersController < ApplicationController
   # special settings/stats page for admins only
   def admin
     render :admin
+  end
+
+  def knight
+    unless current_volunteer.super_admin?
+      flash[:notice] = "You're not permitted to do that!"
+      redirect_to(root_path)
+    end
+    v = Volunteer.find(params[:volunteer_id])
+    v.admin = !v.admin
+    v.save
+    admin
   end
 
   def admin_only

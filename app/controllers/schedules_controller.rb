@@ -2,39 +2,6 @@ class SchedulesController < ApplicationController
   before_filter :authenticate_volunteer!
   before_filter :admin_only, :only => [:fast_schedule,:today,:tomorrow,:yesterday]
 
-  active_scaffold :schedule do |conf|
-    conf.list.sorting = {:day_of_week => 'ASC'}
-    conf.list.per_page = 500
-    conf.columns = [:region,:day_of_week,:donor,:recipient,:volunteer,:time_start,:time_stop,
-                    :irregular,:backup,:transport_type,:food_types,:needs_training,:public_notes,
-                    :prior_volunteer,:admin_notes]
-    conf.columns[:day_of_week].form_ui = :select
-    conf.columns[:day_of_week].options = {:options => [["Unknown/varies",nil],["Sunday",0],
-                                                       ["Monday",1],["Tuesday",2],["Wednesday",3],
-                                                       ["Thursday",4],["Friday",5],["Saturday",6]]}
-    conf.columns[:time_start].description = "e.g., 1400"
-    conf.columns[:time_stop].description = "e.g., 1600"
-    conf.columns[:donor].form_ui = :select
-    conf.columns[:volunteer].form_ui = :select
-    conf.columns[:volunteer].clear_link
-    conf.columns[:recipient].form_ui = :select
-    conf.columns[:food_types].form_ui = :select
-    conf.columns[:food_types].clear_link
-    conf.columns[:transport_type].form_ui = :select
-    conf.columns[:prior_volunteer].form_ui = :select
-    conf.columns[:prior_volunteer].clear_link
-    conf.columns[:region].form_ui = :select
-    conf.columns[:irregular].label = "Irregular"
-    conf.columns[:backup].label = "Backup Pickup"
-    # if marking isn't enabled it creates errors on delete :(
-    conf.actions.add :mark
-  end
-
-  # Only admins can change things in the schedule table
-  def create_authorized?
-    current_volunteer.super_admin? or current_volunteer.region_admin?
-  end
-
   def open
     @open_schedules = Schedule.where("volunteer_id IS NULL AND recipient_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
     render :open
@@ -47,34 +14,64 @@ class SchedulesController < ApplicationController
   def mine
     @volunteer_schedules = Schedule.where(:volunteer_id => current_volunteer)
   end
-  def mine_old
-    @conditions = "volunteer_id = '#{current_volunteer.id}'"
-    index
+
+  def index(day_of_week=nil)
+    dowq = day_of_week.nil? ? "" : "AND day_of_week = #{day_of_week.to_i}"
+    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")}) #{dowq}")
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end
+    render :fast_schedule
   end
 
-  def fast_schedule
-    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
-  end
   def today
-    @conditions = "day_of_week = #{Date.today.wday}"
-    index
+    index(Date.today.wday)
   end
   def tomorrow
-    @conditions = "day_of_week = #{Date.today.wday + 1 % 6}"
-    index
+    index(Date.today.wday+1 % 6)
   end
   def yesterday
-    @conditions = "day_of_week = #{Date.today.wday - 1 % 6}"
-    index
+    day_of_week = Date.today.wday - 1
+    day_of_week = 6 if day_of_week < 0
+    index(day_of_week)
   end
 
-  def conditions_for_collection
-    if current_volunteer.assignments.length == 0
-      @base_conditions = "1 = 0"
+  def new
+    @region = Region.find(params[:region_id])
+    @schedule = Schedule.new
+    @action = "create"
+    render :new
+  end
+
+  def create
+    @schedule = Schedule.new(params[:schedule])
+    if @schedule.save
+      flash[:notice] = "Created successfully"
+      index
     else
-      @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+      flash[:notice] = "Didn't save successfully :("
+      render :new
     end
-    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
+  end
+
+  def edit
+    @schedule = Schedule.find(params[:id])
+    @region = @schedule.region
+    @action = "update"
+  end
+
+  def update
+    @schedule = Schedule.find(params[:id])
+    if @schedule.update_attributes(params[:schedule])
+      flash[:notice] = "Updated Successfully"
+      index
+    else
+      flash[:notice] = "Update failed :("
+      render :edit
+    end
   end
 
   def take

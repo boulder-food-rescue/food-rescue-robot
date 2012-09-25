@@ -56,6 +56,12 @@ class Volunteer < ActiveRecord::Base
   def main_region
     self.regions[0]
   end
+  def region_ids
+    self.regions.collect{ |r| r.id }
+  end
+  def admin_region_ids
+    self.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+  end
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me

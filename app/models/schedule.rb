@@ -7,21 +7,5 @@ class Schedule < ActiveRecord::Base
   belongs_to :region
   has_and_belongs_to_many :food_types
 
-  # column-level restrictions
-  def admin_notes_authorized?
-    current_user.admin
-  end
-
-  # CRUD-level restrictions
-  def authorized_for_update?
-    current_user.admin or current_user.region_admin?(self.region)
-  end
-  def authorized_for_create? 
-    current_user.admin or current_user.region_admin?(self.region)
-  end
-  def authorized_for_delete?
-    current_user.admin or current_user.region_admin?(self.region)
-  end
-
-  attr_accessible :admin_notes, :day_of_week, :donor_id, :needs_training, :prior_volunteer_id, :public_notes, :recipient_id, :time_start, :time_stop
+  attr_accessible :region_id, :volunteer_id, :irregular, :backup, :transport_type_id, :food_type_ids, :weekdays, :admin_notes, :day_of_week, :donor_id, :needs_training, :prior_volunteer_id, :public_notes, :recipient_id, :time_start, :time_stop
 end

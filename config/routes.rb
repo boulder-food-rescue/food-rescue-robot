@@ -5,10 +5,16 @@ Webapp::Application.routes.draw do
       get :welcome
     end
   end
-  
-  resources :cell_carriers do as_routes end
 
-  resources :assignments do as_routes end
+  resources :assignments do
+    collection do
+      get :index
+      get :assign
+      get :knight
+    end
+  end
+ 
+  resources :cell_carriers do as_routes end
 
   resources :regions do as_routes end
 
@@ -42,7 +48,6 @@ Webapp::Application.routes.draw do
   end
 
   resources :schedules do 
-    as_routes
     collection do
       get :today
       get :tomorrow
@@ -52,9 +57,11 @@ Webapp::Application.routes.draw do
       get :mine
       get :mine_old
       get :fast_schedule
-    end
-    member do
       get :take
+      get :index
+      get :edit
+      get :update
+      get :create
     end
   end
 
@@ -71,6 +78,7 @@ Webapp::Application.routes.draw do
       get :shiftless_old
       get :admin
       get :switch_user
+      get :knight
     end
   end
 

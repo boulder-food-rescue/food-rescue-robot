@@ -227,7 +227,7 @@
     </div>
   </div>
   <div class="header">
-    <% if volunteer_signed_in? %>
+    <% if volunteer_signed_in? and !current_volunteer.main_region.nil? %>
     <div>
       <h2 id="bfr_title"><%= current_volunteer.main_region.title %></h2>
       <h3><%= current_volunteer.main_region.tagline %></h3>

@@ -33,7 +33,7 @@ module SchedulesHelper
     if record.volunteer.nil?
       link_to "Take Shift", "/schedules/#{record.id}/take"
     else
-      link_to record.volunteer.name, "/volunteers/#{record.volunteer.id}?association=volunteer&schedule_id=#{record.id}&parent_scaffold=schedule",
+      link_to record.volunteer.name, "/volunteers/#{record.volunteer.id}?association=volunteer&schedule_id=#{record.id}&parent_scaffold=schedules",
             "class" => "show as_action volunteer", "data-action" => "show", "data-remote" => "true", "data-position" => "after",
             "id" => "as_schedules-show-volunteer-#{record.volunteer.id}-#{record.id}-link"
     end

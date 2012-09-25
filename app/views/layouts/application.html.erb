@@ -232,7 +232,7 @@
       <h2 id="bfr_title"><%= current_volunteer.main_region.title %></h2>
       <h3><%= current_volunteer.main_region.tagline %></h3>
     </div>
-    <%= link_to image_tag(current_volunteer.main_region.logo(:thumb), :class => 'logo_image') %>
+    <%= link_to current_volunteer.main_region.website do image_tag(current_volunteer.main_region.logo(:thumb), :class => 'logo_image') end %>
     <% else %>
     <div>
       <h2 id="bfr_title">The Food Rescue Robot</h2>
@@ -251,7 +251,7 @@
   </div>
   
   <div class="footer">
-    <p>Copyright © <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
+    <p>Copyright © <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> <%= Time.now.year %></p>
   </div>
   </div>
 </body>

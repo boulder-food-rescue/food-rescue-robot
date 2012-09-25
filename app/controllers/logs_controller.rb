@@ -125,6 +125,7 @@ class LogsController < ApplicationController
     unless volunteer.id == current_volunteer.id or current_volunteer.super_admin? or (vrids & adminrids).length > 0
       flash[:notice] = "Cannot schedule an absence for that person, mmmmk."
       redirect_to(root_path)
+      return
     end
 
     if current_volunteer.admin and !params[:volunteer_id].nil?
@@ -186,6 +187,7 @@ class LogsController < ApplicationController
     unless current_volunteer.super_admin? or current_volunteer.region_admin?(@loc.region)  
       flash[:notice] = "Cannot generate receipt for donors/receipients in other regions than your own!"
       redirect_to(root_path)
+      return
     end
     @logs = Log.where("#{@loc.is_donor ? "donor_id" : "recipient_id"} = ? AND \"when\" >= ? AND \"when\" <= ?",@loc.id,@start_date,@stop_date)
     respond_to do |format|

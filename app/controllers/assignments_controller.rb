@@ -39,6 +39,7 @@ class AssignmentsController < ApplicationController
     unless current_volunteer.super_admin? or current_volunteer.region_admin?(r)
       flash[:notice] = "Not permitted to do knightings in that region..."
       redirect_to(root_path)
+      return
     end
     a = Assignment.where("volunteer_id = ? and region_id = ?",v.id,r.id)
     bit = (params[:unassign]) ? false : true

@@ -1,6 +1,6 @@
 class SchedulesController < ApplicationController
   before_filter :authenticate_volunteer!
-  before_filter :admin_only, :only => [:fast_schedule,:today,:tomorrow,:yesterday]
+  before_filter :admin_only, :only => [:fast_schedule,:today,:tomorrow,:yesterday,:edit,:update,:create,:new]
 
   def open
     @open_schedules = Schedule.where("volunteer_id IS NULL AND recipient_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
@@ -12,12 +12,13 @@ class SchedulesController < ApplicationController
   end
 
   def mine
-    @volunteer_schedules = Schedule.where(:volunteer_id => current_volunteer)
+    index(nil,current_volunteer.id)
   end
 
-  def index(day_of_week=nil)
+  def index(day_of_week=nil,volunteer_id=nil)
     dowq = day_of_week.nil? ? "" : "AND day_of_week = #{day_of_week.to_i}"
-    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")}) #{dowq}")
+    volq = volunteer_id.nil? ? "" : "AND volunteer_id = #{volunteer_id}"
+    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")}) #{dowq} #{volq}")
     @regions = Region.all
     if current_volunteer.super_admin?
       @my_admin_regions = @regions
@@ -41,6 +42,11 @@ class SchedulesController < ApplicationController
 
   def new
     @region = Region.find(params[:region_id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @region
+      flash[:notice] = "Not authorized to create schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
     @schedule = Schedule.new
     @action = "create"
     render :new
@@ -48,6 +54,11 @@ class SchedulesController < ApplicationController
 
   def create
     @schedule = Schedule.new(params[:schedule])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+      flash[:notice] = "Not authorized to create schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
     if @schedule.save
       flash[:notice] = "Created successfully"
       index
@@ -59,12 +70,22 @@ class SchedulesController < ApplicationController
 
   def edit
     @schedule = Schedule.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+      flash[:notice] = "Not authorized to edit schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
     @region = @schedule.region
     @action = "update"
   end
 
   def update
     @schedule = Schedule.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+      flash[:notice] = "Not authorized to edit schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
     if @schedule.update_attributes(params[:schedule])
       flash[:notice] = "Updated Successfully"
       index

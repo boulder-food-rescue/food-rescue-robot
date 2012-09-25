@@ -59,6 +59,7 @@ class VolunteersController < ApplicationController
     unless current_volunteer.super_admin? or (vrids & adminrids).length > 0
       flash[:notice] = "You're not authorized to switch to that user!"
       redirect_to(root_path)
+      return
     end
     sign_out(current_volunteer)
     sign_in(v)
@@ -75,6 +76,7 @@ class VolunteersController < ApplicationController
     unless current_volunteer.super_admin?
       flash[:notice] = "You're not permitted to do that!"
       redirect_to(root_path)
+      return
     end
     v = Volunteer.find(params[:volunteer_id])
     v.admin = !v.admin

@@ -7,19 +7,9 @@ class Log < ActiveRecord::Base
   belongs_to :food_type
   belongs_to :transport_type
   belongs_to :region
-  attr_accessible :description, :flag_for_admin, :notes, :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :weight, :when
-  after_save { |record| tweet(record) }
+  attr_accessible :region_id, :volunteer_id, :donor_id, :recipient_id, :food_type_id, :transport_type_id, :description, :flag_for_admin, :notes, :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :weight, :when
 
-  # CRUD-level restrictions
-  def authorized_for_update?
-    current_user.admin or current_user.region_admin?(self.region) or (current_user == self.volunteer)
-  end
-  def authorized_for_create?
-    current_user.admin or current_user.region_admin?(self.region) or (current_user == self.volunteer)
-  end
-  def authorized_for_delete?
-    current_user.admin or current_user.region_admin?(self.region)
-  end
+  after_save { |record| tweet(record) }
 
   def tweet(record)
     return true if record.region.nil? or record.region.twitter_key.nil?
@@ -58,6 +48,5 @@ class Log < ActiveRecord::Base
     end
     return true
   end
-
 
 end

@@ -2,51 +2,6 @@ class LogsController < ApplicationController
   before_filter :authenticate_volunteer!
   before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt]
 
-  active_scaffold :log do |conf|
-    conf.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
-                    :description,:transport_type,:food_type,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
-    conf.list.columns = [:when,:volunteer,:donor,:recipient,:weight,:transport_type,:food_type,:orig_volunteer,:schedule]
-    conf.list.per_page = 50
-    conf.columns[:weighed_by].form_ui = :select
-    conf.columns[:weighed_by].options = {:options => [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],
-                                                      ["Guesstimate","Guesstimate"]]}
-    conf.columns[:weight].description = "e.g., '42', in pounds. Put a 0 if the pickup didn't happen for some reason or there was no food."
-    conf.columns[:num_reminders].form_ui = :select
-    conf.columns[:num_reminders].label = "Reminders Sent"
-    conf.columns[:num_reminders].options = {:options => [[0,0],[1,1],[2,2],[3,3],[4,4]]}
-    conf.columns[:schedule].form_ui = :select
-    conf.columns[:region].form_ui = :select
-    conf.columns[:volunteer].form_ui = :select
-    conf.columns[:volunteer].clear_link
-    conf.columns[:food_type].form_ui = :select
-    conf.columns[:food_type].clear_link
-    conf.columns[:description].description = "e.g., apples, pears, bananas, turnips, swiss chard"
-    conf.columns[:volunteer].description = "If someone else covered this shift for you, switch the volunteer to them"
-    conf.columns[:transport_type].clear_link
-    conf.columns[:transport_type].form_ui = :select
-    conf.columns[:orig_volunteer].form_ui = :select
-    conf.columns[:orig_volunteer].label = "Original Volunteer"
-    conf.columns[:orig_volunteer].description = "If the shift was covered by someone else, put the original volunteer here"
-    conf.columns[:orig_volunteer].clear_link
-    conf.columns[:notes].description = "e.g., Trailer wheel is out of true, bin is busted, most raddest pickup evar"
-    conf.columns[:flag_for_admin].description = "Click this if you'd like to make sure we read your note :)"
-    conf.columns[:donor].form_ui = :select
-    conf.columns[:donor].clear_link
-    conf.columns[:recipient].form_ui = :select
-    conf.columns[:recipient].clear_link
-    conf.columns[:schedule].clear_link
-    conf.update.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,:description,:transport_type,:food_type,:notes,:flag_for_admin,:orig_volunteer]
-    # if marking isn't enabled it creates errors on delete :(
-    conf.actions.add :mark
-  end
-
-  # Permissions
-
-  # Only admins can change things in the schedule table
-  def create_authorized?
-    current_volunteer.super_admin? or current_volunteer.region_admin?
-  end
-
   def mine_past
     index("volunteer_id = #{current_volunteer.id} AND \"when\" < current_date","My Past Shifts")
   end
@@ -76,7 +31,70 @@ class LogsController < ApplicationController
     filter = filter.nil? ? "" : " AND #{filter}"
     @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
     @header = header
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end
     render :index
+  end
+
+  def new
+    @region = Region.find(params[:region_id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @region
+      flash[:notice] = "Not authorized to create schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    @log = Log.new
+    @action = "create"
+    session[:my_return_to] = request.referer
+    render :new
+  end
+
+  def create
+    @log = Log.new(params[:log])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region
+      flash[:notice] = "Not authorized to create schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    if @log.save
+      flash[:notice] = "Created successfully."
+      redirect_to(session[:my_return_to])
+    else
+      flash[:notice] = "Didn't save successfully :("
+      render :new
+    end
+  end
+
+  def edit
+    @log = Log.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region or @log.volunteer == current_volunteer
+      flash[:notice] = "Not authorized to edit that log item."
+      redirect_to(root_path)
+      return
+    end
+    @region = @log.region
+    @action = "update"
+    session[:my_return_to] = request.referer
+    render :edit
+  end
+
+  def update
+    @log = Log.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region or @log.volunteer == current_volunteer
+      flash[:notice] = "Not authorized to edit that log item."
+      redirect_to(root_path)
+      return
+    end
+    if @log.update_attributes(params[:log])
+      flash[:notice] = "Updated Successfully."
+      redirect_to(session[:my_return_to])
+    else
+      flash[:notice] = "Update failed :("
+      render :edit
+    end
   end
 
   def new_absence

@@ -1,4 +1,14 @@
 <h2><%= @header %></h2>
+
+<% if current_volunteer.any_admin? %>
+<div style="text-align: right;">
+<%= form_tag("/logs/new", :method => "get") do %>
+New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
+<%= submit_tag("Go") %>
+<% end %>
+</div>
+<% end %>
+
 <% if @shifts.length == 0 %>
 <p> 
   No shifts found.

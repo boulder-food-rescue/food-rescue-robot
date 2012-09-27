@@ -76,7 +76,7 @@ class LogsController < ApplicationController
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else
-        redirect_to(root_path)
+        index
       end
     else
       flash[:notice] = "Didn't save successfully :("

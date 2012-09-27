@@ -170,11 +170,13 @@
         </table>
       </div>
     </div>
+    <% unless Schedule.where(:volunteer_id => current_volunteer).count == 0 %>
     <div class="home_sub_section">
       <h2> Your Map </h2>
       <div class="home_section_content">
         <%= gmaps4rails(Schedule.where('volunteer_id = ?',current_volunteer.id).collect{ |s| [s.donor,s.recipient] }.flatten.compact.to_gmaps4rails) %>
       </div>
     </div>
+    <% end %>
   </div>
 </div>

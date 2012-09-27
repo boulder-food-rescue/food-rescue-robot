@@ -1,7 +1,7 @@
 <h2><%= @s.donor.name %> -> <%= @s.recipient.name %></h2>
 <br>
 <% unless @s.donor.address.nil? or @s.recipient.address.nil? %>
-<%= gmaps("direction" => {"data" => {"from" => @s.donor.address, "to" => @s.recipient.address }, 
+<%= gmaps("direction" => {"data" => {"from" => @s.donor.address.tr("\n\r",","), "to" => @s.recipient.address.tr("\n\r",",") }, 
           "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}}) %>
 <div id="instructions"></div>
 <% else %>

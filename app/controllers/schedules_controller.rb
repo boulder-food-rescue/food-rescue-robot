@@ -25,7 +25,7 @@ class SchedulesController < ApplicationController
     else
       @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
     end
-    render :fast_schedule
+    render :index
   end
 
   def today
@@ -38,6 +38,17 @@ class SchedulesController < ApplicationController
     day_of_week = Date.today.wday - 1
     day_of_week = 6 if day_of_week < 0
     index(day_of_week)
+  end
+
+  def destroy
+    @s = Schedule.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @s.region
+      flash[:notice] = "Not authorized to delete schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    @s.destroy
+    redirect_to(request.referrer)
   end
 
   def new

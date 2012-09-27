@@ -67,7 +67,8 @@ Schedule is empty.
     <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
     <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
     <% if current_volunteer.any_admin? %>
-    <td> <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %> </td>
+    <td> <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %><br>
+         <%= link_to "delete", schedule, :confirm => "Are you sure?", :method => :delete %> </td>
     <% end %>
   </tr>
   <% end %>

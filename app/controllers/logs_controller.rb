@@ -1,6 +1,6 @@
 class LogsController < ApplicationController
   before_filter :authenticate_volunteer!
-  before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt]
+  before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create]
 
   def mine_past
     index("volunteer_id = #{current_volunteer.id} AND \"when\" < current_date","My Past Shifts")
@@ -31,12 +31,24 @@ class LogsController < ApplicationController
     filter = filter.nil? ? "" : " AND #{filter}"
     @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
     @header = header
+    @regions = Region.all
     if current_volunteer.super_admin?
       @my_admin_regions = @regions
     else
       @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
     end
     render :index
+  end
+
+  def destroy
+    @l = Log.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @l.region
+      flash[:notice] = "Not authorized to delete log items for that region"
+      redirect_to(root_path)
+      return
+    end
+    @l.destroy
+    redirect_to(request.referrer)
   end
 
   def new

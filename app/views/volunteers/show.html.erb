@@ -1,0 +1,15 @@
+<table>
+<tr><td>Name<td><%= @v.name %>
+<% unless @v.photo_file_name.nil? %><tr><td>Photo<td><a href="<%= @v.photo(:medium) %>"><img src="<%= @v.photo(:thumb) %>"></a><% end %>
+<tr><td>Phone<td><%= @v.phone %>
+<tr><td>Email<td><a href="mailto:<%= @v.email %>"><%= @v.email %></a>
+<tr><td>Preferred Contact<td><%= @v.preferred_contact %>
+<tr><td>Transport<td><%= @v.transport_type.nil? ? "?" : @v.transport_type.name %> <%= "(has car)" if @v.has_car %>
+<tr><td>Region(s)<td> <%= @v.regions.collect{ |r| r.name }.join(", ") %>
+<tr><td>Account Status<td><%= s = @v.is_disabled ? "Disabled" : ""
+             if !@v.gone_until.nil? and @v.gone_until > Date.today
+               s += ", and " if s.length > 0
+               s += "Gone until #{@v.gone_until}"
+             end
+             s.length == 0 ? "Okay" : s %>
+</table>

@@ -2,53 +2,102 @@ class VolunteersController < ApplicationController
   before_filter :authenticate_volunteer!
   before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
 
-  def create_authorized?
-    current_volunteer.super_admin? or current_volunteer.region_admin?
-  end
-
-  active_scaffold :volunteer do |conf|
-    conf.list.sorting = {:name => 'ASC'}
-    conf.columns = [:name,:photo,:email,:phone,:cell_carrier,:sms_too,:preferred_contact,:gone_until,:has_car,:is_disabled, 
-                    :admin,:on_email_list,:pickup_prefs,:transport_type,:admin_notes,:regions,:created_at]
-    conf.update.columns = [:name,:photo,:email,:phone,:cell_carrier,:preferred_contact,:sms_too,:pre_reminders_too,:gone_until,:has_car,:is_disabled,
-                    :admin,:on_email_list,:pickup_prefs,:transport_type,:admin_notes,:regions]
-    conf.columns[:is_disabled].label = "Account Deactivated"
-    conf.columns[:sms_too].label = "Recieve Texts"
-    conf.columns[:sms_too].description = "In addition to emails..."
-    conf.columns[:pre_reminders_too].label = "Receive Pre-Reminders"
-    conf.columns[:pre_reminders_too].description = "Remind about upcoming pickups"
-    conf.columns[:preferred_contact].form_ui = :select
-    conf.columns[:regions].form_ui = :select
-    conf.columns[:cell_carrier].form_ui = :select
-    conf.columns[:cell_carrier].clear_link
-    conf.columns[:transport_type].form_ui = :select
-    conf.columns[:preferred_contact].options = {:options => [["Email","Email"],["Phone","Phone"],["Text","Text"]]}
-    conf.actions.exclude :create
-    # if marking isn't enabled it creates errors on delete :(
-    conf.actions.add :mark
-  end
-
-  def nested?
-    return false
-  end
-
-  # Custom views of the index table
   def unassigned
-    @conditions = "(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0"
-    index
+    index("(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0","Unassigned")
   end
   def shiftless
-    my_rids = current_volunteer.regions.collect{ |r| r.id }
-    @volunteers = Volunteer.where("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
-                                   (gone_until IS NULL or gone_until < current_date)").collect{ |v| 
-      (v.regions.collect{ |r| r.id } & my_rids).length > 0 ? v : nil }.compact
+    index("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
+           (gone_until IS NULL or gone_until < current_date)","Shiftless") 
   end
-  def shiftless_old
-    @conditions = "(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0"
-    index
+
+  def index(filter=nil,header="All Volunteers")
+    @volunteers = Volunteer.where(filter).collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+    @header = header
+    render :index
   end
-  def conditions_for_collection
-    @conditions
+
+  def show
+    @v = Volunteer.find(params[:id])
+    unless current_volunteer.super_admin? or (current_volunteer.region_ids & @v.region_ids).length > 0
+      flash[:notice] = "Can't view volunteer for a region you're not assigned to..."
+      redirect_to(root_path)
+      return
+    end
+  end
+
+  def destroy
+    @v = Volunteer.find(params[:id])
+    return unless check_permissions(@v)
+    @v.destroy
+    redirect_to(request.referrer)
+  end
+
+  def new
+    @volunteer = Volunteer.new
+    @action = "create"
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end
+    session[:my_return_to] = request.referer
+    render :new
+  end
+
+  def check_permissions(v)
+    # FIXME: use model validation to ensure non-admin doesn't edit the admin bit or admin_notes
+    unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 or
+           current_volunteer == v
+      flash[:notice] = "Not authorized to create/edit volunteers for that region"
+      redirect_to(root_path)
+      return false
+    end
+    return true
+  end
+
+  def create
+    @volunteer = Volunteer.new(params[:volunteer])
+    return unless check_permissions(@volunteer)
+    # can't set admin bits from CRUD controls
+    @volunteer.admin = false
+    @volunteer.assignments.each{ |r| r.admin = false }
+    if @volunteer.save
+      flash[:notice] = "Created successfully."
+      redirect_to(session[:my_return_to])
+    else
+      flash[:notice] = "Didn't save successfully :("
+      render :new
+    end
+  end
+
+  def edit
+    @volunteer = Volunteer.find(params[:id])
+    return unless check_permissions(@volunteer)
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end
+    @action = "update"
+    session[:my_return_to] = request.referer
+    render :edit
+  end
+
+  def update
+    @volunteer = Volunteer.find(params[:id])
+    return unless check_permissions(@volunteer)
+    # can't set admin bits from CRUD controls
+    params[:volunteer].delete(:admin) 
+    params[:volunteer][:assignments].each{ |a| a.delete(:admin) } unless params[:volunteer][:assignments].nil?
+    if @volunteer.update_attributes(params[:volunteer])
+      flash[:notice] = "Updated Successfully."
+      redirect_to(session[:my_return_to])
+    else
+      flash[:notice] = "Update failed :("
+      render :edit
+    end
   end
 
   # switch to a particular user

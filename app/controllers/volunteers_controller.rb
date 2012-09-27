@@ -63,7 +63,11 @@ class VolunteersController < ApplicationController
     @volunteer.assignments.each{ |r| r.admin = false }
     if @volunteer.save
       flash[:notice] = "Created successfully."
-      redirect_to(session[:my_return_to])
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        redirect_to(root_path)
+      end
     else
       flash[:notice] = "Didn't save successfully :("
       render :new
@@ -92,7 +96,11 @@ class VolunteersController < ApplicationController
     params[:volunteer][:assignments].each{ |a| a.delete(:admin) } unless params[:volunteer][:assignments].nil?
     if @volunteer.update_attributes(params[:volunteer])
       flash[:notice] = "Updated Successfully."
-      redirect_to(session[:my_return_to])
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        redirect_to(root_path)
+      end
     else
       flash[:notice] = "Update failed :("
       render :edit

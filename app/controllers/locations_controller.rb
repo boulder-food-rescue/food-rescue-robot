@@ -64,7 +64,11 @@ class LocationsController < ApplicationController
     # can't set admin bits from CRUD controls
     if @location.save
       flash[:notice] = "Created successfully."
-      redirect_to(session[:my_return_to])
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        redirect_to(root_path)
+      end
     else
       flash[:notice] = "Didn't save successfully :("
       render :new
@@ -85,7 +89,11 @@ class LocationsController < ApplicationController
     # can't set admin bits from CRUD controls
     if @location.update_attributes(params[:location])
       flash[:notice] = "Updated Successfully."
-      redirect_to(session[:my_return_to])
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        redirect_to(root_path)
+      end
     else
       flash[:notice] = "Update failed :("
       render :edit

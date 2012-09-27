@@ -10,7 +10,7 @@
 <tr><td>Transport<td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{:include_blank => true}) %>
 <tr><td>Has Car<td><%= f.check_box(:has_car) %>
 <tr><td>Pickup Preferences<td><%= f.text_area(:pickup_prefs, :size => "30x6") %>
-<tr><td>Vacation Until<td><%= f.date_select(:gone_until) %>
+<tr><td>Vacation Until<td><%= f.date_select(:gone_until,{:include_blank => true}) %>
 <% if current_volunteer.any_admin? %>
 <tr><td>Admin Notes<td><%= f.text_area(:admin_notes, :size => "30x6") %>
 <%= hidden_field_tag "volunteer[region_ids][]","" %>

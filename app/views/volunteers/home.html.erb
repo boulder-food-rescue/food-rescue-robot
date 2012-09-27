@@ -17,7 +17,7 @@
           <tr>
             <td> <%= link_to pickup.donor.name, pickup.donor %> </td>
             <td> <%= pickup.when %> </td>
-            <td> <%= link_to "view", pickup %> </td>
+            <td> <%= link_to 'map', pickup.schedule %> </td>
           </tr>
           <% end %>
         </table>
@@ -36,7 +36,7 @@
           <tr>
             <td> <%= link_to report.donor.name, report.donor %> </td>
             <td> <%= report.when %> </td>
-            <td> <%= link_to "view", report %> | <%= link_to "edit", edit_log_path(report) %></td>
+            <td> <%= link_to "edit", edit_log_path(report) %></td>
           </tr>
           <% end %>
         </table>

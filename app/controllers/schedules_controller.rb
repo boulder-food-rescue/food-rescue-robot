@@ -28,6 +28,10 @@ class SchedulesController < ApplicationController
     render :index
   end
 
+  def show
+    @s = Schedule.find(params[:id])
+  end
+
   def today
     index(Date.today.wday)
   end

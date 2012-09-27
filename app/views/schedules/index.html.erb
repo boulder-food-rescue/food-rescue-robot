@@ -66,10 +66,11 @@ Schedule is empty.
     <td><%= link_to schedule.prior_volunteer.name, schedule.prior_volunteer unless schedule.prior_volunteer.nil? %> </td>
     <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
     <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
-    <% if current_volunteer.any_admin? %>
-    <td> <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %><br>
+    <td> <%= link_to 'map', schedule %><br>
+         <% if current_volunteer.any_admin? %>
+         <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %><br>
          <%= link_to "delete", schedule, :confirm => "Are you sure?", :method => :delete %> </td>
-    <% end %>
+         <% end %>
   </tr>
   <% end %>
   </tbody>

@@ -46,7 +46,6 @@ class VolunteersController < ApplicationController
   end
 
   def check_permissions(v)
-    # FIXME: use model validation to ensure non-admin doesn't edit the admin bit or admin_notes
     unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 or
            current_volunteer == v
       flash[:notice] = "Not authorized to create/edit volunteers for that region"

@@ -1,31 +1,96 @@
 class LocationsController < ApplicationController
   before_filter :authenticate_volunteer!
 
-  # Only superadmins and region admins can create locations
-  def create_authorized?
-    current_volunteer.super_admin? or current_volunteer.region_admin?
+  def donors
+    index("is_donor")
   end
 
-  active_scaffold :location do |conf|
-    conf.columns[:donor_type].form_ui = :select
-    conf.columns[:donor_type].options = {:options => [["",nil],["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]]}
-    conf.columns[:recip_category].form_ui = :select
-    conf.columns[:recip_category].options = {:options => [["",nil],["A","A"],["B","B"],["C","C"],["D","D"]]}
-    conf.columns[:recip_category].label = 'Recipient Category'
-    conf.columns[:recip_category].description = 'Leave blank if this is a donor'
-    conf.columns[:donor_type].description = 'Leave blank if this is a recipient'
-    conf.columns[:lat].label = 'Latitude'
-    conf.columns[:lng].label = 'Longitude'
-    conf.columns[:lat].description = 'Decimal degrees, WGS84, EPSG:4326, Leave blank for geo-coding'
-    conf.columns[:lng].description = 'Decimal degrees, WGS84, EPSG:4326, Leave blank for geo-coding'
-    conf.columns[:is_donor].description = "If this isn't checked, it must be a recipient"
-    conf.columns[:region].form_ui = :select
-    # if marking isn't enabled it creates errors on delete :(
-    conf.actions.add :mark
+  def recipients
+    index("NOT is_donor")
   end
 
-  def conditions_for_collection
-    @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
-    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
+  def index(filter=nil,header="All Locations")
+    filter = filter.nil? ? "" : " AND #{filter}"
+    @locations = Location.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
+    @header = header
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end
+    render :index
   end
+
+  def show
+    @loc = Location.find(params[:id])
+    unless current_volunteer.super_admin? or (current_volunteer.region_ids.include? @loc.region_id)
+      flash[:notice] = "Can't view location for a region you're not assigned to..."
+      redirect_to(root_path)
+      return
+    end
+  end
+
+  def destroy
+    @l = Location.find(params[:id])
+    return unless check_permissions(@l)
+    @l.destroy
+    redirect_to(request.referrer)
+  end
+
+  def new
+    @location = Location.new
+    @location.is_donor = params[:is_donor]
+    @location.region_id = params[:region_id]
+    return unless check_permissions(@location)
+    @action = "create"
+    session[:my_return_to] = request.referer
+    render :new
+  end
+
+  def check_permissions(l)
+    unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids.include? l.region_id) or
+      flash[:notice] = "Not authorized to create/edit locations for that region"
+      redirect_to(root_path)
+      return false
+    end
+    return true
+  end
+
+  def create
+    @location = Location.new(params[:location])
+    return unless check_permissions(@location)
+    # can't set admin bits from CRUD controls
+    if @location.save
+      flash[:notice] = "Created successfully."
+      redirect_to(session[:my_return_to])
+    else
+      flash[:notice] = "Didn't save successfully :("
+      render :new
+    end
+  end
+
+  def edit
+    @location = Location.find(params[:id])
+    return unless check_permissions(@location)
+    @action = "update"
+    session[:my_return_to] = request.referer
+    render :edit
+  end
+
+  def update
+    @location = Location.find(params[:id])
+    return unless check_permissions(@location)
+    # can't set admin bits from CRUD controls
+    if @location.update_attributes(params[:location])
+      flash[:notice] = "Updated Successfully."
+      redirect_to(session[:my_return_to])
+    else
+      flash[:notice] = "Update failed :("
+      render :edit
+    end
+  end
+
+  #  conf.columns[:donor_type].options = {:options => [["",nil],["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]]}
+
 end 

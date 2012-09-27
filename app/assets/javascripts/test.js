@@ -26,7 +26,7 @@
 
 var schedule_table_init = function(){
   $('#my_schedule_table').dataTable( {
-    'iDisplayLength' : 25,
+    'iDisplayLength' : 50,
 //    "aoColumns": [ 
 //                  { "sType": 'weekday-case' },
 //                  null,

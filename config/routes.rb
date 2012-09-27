@@ -61,8 +61,16 @@ Webapp::Application.routes.draw do
     end
   end
 
-  resources :locations do 
-    as_routes 
+  resources :locations do
+    collection do
+      get :donors
+      get :recipients
+      get :index
+      get :edit
+      get :update
+      get :create
+      get :destroy
+    end
   end
 
   devise_for :volunteers

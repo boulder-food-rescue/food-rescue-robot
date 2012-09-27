@@ -23,7 +23,7 @@ No volunteers matching that criteria...
   <tbody>
   <%
   @volunteers.each do |v|
-    row_bgcolor = "white"
+    row_bgcolor = nil
     if v.super_admin?
       row_bgcolor = "red"
     elsif v.any_admin?
@@ -32,8 +32,8 @@ No volunteers matching that criteria...
       row_bgcolor = "grey"
     end
   %>
-  <tr style="background: <%= row_bgcolor %>;">
-    <td> <%= v.name %>
+  <tr<% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+    <td> <%= link_to v.name, v unless v.name.nil? %>
     <td> <% unless v.photo_file_name.nil? %><a href="<%= v.photo(:medium) %>"><img src="<%= v.photo(:thumb) %>"></a><% end %>
     <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
     <td> <%= v.phone %>
@@ -50,8 +50,7 @@ No volunteers matching that criteria...
     <td> <%= word_wrap(v.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless v.admin_notes.nil? %>
     <% end %>
     <td> <%= v.created_at.strftime('%Y-%m-%d') %>
-    <td> <%= link_to 'view', v %><br>
-         <%= link_to 'edit', edit_volunteer_path(v) if (current_volunteer.admin_region_ids & v.region_ids).length > 0 %><br>
+    <td> <%= link_to 'edit', edit_volunteer_path(v) if (current_volunteer.admin_region_ids & v.region_ids).length > 0 %><br>
          <%= link_to "delete", v, :confirm => "Are you sure?", :method => :delete if (current_volunteer.admin_region_ids & v.region_ids).length > 0 %> 
   </tr>
   <% end %>

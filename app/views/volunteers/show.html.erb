@@ -1,6 +1,6 @@
+<h2><%= @v.name %></h2>
+<% unless @v.photo_file_name.nil? %><br><img src="<%= @v.photo(:medium) %>"><% end %>
 <table>
-<tr><td>Name<td><%= @v.name %>
-<% unless @v.photo_file_name.nil? %><tr><td>Photo<td><a href="<%= @v.photo(:medium) %>"><img src="<%= @v.photo(:thumb) %>"></a><% end %>
 <tr><td>Phone<td><%= @v.phone %>
 <tr><td>Email<td><a href="mailto:<%= @v.email %>"><%= @v.email %></a>
 <tr><td>Preferred Contact<td><%= @v.preferred_contact %>

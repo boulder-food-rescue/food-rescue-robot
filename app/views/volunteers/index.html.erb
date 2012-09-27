@@ -50,8 +50,10 @@ No volunteers matching that criteria...
     <td> <%= word_wrap(v.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless v.admin_notes.nil? %>
     <% end %>
     <td> <%= v.created_at.strftime('%Y-%m-%d') %>
-    <td> <%= link_to 'edit', edit_volunteer_path(v) if (current_volunteer.admin_region_ids & v.region_ids).length > 0 %><br>
-         <%= link_to "delete", v, :confirm => "Are you sure?", :method => :delete if (current_volunteer.admin_region_ids & v.region_ids).length > 0 %> 
+    <td> <% if current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 %>
+         <%= link_to 'edit', edit_volunteer_path(v) %><br>
+         <%= link_to "delete", v, :confirm => "Are you sure?", :method => :delete %> 
+         <% end %>
   </tr>
   <% end %>
   </tbody>

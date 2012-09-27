@@ -6,14 +6,12 @@
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
   <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "welcome", "test", :media => "all" %>
+  <%= stylesheet_link_tag "gmaps4rails" %>
   <%= javascript_include_tag "application" %>
   <%= javascript_include_tag :highcharts  %>
   <%= csrf_meta_tags %>
   <script type="text/javascript" language="javascript" src="/DataTables-1.9.2/media/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/DataTables-1.9.2/media/css/demo_table.css">
-  <script type="text/javascript"
-      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCRgaUAPvrYhok18aELb2E32Jjmdnvc494&sensor=false">
-  </script>
 </head>
 <body>
   <div class="container">
@@ -251,5 +249,8 @@
     <p>Copyright © <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> <%= Time.now.year %></p>
   </div>
   </div>
+
+  <%= yield :scripts %>
+
 </body>
 </html>

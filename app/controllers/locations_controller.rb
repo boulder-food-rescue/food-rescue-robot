@@ -29,6 +29,7 @@ class LocationsController < ApplicationController
       redirect_to(root_path)
       return
     end
+    @json = @loc.to_gmaps4rails
   end
 
   def destroy

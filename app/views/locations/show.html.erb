@@ -1,5 +1,6 @@
 <h2><%= @loc.name %></h2>
-
+<%= gmaps("markers" => { "data" => @json },"map_options" => {"processing" => "json", "auto_zoom" => false, "zoom" => 14}) %>
+<br><br>
 <%= @loc.address.gsub("\n","<br>").html_safe unless @loc.address.nil? %><br>
 <% unless @loc.website.nil? %><a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
 <br><br>

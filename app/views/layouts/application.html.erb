@@ -169,10 +169,16 @@
           <a href='#'><span>Administration</span></a>
 		  <ul>
 		    <li>
-		      <a href=<%= locations_path %> class="<%= "selected" if request.fullpath == locations_path %>">
-		        <span>Donors & Recipients</span>
+		      <a href=<%= recipients_locations_path %> class="<%= "selected" if request.fullpath == recipients_locations_path %>">
+		        <span>Recipients</span>
 		      </a>
 		    </li>
+                    <li>
+                      <a href=<%= donors_locations_path %> class="<%= "selected" if request.fullpath == donors_locations_path %>">
+                        <span>Donors</span>
+                      </a>
+                    </li>
+
                     <li>
                       <a href="/volunteers/admin">Controls & Stats (Testing)</a>
                     </li>

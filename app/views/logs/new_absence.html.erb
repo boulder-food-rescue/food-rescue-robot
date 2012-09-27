@@ -2,10 +2,17 @@
 
 <%= form_tag("/logs/create_absence", :method => "get") do %>
 <table class="absence_table">
-  <% if current_volunteer.admin %>
+  <% if current_volunteer.any_admin? %>
   <tr>
   <td>Volunteer:</td>
-  <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.all.collect{ |v| [v.name,v.id] })) %></td>
+  <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+  if current_volunteer.super_admin? %>
+  <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+          ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] })) %></td>
+  <% else %>
+  <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+          ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact)) %></td>
+  <% end %>
   </tr>
   <% end %>
 

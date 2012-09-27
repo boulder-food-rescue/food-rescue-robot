@@ -6,21 +6,19 @@
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
   <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "welcome", "test", :media => "all" %>
+  <%= stylesheet_link_tag "gmaps4rails" %>
   <%= javascript_include_tag "application" %>
   <%= javascript_include_tag :highcharts  %>
   <%= csrf_meta_tags %>
   <script type="text/javascript" language="javascript" src="/DataTables-1.9.2/media/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/DataTables-1.9.2/media/css/demo_table.css">
-  <script type="text/javascript"
-      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCRgaUAPvrYhok18aELb2E32Jjmdnvc494&sensor=false">
-  </script>
 </head>
 <body>
   <div class="container">
   <div class="navigation">
     <div id="cssmenu">
       <li>
-        <a href="/home/welcome">
+        <a href="/volunteers/home">
           <span>Home</span>
         </a>
       </li>
@@ -54,9 +52,6 @@
             <a href=<%= tomorrow_schedules_path %>>
               <span>Tomorrow</span>
             </a>
-          </li>
-          <li>
-            <a href="/schedules/fast_schedule"><span>Faster Full Schedule (Testing)</span></a>
           </li>
   <% end %>
           </ul>
@@ -178,6 +173,9 @@
 		        <span>Donors & Recipients</span>
 		      </a>
 		    </li>
+                    <li>
+                      <a href="/volunteers/admin">Controls & Stats (Testing)</a>
+                    </li>
           <% if current_volunteer.super_admin? %>
           <li>
             <a href=<%= food_types_path %> class="<%= "selected" if request.fullpath == food_types_path %>">
@@ -198,9 +196,6 @@
             <a href=<%= regions_path %> class="<%= "selected" if request.fullpath == regions_path %>">
               <span>Regions</span>
             </a>
-          </li>
-          <li>
-              <a href="/volunteers/admin">Controls & Stats (Testing)</a>
           </li>
           <% end %>
 		  </ul>
@@ -232,7 +227,7 @@
       <h2 id="bfr_title"><%= current_volunteer.main_region.title %></h2>
       <h3><%= current_volunteer.main_region.tagline %></h3>
     </div>
-    <%= link_to image_tag(current_volunteer.main_region.logo(:thumb), :class => 'logo_image') %>
+    <%= link_to current_volunteer.main_region.website do image_tag(current_volunteer.main_region.logo(:thumb), :class => 'logo_image') end %>
     <% else %>
     <div>
       <h2 id="bfr_title">The Food Rescue Robot</h2>
@@ -251,8 +246,11 @@
   </div>
   
   <div class="footer">
-    <p>Copyright © <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
+    <p>Copyright © <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> <%= Time.now.year %></p>
   </div>
   </div>
+
+  <%= yield :scripts %>
+
 </body>
 </html>

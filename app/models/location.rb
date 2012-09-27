@@ -1,19 +1,24 @@
 class Location < ActiveRecord::Base
   belongs_to :region
   geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
-  after_validation :geocode    
-  attr_accessible :address, :admin_notes, :contact, :donor_type, :hours, :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website
+  acts_as_gmappable :process_geocoding => false, :lat => "lat", :lng => "lng", :address => "address"
 
-  # CRUD-level restrictions
-  def authorized_for_update?
-    current_user.admin or current_user.region_admin?(self.region)
+  after_validation :geocode    
+  attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website
+
+  def gmaps4rails_title
+    self.name
   end
-  def authorized_for_create?
-    current_user.admin or current_user.region_admin?(self.region)
+  def gmaps4rails_infowindow
+    ret = "<span style=\"font-weight: bold;color: darkblue;\">#{self.name}</span><br>"
+    ret += self.address.gsub("\n","<br>") unless self.address.nil?
+    ret += "<br>"
+    ret += self.contact.gsub("\n","<br>") unless self.contact.nil?
+    ret += "<br>"
+    ret += self.hours.gsub("\n","<br>") unless self.hours.nil?
+    ret += "<br>"
+    ret += "<a href=\"#{self.website}\">website</a>" unless self.website.nil?
+    ret
   end
-  def authorized_for_delete?
-    current_user.admin or current_user.region_admin?(self.region)
-  end
-  
-  @json = '[{"description": "", "title": "", "sidebar": "", "lng": "28.8701", "lat": "47.0345", "picture": "", "width": "", "height": ""},{"lng": "28.9", "lat": "47" }]'
+
 end

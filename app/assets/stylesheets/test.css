@@ -4,7 +4,7 @@ table{
 }
 
 table tbody{
-  font-size: 0.95em;
+  font-size: 10pt;
 }
 
 
@@ -31,10 +31,12 @@ table a:hover{
 
 thead{
   border-bottom: 2px solid #B5B5B5;
+  font-size: 10pt;
+  font-weight: bold;
 }
 
 table tr.even{
-  background-color: #F6F6F6;
+  background-color: #F0F0F0;
 }
 
 table tr.odd{

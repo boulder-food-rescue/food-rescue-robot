@@ -1,47 +1,10 @@
 class SchedulesController < ApplicationController
   before_filter :authenticate_volunteer!
-
-  active_scaffold :schedule do |conf|
-    conf.list.sorting = {:day_of_week => 'ASC'}
-    conf.list.per_page = 500
-    conf.columns = [:region,:day_of_week,:donor,:recipient,:volunteer,:time_start,:time_stop,
-                    :irregular,:backup,:transport_type,:food_types,:needs_training,:public_notes,
-                    :prior_volunteer,:admin_notes]
-    conf.columns[:day_of_week].form_ui = :select
-    conf.columns[:day_of_week].options = {:options => [["Unknown/varies",nil],["Sunday",0],
-                                                       ["Monday",1],["Tuesday",2],["Wednesday",3],
-                                                       ["Thursday",4],["Friday",5],["Saturday",6]]}
-    conf.columns[:time_start].description = "e.g., 1400"
-    conf.columns[:time_stop].description = "e.g., 1600"
-    conf.columns[:donor].form_ui = :select
-    conf.columns[:volunteer].form_ui = :select
-    conf.columns[:volunteer].clear_link
-    conf.columns[:recipient].form_ui = :select
-    conf.columns[:food_types].form_ui = :select
-    conf.columns[:food_types].clear_link
-    conf.columns[:transport_type].form_ui = :select
-    conf.columns[:prior_volunteer].form_ui = :select
-    conf.columns[:prior_volunteer].clear_link
-    conf.columns[:region].form_ui = :select
-    conf.columns[:irregular].label = "Irregular"
-    conf.columns[:backup].label = "Backup Pickup"
-    # if marking isn't enabled it creates errors on delete :(
-    conf.actions.add :mark
-  end
-
-  # Only admins can change things in the schedule table
-  def create_authorized?
-    current_volunteer.super_admin? or current_volunteer.region_admin?
-  end
-#  def update_authorized?(record=nil)
-#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-#  end
-#  def delete_authorized?(record=nil)
-#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-#  end
+  before_filter :admin_only, :only => [:fast_schedule,:today,:tomorrow,:yesterday,:edit,:update,:create,:new]
 
   def open
     @open_schedules = Schedule.where("volunteer_id IS NULL AND recipient_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
+    render :open
   end
   def open_old
     @conditions = "volunteer_id is NULL AND recipient_id IS NOT NULL and donor_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
@@ -49,43 +12,118 @@ class SchedulesController < ApplicationController
   end
 
   def mine
-  end
-  def mine_old
-    @conditions = "volunteer_id = '#{current_volunteer.id}'"
-    index
+    index(nil,current_volunteer.id)
   end
 
-  def fast_schedule
-    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
+  def index(day_of_week=nil,volunteer_id=nil)
+    dowq = day_of_week.nil? ? "" : "AND day_of_week = #{day_of_week.to_i}"
+    volq = volunteer_id.nil? ? "" : "AND volunteer_id = #{volunteer_id}"
+    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")}) #{dowq} #{volq}")
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end
+    render :index
+  end
+
+  def show
+    @s = Schedule.find(params[:id])
   end
 
   def today
-    @conditions = "day_of_week = #{Date.today.wday}"
-    index
+    index(Date.today.wday)
   end
   def tomorrow
-    @conditions = "day_of_week = #{Date.today.wday + 1 % 6}"
-    index
+    index(Date.today.wday+1 % 6)
   end
   def yesterday
-    @conditions = "day_of_week = #{Date.today.wday - 1 % 6}"
-    index
+    day_of_week = Date.today.wday - 1
+    day_of_week = 6 if day_of_week < 0
+    index(day_of_week)
   end
 
-  def conditions_for_collection
-    if current_volunteer.assignments.length == 0
-      @base_conditions = "1 = 0"
-    else
-      @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+  def destroy
+    @s = Schedule.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @s.region
+      flash[:notice] = "Not authorized to delete schedule items for that region"
+      redirect_to(root_path)
+      return
     end
-    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
+    @s.destroy
+    redirect_to(request.referrer)
+  end
+
+  def new
+    @region = Region.find(params[:region_id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @region
+      flash[:notice] = "Not authorized to create schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    @schedule = Schedule.new
+    @action = "create"
+    render :new
+  end
+
+  def create
+    @schedule = Schedule.new(params[:schedule])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+      flash[:notice] = "Not authorized to create schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    if @schedule.save
+      flash[:notice] = "Created successfully"
+      index
+    else
+      flash[:notice] = "Didn't save successfully :("
+      render :new
+    end
+  end
+
+  def edit
+    @schedule = Schedule.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+      flash[:notice] = "Not authorized to edit schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    @region = @schedule.region
+    @action = "update"
+  end
+
+  def update
+    @schedule = Schedule.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+      flash[:notice] = "Not authorized to edit schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    if @schedule.update_attributes(params[:schedule])
+      flash[:notice] = "Updated Successfully"
+      index
+    else
+      flash[:notice] = "Update failed :("
+      render :edit
+    end
   end
 
   def take
     s = Schedule.find(params[:id])
-    s.volunteer = current_volunteer
-    s.save
-    render "mine"
+    if current_volunteer.regions.collect{ |r| r.id }.include? s.region_id
+      s.volunteer = current_volunteer
+      s.save
+      flash[:notice] = "Successfully took 1 shift."
+    else
+      flash[:notice] = "Cannot take that pickup since you are not a member of that region."
+    end
+    open
+  end
+
+  def admin_only
+    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
   end
 
 end 

@@ -1,24 +1,66 @@
 class AssignmentsController < ApplicationController
-  active_scaffold :assignment do |conf|
-    conf.columns = [:admin,:region,:volunteer]
-    conf.columns[:region].form_ui = :select
-    conf.columns[:volunteer].form_ui = :select
-    # if marking isn't enabled it creates errors on delete :(
-    conf.actions.add :mark
+  before_filter :authenticate_volunteer!
+  before_filter :admin_only
+
+  def index
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+      @my_admin_volunteers = Volunteer.all
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+      adminrids = @my_admin_regions.collect{ |m| m.id }
+      @my_admin_volunteers = Volunteer.all.collect{ |v| 
+        ((v.regions.length == 0) or (adminrids & v.regions.collect{ |r| r.id }).length > 0) ? v : nil }.compact
+    end
+    render :index
   end
 
-  # Only admins can change things in the schedule table
-  def create_authorized?
-    current_volunteer.super_admin? or current_volunteer.region_admin?
+  def assign
+    v = Volunteer.find(params[:volunteer_id])
+    r = Region.find(params[:region_id])
+    a = Assignment.where("volunteer_id = ? and region_id = ?",v.id,r.id)
+    if params[:unassign]
+      a.each{ |e| e.destroy }
+    else
+      if a.length == 0
+        a = Assignment.new
+        a.volunteer = v
+        a.region = r
+        a.save
+      end
+    end
+    index
   end
-#  def update_authorized?(record=nil)
-#    current_volunteer.admin or current_volunteer.region_admin?(record.region)
-#  end
-#  def delete_authorized?(record=nil)
-#    return true if current_volunteer.admin
-#    current_volunteer.assignments.each{ |a|
-#      return true if a.admin and (a.region == record.region)
-#    }
-#  end
+
+  def knight
+    v = Volunteer.find(params[:volunteer_id])
+    r = Region.find(params[:region_id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin?(r)
+      flash[:notice] = "Not permitted to do knightings in that region..."
+      redirect_to(root_path)
+      return
+    end
+    a = Assignment.where("volunteer_id = ? and region_id = ?",v.id,r.id)
+    bit = (params[:unassign]) ? false : true
+    if a.length == 0
+      a = Assignment.new
+      a.volunteer = v   
+      a.region = r
+      a.admin = bit
+      a.save
+    else
+      a.each{ |a| 
+        a.admin = bit
+        a.save
+      }
+    end
+    flash[:notice] = "Assignment succeeded."
+    index
+  end
+
+  def admin_only
+    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
+  end
 
 end 

@@ -1,109 +1,112 @@
 class LogsController < ApplicationController
   before_filter :authenticate_volunteer!
+  before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create]
 
-  active_scaffold :log do |conf|
-    conf.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,
-                    :description,:transport_type,:food_type,:notes,:flag_for_admin,:num_reminders,:orig_volunteer]
-    conf.list.columns = [:when,:volunteer,:donor,:recipient,:weight,:transport_type,:food_type,:orig_volunteer,:schedule]
-    conf.list.per_page = 50
-    conf.columns[:weighed_by].form_ui = :select
-    conf.columns[:weighed_by].options = {:options => [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],
-                                                      ["Guesstimate","Guesstimate"]]}
-    conf.columns[:weight].description = "e.g., '42', in pounds. Put a 0 if the pickup didn't happen for some reason or there was no food."
-    conf.columns[:num_reminders].form_ui = :select
-    conf.columns[:num_reminders].label = "Reminders Sent"
-    conf.columns[:num_reminders].options = {:options => [[0,0],[1,1],[2,2],[3,3],[4,4]]}
-    conf.columns[:schedule].form_ui = :select
-    conf.columns[:region].form_ui = :select
-    conf.columns[:volunteer].form_ui = :select
-    conf.columns[:volunteer].clear_link
-    conf.columns[:food_type].form_ui = :select
-    conf.columns[:food_type].clear_link
-    conf.columns[:description].description = "e.g., apples, pears, bananas, turnips, swiss chard"
-    conf.columns[:volunteer].description = "If someone else covered this shift for you, switch the volunteer to them"
-    conf.columns[:transport_type].clear_link
-    conf.columns[:transport_type].form_ui = :select
-    conf.columns[:orig_volunteer].form_ui = :select
-    conf.columns[:orig_volunteer].label = "Original Volunteer"
-    conf.columns[:orig_volunteer].description = "If the shift was covered by someone else, put the original volunteer here"
-    conf.columns[:orig_volunteer].clear_link
-    conf.columns[:notes].description = "e.g., Trailer wheel is out of true, bin is busted, most raddest pickup evar"
-    conf.columns[:flag_for_admin].description = "Click this if you'd like to make sure we read your note :)"
-    conf.columns[:donor].form_ui = :select
-    conf.columns[:donor].clear_link
-    conf.columns[:recipient].form_ui = :select
-    conf.columns[:recipient].clear_link
-    conf.columns[:schedule].clear_link
-    conf.update.columns = [:region,:when,:volunteer,:donor,:recipient,:weight,:weighed_by,:description,:transport_type,:food_type,:notes,:flag_for_admin,:orig_volunteer]
-    # if marking isn't enabled it creates errors on delete :(
-    conf.actions.add :mark
+  def mine_past
+    index("volunteer_id = #{current_volunteer.id} AND \"when\" < current_date","My Past Shifts")
   end
-
-  # Permissions
-
-  # Only admins can change things in the schedule table
-  def create_authorized?
-    current_volunteer.super_admin? or current_volunteer.region_admin?
-  end
-#  def update_authorized?(record=nil)
-#    current_volunteer == record.volunteer or current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-#  end
-#  def delete_authorized?(record=nil)
-#    current_volunteer.super_admin? or current_volunteer.region_admin?(record.region)
-#  end
-
   def mine_upcoming
-    date = Date.today
-    @upcoming_shifts = Log.where(:volunteer_id => current_volunteer.id).where(:when => date...(date + 7))
+    index("volunteer_id = #{current_volunteer.id} AND \"when\" >= current_date","My Upcoming Shifts")
   end
   def open
-    @open_shifts = Log.where("volunteer_id IS NULL AND recipient_id IS NOT NULL").where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
-  end
-  def mine_past
-    @past_shifts = Log.where(:volunteer_id => current_volunteer.id).where("\"when\" <= '#{(Date.today).to_s}'")
-  end
-
-  # Custom views of the index table
-  def mine_upcoming_old
-    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" >= '#{(Date.today).to_s}'"
-    index
-  end
-  def mine_past_old
-    @conditions = "volunteer_id = '#{current_volunteer.id}' AND \"when\" < '#{(Date.today).to_s}'"
-    index
-  end
-  def open_old
-    @conditions = "volunteer_id is NULL"
-    index
+    index("volunteer_id IS NULL AND \"when\" >= current_date","Open Shifts")
   end
   def today
-    @conditions = "\"when\" = '#{Date.today.to_s}'"
-    index 
+    index("\"when\" = '#{Date.today.to_s}'","Today's Shifts")
   end
   def tomorrow
-    @conditions = "\"when\" = '#{(Date.today+1).to_s}'"
-    index
+    index("\"when\" = '#{(Date.today+1).to_s}'","Tomorrow's Shifts")
   end
   def yesterday
-    @conditions = "\"when\" = '#{(Date.today-1).to_s}'"
-    index
+    index("\"when\" = '#{(Date.today-1).to_s}'","Yesterday's Shifts")
   end
   def being_covered
-    @conditions = "\"when\" >= '#{(Date.today).to_s}' AND volunteer_id IS NOT NULL and volunteer_id != orig_volunteer_id"
-    index
+    index("\"when\" >= current_date AND orig_volunteer_id IS NOT NULL AND orig_volunteer_id != volunteer_id","Shifts Being Covered")
   end
   def tardy
-    @conditions = "\"when\" < '#{(Date.today).to_s}' AND num_reminders >= 3 AND weight IS NULL"
-    index
+    index("\"when\" < current_date AND weight IS NULL and num_reminders >= 3","Missing Data (>= 3 Reminders)")
   end
 
-  def conditions_for_collection
-    if current_volunteer.assignments.length == 0
-      @base_conditions = "1 = 0"
+  def index(filter=nil,header="Entire Log")
+    filter = filter.nil? ? "" : " AND #{filter}"
+    @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
+    @header = header
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
     else
-      @base_conditions = "region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
     end
-    @conditions.nil? ? @base_conditions : @base_conditions + " AND " + @conditions
+    render :index
+  end
+
+  def destroy
+    @l = Log.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @l.region
+      flash[:notice] = "Not authorized to delete log items for that region"
+      redirect_to(root_path)
+      return
+    end
+    @l.destroy
+    redirect_to(request.referrer)
+  end
+
+  def new
+    @region = Region.find(params[:region_id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @region
+      flash[:notice] = "Not authorized to create schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    @log = Log.new
+    @action = "create"
+    session[:my_return_to] = request.referer
+    render :new
+  end
+
+  def create
+    @log = Log.new(params[:log])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region
+      flash[:notice] = "Not authorized to create schedule items for that region"
+      redirect_to(root_path)
+      return
+    end
+    if @log.save
+      flash[:notice] = "Created successfully."
+      redirect_to(session[:my_return_to])
+    else
+      flash[:notice] = "Didn't save successfully :("
+      render :new
+    end
+  end
+
+  def edit
+    @log = Log.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region or @log.volunteer == current_volunteer
+      flash[:notice] = "Not authorized to edit that log item."
+      redirect_to(root_path)
+      return
+    end
+    @region = @log.region
+    @action = "update"
+    session[:my_return_to] = request.referer
+    render :edit
+  end
+
+  def update
+    @log = Log.find(params[:id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region or @log.volunteer == current_volunteer
+      flash[:notice] = "Not authorized to edit that log item."
+      redirect_to(root_path)
+      return
+    end
+    if @log.update_attributes(params[:log])
+      flash[:notice] = "Updated Successfully."
+      redirect_to(session[:my_return_to])
+    else
+      flash[:notice] = "Update failed :("
+      render :edit
+    end
   end
 
   def new_absence
@@ -115,12 +118,22 @@ class LogsController < ApplicationController
   def create_absence
     from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
+    volunteer = Volunteer.find(params[:volunteer_id].to_i)
+    vrids = volunteer.regions.collect{ |r| r.id }
+    adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+
+    unless volunteer.id == current_volunteer.id or current_volunteer.super_admin? or (vrids & adminrids).length > 0
+      flash[:notice] = "Cannot schedule an absence for that person, mmmmk."
+      redirect_to(root_path)
+      return
+    end
+
     if current_volunteer.admin and !params[:volunteer_id].nil?
       pickups = Schedule.where("volunteer_id = #{params[:volunteer_id].to_i}")
     else
       pickups = Schedule.where("volunteer_id = #{current_volunteer.id}")
     end
-    flash[:notice] = pickups.length
+    
     n = 0
     while from <= to
       pickups.each{ |p|
@@ -128,7 +141,6 @@ class LogsController < ApplicationController
           p.food_types.each{ |ft|
             # make sure we don't create more than one for the same absence
             found = Log.where('"when" = ? AND schedule_id = ? AND food_type_id = ?',from,p.id,ft.id)
-            flash[:notice] = "#{from} #{p.id} #{ft.id} #{found.to_s.length}"
             next if found.length > 0
 
             # create the null record
@@ -152,22 +164,31 @@ class LogsController < ApplicationController
       }      
       from += 1
     end
-#    flash[:notice] = "Scheduled #{n} absences"
+    flash[:notice] = "Scheduled #{n} absences"
     render :new_absence
   end
 
   def take
     l = Log.find(params[:id])
-    l.volunteer = current_volunteer
-    l.save
-    mine_upcoming
-    render :mine_upcoming
+    if current_volunteer.regions.collect{ |r| r.id }.include? l.region_id
+      l.volunteer = current_volunteer
+      l.save
+      flash[:notice] = "Successfully took one shift."
+    else
+      flash[:notice] = "Cannot take shifts for regions that you aren't assigned to!"
+    end
+    open
   end
 
   def receipt
     @start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     @stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
     @loc = Location.find(params[:location_id])
+    unless current_volunteer.super_admin? or current_volunteer.region_admin?(@loc.region)  
+      flash[:notice] = "Cannot generate receipt for donors/receipients in other regions than your own!"
+      redirect_to(root_path)
+      return
+    end
     @logs = Log.where("#{@loc.is_donor ? "donor_id" : "recipient_id"} = ? AND \"when\" >= ? AND \"when\" <= ?",@loc.id,@start_date,@stop_date)
     respond_to do |format|
       format.html
@@ -205,6 +226,10 @@ class LogsController < ApplicationController
         send_data pdf.render
       end
     end
+  end
+
+  def admin_only
+    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
   end
 
 end

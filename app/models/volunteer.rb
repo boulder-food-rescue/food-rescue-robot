@@ -12,32 +12,12 @@ class Volunteer < ActiveRecord::Base
 
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
 
-  # column-level restrictions
-  def admin_notes_authorized?
-    current_user.admin
-  end
-  # column-level restrictions
-  def admin_authorized?
-    current_user.admin
-  end
-
-  # ActiveScaffold CRUD-level restrictions
-  def authorized_for_update?
-    current_user.admin or self.email == current_user.email
-  end
-  def authorized_for_create?
-    current_user.admin
-  end
-  def authorized_for_delete?
-    current_user.admin or self.email == current_user.email
-  end
-
   # Admin info accessors
   def super_admin?
-    current_user.admin
+    self.admin
   end
   def region_admin?(r=nil)
-    current_user.assignments.each{ |a|
+    self.assignments.each{ |a|
       return true if (a.admin and r.nil?) or (a.admin and r == a.region)
     }
     return false
@@ -56,8 +36,13 @@ class Volunteer < ActiveRecord::Base
   def main_region
     self.regions[0]
   end
+  def region_ids
+    self.regions.collect{ |r| r.id }
+  end
+  def admin_region_ids
+    self.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+  end
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
-  attr_accessible :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id
+  attr_accessible :pre_reminders_too, :region_ids, :password, :password_confirmation, :remember_me, :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id
 end

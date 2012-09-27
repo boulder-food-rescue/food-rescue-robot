@@ -5,21 +5,21 @@ Webapp::Application.routes.draw do
       get :welcome
     end
   end
-  
+
+  resources :assignments do
+    collection do
+      get :index
+      get :assign
+      get :knight
+    end
+  end
+ 
   resources :cell_carriers do as_routes end
-
-  resources :assignments do as_routes end
-
   resources :regions do as_routes end
-
   resources :transport_types do as_routes end
-
   resources :food_types do as_routes end
 
-  devise_for :volunteers
-
   resources :logs do 
-    as_routes 
     collection do
       get :today
       get :tomorrow
@@ -28,13 +28,15 @@ Webapp::Application.routes.draw do
       get :open
       get :mine_past
       get :mine_upcoming
-      get :mine_past_old
-      get :mine_upcoming_old
-      get :open_old
       get :being_covered
       get :new_absence
       get :create_absence
       get :receipt
+      get :index
+      get :edit
+      get :update
+      get :create
+      get :destroy
     end
     member do
       get :take
@@ -42,7 +44,6 @@ Webapp::Application.routes.draw do
   end
 
   resources :schedules do 
-    as_routes
     collection do
       get :today
       get :tomorrow
@@ -51,19 +52,29 @@ Webapp::Application.routes.draw do
       get :open_old
       get :mine
       get :mine_old
-      get :fast_schedule
-    end
-    member do
       get :take
+      get :index
+      get :edit
+      get :update
+      get :create
+      get :destroy
     end
   end
 
-  resources :locations do 
-    as_routes 
+  resources :locations do
+    collection do
+      get :donors
+      get :recipients
+      get :index
+      get :edit
+      get :update
+      get :create
+      get :destroy
+    end
   end
 
+  devise_for :volunteers
   resources :volunteers do 
-    as_routes 
     collection do
       get :home
       get :unassigned
@@ -71,6 +82,12 @@ Webapp::Application.routes.draw do
       get :shiftless_old
       get :admin
       get :switch_user
+      get :knight
+      get :index
+      get :edit
+      get :update
+      get :create
+      get :destroy
     end
   end
 
@@ -123,7 +140,7 @@ Webapp::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => 'home#welcome'
+  root :to => 'volunteers#home'
 
   # See how all your routes lay out with "rake routes"
 

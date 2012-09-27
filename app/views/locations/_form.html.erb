@@ -1,0 +1,20 @@
+<%= form_for @location, :url => {:action => @action } do |f| %>
+<table>
+<%= hidden_field_tag "location[region_id]", @location.region_id %>
+<%= hidden_field_tag "location[is_donor]", @location.is_donor %>
+<tr><td>Name<td><%= f.text_field(:name) %>
+<tr><td>Address<td><%= f.text_area(:address, :size => "30x6") %>
+<tr><td>Contact Info<td><%= f.text_area(:contact, :size => "30x6") %>
+<tr><td>Website<br><span class="subtext">e.g., http://luckysmarket.com/</span><td><%= f.text_field(:website) %>
+<tr><td>Twitter Handle<br><span class="subtext">e.g., IdealMarket</span><td><%= f.text_field(:twitter_handle) %>
+<tr><td>Hours<td><%= f.text_area(:hours, :size => "30x6") %>
+<% if @location.is_donor %>
+<tr><td>Type<td><%= f.select(:donor_type, [["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]],{:include_blank => true}) %>
+<% else %>
+<tr><td>Category<td><%= f.select(:recip_category, [["A","A"],["B","B"],["C","C"],["D","D"]],{:include_blank => true}) %>
+<% end %>
+<tr><td>Public Notes<td><%= f.text_area(:public_notes, :size => "30x6") %>
+<tr><td>Admin Notes<td><%= f.text_area(:admin_notes, :size => "30x6") %>
+</table>
+<%= submit_tag %>
+<% end %>

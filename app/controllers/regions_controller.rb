@@ -1,4 +1,5 @@
 class RegionsController < ApplicationController
+  before_filter :authenticate_volunteer!
 
   active_scaffold :region do |conf|
     conf.columns = [:logo,:name,:title,:tagline,:address,:phone,:tax_id,:lat,:lng,:notes,:website,:handbook_url,:prior_lbs_rescued,:prior_num_pickups]

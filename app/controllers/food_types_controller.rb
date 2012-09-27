@@ -1,4 +1,6 @@
 class FoodTypesController < ApplicationController
+  before_filter :authenticate_volunteer!
+
   active_scaffold :food_type do |conf|
     conf.columns = [:name]
     # if marking isn't enabled it creates errors on delete :(

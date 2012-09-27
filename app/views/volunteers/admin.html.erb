@@ -16,7 +16,14 @@
         <table class>
           <tr>
             <td>Volunteer:</td>
-            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| [v.name,v.id] })) %></td>
+            <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+            if current_volunteer.super_admin? %>
+            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
+                      ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] })) %></td> 
+            <% else %>
+            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
+                      ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact)) %></td>
+            <% end %>
           </tr>
         </table>
         <%= submit_tag "Switch" %>
@@ -30,7 +37,14 @@
       <table>
       <tr>
         <td>Donor/Recipient:</td>
-        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| r.id }.join(",")})").collect{ |v| [v.name,v.id] })) %></td>
+        <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+        if current_volunteer.super_admin? %>
+        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| 
+                 r.id }.join(",")})").collect{ |v| [v.name,v.id] })) %></td>
+        <% else %>
+        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{adminrids.join(",")})").collect{ |l|
+                  [l.name,l.id] })) %></td>
+        <% end %>
       </tr>
       <tr>
         <td>Starting On: </td>
@@ -46,6 +60,31 @@
 
       </div>
     </div>
+    <% if current_volunteer.super_admin? %>
+    <div class="home_sub_section">
+      <h2> Toggle Super-Admin Priviledges </h2>
+      <div class="home_section_content">
+      <p>
+      Super-admins can do most anything for any region. This should only be given to site 
+      administrators. See <%= link_to assignments_path do "assignments" end %> to assign per-region admins.
+      </p>
+      <%= form_tag("/volunteers/knight", :method => "get") do %>
+      <table>
+      <tr>
+        <td>Volunteer:</td>
+        <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.all.collect{ |v| 
+                name = v.name + " [" + v.assignments.collect{ |a| (a.admin ? "*" : "") + a.region.name }.join(",") + "]"
+                name = "*#{name}" if v.admin
+                [name,v.id] 
+                }))
+            %></td>
+      </tr>
+    </table>
+    <%= submit_tag "Toggle" %>
+    <% end %>
+      </div>
+    </div>
+    <% end %>
   </div>
 
   <div class="home_section">

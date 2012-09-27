@@ -112,6 +112,8 @@ recipient_count = Location.count(:conditions => {:is_donor => false})
 list_of_donors = Location.where(:is_donor => true)
 donor_count = list_of_donors.length
 
+list_of_regions = Region.all
+
 #Transportation Stats
 total_trips = Log.count()
 pie_data = []
@@ -161,19 +163,41 @@ end
     </div>
     <div class="wrap">
     <div class="info_section">
-      <h2 class="section_title"> About BFR </h2>
+      <h2 class="section_title"> About The Robot </h2>
       <p>
-      Boulder Food Rescue is an all volunteer non-profit organization located in Boulder, CO. 
-      We rescue and redistribute perishable food "waste" to charities that serve homeless and 
-      at-risk individuals. Our goal is to help solve the problems of hunger, malnutrition, and 
-      food waste in our community.
-
+      The robot is a web-application for scheduling, routing, and tracking just-in-time food rescue.
+      It was developed by volunteers of <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a>,
+      an all volunteer non-profit organization located in Boulder, Colorado. Although originally used exclusively
+      by Boulder Food Rescue, the robot is now used by multiple organizations around the country, fighting malnutrition
+      and food waste with love, community, and bicycles. If you'd like to start a food rescue group in your town, shoot
+      an email to info at boulder food rescue dot org.
       </p>
-      <div>
-      <p>Read more at <a href="http://www.boulderfoodrescue.org">www.boulderfoodrescue.org</a></p>
-      </div>
+
       <h2 class="section_title">Facts</h2>
       <div class="fact_section">
+      <div class="a_fact_section">
+        <p>Number of Cities Using the Robot: <%= list_of_regions.length %></p>
+        <p class="show_recipient_facts text_link"> list </p>
+                          <div class="fact_info donor_list">
+                                <div class="fun_fact">
+                                  <%
+                                  list_of_regions.each do |r|
+                                    if r.website != nil%>
+                                      <div>
+                                        <p class>
+                                          <a href="<%= r.website %>"><%= r.title %></a>: <%= r.tagline %>
+                                        </p>
+                                      </div>
+                                    <% else %>
+                                      <div>
+                                        <p> <%= r.name %>: <%= r.tagline %></p>
+                                      </div>
+                                    <% end %>
+                                  <% end %>
+                                </div>
+                          </div>
+
+      </div>
       <div class="a_fact_section">
         <p>Total Food Pickups To Date: <%= total_number_pickups %> pickups</p>
         <p class="show_pickups_to_date text_link"> fun facts </p>

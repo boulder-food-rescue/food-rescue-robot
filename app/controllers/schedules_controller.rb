@@ -3,22 +3,17 @@ class SchedulesController < ApplicationController
   before_filter :admin_only, :only => [:fast_schedule,:today,:tomorrow,:yesterday,:edit,:update,:create,:new]
 
   def open
-    @open_schedules = Schedule.where("volunteer_id IS NULL AND recipient_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})")
-    render :open
+    index(nil,nil,"volunteer_id IS NULL and recipient_id IS NOT NULL")
   end
-  def open_old
-    @conditions = "volunteer_id is NULL AND recipient_id IS NOT NULL and donor_id IS NOT NULL and region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
-    index
-  end
-
   def mine
     index(nil,current_volunteer.id)
   end
 
-  def index(day_of_week=nil,volunteer_id=nil)
+  def index(day_of_week=nil,volunteer_id=nil,otherq=nil)
     dowq = day_of_week.nil? ? "" : "AND day_of_week = #{day_of_week.to_i}"
     volq = volunteer_id.nil? ? "" : "AND volunteer_id = #{volunteer_id}"
-    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")}) #{dowq} #{volq}")
+    otherq = otherq.nil? ? "" : "AND #{otherq}"
+    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")}) #{dowq} #{volq} #{otherq}")
     @regions = Region.all
     if current_volunteer.super_admin?
       @my_admin_regions = @regions

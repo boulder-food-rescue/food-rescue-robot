@@ -163,8 +163,8 @@ class VolunteersController < ApplicationController
     @dis_traveled = 0.0
     completed_pickups.each do |pickup|
       if pickup.schedule != nil
-        donor = Location.find(pickup.schedule.donor_id)
-        recipient = Location.find(pickup.schedule.recipient_id)
+        donor = pickup.donor
+        recipient = pickup.recipient
         if donor.lng != nil && donor.lat != nil && recipient.lng != nil && recipient.lat != nil
           radius = 6371.0
           dLat = (donor.lat - recipient.lat) * Math::PI / 180.0

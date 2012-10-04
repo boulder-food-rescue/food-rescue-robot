@@ -13,7 +13,8 @@ class SchedulesController < ApplicationController
     dowq = day_of_week.nil? ? "" : "AND day_of_week = #{day_of_week.to_i}"
     volq = volunteer_id.nil? ? "" : "AND volunteer_id = #{volunteer_id}"
     otherq = otherq.nil? ? "" : "AND #{otherq}"
-    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")}) #{dowq} #{volq} #{otherq}")
+    @volunteer_schedules = []
+    @volunteer_schedules = Schedule.where("region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")}) #{dowq} #{volq} #{otherq}") unless current_volunteer.assignments.length == 0
     @regions = Region.all
     if current_volunteer.super_admin?
       @my_admin_regions = @regions

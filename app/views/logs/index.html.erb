@@ -9,7 +9,9 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
 </div>
 <% end %>
 
-<% if @shifts.length == 0 %>
+<% if current_volunteer.assignments.length == 0 %>
+<p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
+<% elsif @shifts.length == 0 %>
 <p> 
   No shifts found.
 </p>

@@ -29,7 +29,8 @@ class LogsController < ApplicationController
 
   def index(filter=nil,header="Entire Log")
     filter = filter.nil? ? "" : " AND #{filter}"
-    @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
+    @shifts = []
+    @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}") if current_volunteer.region_ids.length > 0
     @header = header
     @regions = Region.all
     if current_volunteer.super_admin?

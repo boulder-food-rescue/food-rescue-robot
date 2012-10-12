@@ -122,7 +122,7 @@
           <% if current_volunteer.region_admin? %>
           <tr>
             <td> Admin For: </td>
-            <td> <%= current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact.join(", ") %> </td>
+            <td> <%= current_volunteer.assignments.collect{ |a| a.admin ? a.region.name : nil }.compact.join(", ") %> </td>
           </tr>
           <% end %>
           <% if current_volunteer.super_admin? %>

@@ -52,7 +52,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <td> <%= link_to shift.orig_volunteer.name, shift.orig_volunteer unless shift.orig_volunteer.nil? %>
     <td> <%= word_wrap(shift.description,:line_width => 20).gsub("\n","<br>").html_safe unless shift.description.nil? %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
-    <td> <%= link_to 'map', shift.schedule %><br>
+    <td> <%= link_to 'map', shift.schedule unless shift.schedule.nil? %><br>
          <% if current_volunteer.super_admin? or current_volunteer.region_admin?(shift.region) %>
          <%= link_to "edit", edit_log_path(shift) %><br>
          <%= link_to "delete", shift, :confirm => "Are you sure?", :method => :delete %>

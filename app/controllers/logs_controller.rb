@@ -128,7 +128,7 @@ class LogsController < ApplicationController
   def create_absence
     from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-    volunteer = Volunteer.find(params[:volunteer_id].to_i)
+    volunteer = (params[:volunteer_id].nil?) ? current_volunteer : Volunteer.find(params[:volunteer_id].to_i)
     vrids = volunteer.regions.collect{ |r| r.id }
     adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
 

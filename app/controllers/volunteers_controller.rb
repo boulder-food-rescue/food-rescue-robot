@@ -3,7 +3,10 @@ class VolunteersController < ApplicationController
   before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
 
   def unassigned
-    index("(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0","Unassigned")
+    @filter = "(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0"
+    @volunteers = Volunteer.where(@filter)
+    @header = "Unassigned"
+    render :index
   end
   def shiftless
     index("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 

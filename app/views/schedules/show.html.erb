@@ -1,5 +1,11 @@
 <h2><%= @s.donor.name %> -> <%= @s.recipient.name %></h2>
 <br>
+Pickup Between: <%= @s.time_start %> - <%= @s.time_stop %>
+<br><br>
+<% unless @s.public_notes.nil? or @s.public_notes.strip == "" %>
+Notes: <%= @s.public_notes %>
+<br><br>
+<% end %>
 <% unless @s.donor.address.nil? or @s.recipient.address.nil? %>
 <%= gmaps("direction" => {"data" => {"from" => @s.donor.address.tr("\n\r",","), "to" => @s.recipient.address.tr("\n\r",",") }, 
           "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}}) %>

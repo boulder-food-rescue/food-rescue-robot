@@ -168,7 +168,7 @@ class VolunteersController < ApplicationController
       if pickup.schedule != nil
         donor = pickup.donor
         recipient = pickup.recipient
-        if donor.lng != nil && donor.lat != nil && recipient.lng != nil && recipient.lat != nil
+        unless donor.nil? or recipient.nil? or donor.lng.nil? or donor.lat.nil? or recipient.lat.nil? or recipient.lng.nil?
           radius = 6371.0
           dLat = (donor.lat - recipient.lat) * Math::PI / 180.0
           dLon = (donor.lng - recipient.lng) * Math::PI / 180.0
@@ -179,7 +179,7 @@ class VolunteersController < ApplicationController
           c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
           @dis_traveled += radius * c
         end
-        end
+      end
     end
     if current_volunteer.assignments.length == 0
       @unassigned = true

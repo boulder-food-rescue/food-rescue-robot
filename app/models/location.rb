@@ -4,7 +4,7 @@ class Location < ActiveRecord::Base
   acts_as_gmappable :process_geocoding => false, :lat => "lat", :lng => "lng", :address => "address"
 
   after_validation :geocode    
-  attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website
+  attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website, :receipt_key
 
   def gmaps4rails_title
     self.name

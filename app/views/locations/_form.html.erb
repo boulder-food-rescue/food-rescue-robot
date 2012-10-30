@@ -15,6 +15,7 @@
 <% end %>
 <tr><td>Public Notes<td><%= f.text_area(:public_notes, :size => "30x6") %>
 <tr><td>Admin Notes<td><%= f.text_area(:admin_notes, :size => "30x6") %>
+<tr><td>Receipt Key<br><span class="subtext">i.e., a random password donors will use to login</span><td><%= f.text_field(:receipt_key) %>
 </table>
 <%= submit_tag %>
 <% end %>

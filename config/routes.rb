@@ -70,6 +70,7 @@ Webapp::Application.routes.draw do
       get :update
       get :create
       get :destroy
+      get :hud
     end
   end
 

@@ -53,7 +53,10 @@ No locations.
     <td><%= word_wrap(loc.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless loc.public_notes.nil? %></td>
     <% if current_volunteer.any_admin? %>
     <td><%= word_wrap(loc.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless loc.admin_notes.nil? or !(current_volunteer.any_admin?) %></td>
-    <td> <%= link_to 'edit', :controller => "locations", :action => "edit", :id => loc %><br>
+    <td> <% unless loc.receipt_key.nil?%>
+           <%= link_to 'hud', :controller => "locations", :action => "hud", :id => loc %><br>
+         <% end %>
+         <%= link_to 'edit', :controller => "locations", :action => "edit", :id => loc %><br>
          <%= link_to "delete", loc, :confirm => "Are you sure?", :method => :delete %> </td>
     <% end %>
   </tr>

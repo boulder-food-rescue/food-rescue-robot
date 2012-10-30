@@ -1,5 +1,18 @@
 class LocationsController < ApplicationController
-  before_filter :authenticate_volunteer!
+  before_filter :authenticate_volunteer!, :except => [:hud]
+
+  def hud
+    @loc = Location.find(params[:id])
+    if (params[:key] == @loc.receipt_key) or current_volunteer.region_admin?(@loc.region) or current_volunteer.super_admin?
+      @schedules = @loc.is_donor ? Schedule.where("donor_id = ?",@loc.id) : Schedule.where("recipient_id = ?",@loc.id)
+      @logs = @loc.is_donor ? Log.where("donor_id = ?",@loc.id) : Log.where("recipient_id = ?",@loc.id).order("when ASC")
+      render :hud
+    else
+      flash[:notice] = "Sorry, the key you're using is expired or you're not authorized to do that"
+      redirect_to(root_path)
+      return
+    end    
+  end
 
   def donors
     index("is_donor")

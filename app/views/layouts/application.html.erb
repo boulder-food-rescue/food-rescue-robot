@@ -16,6 +16,7 @@
 <body>
   <div class="container">
   <div class="navigation">
+    <% unless current_volunteer.nil? %>
     <div id="cssmenu">
       <li>
         <a href="/volunteers/home">
@@ -226,6 +227,7 @@
         </li>
     <% end %>
     </div>
+    <% end %>
   </div>
   <div class="header">
     <% if volunteer_signed_in? and !current_volunteer.main_region.nil? %>

@@ -1,0 +1,63 @@
+<h2><%= @loc.is_donor? ? "Donor" : "Recipient" %> Schedule</h2>
+
+<% unless @loc.receipt_key.nil? %>
+<br>Link to this page: <%= link_to "click here", "/locations/hud?id=#{@loc.id}&key=#{@loc.receipt_key}" %><br>
+<% end %>
+
+<table>
+  <thead>
+  <tr>
+    <th> Day of Week</th>
+    <th> Volunteer </th>
+    <th> Start Time </th>
+    <th> End Time </th>
+    <th> Transport </th>
+    <th> Food Types </th>
+  </tr>
+  </thead>
+  <tbody>
+  <% days_of_week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ] %>
+  <%
+  @schedules.each do |schedule|
+  %>
+  <tr>
+    <td> <span style="display:none;"><%= schedule.day_of_week %></span> <%= days_of_week[schedule.day_of_week] %> </td>
+    <td> <%= schedule.volunteer.name %>
+    <td> <%= schedule.time_start %> </td>
+    <td> <%= schedule.time_stop %> </td>
+    <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
+    <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h2><%= @loc.is_donor? ? "Pick Up" : "Delivery" %> Log</h2>
+<br>
+Total poundage: <%= @logs.collect{ |l| l.weight }.compact.reduce(:+) %><br><br>
+
+
+<table id="my_schedule_table">
+  <thead>
+  <tr>
+    <th> When </th>
+    <th> Volunteer </th>
+    <th> Weight </th>
+    <th> Transport Type </th>
+    <th> Food Type </th>
+  </tr>
+  </thead>
+  <tbody>
+  <%
+  @logs.each do |shift|
+  %>
+  <tr>
+    <td> <%= shift.when %> </td>
+    <td> <%= shift.volunteer.nil? ? "Unknown" : shift.volunteer.name %>
+    <td> <%= shift.weight %> </td>
+    <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
+    <td> <%= shift.food_type.name unless shift.food_type.nil? %>
+  </tr>
+  <% end %>
+  </tbody>
+</table>

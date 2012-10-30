@@ -5,7 +5,7 @@
 <tr><td>Phone<td><%= f.text_field(:phone) %> with <%= f.select(:cell_carrier_id,CellCarrier.all.collect{ |cc| [cc.name,cc.id] },{:include_blank => true}) %>
 <tr><td>Email<td><%= f.text_field(:email) %>
 <tr><td>Preferred Contact<td><%= f.select(:preferred_contact,[["Email","Email"],["Phone","Phone"],["Text","Text"]],{:include_blank => true}) %>
-<tr><td>Receive From Robot<td><%= f.check_box(:sms_too) %> Text Messages <%= f.check_box(:pre_reminders_too) %> Pre-Pickup-Reminders
+<tr><td>Receive From Robot<td><%= f.check_box(:sms_too) %> Text Messages <%= f.check_box(:pre_reminders_too) %> Pre-Pickup-Reminders <%= f.check_box(:get_sncs_email) %> SNCS Email
 <tr><td>On Email List<br><td><%= f.check_box(:on_email_list) %>
 <tr><td>Transport<td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{:include_blank => true}) %>
 <tr><td>Has Car<td><%= f.check_box(:has_car) %>

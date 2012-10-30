@@ -42,7 +42,7 @@ class Notifier < ActionMailer::Base
 
   def admin_short_term_cover_summary(region,logs)
     @logs = logs
-    to = admin_emails_for_region(region)
+    to = admin_emails_for_region(region) + Volunteer.where("get_sncs_email").collect{ |v| v.email }
     mail(:to => to, :subject => "#{region.name} Shifts Needing Coverage Soon (SNCS!)"){ |format| format.text }
   end
 

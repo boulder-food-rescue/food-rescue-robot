@@ -164,6 +164,11 @@
             <td> <%= current_volunteer.pre_reminders_too ? "Yes" : "No" %> </td>
           </tr>
           <tr>
+            <td> Recieving SNCS Emails </td>
+            <td> <%= current_volunteer.get_sncs_email ? "Yes" : "No" %> </td>
+          </tr>
+
+          <tr>
             <td> Change settings </td>
             <td> <a href="/volunteers/<%= current_volunteer.id %>/edit"> Click Here </a> </td>
           </tr>

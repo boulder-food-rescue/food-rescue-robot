@@ -9,7 +9,9 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
 </div>
 <% end %>
 
-<% if @volunteer_schedules.length == 0 %>
+<% if current_volunteer.assignments.length == 0 %>
+<p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
+<% elsif @volunteer_schedules.length == 0 %>
 <p> 
 Schedule is empty.
 </p>
@@ -52,12 +54,12 @@ You aren't assigned to any regions, so you can't see anything yet. Ask a coordin
       row_bgcolor = "yellow"
     end
   %>
-  <tr<% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-    <td> <%= days_of_week[schedule.day_of_week] %> </td>
+  <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+    <td> <span style="display:none;"><%= schedule.day_of_week %></span> <%= days_of_week[schedule.day_of_week] %> </td>
     <td> <%= link_to schedule.donor.name, schedule.donor unless schedule.donor.nil? %> </td>
     <td> <%= link_to schedule.recipient.name, schedule.recipient unless schedule.recipient.nil? %> </td>
-    <td> <% if schedule.volunteer.nil? %>
-         <%=  link_to "(Take it)", :controller => "schedules", :action => "take", :id => schedule %>
+    <td <% if schedule.volunteer.nil? %>style="background: yellow;text-align: center;"<% end %>> <% if schedule.volunteer.nil? %>
+         <%=  link_to "Take it!", :controller => "schedules", :action => "take", :id => schedule %>
          <% else %>
          <%= link_to schedule.volunteer.name, schedule.volunteer %> </td>
          <% end %>

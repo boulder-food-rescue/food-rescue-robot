@@ -4,6 +4,7 @@ tmp
 db/development.sqlite3
 db/data.yml
 db/backup*
+config/database.yaml
 config/database.yml
 config/database.yml.mine
 public/system

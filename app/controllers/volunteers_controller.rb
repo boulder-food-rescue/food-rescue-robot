@@ -3,7 +3,10 @@ class VolunteersController < ApplicationController
   before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
 
   def unassigned
-    index("(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0","Unassigned")
+    @filter = "(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0"
+    @volunteers = Volunteer.where(@filter)
+    @header = "Unassigned"
+    render :index
   end
   def shiftless
     index("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
@@ -63,7 +66,11 @@ class VolunteersController < ApplicationController
     @volunteer.assignments.each{ |r| r.admin = false }
     if @volunteer.save
       flash[:notice] = "Created successfully."
-      redirect_to(session[:my_return_to])
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        index
+      end
     else
       flash[:notice] = "Didn't save successfully :("
       render :new
@@ -92,7 +99,11 @@ class VolunteersController < ApplicationController
     params[:volunteer][:assignments].each{ |a| a.delete(:admin) } unless params[:volunteer][:assignments].nil?
     if @volunteer.update_attributes(params[:volunteer])
       flash[:notice] = "Updated Successfully."
-      redirect_to(session[:my_return_to])
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        index
+      end
     else
       flash[:notice] = "Update failed :("
       render :edit
@@ -155,9 +166,9 @@ class VolunteersController < ApplicationController
     @dis_traveled = 0.0
     completed_pickups.each do |pickup|
       if pickup.schedule != nil
-        donor = Location.find(pickup.schedule.donor_id)
-        recipient = Location.find(pickup.schedule.recipient_id)
-        if donor.lng != nil && donor.lat != nil && recipient.lng != nil && recipient.lat != nil
+        donor = pickup.donor
+        recipient = pickup.recipient
+        unless donor.nil? or recipient.nil? or donor.lng.nil? or donor.lat.nil? or recipient.lat.nil? or recipient.lng.nil?
           radius = 6371.0
           dLat = (donor.lat - recipient.lat) * Math::PI / 180.0
           dLon = (donor.lng - recipient.lng) * Math::PI / 180.0
@@ -168,7 +179,7 @@ class VolunteersController < ApplicationController
           c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
           @dis_traveled += radius * c
         end
-        end
+      end
     end
     if current_volunteer.assignments.length == 0
       @unassigned = true

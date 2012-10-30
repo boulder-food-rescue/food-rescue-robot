@@ -29,7 +29,8 @@ class LogsController < ApplicationController
 
   def index(filter=nil,header="Entire Log")
     filter = filter.nil? ? "" : " AND #{filter}"
-    @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
+    @shifts = []
+    @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}") if current_volunteer.region_ids.length > 0
     @header = header
     @regions = Region.all
     if current_volunteer.super_admin?
@@ -73,7 +74,11 @@ class LogsController < ApplicationController
     end
     if @log.save
       flash[:notice] = "Created successfully."
-      redirect_to(session[:my_return_to])
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        index
+      end
     else
       flash[:notice] = "Didn't save successfully :("
       render :new
@@ -102,7 +107,12 @@ class LogsController < ApplicationController
     end
     if @log.update_attributes(params[:log])
       flash[:notice] = "Updated Successfully."
-      redirect_to(session[:my_return_to])
+      # could be nil if they clicked on the link in an email
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        mine_past
+      end
     else
       flash[:notice] = "Update failed :("
       render :edit
@@ -118,7 +128,7 @@ class LogsController < ApplicationController
   def create_absence
     from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-    volunteer = Volunteer.find(params[:volunteer_id].to_i)
+    volunteer = (params[:volunteer_id].nil?) ? current_volunteer : Volunteer.find(params[:volunteer_id].to_i)
     vrids = volunteer.regions.collect{ |r| r.id }
     adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
 

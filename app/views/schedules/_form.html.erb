@@ -6,7 +6,7 @@
 <tr><td>Donor<td><%= f.select(:donor_id, Location.where("is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
 <tr><td>Recipient<td><%= f.select(:recipient_id, Location.where("NOT is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
 <tr><td>Time Start<td><%= f.text_field(:time_start) %>
-<tr><td>Time Stop<td><%= f.text_field(:time_start) %>
+<tr><td>Time Stop<td><%= f.text_field(:time_stop) %>
 <tr><td>Public Notes<td><%= f.text_area(:public_notes, :size => "30x6") %>
 <tr><td>Admin Notes<td><%= f.text_area(:admin_notes, :size => "30x6") %>
 <tr><td>Irregular<td><%= f.check_box(:irregular) %>

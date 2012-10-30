@@ -1,6 +1,7 @@
 <%= form_for @log, :url => {:action => @action } do |f| %>
 <table>
 <%= hidden_field_tag "log[region_id]", @region.id %>
+<%= hidden_field_tag "log[schedule_id]", @log.schedule.nil? ? nil : @log.schedule.id  %>
 <tr><td>Date<td><%= f.date_select :when %>
 <tr><td>Volunteer<td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| (v.region_ids.include? @region.id) ? v : nil }.compact.collect{ |v| [v.name,v.id] },{:include_blank => true}) %>
 <tr><td>Donor<td><%= f.select(:donor_id, Location.where("is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>

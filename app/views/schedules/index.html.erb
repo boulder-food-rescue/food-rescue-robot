@@ -13,6 +13,10 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
 <p> 
 Schedule is empty.
 </p>
+<% elsif current_volunteer.regions.length == 0 %>
+<p>
+You aren't assigned to any regions, so you can't see anything yet. Ask a coordinator in your region to assign you!
+</p>
 <% else %>
 <% days_of_week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ] %>
 <table id="my_schedule_table">

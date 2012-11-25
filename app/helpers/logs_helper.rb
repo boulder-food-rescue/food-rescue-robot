@@ -251,12 +251,14 @@ def send_weekly_pickup_summary
     biggest = nil
     num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?',r.id,Date.today-7,Date.today).count
     num_entered = 0
+    next unless num_logs > 0
     Log.where('region_id = ? AND "when" > ? AND "when" < ? AND weight IS NOT NULL',r.id,Date.today-7,Date.today).each{ |l|
       lbs += l.weight
       flagged_logs << l if l.flag_for_admin
       biggest = l if biggest.nil? or l.weight > biggest.weight
       num_entered += 1
     }
+    next if biggest.nil?
     m = Notifier.admin_weekly_summary(r,lbs,flagged_logs,biggest,num_logs,num_entered)
     if DontDeliverEmails
       puts m

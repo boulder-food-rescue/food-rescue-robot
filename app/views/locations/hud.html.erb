@@ -22,7 +22,7 @@
   %>
   <tr>
     <td> <span style="display:none;"><%= schedule.day_of_week %></span> <%= days_of_week[schedule.day_of_week] %> </td>
-    <td> <%= schedule.volunteer.name %>
+    <td> <%= schedule.volunteer.nil? ? "Unknown" : schedule.volunteer.name %>
     <td> <%= schedule.time_start %> </td>
     <td> <%= schedule.time_stop %> </td>
     <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>

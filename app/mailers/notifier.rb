@@ -3,7 +3,7 @@ class Notifier < ActionMailer::Base
 
   # Helper method
   def admin_emails_for_region(region)
-    Assignment.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.nil? ? nil : a.volunteer.email }.compact.join(",")
+    Assignment.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.nil? ? nil : a.volunteer.email }.compact
   end
 
   def volunteer_log_reminder(volunteer,logs)

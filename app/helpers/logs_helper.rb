@@ -1,7 +1,7 @@
 module LogsHelper
 
 # Set to true to disable emailing and just print the emails to STDOUT
-DontDeliverEmails = true
+DontDeliverEmails = false
 
 def log_volunteer_column(record)
   if record.volunteer.nil?

@@ -43,6 +43,10 @@ class Volunteer < ActiveRecord::Base
     self.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
   end
 
+  def gone?
+    !self.gone_until.nil? and self.gone_until > Date.today
+  end
+
   # Setup accessible (or protected) attributes for your model
   attr_accessible :pre_reminders_too, :region_ids, :password, :password_confirmation, :remember_me, :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id, :photo, :get_sncs_email
 end

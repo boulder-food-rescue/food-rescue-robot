@@ -28,6 +28,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Food Type </th>
     <th> Original Volunteer </th>
     <th> Description </th>
+    <th> Time Window </th>
     <th> Notes </th>
     <th> Link </th>
   </tr>
@@ -51,6 +52,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <td> <%= shift.food_type.name unless shift.food_type.nil? %>
     <td> <%= link_to shift.orig_volunteer.name, shift.orig_volunteer unless shift.orig_volunteer.nil? %>
     <td> <%= word_wrap(shift.description,:line_width => 20).gsub("\n","<br>").html_safe unless shift.description.nil? %>
+    <td> <%= shift.schedule.time_start.to_s + " - " + shift.schedule.time_stop.to_s unless shift.schedule.nil? %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
     <td> <%= link_to 'map', shift.schedule unless shift.schedule.nil? %><br>
          <% if current_volunteer.super_admin? or current_volunteer.region_admin?(shift.region) %>

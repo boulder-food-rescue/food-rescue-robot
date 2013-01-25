@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121030144508) do
+ActiveRecord::Schema.define(:version => 20130125005456) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -170,6 +170,8 @@ ActiveRecord::Schema.define(:version => 20121030144508) do
     t.integer  "photo_file_size"
     t.datetime "photo_updated_at"
     t.boolean  "get_sncs_email",         :default => false, :null => false
+    t.boolean  "waiver_signed",          :default => false, :null => false
+    t.datetime "waiver_signed_at"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

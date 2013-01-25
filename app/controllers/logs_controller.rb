@@ -20,6 +20,9 @@ class LogsController < ApplicationController
   def yesterday
     index("\"when\" = '#{(Date.today-1).to_s}'","Yesterday's Shifts")
   end
+  def last_ten
+    index("\"when\" >= '#{(Date.today-10).to_s}'","Last 10 Days of Shifts")
+  end
   def being_covered
     index("\"when\" >= current_date AND orig_volunteer_id IS NOT NULL AND orig_volunteer_id != volunteer_id","Shifts Being Covered")
   end
@@ -171,10 +174,11 @@ class LogsController < ApplicationController
           }
           n += 1
         end
-      }      
+      }
+      break if n >= 12      
       from += 1
     end
-    flash[:notice] = "Scheduled #{n} absences"
+    flash[:notice] = "Scheduled #{n} absences (12 is the max at one time)"
     render :new_absence
   end
 

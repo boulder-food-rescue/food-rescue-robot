@@ -82,6 +82,7 @@ Webapp::Application.routes.draw do
       get :unassigned
       get :shiftless
       get :shiftless_old
+      get :need_training
       get :admin
       get :switch_user
       get :knight

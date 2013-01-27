@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130127011400) do
+ActiveRecord::Schema.define(:version => 20130127170220) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -122,7 +122,6 @@ ActiveRecord::Schema.define(:version => 20130127011400) do
     t.integer  "time_stop"
     t.text     "admin_notes"
     t.text     "public_notes"
-    t.boolean  "needs_training"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
     t.boolean  "irregular"
@@ -173,6 +172,7 @@ ActiveRecord::Schema.define(:version => 20130127011400) do
     t.boolean  "get_sncs_email",         :default => false, :null => false
     t.boolean  "waiver_signed",          :default => false, :null => false
     t.datetime "waiver_signed_at"
+    t.boolean  "needs_training",         :default => true
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

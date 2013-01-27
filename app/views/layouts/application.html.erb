@@ -114,6 +114,11 @@
               </a>
             </li>
             <li>
+              <a href=<%= need_training_volunteers_path %> class="<%= "selected" if request.fullpath == need_training_volunteers_path %>">
+                <span>Need Training</span>
+              </a>
+            </li>
+            <li>
               <a href=<%= unassigned_volunteers_path %> class="<%= "selected" if request.fullpath == unassigned_volunteers_path %>">
                 <span>Unassigned</span>
               </a>

@@ -36,8 +36,16 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   <tbody>
   <%
   @shifts.each do |shift|
+    row_bgcolor = nil
+    if shift.volunteer.nil?
+      row_bgcolor = "pink"
+    elsif shift.volunteer.needs_training
+      row_bgcolor = "lightgreen"
+    elsif shift.recipient.nil? or shift.donor.nil?
+      row_bgcolor = "yellow"
+    end
   %>
-  <tr>
+  <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
     <td> <%= shift.when %> </td>
     <td <% if shift.volunteer.nil? %>style="background: yellow;text-align: center;"<% end %>> 
          <% if shift.volunteer.nil? %>

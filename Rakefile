@@ -11,6 +11,7 @@ task(:generate_logs => :environment) do
   # Generate entries for today and tomorrow (shouldn't duplicate...)
   generate_log_entries(Date.today)
   generate_log_entries(Date.today+1)
+  generate_log_entries(Date.today+2)
 end
 
 task(:send_reminders => :environment) do

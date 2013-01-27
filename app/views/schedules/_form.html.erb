@@ -11,7 +11,6 @@
 <tr><td>Admin Notes<td><%= f.text_area(:admin_notes, :size => "30x6") %>
 <tr><td>Irregular<td><%= f.check_box(:irregular) %>
 <tr><td>Backup Pick up<td><%= f.check_box(:backup) %>
-<tr><td>Needs Training<td><%= f.check_box(:needs_training) %>
 <tr><td>Scheduled Transport<td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] }) %>
 <%= hidden_field_tag "schedule[food_type_ids][]","" %>
 <tr><td>Food Type(s)<td><% FoodType.all.each{ |ft| %>

@@ -48,7 +48,7 @@ You aren't assigned to any regions, so you can't see anything yet. Ask a coordin
     row_bgcolor = nil
     if schedule.volunteer.nil?
       row_bgcolor = "pink"
-    elsif schedule.needs_training
+    elsif schedule.volunteer.needs_training
       row_bgcolor = "lightgreen"
     elsif schedule.recipient.nil? or schedule.donor.nil?
       row_bgcolor = "yellow"

@@ -29,6 +29,10 @@ class AssignmentsController < ApplicationController
         a.region = r
         a.save
       end
+      unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
+        m = Notifier.region_welcome_email(r,v)
+        m.deliver unless m.nil?
+      end
     end
     index
   end

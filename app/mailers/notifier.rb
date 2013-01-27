@@ -1,7 +1,12 @@
 class Notifier < ActionMailer::Base
   default :from => "robot@boulderfoodrescue.org"
 
-  # Helper method
+  def region_welcome_email(region,volunteer)
+    return nil if region.welcome_email_text.nil? or region.welcome_email_text.strip.length == 0
+    @welcome_email_text = region.welcome_email_text
+    mail(:to => volunteer.email, :subject => "Welcome"){ |format| format.text }
+  end  
+
   def admin_emails_for_region(region)
     Assignment.where("region_id = ? AND admin = ?",region.id,true).collect{ |a| a.volunteer.nil? ? nil : a.volunteer.email }.compact
   end

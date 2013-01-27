@@ -25,6 +25,7 @@ Webapp::Application.routes.draw do
       get :tomorrow
       get :yesterday
       get :tardy
+      get :last_ten
       get :open
       get :mine_past
       get :mine_upcoming
@@ -89,6 +90,8 @@ Webapp::Application.routes.draw do
       get :update
       get :create
       get :destroy
+      get :waiver
+      get :sign_waiver
     end
   end
 

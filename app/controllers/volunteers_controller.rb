@@ -131,6 +131,20 @@ class VolunteersController < ApplicationController
     render :admin
   end
 
+  def waiver
+    render :waiver
+  end
+
+  def sign_waiver
+    if params[:accept].to_i == 1
+      current_volunteer.waiver_signed = true
+      current_volunteer.waiver_signed_at = Time.now
+      current_volunteer.save
+      flash[:notice] = "Waiver signed!"
+    end
+    home
+  end
+
   def knight
     unless current_volunteer.super_admin?
       flash[:notice] = "You're not permitted to do that!"
@@ -148,6 +162,10 @@ class VolunteersController < ApplicationController
   end
 
   def home
+    if !current_volunteer.waiver_signed
+      waiver
+      return
+    end
     today = Date.today
     
     #Upcoming pickup list

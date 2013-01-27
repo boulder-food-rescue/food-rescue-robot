@@ -13,6 +13,10 @@
             <td>Un-Assign:</td>
             <td><%= check_box_tag(:unassign) %></td>
           </tr>
+          <tr>
+           <td>Send Welcome Email:</td>
+           <td><%= check_box_tag(:send_welcome_email,1,:checked=>true) %></td>
+          </tr>
         </table>
         <%= submit_tag %>
         <% end %>

@@ -14,8 +14,10 @@ class Log < ActiveRecord::Base
   def tweet(record)
     return true if record.region.nil? or record.region.twitter_key.nil?
     return true if record.weight.nil? or record.weight <= 0
-    # only tweet if it's been an hour since the last one
-    return true unless record.region.twitter_last_timestamp.nil? or (Time.now - record.region.twitter_last_timestamp) > 3600
+    # only tweet if it's been a day since the last one
+    return true unless record.region.twitter_last_timestamp.nil? or (Time.now - record.region.twitter_last_timestamp) > 3600*24
+    # flip a coin about whether we'll post this one so we don't always post at the same time of day
+    return true if rand > 0.5
     begin
       Twitter.configure do |config|
         config.consumer_key = record.region.twitter_key

@@ -1,11 +1,33 @@
-<h2><%= @s.donor.name %> -> <%= @s.recipient.name %></h2>
+<% 
+days_of_week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ] 
+next_pickup = nil
+unless @s.irregular
+  next_pickup = Date.today
+  next_pickup += 1 if @s.day_of_week == next_pickup.wday and @s.time_start.to_i < Time.now.strftime("%H%m").to_i
+  while next_pickup.wday != @s.day_of_week
+    next_pickup += 1
+  end
+  time_start_hour = @s.time_start/100
+  time_start_minute = @s.time_start - time_start_hour*100
+  time_stop_hour = @s.time_stop/100
+  time_stop_minute = @s.time_stop - time_stop_hour*100
+  next_pickup_start = Time.new(next_pickup.year,next_pickup.month,next_pickup.day,time_start_hour,time_start_minute)
+  next_pickup_stop = Time.new(next_pickup.year,next_pickup.month,next_pickup.day,time_stop_hour,time_stop_minute)
+end 
+%>
+
+<h2><%= @s.donor.nil? ? "?" : @s.donor.name %> -> <%= @s.recipient.nil? ? "?" : @s.recipient.name %></h2>
 <br>
-Pickup Between: <%= @s.time_start %> - <%= @s.time_stop %>
+Pickup Between: <%= @s.time_start %> - <%= @s.time_stop %> <% unless @s.irregular %>on <%= days_of_week[@s.day_of_week] %><% else %>(Irregular)<% end %>
 <br><br>
 <% unless @s.public_notes.nil? or @s.public_notes.strip == "" %>
 Notes: <%= @s.public_notes %>
 <br><br>
 <% end %>
+<% unless next_pickup.nil? %>
+<a href="http://www.google.com/calendar/event?action=TEMPLATE&text=<%=u "Food Rescue: #{@s.donor.name} -> #{@s.recipient.name}" %>&dates=<%=u next_pickup_start.gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u next_pickup_stop.gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @s.public_notes%>&location=<%=u @s.donor.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
+<% end %>
+<br><br>
 <% unless @s.donor.address.nil? or @s.recipient.address.nil? %>
 <%= gmaps("direction" => {"data" => {"from" => @s.donor.address.tr("\n\r",","), "to" => @s.recipient.address.tr("\n\r",",") }, 
           "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}}) %>
@@ -13,3 +35,7 @@ Notes: <%= @s.public_notes %>
 <% else %>
 Sorry, can't draw map: missing an address for the donor or recipient.
 <% end %>
+
+<%
+  next_pickup = Date.today
+%>

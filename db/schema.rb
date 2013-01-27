@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121030144508) do
+ActiveRecord::Schema.define(:version => 20130127011400) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -109,6 +109,7 @@ ActiveRecord::Schema.define(:version => 20121030144508) do
     t.datetime "logo_updated_at"
     t.string   "phone"
     t.string   "tax_id"
+    t.text     "welcome_email_text"
   end
 
   create_table "schedules", :force => true do |t|
@@ -170,6 +171,8 @@ ActiveRecord::Schema.define(:version => 20121030144508) do
     t.integer  "photo_file_size"
     t.datetime "photo_updated_at"
     t.boolean  "get_sncs_email",         :default => false, :null => false
+    t.boolean  "waiver_signed",          :default => false, :null => false
+    t.datetime "waiver_signed_at"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

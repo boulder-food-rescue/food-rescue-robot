@@ -33,6 +33,7 @@ Webapp::Application.routes.draw do
       get :new_absence
       get :create_absence
       get :receipt
+      get :stats
       get :index
       get :edit
       get :update

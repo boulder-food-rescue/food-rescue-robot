@@ -292,6 +292,7 @@ class VolunteersController < ApplicationController
       food_per_month = food_per_month.push(food_per_month.shift)
       v_food_per_month = v_food_per_month.push(v_food_per_month.shift)
     end
+    @food_per_month = food_per_month
     
     @food_chart_month = LazyHighCharts::HighChart.new('column') do |f|
       f.options[:chart][:defaultSeriesType] = "column"

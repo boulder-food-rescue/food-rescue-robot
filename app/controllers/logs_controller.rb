@@ -44,6 +44,15 @@ class LogsController < ApplicationController
     render :index
   end
 
+  def stats
+    if current_volunteer.super_admin?
+      @regions = Region.all
+    else
+      @regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end
+    render :stats
+  end
+
   def destroy
     @l = Log.find(params[:id])
     unless current_volunteer.super_admin? or current_volunteer.region_admin? @l.region

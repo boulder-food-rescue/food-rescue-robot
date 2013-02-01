@@ -1,7 +1,7 @@
 <% @regions.each do |r| 
   next if Log.where("weight is not null and region_id = #{r.id}").count <= 0
 %>
-<h2><%= r.name %></h2>
+<h2><%= r.name %></h2><br>
 <% 
   pounds_per_year = {}
   pounds_per_month = {}
@@ -50,5 +50,6 @@ Before <%= first_recorded_pickup.to_s %>: <%= r.prior_lbs_rescued %><br>
 %>
    <div style="width: 500px;"><%= high_chart("chart_food_per_year_#{r.id}", food_chart_year)  %></div>
    <div style="width: 500px;"><%= high_chart("chart_food_per_month_#{r.id}", food_chart_month)  %></div>
+   <br><br>
 
 <% end %>

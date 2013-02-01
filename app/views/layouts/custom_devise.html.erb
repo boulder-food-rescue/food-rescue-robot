@@ -267,8 +267,7 @@ end
           <h3>Volunteers Working Today</h3>
           <% 
           pickups_today.each do |pickup|
-            if pickup.volunteer != nil
-              donor = Location.find(pickup.donor_id)
+            next if pickup.volunteer.nil? or pickup.donor.nil?
               if donor.website != nil%>
                 <div>
                   <p>
@@ -282,7 +281,6 @@ end
                   </p>
                 </div>
             <% end %>
-          <% end %> 
           <% end %>
         </div>
         </div>

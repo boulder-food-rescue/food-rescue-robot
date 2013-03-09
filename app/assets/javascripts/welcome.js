@@ -19,7 +19,7 @@ var home_links = function(){
       div += '<li><a href="#'+index+'">' + sub_section + '</a></li>\n'
       $(this).prepend('<a name="'+index+'"\>')
     })
-    if(sub_section.length > 0){
+    if(sub_sections.length > 0){
       div += '</ul>\n'
     }
     div += '</li>\n'

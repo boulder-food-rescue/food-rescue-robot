@@ -1,7 +1,13 @@
 <div class="home_sidebar">
-  <h1> Sections <h2>
+<h1>Sections</h1>
 </div>
 <div class="home_sections">
+  <% unless current_volunteer.main_region.nil? or current_volunteer.main_region.splash_html.nil? %>
+  <div class="home_section">
+    <h1> Welcome </h1>
+    <%= raw current_volunteer.main_region.splash_html %>
+  </div>
+  <% end %> 
   <div class="home_section">
     <h1> My Pickups </h1>
     <div class="home_sub_section">

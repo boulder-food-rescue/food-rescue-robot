@@ -8,3 +8,4 @@ config/database.yaml
 config/database.yml
 config/database.yml.mine
 public/system
+log/*.log.*

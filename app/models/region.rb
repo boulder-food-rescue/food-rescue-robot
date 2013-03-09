@@ -3,7 +3,7 @@ class Region < ActiveRecord::Base
   has_many :volunteers, :through => :assignments
   geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
   after_validation :geocode
-  attr_accessible :address, :lat, :lng, :name, :notes, :website, :handbook_url, :welcome_email_text
+  attr_accessible :address, :lat, :lng, :name, :notes, :website, :handbook_url, :welcome_email_text, :splash_html
   has_attached_file :logo, :styles => { :thumb => "50x50" }
 
   # ActiveScaffold CRUD-level restrictions

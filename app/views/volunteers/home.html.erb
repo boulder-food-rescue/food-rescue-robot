@@ -34,7 +34,7 @@
       <div class="home_section_content">
         <table class="minamalist_table">
           <tr>
-            <th>Donor</th>
+            <th>Location</th>
             <th>Date</th>
             <th></th>
           </tr>
@@ -43,6 +43,27 @@
             <td> <%= link_to report.donor.name, report.donor %> </td>
             <td> <%= report.when %> </td>
             <td> <%= link_to "edit", edit_log_path(report) %></td>
+          </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Shifts Needing Covering! </h2>
+      <div class="home_section_content">
+        <table class="minamalist_table">
+          <tr>
+            <th>Location</th>
+            <th>Date</th>
+            <th></th>
+            <th></th>
+          </tr>
+          <% @sncs_pickups.each do |pickup| %>
+          <tr>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> </td>
+            <td> <%= pickup.when %> </td>
+            <td> <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => pickup.id %>
+            <td> <%= link_to "map", pickup.schedule %></td>
           </tr>
           <% end %>
         </table>

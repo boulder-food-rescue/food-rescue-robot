@@ -55,3 +55,7 @@ gem 'lazy_high_charts'
 
 # To use debugger
 # gem 'ruby-debug'
+
+group :production do
+  gem 'mysql2'
+end

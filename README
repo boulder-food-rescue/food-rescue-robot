@@ -1,3 +1,20 @@
+Boudle Food Rescue Web App
+==========================
+
+Installation
+------------
+
+1. Make sure you have ruby installed.
+2. Grab the [source code](http://code.google.com/p/bfr-webapp/).
+3. Run `bundle update` to pull in all the required gems.
+4. Copy `app/config/database.yml.dist` to `app/config/database.yml` and edit the `development` configuration as desired (defaults to sqlite).
+5. Create the database by running `rake db:migrate`
+6. Fire up the app by running `rails sever` and then hit http://localhost:3000/ to see if it works
+7. Click the `sign up` link and create an account
+
+Development Notes
+-----------------
+
 Models:
    
    Volunteer (people, user accounts, you know...)

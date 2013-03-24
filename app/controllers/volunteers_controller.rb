@@ -173,7 +173,7 @@ class VolunteersController < ApplicationController
     
     #Upcoming pickup list
     @upcoming_pickups = Log.where(:when => today...(today + 7)).where(:volunteer_id => current_volunteer)
-    @sncs_pickups = Log.where(:when => today...(today+7), :weight => nil, :volunteer_id => nil).collect{ |l| 
+    @sncs_pickups = Log.where(:when => today...(today+7), :weight => nil, :volunteer_id => nil).order("\"when\"").collect{ |l| 
       (current_volunteer.region_ids.include? l.region_id) ? l : nil }.compact
     
     #To Do Pickup Reports

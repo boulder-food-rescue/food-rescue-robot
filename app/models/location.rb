@@ -20,5 +20,10 @@ class Location < ActiveRecord::Base
     ret += "<a href=\"#{self.website}\">website</a>" unless self.website.nil?
     ret
   end
-
+  def gmaps4rails_marker_picture
+   {
+     "picture" => self.is_donor ? "http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-start.png" : 
+                                  "http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-end.png"          # string,  mandatory
+   }
+  end
 end

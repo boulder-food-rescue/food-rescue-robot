@@ -50,6 +50,10 @@ Before <%= first_recorded_pickup.to_s %>: <%= r.prior_lbs_rescued %><br>
 %>
    <div style="width: 500px;"><%= high_chart("chart_food_per_year_#{r.id}", food_chart_year)  %></div>
    <div style="width: 500px;"><%= high_chart("chart_food_per_month_#{r.id}", food_chart_month)  %></div>
+   <% if r.id == 1 %>
+   <%= gmaps(:map_options => { :id => "map_#{r.id}" },
+             :markers => { "data" => Location.where("region_id" => r.id).to_gmaps4rails }) %>
+   <% end %>
    <br><br>
 
 <% end %>

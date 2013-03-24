@@ -26,14 +26,17 @@
           </tr>
           <% @upcoming_pickups.each do |pickup| %>
           <tr>
-            <td> <%= link_to pickup.donor.name, pickup.donor %> </td>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> 
+                 <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_type.name %>)</span>
+            </td>
             <td> <%= pickup.when %> </td>
-            <td> <%= link_to 'map', pickup.schedule %> </td>
+            <td> <%= link_to 'Info', pickup.schedule %> </td>
           </tr>
           <% end %>
         </table>
       </div>
     </div>
+    <% if @to_do_reports.length > 0 %>
     <div class="home_sub_section">
       <h2> To Do Pickup Reports </h2>
       <div class="home_section_content">
@@ -45,7 +48,7 @@
           </tr>
           <% @to_do_reports.each do |report| %>
           <tr>
-            <td> <%= link_to report.donor.name, report.donor %> </td>
+            <td> <%= link_to report.donor.name, report.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_type.name %>)</span></td>
             <td> <%= report.when %> </td>
             <td> <%= link_to "edit", edit_log_path(report) %></td>
           </tr>
@@ -53,6 +56,8 @@
         </table>
       </div>
     </div>
+    <% end %>
+    <% if @sncs_pickups.length > 0 %>
     <div class="home_sub_section">
       <h2> Shifts Needing Covering! </h2>
       <div class="home_section_content">
@@ -63,17 +68,22 @@
             <th></th>
             <th></th>
           </tr>
-          <% @sncs_pickups.each do |pickup| %>
+          <% n = 0
+             @sncs_pickups.each do |pickup| 
+               n += 1
+               break if n > 5
+           %>
           <tr>
-            <td> <%= link_to pickup.donor.name, pickup.donor %> </td>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_type.name %>)</span></td>
             <td> <%= pickup.when %> </td>
             <td> <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => pickup.id %>
-            <td> <%= link_to "map", pickup.schedule %></td>
+            <td> <%= link_to "Info", pickup.schedule %></td>
           </tr>
           <% end %>
         </table>
       </div>
     </div>
+    <% end %>
   </div>
   <div class="home_section">
     <h1> Pickup Stats </h1>
@@ -125,15 +135,9 @@
       </div>
     </div>
     <div class="home_sub_section">
-      <h2> Food Collected by Day </h2>
-      <div class="home_section_content">
-        <%= high_chart("chart_food_per_day", @food_chart_day)  %>
-      </div>
-    </div>
-    <div class="home_sub_section">
       <h2> Food Collected by Month </h2>
       <div class="home_section_content">
-        <%= high_chart("chart_food_per_month", @food_chart_month)  %>
+        <%= high_chart("chart_food_per_month_mine", @food_chart_month_mine)  %>
       </div>
     </div>
   </div>
@@ -211,13 +215,5 @@
         </table>
       </div>
     </div>
-    <% unless Schedule.where(:volunteer_id => current_volunteer).count == 0 %>
-    <div class="home_sub_section">
-      <h2> Your Map </h2>
-      <div class="home_section_content">
-        <%= gmaps4rails(Schedule.where('volunteer_id = ?',current_volunteer.id).collect{ |s| [s.donor,s.recipient] }.flatten.compact.to_gmaps4rails) %>
-      </div>
-    </div>
-    <% end %>
   </div>
 </div>

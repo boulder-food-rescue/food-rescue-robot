@@ -48,9 +48,9 @@
           </tr>
           <% @to_do_reports.each do |report| %>
           <tr>
-            <td> <%= link_to report.donor.name, report.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_type.name %>)</span></td>
+            <td> <%= link_to report.donor.name, report.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_type.name %>)</span></td>
             <td> <%= report.when %> </td>
-            <td> <%= link_to "edit", edit_log_path(report) %></td>
+            <td> <%= link_to "Fill In", edit_log_path(report) %></td>
           </tr>
           <% end %>
         </table>

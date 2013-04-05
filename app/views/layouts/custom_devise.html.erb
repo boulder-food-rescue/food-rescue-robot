@@ -242,7 +242,7 @@ end
         <p>Number of Volunteers: <%= number_of_volunteers %> volunteers</p>
         <p class="volunteer_facts text_link"> fun facts </p>
         <div class="fact_info">
-          <% if largest_pickup.volunteer != nil %>
+          <% if (largest_pickup != nil) && (largest_pickup.volunteer != nil) %>
             <div class="fun_fact">
               <h3>Largest Pickup</h3>
               <%
@@ -337,7 +337,7 @@ end
       </div>  
       <div class="a_fact_section">
         <p>Percent of Trips Human Powered: 
-        <%= human_power_percent.round %> %
+        <%= (human_power_percent.nan?) ? 'unknown' : human_power_percent.round.to_s+'%' %>
         </p>
         <p class="show_trans_chart text_link"> chart </p>
         <div class="fact_info transportation_chart">

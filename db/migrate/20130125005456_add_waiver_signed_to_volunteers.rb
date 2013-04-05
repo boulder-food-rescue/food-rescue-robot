@@ -1,6 +1,6 @@
 class AddWaiverSignedToVolunteers < ActiveRecord::Migration
   def up
-    add_column :volunteers, :waiver_signed, :boolean, :null => false, :default => 'f'
+    add_column :volunteers, :waiver_signed, :boolean, :null => false, :default => false
     add_column :volunteers, :waiver_signed_at, :datetime
   end
 

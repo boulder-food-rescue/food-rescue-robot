@@ -1,3 +1,28 @@
+Boudle Food Rescue Web App
+==========================
+
+Installation
+------------
+
+1. Make sure you have ruby installed.
+2. Make sure you have ImageMagick installed by running `which convert` (the paperclip plugin needs this).
+2. Grab the [source code](http://code.google.com/p/bfr-webapp/).
+3. Run `bundle update` to pull in all the required gems.
+4. Copy `config/database.yml.dist` to `config/database.yml` and edit the `development` configuration as desired (defaults to sqlite).
+5. Create the database by running `rake db:migrate`
+6. Fire up the app by running `rails sever` and then hit http://localhost:3000/ to see if it works
+
+Setting Up an Admin User
+------------------------
+
+1. Click the `sign up` link and create an account
+2. Go into your database and change the `volunteer.admin` value for your account to `true` (or do this via the rails console).
+3. Go back to the website, login, and edit your list of regions on `http://localhost:3000/regions`
+4. Click on your name, and edit your settings - add yourself to the region you just created
+
+Development Notes
+-----------------
+
 Models:
    
    Volunteer (people, user accounts, you know...)

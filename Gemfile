@@ -21,7 +21,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails'
+gem 'jquery-rails', '2.1.4'
 
 # Added by Caleb
 gem 'active_scaffold'
@@ -55,3 +55,7 @@ gem 'lazy_high_charts'
 
 # To use debugger
 # gem 'ruby-debug'
+
+group :production do
+  gem 'mysql2'
+end

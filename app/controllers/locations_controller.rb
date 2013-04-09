@@ -15,16 +15,16 @@ class LocationsController < ApplicationController
   end
 
   def donors
-    index("is_donor")
+    index({"is_donor"=>true},"Donors")
   end
 
   def recipients
-    index("NOT is_donor")
+    index({"is_donor"=>false},"Recipients")
   end
 
-  def index(filter=nil,header="All Locations")
-    filter = filter.nil? ? "" : " AND #{filter}"
-    @locations = Location.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
+  def index(filters={},header="Donors and Recipients")
+    filters['region_id'] = current_volunteer.region_ids
+    @locations = Location.where(filters)
     @header = header
     @regions = Region.all
     if current_volunteer.super_admin?

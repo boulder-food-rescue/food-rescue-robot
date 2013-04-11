@@ -6,6 +6,9 @@ class Location < ActiveRecord::Base
   after_validation :geocode    
   attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website, :receipt_key
 
+  scope :donors, where(:is_donor=>true)
+  scope :recipients, where(:is_donor=>false)
+
   def donor?
     return is_donor
   end

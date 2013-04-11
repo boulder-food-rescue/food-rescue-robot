@@ -74,6 +74,7 @@ class LogsController < ApplicationController
     @log = Log.new
     @action = "create"
     session[:my_return_to] = request.referer
+    set_vars_for_form
     render :new
   end
 
@@ -107,6 +108,7 @@ class LogsController < ApplicationController
     @region = @log.region
     @action = "update"
     session[:my_return_to] = request.referer
+    set_vars_for_form
     render :edit
   end
 
@@ -251,8 +253,19 @@ class LogsController < ApplicationController
     end
   end
 
-  def admin_only
-    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
-  end
+  private
+
+    def admin_only
+      redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
+    end
+
+    # add in the variables needed by the form partial
+    def set_vars_for_form
+      @volunteers = Volunteer.all_for_region(@region.id).collect{ |v| [v.name,v.id] }
+      @donors = Location.donors.where(:region_id=>@region.id).collect{ |l| [l.name,l.id] }
+      @recipients = Location.recipients.where(:region_id=>@region.id).collect{ |l| [l.name,l.id] }
+      @food_types = FoodType.all.collect{ |ft| [ft.name,ft.id] }
+      @transport_types = TransportType.all.collect{ |tt| [tt.name,tt.id] }
+    end
 
 end

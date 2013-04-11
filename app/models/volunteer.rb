@@ -47,6 +47,10 @@ class Volunteer < ActiveRecord::Base
     !self.gone_until.nil? and self.gone_until > Date.today
   end
 
+  def self.all_for_region region_id
+    self.includes(:regions).where(:regions=>{:id=>region_id}).compact
+  end
+
   # Setup accessible (or protected) attributes for your model
   attr_accessible :pre_reminders_too, :region_ids, :password, :password_confirmation, :remember_me, :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id, :photo, :get_sncs_email, :needs_training
 end

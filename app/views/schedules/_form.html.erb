@@ -1,22 +1,51 @@
 <%= form_for @schedule, :url => {:action => @action } do |f| %>
-<table>
-<%= hidden_field_tag "schedule[region_id]", @region.id %>
-<tr><td>Day<td><%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %>
-<tr><td>Volunteer<td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| (v.region_ids.include? @region.id) ? v : nil }.compact.collect{ |v| [v.name,v.id] },{:include_blank => true}) %>
-<tr><td>Donor<td><%= f.select(:donor_id, Location.where("is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
-<tr><td>Recipient<td><%= f.select(:recipient_id, Location.where("NOT is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
-<tr><td>Time Start<td><%= f.text_field(:time_start) %>
-<tr><td>Time Stop<td><%= f.text_field(:time_stop) %>
-<tr><td>Public Notes<td><%= f.text_area(:public_notes, :size => "30x6") %>
-<tr><td>Admin Notes<td><%= f.text_area(:admin_notes, :size => "30x6") %>
-<tr><td>Irregular<td><%= f.check_box(:irregular) %>
-<tr><td>Backup Pick up<td><%= f.check_box(:backup) %>
-<tr><td>Scheduled Transport<td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] }) %>
-<%= hidden_field_tag "schedule[food_type_ids][]","" %>
-<tr><td>Food Type(s)<td><% FoodType.all.each{ |ft| %>
-  <%= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <%= ft.name %>
-<% } %>
-<tr><td>Prior Volunteer<td><%= f.select(:prior_volunteer_id, Volunteer.all.collect{ |v| (v.region_ids.include? @region.id) ? v : nil }.compact.collect{ |v| [v.name,v.id] },{:include_blank => true}) %>
-</table>
-<%= submit_tag %>
+
+  <%= hidden_field_tag "schedule[region_id]", @region.id %>
+
+  <table>
+    <tr><td>Day</td>
+        <td><%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %></td>
+    </tr>
+    <tr><td>Volunteer</td>
+        <td><%= f.select(:volunteer_id, @volunteers, {:include_blank => true}) %></td>
+    </tr>
+    <tr><td>Donor</td>
+        <td><%= f.select(:donor_id, @donors, {:include_blank => true}) %></td>
+    </tr>
+    <tr><td>Recipient</td>
+        <td><%= f.select(:recipient_id, @recipients, {:include_blank => true}) %></td>
+    </tr>
+    <tr><td>Time Start</td>
+        <td><%= f.text_field(:time_start) %></td>
+    </tr>
+    <tr><td>Time Stop</td>
+        <td><%= f.text_field(:time_stop) %></td>
+    </tr>
+    <tr><td>Public Notes</td>
+        <td><%= f.text_area(:public_notes, :size => "30x6") %></td>
+    </tr>
+    <tr><td>Admin Notes</td>
+        <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>
+    </tr>
+    <tr><td>Irregular</td>
+        <td><%= f.check_box(:irregular) %></td>
+    </tr>
+    <tr><td>Backup Pick up</td>
+        <td><%= f.check_box(:backup) %></td>
+    </tr>
+    <tr><td>Scheduled Transport</td>
+        <td><%= f.select(:transport_type_id, @transport_types) %>
+    <%= hidden_field_tag "schedule[food_type_ids][]","" %></td>
+    </tr>
+    <tr><td>Food Type(s)</td><td><% FoodType.all.each{ |ft| %>
+      <%= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <%= ft.name %>
+    <% } %></td>
+    </tr>
+    <tr><td>Prior Volunteer</td>
+        <td><%= f.select(:prior_volunteer_id, @volunteers, {:include_blank => true}) %></td>  
+    </tr>
+  </table>
+
+  <%= submit_tag %>
+
 <% end %>

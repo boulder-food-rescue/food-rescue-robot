@@ -15,11 +15,11 @@ class LocationsController < ApplicationController
   end
 
   def donors
-    index({"is_donor"=>true},"Donors")
+    index({:is_donor=>true},"Donors")
   end
 
   def recipients
-    index({"is_donor"=>false},"Recipients")
+    index({:is_donor=>false},"Recipients")
   end
 
   def index(filters={},header="Donors and Recipients")

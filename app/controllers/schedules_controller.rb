@@ -59,6 +59,7 @@ class SchedulesController < ApplicationController
       return
     end
     @schedule = Schedule.new
+    set_vars_for_form @region
     @action = "create"
     render :new
   end
@@ -87,6 +88,7 @@ class SchedulesController < ApplicationController
       return
     end
     @region = @schedule.region
+    set_vars_for_form @region
     @action = "update"
   end
 

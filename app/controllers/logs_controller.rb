@@ -1,5 +1,5 @@
 class LogsController < ApplicationController
-  before_filter :authenticate_volunteer!
+  before_filter :authenticate_volunteer!, :except => :stats_service
   before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create]
 
   def mine_past
@@ -51,6 +51,24 @@ class LogsController < ApplicationController
       @regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
     end
     render :stats
+  end
+
+  def stats_service
+    case params[:what]
+    when 'poundage'
+      if params[:region_id].nil?
+        t = Log.where("weight IS NOT NULL").sum("weight") +
+            Region.where("prior_lbs_rescued IS NOT NULL").sum("prior_lbs_rescued")
+      else
+        r = params[:region_id]
+        @region = Region.find(r)
+        t = Log.where("region_id = ? AND weight IS NOT NULL",r).sum("weight")
+        t += @region.prior_lbs_rescued unless @region.nil? or @region.prior_lbs_rescued.nil?
+      end
+      render :text => t.to_s
+    else
+      render :text => "NO"
+    end
   end
 
   def destroy

@@ -39,6 +39,7 @@ Webapp::Application.routes.draw do
       get :update
       get :create
       get :destroy
+      get :stats_service
     end
     member do
       get :take

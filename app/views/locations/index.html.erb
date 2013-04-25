@@ -48,7 +48,13 @@ No locations.
     <td> <%= loc.name.nil? ? loc.name : (link_to loc.name, loc) %> <% unless loc.website.nil? %><%= link_to "(website)", loc.website %><% end %></td>
     <td> <%= loc.address.gsub("\n","<br>").html_safe unless loc.address.nil? %></td>
     <td> <%= loc.contact.gsub("\n","<br>").html_safe unless loc.contact.nil? %> </td>
-    <td> <%= loc.hours.gsub("\n","<br>").html_safe unless loc.hours.nil? %> </td>
+    <td>
+      <% if Webapp::Application.config.use_detailed_hours %>
+        <%= readable_detailed_hours loc %>
+      <% else %>
+        <%= loc.hours.gsub("\n","<br>").html_safe unless loc.hours.nil? %>
+      <% end %>
+    </td>
     <td> <%= loc.is_donor ? loc.donor_type : loc.recip_category %>
     <td><%= word_wrap(loc.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless loc.public_notes.nil? %></td>
     <% if current_volunteer.any_admin? %>

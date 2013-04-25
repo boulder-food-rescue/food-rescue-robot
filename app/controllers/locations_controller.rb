@@ -73,6 +73,7 @@ class LocationsController < ApplicationController
 
   def create
     @location = Location.new(params[:location])
+    @location.populate_detailed_hours_from_form params
     return unless check_permissions(@location)
     # can't set admin bits from CRUD controls
     if @location.save
@@ -98,6 +99,7 @@ class LocationsController < ApplicationController
 
   def update
     @location = Location.find(params[:id])
+    @location.populate_detailed_hours_from_form params
     return unless check_permissions(@location)
     # can't set admin bits from CRUD controls
     if @location.update_attributes(params[:location])

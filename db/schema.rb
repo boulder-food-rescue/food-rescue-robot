@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130309045432) do
+ActiveRecord::Schema.define(:version => 20130425182028) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -53,11 +53,12 @@ ActiveRecord::Schema.define(:version => 20130309045432) do
     t.text     "admin_notes"
     t.text     "public_notes"
     t.text     "hours"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "region_id"
     t.string   "twitter_handle"
     t.string   "receipt_key"
+    t.text     "detailed_hours_json"
   end
 
   create_table "logs", :force => true do |t|

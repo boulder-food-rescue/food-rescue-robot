@@ -28,15 +28,16 @@ module LocationsHelper
       str = ''
       (0..6).each do |index|
         if location.open_on_day? index
-          str += Date::DAYNAMES[index] + ' from ' + format_time(location.read_attribute('day'+index.to_s+'_start')) + 
-            ' to ' + format_time(location.read_attribute('day'+index.to_s+'_end')) + '<br />'
+          str += Date::ABBR_DAYNAMES[index] + ': ' + format_time(location.read_attribute('day'+index.to_s+'_start')) + 
+            ' - ' + format_time(location.read_attribute('day'+index.to_s+'_end')) + '<br />'
         end
       end
       str.html_safe
     end
 
     def format_time t
-      I18n.l t, :format => "%I:%M%p",  :locale => :"en"
+      format = (t.min==0) ? "%-I%p" : "%-I:%M%p"
+      I18n.l t, :format => format,  :locale => :"en"
     end
 
 end

@@ -54,9 +54,9 @@ No locations.
     </td>
     <td><%= readable_hours loc %></td>
     <td> <%= loc.is_donor ? loc.donor_type : loc.recip_category %>
-    <td><small><%= word_wrap(loc.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless loc.public_notes.nil? %></small></td>
+    <td><small><%= word_wrap(loc.public_notes,:line_width => 30).gsub("\n","<br>").html_safe unless loc.public_notes.nil? %></small></td>
     <% if current_volunteer.any_admin? %>
-      <td><small><%= word_wrap(loc.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless loc.admin_notes.nil? or !(current_volunteer.any_admin?) %></small></td>
+      <td><small><%= word_wrap(loc.admin_notes,:line_width => 30).gsub("\n","<br>").html_safe unless loc.admin_notes.nil? or !(current_volunteer.any_admin?) %></small></td>
       <td> <% unless loc.receipt_key.nil?%>
              <%= link_to 'hud', "/locations/hud?id=#{loc.id}&key=#{loc.receipt_key}" %><br>
            <% end %>

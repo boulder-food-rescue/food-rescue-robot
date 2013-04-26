@@ -1,13 +1,33 @@
+
 <h2><%= @loc.name %></h2>
+
+<br />
 <%= gmaps("markers" => { "data" => @json },"map_options" => {"processing" => "json", "auto_zoom" => false, "zoom" => 14}) %>
-<br><br>
+<br />
+
+<h3>Address</h3>
+<p>
 <%= @loc.address.gsub("\n","<br>").html_safe unless @loc.address.nil? %><br>
-<% unless @loc.website.nil? %><a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
-<br><br>
+</p>
+
+<h3>Contact Info</h3>
+<p>
 <%= @loc.contact.gsub("\n","<br>").html_safe unless @loc.contact.nil? %>
-<br><br>
+<% unless @loc.website.nil? %><a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
+<br>
+<%= @loc.phone %>
+<br>
+<%= @loc.email %>
+</p>
+
+<h3>Hours</h3>
+<p>
 <%= readable_hours @loc %>
-<br><br>
+</p>
+
+<h3>Notes</h3>
+<p>
 <%= @loc.public_notes.gsub("\n","<br>").html_safe unless @loc.public_notes.nil? %>
-<br><br>
+<br>
 <%= @loc.admin_notes.gsub("\n","<br>").html_safe unless @loc.admin_notes.nil? or !(current_volunteer.region_admin? @loc.region or current_volunteer.super_admin?) %>
+</p>

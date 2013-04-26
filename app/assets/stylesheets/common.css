@@ -72,9 +72,11 @@ h2 {
 }
 
 h3 {
-  color: #444444
+  color: #DB5432;
+  font-weight: bold;
   padding: 2px 0px;
   margin: 0;
+  margin-top: 1em;
   font: 100% arial, sans-serif;
 }
 

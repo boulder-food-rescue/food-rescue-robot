@@ -122,6 +122,10 @@ input[type=text]{
   padding: 4px;
 }
 
+td {
+  vertical-align: top;
+}
+
 /* Webkit Scrollbar */
 
 ::-webkit-scrollbar {

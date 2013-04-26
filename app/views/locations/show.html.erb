@@ -14,9 +14,9 @@
 <p>
 <%= @loc.contact.gsub("\n","<br>").html_safe unless @loc.contact.nil? %>
 <% unless @loc.website.nil? %><a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
-<br>
+<br />
 <%= @loc.phone %>
-<br>
+<br />
 <%= @loc.email %>
 </p>
 
@@ -28,6 +28,6 @@
 <h3>Notes</h3>
 <p>
 <%= @loc.public_notes.gsub("\n","<br>").html_safe unless @loc.public_notes.nil? %>
-<br>
+<br />
 <%= @loc.admin_notes.gsub("\n","<br>").html_safe unless @loc.admin_notes.nil? or !(current_volunteer.region_admin? @loc.region or current_volunteer.super_admin?) %>
 </p>

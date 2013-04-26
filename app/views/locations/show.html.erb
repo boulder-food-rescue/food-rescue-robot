@@ -6,7 +6,7 @@
 <br><br>
 <%= @loc.contact.gsub("\n","<br>").html_safe unless @loc.contact.nil? %>
 <br><br>
-<%= @loc.hours.gsub("\n","<br>").html_safe unless @loc.hours.nil? %>
+<%= readable_hours @loc %>
 <br><br>
 <%= @loc.public_notes.gsub("\n","<br>").html_safe unless @loc.public_notes.nil? %>
 <br><br>

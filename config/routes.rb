@@ -15,7 +15,10 @@ Webapp::Application.routes.draw do
   end
  
   resources :cell_carriers do as_routes end
-  resources :regions do as_routes end
+  resources :regions do 
+    get 'recipients', :on => :member
+    as_routes 
+  end
   resources :transport_types do as_routes end
   resources :food_types do as_routes end
 

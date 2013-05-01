@@ -179,24 +179,24 @@ end
       <div class="a_fact_section">
         <p>Number of Cities Using the Robot: <%= list_of_regions.length %></p>
         <p class="show_recipient_facts text_link"> list </p>
-                          <div class="fact_info donor_list">
-                                <div class="fun_fact">
-                                  <%
-                                  list_of_regions.each do |r|
-                                    if r.website != nil%>
-                                      <div>
-                                        <p class>
-                                          <a href="<%= r.website %>"><%= r.title %></a>: <%= r.tagline %>
-                                        </p>
-                                      </div>
-                                    <% else %>
-                                      <div>
-                                        <p> <%= r.name %>: <%= r.tagline %></p>
-                                      </div>
-                                    <% end %>
-                                  <% end %>
-                                </div>
-                          </div>
+          <div class="fact_info donor_list">
+                <div class="fun_fact">
+                  <%
+                  list_of_regions.each do |r|
+                    if r.website != nil%>
+                      <div>
+                        <p class>
+                          <a href="<%= r.website %>"><%= r.title %></a>: <%= r.tagline %>
+                        </p>
+                      </div>
+                    <% else %>
+                      <div>
+                        <p> <%= r.name %>: <%= r.tagline %> (<%=link_to('recipients', region_path(r)+'/recipients')%>)</p>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+          </div>
 
       </div>
       <div class="a_fact_section">

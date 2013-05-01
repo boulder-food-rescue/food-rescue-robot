@@ -1,0 +1,12 @@
+
+<h2><%=@region.name%> Recipients</h2>
+
+<p><%=@region.name%> has <%=@locations.count%> recipients.  Places that are open right now are shown in green.  Closed places are in red.  Click any marker on the map for more details.</p>
+
+<div id="region-recipient-map">
+  <%= gmaps4rails(@json) %>
+</div>
+
+<% @locations.each do |loc| %>
+
+<% end %>

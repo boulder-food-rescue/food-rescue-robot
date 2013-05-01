@@ -51,6 +51,18 @@ class Location < ActiveRecord::Base
    }
   end
 
+  def open? time=nil
+    time = Time.new if time.nil?
+    day_index = time.wday
+    return unless open_on_day? day_index
+    hours = hours_on_day day_index
+    (time > hours[0]) && (time < hours[1])
+  end
+
+  def hours_on_day index
+    [ read_attribute("day"+index.to_s+"_start") , read_attribute("day"+index.to_s+"_end") ]
+  end
+
   def open_on_day? index
     read_attribute('day'+index.to_s+'_status') == 1
   end

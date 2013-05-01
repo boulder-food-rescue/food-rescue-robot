@@ -1,0 +1,23 @@
+
+<span style="font-weight: bold;color: darkblue;"><%=loc.name%></span>
+
+<% if loc.open? %>
+  <b style="font-variant:small-caps;">( open now )</b>
+<% end %>
+
+<br>
+
+<%= loc.contact %>
+<br />
+<%= loc.phone %>
+<br />
+<%= loc.address %>
+<br />
+<small>
+<%= readable_hours loc %>
+</small>
+<br />
+<% unless loc.website.empty? %>
+  <a target="_new" href="<%=loc.website%>"><%=loc.website%></a>
+  <br />
+<% end %>

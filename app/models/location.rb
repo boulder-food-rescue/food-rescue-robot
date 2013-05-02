@@ -69,37 +69,8 @@ class Location < ActiveRecord::Base
     read_attribute('day'+index.to_s+'_status') == 1
   end
 
-  def using_detailed_hours 
-    Webapp::Application.config.use_detailed_hours
-  end
-
-  def detailed_hours_cannot_end_before_start
-    (0..6).each do |index|
-      if open_on_day? index
-        prefix = "day"+index.to_s
-        if read_attribute(prefix+"_start") > read_attribute(prefix+"_start")
-          errors.add(prefix+"_status","must have an end time AFTER the start time")
-        end
-      end
-    end
-  end
-
-  def populate_detailed_hours_json_before_save
-    return unless using_detailed_hours
-    hours_info = {}
-    (0..6).each do |index|
-      prefix = "day"+index.to_s+"_"
-      hours_info[index] = {
-        :status => read_attribute(prefix+"status"),
-        :start => read_attribute(prefix+"start"),
-        :end => read_attribute(prefix+"end")
-      }
-    end
-    write_attribute(:detailed_hours_json, hours_info.to_json)
-  end
-
   def populate_detailed_hours_from_form params
-    return unless using_detailed_hours
+    return unless using_detailed_hours?
     puts params.to_yaml
     (0..6).each do |index|
       prefix = "day"+index.to_s
@@ -113,21 +84,62 @@ class Location < ActiveRecord::Base
     region.time_zone
   end
 
-  def init_detailed_hours
-    return unless using_detailed_hours
-    return if detailed_hours_json.nil?
-    detailed_hours = JSON.parse(detailed_hours_json)
-    now = Time.new
-    (0..6).each do |index|
-      prefix = "day"+index.to_s+"_"
-      write_attribute( prefix+"status", detailed_hours[index.to_s]['status'].to_i )
-      t = Time.parse(detailed_hours[index.to_s]['start']+self.time_zone)
-      t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
-      write_attribute( prefix+"start", t )
-      t = Time.parse(detailed_hours[index.to_s]['end']+self.time_zone)
-      t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
-      write_attribute( prefix+"end", t )
-    end
+  def has_time_zone?
+    region.time_zone.nil?
   end
+
+  private 
+  
+    def using_detailed_hours? 
+      Webapp::Application.config.use_detailed_hours
+    end
+
+    def detailed_hours_cannot_end_before_start
+      (0..6).each do |index|
+        if open_on_day? index
+          prefix = "day"+index.to_s
+          if read_attribute(prefix+"_start") > read_attribute(prefix+"_start")
+            errors.add(prefix+"_status","must have an end time AFTER the start time")
+          end
+        end
+      end
+    end
+
+    def populate_detailed_hours_json_before_save
+      return unless using_detailed_hours?
+      hours_info = {}
+      (0..6).each do |index|
+        prefix = "day"+index.to_s+"_"
+        hours_info[index] = {
+          :status => read_attribute(prefix+"status"),
+          :start => read_attribute(prefix+"start"),
+          :end => read_attribute(prefix+"end")
+        }
+      end
+      write_attribute(:detailed_hours_json, hours_info.to_json)
+    end
+
+    def init_detailed_hours
+      return unless using_detailed_hours?
+      return if detailed_hours_json.nil?
+      detailed_hours = JSON.parse(detailed_hours_json)
+      now = Time.new
+      (0..6).each do |index|
+        prefix = "day"+index.to_s+"_"
+        write_attribute( prefix+"status", detailed_hours[index.to_s]['status'].to_i )
+        # carefully set start time
+        str = detailed_hours[index.to_s]['start']
+        str += self.time_zone if self.has_time_zone?
+        t = Time.parse(str)
+        t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
+        write_attribute( prefix+"start", t )
+        # carefully set end time
+        str = detailed_hours[index.to_s]['end']
+        str += self.time_zone if self.has_time_zone?
+        t = Time.parse(str)
+        t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
+        write_attribute( prefix+"end", t )
+      end
+    end
 
 end

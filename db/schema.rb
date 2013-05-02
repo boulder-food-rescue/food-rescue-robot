@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130426145934) do
+ActiveRecord::Schema.define(:version => 20130501200515) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -114,6 +114,8 @@ ActiveRecord::Schema.define(:version => 20130426145934) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
+    t.integer  "tz_offset"
+    t.text     "time_zone"
   end
 
   create_table "schedules", :force => true do |t|

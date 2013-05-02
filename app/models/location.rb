@@ -51,8 +51,10 @@ class Location < ActiveRecord::Base
    }
   end
 
+  # this has to be smart about time zones
   def open? time=nil
     time = Time.new if time.nil?
+    time = time.in_time_zone(self.time_zone)
     day_index = time.wday
     return unless open_on_day? day_index
     hours = hours_on_day day_index
@@ -107,15 +109,24 @@ class Location < ActiveRecord::Base
     end
   end
 
+  def time_zone
+    region.time_zone
+  end
+
   def init_detailed_hours
     return unless using_detailed_hours
     return if detailed_hours_json.nil?
     detailed_hours = JSON.parse(detailed_hours_json)
+    now = Time.new
     (0..6).each do |index|
       prefix = "day"+index.to_s+"_"
-      write_attribute(prefix+"status",detailed_hours[index.to_s]['status'].to_i)
-      write_attribute(prefix+"start",Time.parse(detailed_hours[index.to_s]['start']))
-      write_attribute(prefix+"end",Time.parse(detailed_hours[index.to_s]['end']))
+      write_attribute( prefix+"status", detailed_hours[index.to_s]['status'].to_i )
+      t = Time.parse(detailed_hours[index.to_s]['start']+self.time_zone)
+      t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
+      write_attribute( prefix+"start", t )
+      t = Time.parse(detailed_hours[index.to_s]['end']+self.time_zone)
+      t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
+      write_attribute( prefix+"end", t )
     end
   end
 

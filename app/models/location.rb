@@ -85,7 +85,7 @@ class Location < ActiveRecord::Base
   end
 
   def has_time_zone?
-    region.time_zone.nil?
+    not region.time_zone.nil?
   end
 
   private 

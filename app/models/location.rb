@@ -75,17 +75,18 @@ class Location < ActiveRecord::Base
     (0..6).each do |index|
       prefix = "day"+index.to_s
       write_attribute(prefix+"_status", params[prefix]["status"].to_i)
-      write_attribute(prefix+"_start", Time.parse( params[prefix]['start']['hour']+":"+params[prefix]['start']['minute']) )
-      write_attribute(prefix+"_end", Time.parse( params[prefix]['end']['hour']+":"+params[prefix]['end']['minute']) )
+      write_attribute(prefix+"_start", 
+        Time.find_zone(self.time_zone).parse( params[prefix]['start']['hour']+":"+params[prefix]['start']['minute'] )
+      )
+      write_attribute(prefix+"_end", 
+        Time.find_zone(self.time_zone).parse( params[prefix]['end']['hour']+":"+params[prefix]['end']['minute'] )
+      )
     end
   end
 
   def time_zone
+    return 'UTC' if region.time_zone.nil?
     region.time_zone
-  end
-
-  def has_time_zone?
-    not region.time_zone.nil?
   end
 
   private 
@@ -128,15 +129,11 @@ class Location < ActiveRecord::Base
         prefix = "day"+index.to_s+"_"
         write_attribute( prefix+"status", detailed_hours[index.to_s]['status'].to_i )
         # carefully set start time
-        str = detailed_hours[index.to_s]['start']
-        str += self.time_zone if self.has_time_zone?
-        t = Time.parse(str)
+        t = Time.parse( detailed_hours[index.to_s]['start'] )
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
         write_attribute( prefix+"start", t )
         # carefully set end time
-        str = detailed_hours[index.to_s]['end']
-        str += self.time_zone if self.has_time_zone?
-        t = Time.parse(str)
+        t = Time.parse( detailed_hours[index.to_s]['end'] )
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
         write_attribute( prefix+"end", t )
       end

@@ -128,11 +128,11 @@ class Location < ActiveRecord::Base
         prefix = "day"+index.to_s+"_"
         write_attribute( prefix+"status", detailed_hours[index.to_s]['status'].to_i )
         # carefully set start time
-        t = Time.parse( detailed_hours[index.to_s]['start'] )
+        t = Time.find_zone(self.time_zone).parse( detailed_hours[index.to_s]['start'] )
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
         write_attribute( prefix+"start", t )
         # carefully set end time
-        t = Time.parse( detailed_hours[index.to_s]['end'] )
+        t = Time.find_zone(self.time_zone).parse( detailed_hours[index.to_s]['end'] )
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
         write_attribute( prefix+"end", t )
       end

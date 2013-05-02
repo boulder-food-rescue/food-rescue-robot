@@ -71,7 +71,6 @@ class Location < ActiveRecord::Base
 
   def populate_detailed_hours_from_form params
     return unless using_detailed_hours?
-    puts params.to_yaml
     (0..6).each do |index|
       prefix = "day"+index.to_s
       write_attribute(prefix+"_status", params[prefix]["status"].to_i)
@@ -112,9 +111,9 @@ class Location < ActiveRecord::Base
       (0..6).each do |index|
         prefix = "day"+index.to_s+"_"
         hours_info[index] = {
-          :status => read_attribute(prefix+"status"),
-          :start => read_attribute(prefix+"start"),
-          :end => read_attribute(prefix+"end")
+          :status => read_attribute(prefix+"status").to_s,
+          :start => read_attribute(prefix+"start").to_s,
+          :end => read_attribute(prefix+"end").to_s
         }
       end
       write_attribute(:detailed_hours_json, hours_info.to_json)

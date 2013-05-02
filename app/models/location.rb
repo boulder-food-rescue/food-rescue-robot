@@ -112,8 +112,8 @@ class Location < ActiveRecord::Base
         prefix = "day"+index.to_s+"_"
         hours_info[index] = {
           :status => read_attribute(prefix+"status").to_s,
-          :start => read_attribute(prefix+"start").to_s,
-          :end => read_attribute(prefix+"end").to_s
+          :start => read_attribute(prefix+"start").to_formatted_s(:rfc822),
+          :end => read_attribute(prefix+"end").to_formatted_s(:rfc822)
         }
       end
       write_attribute(:detailed_hours_json, hours_info.to_json)

@@ -10,8 +10,5 @@
 <h2>Locations</h2>
 
 <% @locations.each do |loc| %>
-  <h3><%=loc.name%></h3>
-  <p>
-    <%=loc.address%>
-  </p>
+  <%= render :partial=>"locations/details", :locals=> {:loc=>loc} %>
 <% end %>

@@ -22,7 +22,7 @@ class RegionsController < ApplicationController
     @region = Region.find(params[:id])
     @locations = Location.recipients.where(:region_id=>@region.id)
     @json = @locations.to_gmaps4rails do |loc, marker|
-      marker.infowindow render_to_string(:template => "locations/_map_infowindow.html", :layout=>nil, :locals => { :loc => loc}).html_safe
+      marker.infowindow render_to_string(:template => "locations/_details.html", :layout=>nil, :locals => { :loc => loc}).html_safe
       marker.picture({
         "picture" => loc.open? ? 'http://maps.google.com/mapfiles/marker_green.png' : 'http://maps.google.com/mapfiles/marker.png',
         "width" =>  '32', "height" => '37'

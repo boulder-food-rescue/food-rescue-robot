@@ -22,8 +22,8 @@ class Volunteer < ActiveRecord::Base
     }
     return false
   end
-  def any_admin?
-    self.super_admin? or self.region_admin?
+  def any_admin? region=nil
+    self.super_admin? or self.region_admin? region
   end
 
   def sms_email

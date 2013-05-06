@@ -161,7 +161,7 @@ class VolunteersController < ApplicationController
   end
 
   def admin_only
-    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
+    redirect_to(root_path) unless current_volunteer.any_admin?
   end
 
   def home

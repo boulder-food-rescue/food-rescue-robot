@@ -55,7 +55,7 @@ class LogsController < ApplicationController
 
   def destroy
     @l = Log.find(params[:id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @l.region
+    unless current_volunteer.any_admin? @l.region
       flash[:notice] = "Not authorized to delete log items for that region"
       redirect_to(root_path)
       return
@@ -66,7 +66,7 @@ class LogsController < ApplicationController
 
   def new
     @region = Region.find(params[:region_id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @region
+    unless current_volunteer.any_admin? @region
       flash[:notice] = "Not authorized to create schedule items for that region"
       redirect_to(root_path)
       return
@@ -80,7 +80,7 @@ class LogsController < ApplicationController
 
   def create
     @log = Log.new(params[:log])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region
+    unless current_volunteer.any_admin? @log.region
       flash[:notice] = "Not authorized to create schedule items for that region"
       redirect_to(root_path)
       return
@@ -100,7 +100,7 @@ class LogsController < ApplicationController
 
   def edit
     @log = Log.find(params[:id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region or @log.volunteer == current_volunteer
+    unless current_volunteer.any_admin? @log.region or @log.volunteer == current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
       redirect_to(root_path)
       return
@@ -114,7 +114,7 @@ class LogsController < ApplicationController
 
   def update
     @log = Log.find(params[:id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @log.region or @log.volunteer == current_volunteer
+    unless current_volunteer.any_admin? @log.region or @log.volunteer == current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
       redirect_to(root_path)
       return
@@ -209,7 +209,7 @@ class LogsController < ApplicationController
     @start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     @stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
     @loc = Location.find(params[:location_id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin?(@loc.region)  
+    unless current_volunteer.any_admin?(@loc.region)  
       flash[:notice] = "Cannot generate receipt for donors/receipients in other regions than your own!"
       redirect_to(root_path)
       return
@@ -256,7 +256,7 @@ class LogsController < ApplicationController
   private
 
     def admin_only
-      redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
+      redirect_to(root_path) unless current_volunteer.any_admin?
     end
 
 end

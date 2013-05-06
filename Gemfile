@@ -13,10 +13,13 @@ gem 'json'
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'therubyracer', :platforms => :ruby
+  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'uglifier', '>= 1.0.3'
 end
+
+# mobile-friendly template
+gem 'twitter-bootstrap-rails'
 
 # lets us use the ubiquitous jquery javascript library
 gem 'jquery-rails', '2.1.4'
@@ -60,6 +63,3 @@ gem 'lazy_high_charts'
 group :development do
   gem 'ruby-debug19'
 end
-
-# mobile-friendly template
-gem 'twitter-bootstrap-rails'

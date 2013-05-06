@@ -36,7 +36,7 @@
 
   <tr>
     <td>Hours</td>
-<% if Webapp::Application.config.use_detailed_hours %>
+<% if use_detailed_hours? %>
       <td>
       <% Date::DAYNAMES.each_with_index do |day_name, index| 
           day_html_prefix = "day"+index.to_s
@@ -87,7 +87,7 @@
 
 <% end %>
 
-<% if Webapp::Application.config.use_detailed_hours %>
+<% if use_detailed_hours? %>
 <script type="text/javascript">
 $(function(){
   $('.day-wrapper').each(function(idx,el){

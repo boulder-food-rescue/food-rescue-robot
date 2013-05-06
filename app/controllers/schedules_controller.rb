@@ -25,7 +25,7 @@ class SchedulesController < ApplicationController
   end
 
   def show
-    @s = Schedule.find(params[:id])
+    @schedule = Schedule.find(params[:id])
   end
 
   def today

@@ -36,8 +36,7 @@ module LocationsHelper
     end
 
     def format_time t
-      format = (t.min==0) ? "%-I%p" : "%-I:%M%p"
-      I18n.l t, :format => format,  :locale => :"en"
+      t.to_s(:clean_time)
     end
 
 end

@@ -8,4 +8,8 @@ module ApplicationHelper
     }.compact
   end
 
+  def use_detailed_hours?
+    Webapp::Application.config.use_detailed_hours
+  end
+
 end

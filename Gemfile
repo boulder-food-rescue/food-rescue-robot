@@ -1,61 +1,65 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.12'
+# the base rails libraries
+gem 'rails', '~> 3.2.13'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
-
+# for talking to the sqlite3 on-disk database
 gem 'sqlite3'
 
+# for handling json objects with ruby
 gem 'json'
 
-# Gems used only for assets and not required
-# in production environments by default.
+# Gems used only for assets and not required in production environments by default.
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
-
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'therubyracer', :platforms => :ruby
-
   gem 'uglifier', '>= 1.0.3'
 end
 
+# lets us use the ubiquitous jquery javascript library
 gem 'jquery-rails', '2.1.4'
 
-# Added by Caleb
+# dynamic in-place editing for some admin tables
 gem 'active_scaffold'
+
+# used to geo-locate locations
 gem 'geocoder'
+
+# handles authentication
 gem 'devise'
+
+# alternative webserver (>thin start)
 gem 'thin'
+
+# talk to the postgres database engine
 gem 'pg'
+
+# lets us post things to twitter programatically
 gem 'twitter'
+
 # This gem is for moving data easily between databases
 # use rake db:data:dump to dump the data in your current db into a db/data.yaml
 # use rake db:data:load to load the data in that file into your current db
 gem 'yaml_db' 
+
+# smart image attachment management
 gem 'paperclip', '~> 3.1'
+
+# generate pdfs
 gem 'prawn'
+
+# render google maps
 gem 'gmaps4rails'
 
-# Added by Sean
+# lets us render charts in-browser
 gem 'lazy_high_charts'
 
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano'
-
-# To use debugger
-# gem 'ruby-debug'
-
-group :production do
-  gem 'mysql2'
+# To use debugger (dev only)
+group :development do
+  gem 'ruby-debug19'
 end
+
+# mobile-friendly template
+gem 'twitter-bootstrap-rails'

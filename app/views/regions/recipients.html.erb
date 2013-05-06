@@ -7,6 +7,11 @@
   <%= gmaps4rails(@json) %>
 </div>
 
-<% @locations.each do |loc| %>
+<h2>Locations</h2>
 
+<% @locations.each do |loc| %>
+  <h3><%=loc.name%></h3>
+  <p>
+    <%=loc.address%>
+  </p>
 <% end %>

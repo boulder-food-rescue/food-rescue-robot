@@ -43,8 +43,6 @@ html, body {
 
 /* Footer */
 .footer{
-  position: absolute;
-  bottom: 0;
   border-top: 1px solid #B3B3B3;
   width: 100%;
 }
@@ -67,7 +65,7 @@ html, body {
 h2 {
   color: #DB5432;
   padding: 2px 0px;
-  margin: 0;
+  margin: 1em 0em 0.5em 0em;
   font: bold 120% arial, sans-serif;
 }
 

@@ -117,6 +117,8 @@ GEM
       activesupport (= 3.2.13)
       bundler (~> 1.0)
       railties (= 3.2.13)
+    rails_bootstrap_navbar (0.1.5.beta)
+      rails (>= 3.0.0)
     railties (3.2.13)
       actionpack (= 3.2.13)
       activesupport (= 3.2.13)
@@ -196,6 +198,7 @@ DEPENDENCIES
   pg
   prawn
   rails (~> 3.2.13)
+  rails_bootstrap_navbar
   ruby-debug19
   sass-rails (~> 3.2.3)
   sqlite3

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= content_for?(:title) ? yield(:title) : "Webapp" %></title>
+    <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "welcome", "test", :media => "all" %>
     <%= csrf_meta_tags %>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
@@ -32,50 +34,113 @@
 
     <!-- For all other devices -->
     <!-- Size should be 32 x 32 pixels -->
-    <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
+    <%= favicon_link_tag 'favicon.png', :rel => 'shortcut icon' %>
   </head>
+
   <body>
 
-    <div class="navbar navbar-fluid-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#">Webapp</a>
-          <div class="container-fluid nav-collapse">
-            <ul class="nav">
-              <li><%= link_to "Link1", "/path1"  %></li>
-              <li><%= link_to "Link2", "/path2"  %></li>
-              <li><%= link_to "Link3", "/path3"  %></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
+    <%= nav_bar :fixed=>:top, :brand=>'The Food Rescue Robot', :responsive=>true do %>
+
+      <%= menu_group do %>
+      
+        <%= menu_item "Home", root_path %>
+
+        <% if volunteer_signed_in? %>
+
+          <%= drop_down "Schedule" do %>
+            <%= menu_item "My Schedule", mine_schedules_path %>
+            <%= menu_item "Unassigned", open_schedules_path %>
+            <% if current_volunteer.any_admin? %>
+              <%= menu_item "Full Schedule", schedules_path %>
+              <%= menu_item "Yesterday", yesterday_schedules_path %>
+              <%= menu_item "Today", today_schedules_path %>
+              <%= menu_item "Tomorrow", tomorrow_schedules_path %>
+            <% end %>
+          <% end %>
+
+          <%= drop_down "Shifts" do %>
+            <%= menu_item "Upcoming Shifts", mine_upcoming_logs_path %>
+            <%= menu_item "Past Shifts", mine_past_logs_path %>
+            <%= menu_item "Cover Shifts", open_logs_path %>
+            <%= menu_item "Schedule Absence", new_absence_logs_path %>
+          <% end %>
+
+          <% if Region.has_any_handbooks? current_volunteer.regions %>
+            <%= drop_down "Handbook" do %>
+              <% current_volunteer.regions.each do |region| %>
+                <%= menu_item region.name+" Handbook", region.handbook_url if region.has_handbook? %> 
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <% if current_volunteer.any_admin? %>
+
+            <%= drop_down "Volunteers" do %>
+              <%= menu_item "Full List", volunteers_path %>
+              <%= menu_item "Shiftless", shiftless_volunteers_path %>
+              <%= menu_item "Need Training", need_training_volunteers_path %>
+              <%= menu_item "Unassigned", unassigned_volunteers_path %>
+              <%= menu_item "Assignments", assignments_path %>
+            <% end %>
+
+            <%= drop_down "Rescue Log" do %>
+              <%= menu_item "Last 10 Days", last_ten_logs_path %>
+              <%= menu_item "Yesterday", yesterday_logs_path %>
+              <%= menu_item "Today", today_logs_path %>
+              <%= menu_item "Tomorrow", tomorrow_logs_path %>
+              <%= menu_item "Entire Log", logs_path %>
+              <%= menu_item "Tardy", tardy_logs_path %>
+              <%= menu_item "Being Covered", being_covered_logs_path %>
+            <% end %>
+
+            <%= drop_down "Administrative" do %>
+              <%= menu_item "Recipients", recipients_locations_path %>
+              <%= menu_item "Donors", donors_locations_path %>
+              <%= menu_item "Controls", admin_volunteers_path %>
+              <%= menu_item "Statistics", stats_logs_path %>
+
+              <% if current_volunteer.super_admin? %>
+                <%= menu_item "Food Types", food_types_path %>
+                <%= menu_item "Transport Types", transport_types_path %>
+                <%= menu_item "Cell Carries", cell_carriers_path %>
+                <%= menu_item "Regions", regions_path %>              
+              <% end %>
+
+            <% end %>
+  
+          <% end # if signed in %>
+
+        <% end # menu group %>
+
+        <%= menu_group :pull => :right do %>
+          <% if volunteer_signed_in? %>
+            <%= drop_down current_volunteer.name  do %>
+              <%= menu_item "Settings", edit_volunteer_path(current_volunteer.id) %>
+              <%= menu_item "Account", edit_volunteer_registration_path %>
+              <%= menu_item "Controls", admin_volunteers_path %>
+              <%= menu_item "Waiver", waiver_volunteers_path %>
+              <%= menu_item "Logout", destroy_volunteer_session_path, :method => :delete %>
+            <% end %>
+          <% else %>
+            <%= menu_item "Login", sign_in_volunteers_path %>
+          <% end %>
+        <% end %>
+
+      <% end %>
+
+    <% end %>
 
     <div class="container-fluid">
+      
       <div class="row-fluid">
-        <div class="span3">
-          <div class="well sidebar-nav">
-            <ul class="nav nav-list">
-              <li class="nav-header">Sidebar</li>
-              <li><%= link_to "Link1", "/path1"  %></li>
-              <li><%= link_to "Link2", "/path2"  %></li>
-              <li><%= link_to "Link3", "/path3"  %></li>
-            </ul>
-          </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span9">
+        <div class="span12">
           <%= bootstrap_flash %>
           <%= yield %>
         </div>
       </div><!--/row-->
-
+      
       <footer>
-        <p>&copy; Company 2013</p>
+        <p>&copy; Boulder Food Rescue <%=Time.new.year %></p>
       </footer>
 
     </div> <!-- /container -->
@@ -84,6 +149,8 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <%= javascript_include_tag "application" %>
-
+    <%= yield :scripts %>
+    
   </body>
+
 </html>

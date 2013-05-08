@@ -28,6 +28,7 @@ class RegionsController < ApplicationController
         "width" =>  '32', "height" => '37'
       })
     end
+    render :layout => 'responsive'
   end
 
 end 

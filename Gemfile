@@ -20,6 +20,7 @@ end
 
 # mobile-friendly template
 gem 'twitter-bootstrap-rails'
+gem 'rails_bootstrap_navbar'
 
 # lets us use the ubiquitous jquery javascript library
 gem 'jquery-rails', '2.1.4'

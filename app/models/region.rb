@@ -17,4 +17,15 @@ class Region < ActiveRecord::Base
     current_user.super_admin?
   end
 
+  def has_handbook?
+    not handbook_url.nil?
+  end
+
+  def self.has_any_handbooks? region_list
+    handbook_count = 0
+    # for some reason I couldn't get .count to work here :-(
+    region_list.each { |r| handbook_count+= 1 if r.has_handbook? }
+    handbook_count > 0 
+  end
+
 end

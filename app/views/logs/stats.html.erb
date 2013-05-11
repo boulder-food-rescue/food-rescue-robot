@@ -1,6 +1,6 @@
 <% @regions.sort{|x,y| x.id <=> y.id }.each do |r|
   next unless r.id == 1
-  next if Log.where("weight is not null and region_id = #{r.id}").count <= 0
+  next if Log.where("complete and region_id = #{r.id}").count <= 0
 %>
 <h2>Totals</h2>
 <% 
@@ -10,24 +10,24 @@
   per_volunteer = {}
   per_volunteer2 = {}
   
-  Log.where("weight is not null and region_id = #{r.id}").each{ |l|
+  Log.where("complete and region_id = #{r.id}").each{ |l|
     pounds_per_year[l.when.year] = 0 if pounds_per_year[l.when.year].nil?
-    pounds_per_year[l.when.year] += l.weight
+    pounds_per_year[l.when.year] += l.summed_weight
     mokey = l.when.strftime("%Y-%m")
     pounds_per_month[mokey] = 0 if pounds_per_month[mokey].nil?
-    pounds_per_month[mokey] += l.weight
+    pounds_per_month[mokey] += l.summed_weight
     first_recorded_pickup = l.when if first_recorded_pickup.nil? or l.when < first_recorded_pickup
     next if l.volunteer.nil?
     per_volunteer[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if per_volunteer[l.volunteer.id].nil?
     per_volunteer2[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if per_volunteer2[l.volunteer.id].nil?
     if l.when >= (Date.today << 12)
-      per_volunteer[l.volunteer.id][:weight] += l.weight
+      per_volunteer[l.volunteer.id][:weight] += l.summed_weight
       per_volunteer[l.volunteer.id][:count] += 1
       per_volunteer[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
       per_volunteer[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
     end
     if l.when >= (Date.today << 1)
-      per_volunteer2[l.volunteer.id][:weight] += l.weight
+      per_volunteer2[l.volunteer.id][:weight] += l.summed_weight
       per_volunteer2[l.volunteer.id][:count] += 1
       per_volunteer2[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
       per_volunteer2[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer

@@ -46,7 +46,7 @@ start_date = Date.new(2012, 6, 26)
 range = Date.today - start_date
 for i in 0..range
   start_date += 1
-  total = Log.where(:when => start_date).where("complete").collect{ |l| l.weight }.sum
+  total = Log.where(:when => start_date).where("complete").collect{ |l| l.summed_weight }.sum
   if total != nil
     running_total += total
     food_per_month[start_date.month - 1] += total
@@ -104,7 +104,7 @@ end
 number_of_volunteers = Volunteer.count()
 largest_pickup = nil
 Log.where("complete").each{ |l|
-  largest_pickup = l if largest_pickup.nil? or largest_pickup.weight < l.weight
+  largest_pickup = l if largest_pickup.nil? or largest_pickup.summed_weight < l.summed_weight
 }
 pickups_today = Schedule.where(:day_of_week => date.wday)
   
@@ -253,14 +253,14 @@ end
               if donor.website != nil %>
                 <div>
                   <p>
-                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from 
+                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.summed_weight %> lbs of food from 
                     <a href="<% donor.website %>"><%= donor.name %></a>
                   </p>
                 </div>
               <% else %>
                 <div>
                   <p>
-                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from <%= donor.name %>
+                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.summed_weight %> lbs of food from <%= donor.name %>
                   </p>
                 </div>
               <%end%>

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  log: 
+  food_type: 
+  required: false
+  weight: 9.99
+
+two:
+  log: 
+  food_type: 
+  required: false
+  weight: 9.99

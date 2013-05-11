@@ -20,15 +20,15 @@ class Log < ActiveRecord::Base
   TweetTimeThreshold = 3600*24
   TweetGainOrTime = :gain
 
-  def weight
+  def summed_weight
     self.log_parts.collect{ |lp| lp.weight }.compact.sum
   end
  
   def tweet(record)
     return true if record.region.nil? or record.region.twitter_key.nil?
-    return true if record.weight.nil? or record.weight <= 0
+    return true unless record.complete
 
-    poundage = Log.where("weight IS NOT NULL AND weight > 0 AND region_id = ?",region.id).collect{ |l| l.weight }.sum
+    poundage = Log.where("complete AND region_id = ?",region.id).collect{ |l| l.summed_weight }.sum
     poundage += record.region.prior_lbs_rescued
     last_poundage = region.twitter_last_poundage.nil? ? 0.0 : region.twitter_last_poundage
 
@@ -52,7 +52,7 @@ class Log < ActiveRecord::Base
         region.save
         return true
       end
-      t = "#{record.volunteer.name} picked up #{record.weight.round} lbs of food, bringing 
+      t = "#{record.volunteer.name} picked up #{record.summed_weight.round} lbs of food, bringing 
            us to #{poundage.round} lbs of food rescued to date in #{record.region.name}."
       if record.donor.twitter_handle.nil?
         t += "Thanks to #{record.donor.name} for the donation!"

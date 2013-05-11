@@ -34,7 +34,7 @@
 
 <h2><%= @loc.is_donor? ? "Pick Up" : "Delivery" %> Log</h2>
 <br>
-Total poundage: <%= @logs.collect{ |l| l.weight }.compact.reduce(:+) %><br><br>
+Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><br><br>
 
 
 <table id="my_schedule_table">
@@ -54,7 +54,7 @@ Total poundage: <%= @logs.collect{ |l| l.weight }.compact.reduce(:+) %><br><br>
   <tr>
     <td> <%= shift.when %> </td>
     <td> <%= shift.volunteer.nil? ? "Unknown" : shift.volunteer.name %>
-    <td> <%= shift.weight %> </td>
+    <td> <%= shift.summed_weight %> </td>
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types.collect{ |ft| ft.name }.join(",") unless shift.food_types.length == 0 %>
   </tr>

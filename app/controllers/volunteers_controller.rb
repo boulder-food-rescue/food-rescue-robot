@@ -184,7 +184,7 @@ class VolunteersController < ApplicationController
     
     #Pickup Stats
     @completed_pickup_count = Log.count(:conditions => {:volunteer_id => current_volunteer})
-    @total_food_rescued = Log.where(:volunteer_id => current_volunteer).where("complete").collect{ |l| l.weight }.sum
+    @total_food_rescued = Log.where(:volunteer_id => current_volunteer).where("complete").collect{ |l| l.summed_weight }.sum
     @dis_traveled = 0.0
     Log.where(:volunteer_id => current_volunteer).where("complete").each do |pickup|
       if pickup.schedule != nil
@@ -227,12 +227,12 @@ class VolunteersController < ApplicationController
       @num_pickups[l.transport_type] = 0 if @num_pickups[l.transport_type].nil?
       @num_pickups[l.transport_type] += 1
       @num_covered += 1 if l.orig_volunteer != current_volunteer and !l.orig_volunteer.nil?
-      @lbs += l.weight
-      @biggest = l if @biggest.nil? or l.weight > @biggest.weight
+      @lbs += l.summed_weight
+      @biggest = l if @biggest.nil? or l.summed_weight > @biggest.summed_weight
       @earliest = l if @earliest.nil? or l.when < @earliest.when
       yrmo = l.when.strftime("%Y-%m")
       by_month[yrmo] = 0.0 if by_month[yrmo].nil?
-      by_month[yrmo] += l.weight unless l.weight.nil?
+      by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
     @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count

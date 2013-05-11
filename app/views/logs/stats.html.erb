@@ -1,0 +1,97 @@
+<% @regions.sort{|x,y| x.id <=> y.id }.each do |r|
+  next unless r.id == 1
+  next if Log.where("weight is not null and region_id = #{r.id}").count <= 0
+%>
+<h2>Totals</h2>
+<% 
+  pounds_per_year = {}
+  pounds_per_month = {}
+  first_recorded_pickup = nil
+  per_volunteer = {}
+  per_volunteer2 = {}
+  
+  Log.where("weight is not null and region_id = #{r.id}").each{ |l|
+    pounds_per_year[l.when.year] = 0 if pounds_per_year[l.when.year].nil?
+    pounds_per_year[l.when.year] += l.weight
+    mokey = l.when.strftime("%Y-%m")
+    pounds_per_month[mokey] = 0 if pounds_per_month[mokey].nil?
+    pounds_per_month[mokey] += l.weight
+    first_recorded_pickup = l.when if first_recorded_pickup.nil? or l.when < first_recorded_pickup
+    next if l.volunteer.nil?
+    per_volunteer[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if per_volunteer[l.volunteer.id].nil?
+    per_volunteer2[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if per_volunteer2[l.volunteer.id].nil?
+    if l.when >= (Date.today << 12)
+      per_volunteer[l.volunteer.id][:weight] += l.weight
+      per_volunteer[l.volunteer.id][:count] += 1
+      per_volunteer[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+      per_volunteer[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+    end
+    if l.when >= (Date.today << 1)
+      per_volunteer2[l.volunteer.id][:weight] += l.weight
+      per_volunteer2[l.volunteer.id][:count] += 1
+      per_volunteer2[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+      per_volunteer2[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+    end
+  }
+%>
+Before <%= first_recorded_pickup.to_s %>: <%= r.prior_lbs_rescued %><br>
+<% 
+   n = 0
+   pounds_per_year.keys.sort.each{ |year| %>
+     <%= n == 0 ? "Remainder of " : "" %><%= year %><%= n == pounds_per_year.length-1 ? " YTD" : "" %>: <%= pounds_per_year[year] %><br>   
+<%   n += 1
+   }
+   per_year_flat =  pounds_per_year.keys.sort.collect{ |y| pounds_per_year[y].to_f } 
+   food_chart_year = LazyHighCharts::HighChart.new('column') do |f|
+     f.options[:chart][:defaultSeriesType] = "column"
+     f.options[:chart][:plotBackgroundColor] = nil
+     f.options[:title][:text] = "Food Rescued By Year"
+       f.options[:xAxis] = {
+       :plot_bands => "none",
+       :title=>{:text=>"Year"},
+       :categories => pounds_per_year.keys.sort}
+    f.options[:yAxis][:title][:text] = "lbs of food"
+    f.series(:name=>'Pounds of Food Rescued', :data=> per_year_flat)
+  end
+  per_month_flat = pounds_per_month.keys.sort.collect{ |y| pounds_per_month[y].to_f }
+  food_chart_month = LazyHighCharts::HighChart.new('graph') do |f|
+     f.options[:chart][:defaultSeriesType] = "area"
+     f.options[:chart][:plotBackgroundColor] = nil
+     f.options[:title][:text] = "Food Rescued By Month"
+       f.options[:xAxis] = {
+       :plot_bands => "none",
+       :title=>{:text=>"Year"},
+       :categories => pounds_per_month.keys.sort}
+    f.options[:yAxis][:title][:text] = "lbs of food"
+    f.series(:name=>'Pounds of Food Rescued', :data=> per_month_flat)
+  end
+
+%>
+   <div style="width: 500px;"><%= high_chart("chart_food_per_year_#{r.id}", food_chart_year)  %></div>
+   <div style="width: 500px;"><%= high_chart("chart_food_per_month_#{r.id}", food_chart_month)  %></div>
+   <%= gmaps(:map_options => { :id => "map_#{r.id}" },
+             :markers => { "data" => Location.where("region_id" => r.id).to_gmaps4rails }) %>
+   <br><br>
+   <h2>Last 12 Months</h2>
+   <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count<th>By Car<th>Covered</tr></thead><tbody>
+<% per_volunteer.each{ |v,s| %>
+   <% next if s[:weight] == 0 %>
+   <tr><td><%= Volunteer.find(v).name %><td><%= s[:weight] %><td><%= s[:count] %><td><%= s[:bycar] %><td><%= s[:covered] %>
+<% } %>
+   </tbody></table>
+   <br><br>
+   <h2>Last Month</h2>
+   <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count<th>By Car<th>Covered</tr></thead><tbody>
+<% per_volunteer2.each{ |v,s| %>
+   <% next if s[:weight] == 0 %>
+   <tr><td><%= Volunteer.find(v).name %><td><%= s[:weight] %><td><%= s[:count] %><td><%= s[:bycar] %><td><%= s[:covered] %>
+<% } %>
+   </tbody></table>
+   <br><br>
+<% end %>
+
+<script>
+  $('.datatable').dataTable( {
+    'iDisplayLength' : 50
+   });
+</script>

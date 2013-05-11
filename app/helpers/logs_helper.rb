@@ -122,22 +122,20 @@ def generate_log_entries(d=Date.today)
   Schedule.where("day_of_week = ?",d.wday).each{ |s|
     next if s.recipient.nil? or s.donor.nil? 
     next if s.irregular
-    s.food_types.each{ |f|
-      # don't insert a duplicate log entry if one already exists
-      check = Log.where('"when" = ? AND schedule_id = ? AND food_type_id = ?',d,s.id,f.id)
-      next if check.length > 0
-      # create each scheduled log entry for the given day
-      log = Log.new{ |l|
-        l.schedule = s
-        l.volunteer = s.volunteer
-        l.donor = s.donor
-        l.recipient = s.recipient
-        l.region = s.region
-        l.when = d
-        l.food_type = f
-      }
-      n += 1 if log.save
+    # don't insert a duplicate log entry if one already exists
+    check = Log.where('"when" = ? AND schedule_id = ?',d,s.id)
+    next if check.length > 0
+    # create each scheduled log entry for the given day
+    log = Log.new{ |l|
+      l.schedule = s
+      l.volunteer = s.volunteer
+      l.donor = s.donor
+      l.recipient = s.recipient
+      l.region = s.region
+      l.when = d
+      l.food_types = s.food_types
     }
+    n += 1 if log.save
   }
   return n
 end

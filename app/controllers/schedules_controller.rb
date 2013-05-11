@@ -59,6 +59,7 @@ class SchedulesController < ApplicationController
       return
     end
     @schedule = Schedule.new
+    @schedule.region = @region
     @action = "create"
     render :new
   end

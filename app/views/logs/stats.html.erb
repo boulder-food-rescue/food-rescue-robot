@@ -6,6 +6,9 @@
   pounds_per_year = {}
   pounds_per_month = {}
   first_recorded_pickup = nil
+  per_volunteer_weight_by_year = {}
+  per_volunteer_weight_by_month = {}
+  
   Log.where("weight is not null and region_id = #{r.id}").each{ |l|
     pounds_per_year[l.when.year] = 0 if pounds_per_year[l.when.year].nil?
     pounds_per_year[l.when.year] += l.weight
@@ -13,6 +16,12 @@
     pounds_per_month[mokey] = 0 if pounds_per_month[mokey].nil?
     pounds_per_month[mokey] += l.weight
     first_recorded_pickup = l.when if first_recorded_pickup.nil? or l.when < first_recorded_pickup
+    per_volunteer_weight_by_year[l.when.year] = {} if per_volunteer_weight_by_year[l.when.year].nil?
+    per_volunteer_weight_by_month[mokey] = {} if per_volunteer_weight_by_month[mokey].nil?
+    per_volunteer_weight_by_year[l.when.year][l.volunteer.id] = 0 if per_volunteer_weight_by_year[l.when.year][l.volunteer.id].nil?
+    per_volunteer_weight_by_month[mokey][l.volunteer.id] = 0 if per_volunteer_weight_by_month[mokey][l.volunteer.id].nil?
+    per_volunteer_weight_by_year[l.when.year][l.volunteer.id] += l.weight
+    per_volunteer_weight_by_month[mokey][l.volunteer.id] += l.weight
   }
 %>
 Before <%= first_recorded_pickup.to_s %>: <%= r.prior_lbs_rescued %><br>
@@ -54,6 +63,14 @@ Before <%= first_recorded_pickup.to_s %>: <%= r.prior_lbs_rescued %><br>
    <%= gmaps(:map_options => { :id => "map_#{r.id}" },
              :markers => { "data" => Location.where("region_id" => r.id).to_gmaps4rails }) %>
    <% end %>
+<% per_volunteer_weight_by_year.keys.sort.each{ |y| %>
+   <h2><%= y %></h2>
+   <table><tr><th>Volunteer<th>Amount</tr>
+<% per_volunteer_weight_by_year[y].sort_by{|k,v| v}.each{ |v,s| %>
+   <tr><td><%= Volunteer.find(v).name %><td><%= s %>
+<% } %>
+   </table>
+<% } %> 
    <br><br>
 
 <% end %>

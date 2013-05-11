@@ -26,7 +26,7 @@
         <table class>
           <tr>
             <td>Volunteer:</td>
-            <td><%= select_tag(:volunteer_id, options_for_select(@my_admin_volunteers.collect{ |v| [v.name+" ["+v.assignments.collect{ |a| a.region.name + (a.admin ? "*" : "") }.join(",")+"]",v.id] })) %></td>
+            <td><%= select_tag(:volunteer_id, options_for_select(@my_admin_volunteers.collect{ |v| [v.name+" ["+v.assignments.collect{ |a| ((a.region.nil?) ? "" : a.region.name) + (a.admin ? "*" : "") }.join(",")+"]",v.id] })) %></td>
           </tr>
           <tr>
             <td>Region:</td>

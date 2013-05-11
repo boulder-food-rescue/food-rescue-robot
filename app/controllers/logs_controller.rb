@@ -66,6 +66,39 @@ class LogsController < ApplicationController
         t += @region.prior_lbs_rescued unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
       render :text => t.to_s
+    when 'wordcloud'
+      logs = nil
+      if params[:region_id].nil?
+        logs = Log.select("description").where("weight IS NOT NULL and description IS NOT NULL")
+      else 
+        logs = Log.select("description").where("weight IS NOT NULL and description IS NOT NULL AND region_id = ?",params[:region_id].to_i)
+      end
+      words = {}
+      Log.select("description").where("weight IS NOT NULL and description IS NOT NULL").each{ |l|
+        l.description.strip.split(/\s*\,\s*/).each{ |w|
+          w = w.strip.downcase.tr(',','')
+          next if w =~ /(nothing|no |none)/ or w =~ /etc/ or w =~ /n\/a/ or w =~ /misc/
+          # people cannot seem to spell the most delicious fruit correctly
+          w = "avocados" if w == "avacados" or w == "avocadoes" or w == "avocado"
+          words[w] = 0 if words[w].nil?
+          words[w] += 1
+        }
+      }
+      render :text => words.collect{ |k,v| (v >= 10) ? "#{k}:#{v}" : nil }.compact.join(",")
+    when 'transport'
+      rq = ""
+      wq = ""
+      unless params[:region_id].nil?
+        rq = "AND region_id=#{params[:region_id].to_i}"
+      end
+      unless params[:timespan].nil?
+        if params[:timespan] == "month"
+          wq = "AND \"when\" > NOW() - interval '1 month'"
+        end
+      end
+      noncar = Log.where("weight is NOT NULL AND transport_type_id IN (SELECT id FROM transport_types WHERE name != 'Car') #{rq} #{wq}").count.to_f
+      car = Log.where("weight is NOT NULL AND transport_type_id IN (SELECT id FROM transport_types WHERE name = 'Car') #{rq} #{wq}").count.to_f
+      render :text => "#{100.0*noncar/(noncar+car)} #{100.0*car/(noncar+car)}"
     else
       render :text => "NO"
     end

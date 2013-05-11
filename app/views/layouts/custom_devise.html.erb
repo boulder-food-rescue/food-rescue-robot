@@ -46,7 +46,7 @@ start_date = Date.new(2012, 6, 26)
 range = Date.today - start_date
 for i in 0..range
   start_date += 1
-  total = Log.where(:when => start_date).where("weight IS NOT NULL").sum(:weight)
+  total = Log.where(:when => start_date).where("complete").collect{ |l| l.weight }.sum
   if total != nil
     running_total += total
     food_per_month[start_date.month - 1] += total
@@ -102,7 +102,10 @@ end
 
 #Volunteer info
 number_of_volunteers = Volunteer.count()
-largest_pickup = Log.where("logs.weight IS NOT NULL").order("weight DESC").first
+largest_pickup = nil
+Log.where("complete").each{ |l|
+  largest_pickup = l if largest_pickup.nil? or largest_pickup.weight < l.weight
+}
 pickups_today = Schedule.where(:day_of_week => date.wday)
   
 #Recipient Stats

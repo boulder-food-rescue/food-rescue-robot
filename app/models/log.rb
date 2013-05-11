@@ -7,9 +7,12 @@ class Log < ActiveRecord::Base
   belongs_to :food_type
   belongs_to :transport_type
   belongs_to :region
+  has_many :log_parts
+  has_many :food_types, :through => :log_parts
+
   attr_accessible :schedule_id, :region_id, :volunteer_id, :donor_id, :recipient_id, 
                   :food_type_id, :transport_type_id, :description, :flag_for_admin, :notes, 
-                  :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :weight, :when
+                  :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :when
 
   after_save { |record| tweet(record) }
 
@@ -17,6 +20,10 @@ class Log < ActiveRecord::Base
   TweetTimeThreshold = 3600*24
   TweetGainOrTime = :gain
 
+  def weight
+    self.log_parts.collect{ |lp| lp.weight }.compact.sum
+  end
+ 
   def tweet(record)
     return true if record.region.nil? or record.region.twitter_key.nil?
     return true if record.weight.nil? or record.weight <= 0

@@ -13,7 +13,7 @@
 <tr><td>Backup Pick up<td><%= f.check_box(:backup) %>
 <tr><td>Scheduled Transport<td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] }) %>
 <%= hidden_field_tag "schedule[food_type_ids][]","" %>
-<tr><td>Food Type(s)<td><% FoodType.all.each{ |ft| %>
+<tr><td>Food Type(s)<td><% FoodType.regional(@schedule.region).each{ |ft| %>
   <%= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <%= ft.name %>
 <% } %>
 <tr><td>Prior Volunteer<td><%= f.select(:prior_volunteer_id, Volunteer.all.collect{ |v| (v.region_ids.include? @region.id) ? v : nil }.compact.collect{ |v| [v.name,v.id] },{:include_blank => true}) %>

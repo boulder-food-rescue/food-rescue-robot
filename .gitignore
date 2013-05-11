@@ -1,7 +1,7 @@
 *.log
 *.sqlite
 tmp
-db/development.sqlite3
+db/*.sqlite3
 db/data.yml
 db/backup*
 config/database.yaml

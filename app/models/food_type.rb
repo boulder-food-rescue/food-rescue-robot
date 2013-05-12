@@ -1,6 +1,7 @@
 class FoodType < ActiveRecord::Base
-  attr_accessible :name
-  has_and_belongs_to_many :schedules
+  attr_accessible :name, :region_id
+  has_many :schedules, :through => :schedule_parts
+  has_many :schedule_parts
   has_many :log_parts
   has_many :logs, :through => :log_parts
   belongs_to :region

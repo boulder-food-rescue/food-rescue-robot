@@ -16,7 +16,8 @@ Webapp::Application.routes.draw do
   resources :cell_carriers do as_routes end
   resources :regions do as_routes end
   resources :transport_types do as_routes end
-  resources :food_types do as_routes end
+
+  resources :food_types
 
   resources :logs do 
     collection do

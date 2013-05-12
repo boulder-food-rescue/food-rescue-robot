@@ -1,0 +1,201 @@
+<div class="home_sidebar">
+  <h1> Sections <h2>
+</div>
+<div class="home_sections">
+  <div class="home_section">
+    <h1> Region Admin Controls </h1>
+    <div class="home_sub_section">
+      <h2> Switch to User </h2>
+      <div class="home_section_content">
+        <p> 
+          Select a volunteer from the list below to swtich to.
+          After switching you will have logout and login to get back to your
+          real user.
+        </p>
+        <%= form_tag("/volunteers/switch_user", :method => "get") do %>
+        <table class>
+          <tr>
+            <td>Volunteer:</td>
+            <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+            if current_volunteer.super_admin? %>
+            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
+                      ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] })) %></td> 
+            <% else %>
+            <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
+                      ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact)) %></td>
+            <% end %>
+          </tr>
+        </table>
+        <%= submit_tag "Switch" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="home_sub_section">
+      <h2> Generate Receipts </h2>
+      <div class="home_section_content">
+      <%= form_tag("/logs/receipt.pdf", :method => "get") do %>
+      <table>
+      <tr>
+        <td>Donor/Recipient:</td>
+        <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+        if current_volunteer.super_admin? %>
+        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| 
+                 r.id }.join(",")})").collect{ |v| [v.name,v.id] })) %></td>
+        <% else %>
+        <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{adminrids.join(",")})").collect{ |l|
+                  [l.name,l.id] })) %></td>
+        <% end %>
+      </tr>
+      <tr>
+        <td>Starting On: </td>
+        <td><%= select_date Date.today, :prefix => :start_date %></td>
+      </tr>
+      <tr>
+        <td>Ending On: </td>
+        <td><%= select_date Date.today, :prefix => :stop_date %></td>
+      </tr>
+    </table>
+    <%= submit_tag "Generate" %>
+<% end %>
+
+      </div>
+    </div>
+    <div class="home_sub_section">
+     <h2> Regional Admin Appointment </h2>
+     <div class="home_section_content">
+       <%= form_tag("/assignments/knight", :method => "get") do %>
+        <table class>
+          <tr>
+            <td>Volunteer:</td>
+            <td><%= select_tag(:volunteer_id, options_for_select(@my_admin_volunteers.collect{ |v| [v.name+" ["+v.assignments.collect{ |a| ((a.region.nil?) ? "" : a.region.name) + (a.admin ? "*" : "") }.join(",")+"]",v.id] })) %></td>
+          </tr>
+          <tr>
+            <td>Region:</td>
+            <td><%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %></td>
+          </tr>
+          <tr>
+           <td>Un-Knight:</td>
+           <td><%= check_box_tag(:unassign) %></td>
+          </tr>
+        </table>
+        <%= submit_tag %>
+        <% end %>
+    </div>
+   </div>
+  </div>
+<% 
+pounds_per_year = {}
+pounds_per_month = {}
+first_recorded_pickup = nil
+per_volunteer = {}
+per_volunteer2 = {}
+  
+Log.where("complete and region_id IN (#{current_volunteer.admin_region_ids.join(",")})").each{ |l|
+  pounds_per_year[l.when.year] = 0 if pounds_per_year[l.when.year].nil?
+  pounds_per_year[l.when.year] += l.summed_weight
+  mokey = l.when.strftime("%Y-%m")
+  pounds_per_month[mokey] = 0 if pounds_per_month[mokey].nil?
+  pounds_per_month[mokey] += l.summed_weight
+  first_recorded_pickup = l.when if first_recorded_pickup.nil? or l.when < first_recorded_pickup
+  next if l.volunteer.nil?
+  per_volunteer[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if per_volunteer[l.volunteer.id].nil?
+  per_volunteer2[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if per_volunteer2[l.volunteer.id].nil?
+  if l.when >= (Date.today << 12)
+    per_volunteer[l.volunteer.id][:weight] += l.summed_weight
+    per_volunteer[l.volunteer.id][:count] += 1
+    per_volunteer[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+    per_volunteer[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+  end
+  if l.when >= (Date.today << 1)
+    per_volunteer2[l.volunteer.id][:weight] += l.summed_weight
+    per_volunteer2[l.volunteer.id][:count] += 1
+    per_volunteer2[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+    per_volunteer2[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+  end
+}
+%>
+<div class="home_section">
+ <h1>Stats and Charts</h1>
+ <div class="home_sub_section">
+ <h2>Gross Statistics</h2>
+ <div class="home_section_content">
+Before <%= first_recorded_pickup.to_s %>: <%= Region.all_admin(current_volunteer).collect{ |r| r.prior_lbs_rescued.nil? ? 0.0 : r.prior_lbs_rescued }.sum %><br>
+<% 
+n = 0
+pounds_per_year.keys.sort.each{ |year| %>
+  <%= n == 0 ? "Remainder of " : "" %><%= year %><%= n == pounds_per_year.length-1 ? " YTD" : "" %>: <%= pounds_per_year[year] %><br>   
+<%   n += 1
+}
+%>
+  </div></div>
+<%
+per_year_flat =  pounds_per_year.keys.sort.collect{ |y| pounds_per_year[y].to_f } 
+food_chart_year = LazyHighCharts::HighChart.new('column') do |f|
+  f.options[:chart][:defaultSeriesType] = "column"
+  f.options[:chart][:plotBackgroundColor] = nil
+  f.options[:title][:text] = "Food Rescued By Year"
+  f.options[:xAxis] = {
+    :plot_bands => "none",
+    :title=>{:text=>"Year"},
+    :categories => pounds_per_year.keys.sort}
+  f.options[:yAxis][:title][:text] = "lbs of food"
+  f.series(:name=>'Pounds of Food Rescued', :data=> per_year_flat)
+end
+per_month_flat = pounds_per_month.keys.sort.collect{ |y| pounds_per_month[y].to_f }
+food_chart_month = LazyHighCharts::HighChart.new('graph') do |f|
+   f.options[:chart][:defaultSeriesType] = "area"
+   f.options[:chart][:plotBackgroundColor] = nil
+   f.options[:title][:text] = "Food Rescued By Month"
+   f.options[:xAxis] = {
+     :plot_bands => "none",
+     :title=>{:text=>"Year"},
+     :categories => pounds_per_month.keys.sort}
+   f.options[:yAxis][:title][:text] = "lbs of food"
+   f.series(:name=>'Pounds of Food Rescued', :data=> per_month_flat)
+end
+%>
+ <div class="home_sub_section">
+ <h2>Annual Statistics</h2>
+ <div class="home_section_content">
+ <div style="width: 500px;"><%= high_chart("chart_food_per_year", food_chart_year)  %></div>
+ </div>
+ </div>
+ <div class="home_sub_section">
+ <h2>Monthly Statistics</h2>
+ <div class="home_section_content">
+ <div style="width: 500px;"><%= high_chart("chart_food_per_month", food_chart_month)  %></div>
+ </div>
+ </div>
+ <div class="home_sub_section">
+ <h2>Map</h2>
+ <div class="home_section_content">
+ <%= gmaps(:map_options => { :id => "map" },
+          :markers => { "data" => Location.where("region_id IN (#{current_volunteer.admin_region_ids.join(",")})").to_gmaps4rails }) %>
+ </div>
+ </div>
+</div>
+<div class="home_section">
+<h1>Volunteer Stats</h1>
+<br><br>
+<h2>Last 12 Months</h2>
+<table class="datatable"><thead><th>Volunteer<th>Amount<th>Count<th>By Car<th>Covered</tr></thead><tbody>
+<% per_volunteer.each{ |v,s| %>
+   <% next if s[:weight] == 0 %>
+   <tr><td><%= Volunteer.find(v).name %><td><%= s[:weight] %><td><%= s[:count] %><td><%= s[:bycar] %><td><%= s[:covered] %>
+<% } %>
+</tbody></table>
+<br><br>
+<h2>Last Month</h2>
+<table class="datatable"><thead><th>Volunteer<th>Amount<th>Count<th>By Car<th>Covered</tr></thead><tbody>
+<% per_volunteer2.each{ |v,s| %>
+<% next if s[:weight] == 0 %>
+<tr><td><%= Volunteer.find(v).name %><td><%= s[:weight] %><td><%= s[:count] %><td><%= s[:bycar] %><td><%= s[:covered] %>
+<% } %>
+</tbody></table>
+<br><br>
+<script>
+  $('.datatable').dataTable( {
+    'iDisplayLength' : 50
+   });
+</script>
+</div></div>

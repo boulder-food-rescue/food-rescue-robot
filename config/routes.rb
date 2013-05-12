@@ -9,7 +9,6 @@ Webapp::Application.routes.draw do
   resources :assignments do
     collection do
       get :index
-      get :assign
       get :knight
     end
   end
@@ -33,7 +32,6 @@ Webapp::Application.routes.draw do
       get :new_absence
       get :create_absence
       get :receipt
-      get :stats
       get :index
       get :edit
       get :update
@@ -85,7 +83,8 @@ Webapp::Application.routes.draw do
       get :shiftless
       get :shiftless_old
       get :need_training
-      get :admin
+      get :super_admin
+      get :region_admin
       get :switch_user
       get :knight
       get :index
@@ -95,6 +94,7 @@ Webapp::Application.routes.draw do
       get :destroy
       get :waiver
       get :sign_waiver
+      get :assign
     end
   end
 

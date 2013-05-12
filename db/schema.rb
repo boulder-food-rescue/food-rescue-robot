@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130511204756) do
+ActiveRecord::Schema.define(:version => 20130512173058) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -192,6 +192,8 @@ ActiveRecord::Schema.define(:version => 20130511204756) do
     t.boolean  "waiver_signed",          :default => false, :null => false
     t.datetime "waiver_signed_at"
     t.boolean  "needs_training",         :default => true
+    t.boolean  "assigned",               :default => false, :null => false
+    t.integer  "requested_region_id"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

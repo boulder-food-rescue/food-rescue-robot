@@ -189,13 +189,14 @@
                         <span>Donors</span>
                       </a>
                     </li>
-
                     <li>
-                      <a href="/volunteers/admin">Controls</a>
+                      <a href="/volunteers/region_admin">Region Admin</a>
                     </li>
+                    <% if current_volunteer.super_admin? %>
                     <li>
-                      <a href="/logs/stats">Statistics</a>
+                      <a href="/volunteers/super_admin">Super Admin</a>
                     </li>
+                    <% end %>
           <% if current_volunteer.super_admin? %>
           <li>
             <a href=<%= food_types_path %> class="<%= "selected" if request.fullpath == food_types_path %>">

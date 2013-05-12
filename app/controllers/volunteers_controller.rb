@@ -3,11 +3,38 @@ class VolunteersController < ApplicationController
   before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
 
   def unassigned
-    @filter = "(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0"
+    @filter = "(not assigned or (SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0) AND ((requested_region_id IS NULL) OR (requested_region_id in (#{current_volunteer.admin_region_ids.join(",")})))"
     @volunteers = Volunteer.where(@filter)
     @header = "Unassigned"
-    render :index
   end
+
+  def assign
+    v = Volunteer.find(params[:volunteer_id])
+    r = Region.find(params[:region_id])
+    a = Assignment.where("volunteer_id = ? and region_id = ?",v.id,r.id)
+    if params[:unassign]
+      a.each{ |e| e.destroy }
+      if v.assignments.length == 0
+        v.assigned = false
+        v.save
+      end
+    else
+      if a.length == 0
+        a = Assignment.new
+        a.volunteer = v
+        a.region = r
+        a.save
+      end
+      v.assigned = true
+      v.save
+      unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
+        m = Notifier.region_welcome_email(r,v)
+        m.deliver unless m.nil?
+      end
+    end
+    redirect_to :action => "unassigned", :alert => "Assignment worked"
+  end
+
   def shiftless
     index("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
            (gone_until IS NULL or gone_until < current_date)","Shiftless") 
@@ -130,8 +157,20 @@ class VolunteersController < ApplicationController
   end
 
   # special settings/stats page for admins only
-  def admin
-    render :admin
+  def super_admin
+  end
+
+  def region_admin
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+      @my_admin_volunteers = Volunteer.all
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+      adminrids = @my_admin_regions.collect{ |m| m.id }
+      @my_admin_volunteers = Volunteer.all.collect{ |v|
+        ((v.regions.length == 0) or (adminrids & v.regions.collect{ |r| r.id }).length > 0) ? v : nil }.compact
+    end
   end
 
   def waiver

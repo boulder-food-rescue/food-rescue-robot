@@ -58,14 +58,8 @@ class LogsController < ApplicationController
       end
       render :text => t.to_s
     when 'wordcloud'
-      logs = nil
-      if params[:region_id].nil?
-        logs = Log.select("description").where("complete and description IS NOT NULL")
-      else 
-        logs = Log.select("description").where("complete and description IS NOT NULL AND region_id = ?",params[:region_id].to_i)
-      end
       words = {}
-      Log.select("description").where("complete and description IS NOT NULL").each{ |l|
+      LogPart.select("description").where("description IS NOT NULL").each{ |l|
         l.description.strip.split(/\s*\,\s*/).each{ |w|
           w = w.strip.downcase.tr(',','')
           next if w =~ /(nothing|no |none)/ or w =~ /etc/ or w =~ /n\/a/ or w =~ /misc/

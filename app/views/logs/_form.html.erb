@@ -7,7 +7,7 @@
 <tr><td>Donor<td><%= f.select(:donor_id, Location.where("is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
 <tr><td>Recipient<td><%= f.select(:recipient_id, Location.where("NOT is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
 <tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br>Put a 0 if the pick-up didn't happen for some reason.</span></td><td>
-<table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.region.weight_unit %>s)<th> Count<th>Comment
+<table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.region.weight_unit %>s)<th> Count<th>Description
 <% @log.log_parts.each{ |lp| %>
   <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
     <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
@@ -45,8 +45,6 @@ EOF
    %>
 </td></tr>
 <tr><td>Weighed With<td><%= f.select(:weighed_by, [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],["Guesstimate","Guesstimate"]],{:include_blank => true}) %>
-<tr><td>Description Of Food<br>
-        <span class="subtext">e.g., pears, apples, mangos, celery</span><td><%= f.text_area(:description, :size => "30x6") %>
 <tr><td>Transported With<td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{:include_blank => true}) %>
 <tr><td>Notes<br>
 <span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.<td><%= f.text_area(:notes, :size => "30x6") %>

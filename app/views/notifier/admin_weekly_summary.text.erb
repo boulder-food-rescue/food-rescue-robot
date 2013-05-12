@@ -12,7 +12,7 @@ These logs were flagged for us:
 <% @flagged_logs.each{ |l| %>
 <%= l.volunteer.name %> (<%= [l.volunteer.email,l.volunteer.phone].compact.join(",") %>)
 <%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %> for <%= l.summed_weight %> lbs
-Description: <%= word_wrap(l.description,70) %>
+Description: <%= word_wrap(l.log_parts.collect{ |lp| lp.description }.join("\n\n"),70) %>
 Note: <%= word_wrap(l.notes,:line_width => 70) %>
 
   <% } %>

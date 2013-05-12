@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
     t.integer  "count"
-    t.string   "description"
+    t.text     "description"
   end
 
   add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"
@@ -75,7 +75,6 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.date     "when"
     t.integer  "volunteer_id"
     t.integer  "orig_volunteer_id"
-    t.text     "description"
     t.text     "notes"
     t.integer  "num_reminders"
     t.boolean  "flag_for_admin"

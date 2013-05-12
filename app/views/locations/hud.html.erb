@@ -37,7 +37,7 @@
 Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><br><br>
 
 
-<table id="my_schedule_table">
+<table id="data_table">
   <thead>
   <tr>
     <th> When </th>
@@ -61,3 +61,10 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
   <% end %>
   </tbody>
 </table>
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+  });
+});
+</script>

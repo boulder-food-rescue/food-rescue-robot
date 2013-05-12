@@ -16,7 +16,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   No shifts found.
 </p>
 <% else %>
-<table id="my_schedule_table">
+<table id="data_table">
   <thead>
   <tr>
     <th> When </th>
@@ -72,3 +72,10 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   </tbody>
 </table>
 <% end %>
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+  });
+});
+</script>

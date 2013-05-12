@@ -5,10 +5,9 @@
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-  <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "welcome", "test", :media => "all" %>
+  <%= stylesheet_link_tag "active_scaffold", "common", "main", "navigation", "welcome", "test", :media => "all" %>
   <%= stylesheet_link_tag "gmaps4rails" %>
   <%= javascript_include_tag "application" %>
-  <%= javascript_include_tag :highcharts  %>
   <%= csrf_meta_tags %>
   <script type="text/javascript" language="javascript" src="/DataTables-1.9.2/media/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/DataTables-1.9.2/media/css/demo_table.css">
@@ -177,37 +176,36 @@
       <% end %>
       <% if volunteer_signed_in? and current_volunteer.any_admin? %>
         <li class='has-sub '>
-          <a href='#'><span>Administration</span></a>
-		  <ul>
-		    <li>
-		      <a href=<%= recipients_locations_path %> class="<%= "selected" if request.fullpath == recipients_locations_path %>">
-		        <span>Recipients</span>
-		      </a>
-		    </li>
-                    <li>
-                      <a href=<%= donors_locations_path %> class="<%= "selected" if request.fullpath == donors_locations_path %>">
-                        <span>Donors</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/volunteers/region_admin">Region Admin</a>
-                    </li>
-                    <% if current_volunteer.super_admin? %>
-                    <li>
-                      <a href="/volunteers/super_admin">Super Admin</a>
-                    </li>
-                    <% end %>
-          <% if current_volunteer.super_admin? %>
+          <a href='#'><span>Region Admin</span></a>
+ 	  <ul>
+	   <li>
+	      <a href=<%= recipients_locations_path %> class="<%= "selected" if request.fullpath == recipients_locations_path %>">
+	        <span>Recipients</span>
+	      </a>
+	    </li>
+            <li>
+             <a href=<%= donors_locations_path %> class="<%= "selected" if request.fullpath == donors_locations_path %>">
+              <span>Donors</span>
+             </a>
+           </li>
           <li>
             <a href=<%= food_types_path %> class="<%= "selected" if request.fullpath == food_types_path %>">
               <span>Food Types</span>
             </a>
           </li>
           <li>
-            <a href=<%= transport_types_path %> class="<%= "selected" if request.fullpath == transport_types_path %>">
-              <span>Transport Types</span>
-            </a>
+           <a href="/volunteers/region_admin">Controls</a>
           </li>
+          <li>
+           <a href="/volunteers/region_stats">Statistics</a>
+          </li>
+        </ul>
+        </li>
+        <% end %>
+        <% if current_volunteer.super_admin? %>
+        <li class='has-sub'>
+          <a href='#'><span>Super Admin</span></a>
+           <ul>
           <li>
             <a href=<%= cell_carriers_path %> class="<%= "selected" if request.fullpath == cell_carriers_path %>">
               <span>Cell Carriers</span>
@@ -215,11 +213,18 @@
           </li>
           <li>
             <a href=<%= regions_path %> class="<%= "selected" if request.fullpath == regions_path %>">
-              <span>Regions</span>
+              <span>Manage Regions</span>
             </a>
           </li>
-          <% end %>
-		  </ul>
+          <li>
+            <a href=<%= transport_types_path %> class="<%= "selected" if request.fullpath == transport_types_path %>">
+              <span>Transport Types</span>
+            </a>
+          </li>
+            <li>
+               <a href="/volunteers/super_admin">Controls</a>
+            </li>
+	</ul>
         </li>
       <% end %>
       <% if volunteer_signed_in? %>

@@ -4,7 +4,7 @@
 No volunteers matching that criteria...
 </p>
 <% else %>
-<table id="my_schedule_table">
+<table id="data_table">
   <thead>
   <tr>
     <th> Name </th>
@@ -65,3 +65,10 @@ Key: <span style="background: red">Admin</span>
 <br><br>
 Email List: <%= @volunteers.collect{ |v| v.email }.join(", ") %>
 <% end %>
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+  });
+});
+</script>

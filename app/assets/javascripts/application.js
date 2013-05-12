@@ -12,5 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require_tree .
+//= require highcharts
 //= require active_scaffold
+//= require_tree .

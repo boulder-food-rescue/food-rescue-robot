@@ -7,7 +7,6 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
   <%= stylesheet_link_tag "common", "devise", :media => "all" %>
   <%= javascript_include_tag "application" %>
-  <%= javascript_include_tag :highcharts  %>
   <%= csrf_meta_tags %>
 </head>
 <%
@@ -54,50 +53,10 @@ for i in 0..range
   food_per_day << running_total/1000.0
 end
 
-food_chart_day = LazyHighCharts::HighChart.new('area') do |f|
-  f.options[:chart][:defaultSeriesType] = "area"
-  f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Food Rescued Since June 26, 2012"
-  f.options[:xAxis][:title] = {:enabled => true, :text => "Days Since 06/26/2012"}
-  f.options[:yAxis][:title][:text] = "thousand lbs of food"
-  f.plot_options(:area => {
-    :pointStart => 0,
-    :marker => {
-      :enabled => false,
-      :symbol => 'circle',
-      :radius => 2,
-      :states => {
-        :hover => {
-          :enabled => true
-        }
-      }
-    }
-  })
-  f.series(
-    :name => 'Pounds of Food Rescued',
-    :data => food_per_day
-  )
-end
-
 month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 for i in 1..current_month
   month_labels = month_labels.push(month_labels.shift)
   food_per_month = food_per_month.push(food_per_month.shift)
-end
-
-food_chart_month = LazyHighCharts::HighChart.new('column') do |f|
-  f.options[:chart][:defaultSeriesType] = "column"
-  f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Food Rescued By Month (since 6/26/2012)"
-    f.options[:xAxis] = {
-    :plot_bands => "none",
-    :title=>{:text=>"Month"},
-    :categories => month_labels}
-  f.options[:yAxis][:title][:text] = "lbs of food"
-  f.series(
-    :name => 'Pounds of Food Rescued',
-    :data => food_per_month
-  )
 end
 
 #Volunteer info
@@ -128,32 +87,6 @@ TransportType.all.each{ |tt|
 }
 nil_values = Log.count(:conditions => { :transport_type_id => nil })
 human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
-
-#Transporation Pie Chart
-h = LazyHighCharts::HighChart.new('pie') do |f|
-  f.chart({:defaultSeriesType => 'pie'})
-  f.options[:chart][:renderTo] = "container"
-  f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Transportation Type"
-  f.plot_options(:pie => {
-    :allowPointSelect=>true, 
-    :cursor=>"pointer" , 
-    :dataLabels=>{
-      :enabled=>true,
-      :color=>"black",
-      :style=>{
-        :font=>"13px Trebuchet MS, Verdana, sans-serif"
-      }
-    }
-  })
-  series = {
-    :type => 'pie',
-    :name => 'Tansportation Type',
-    :data => pie_data
-  }
-  f.series(series)
-end
-
 %>
 <body>
   <div class="container">
@@ -206,10 +139,6 @@ end
         <p>Total Food Pickups To Date: <%= total_number_pickups %> pickups</p>
         <p class="show_pickups_to_date text_link"> fun facts </p>
         <div class="fact_info">
-<!--          <div class="fun_fact">
-            <h3>Pickups Today</h3>
-            <div><p> <%= pickups_this_day %></p></div>
-        </div>-->
         <div class="fun_fact">
           <h3>Pickups This Week</h3>
           <div>
@@ -222,12 +151,6 @@ end
             <p> <%= pickups_this_month %></p>
           </div>
         </div>
-<!--        <div class="fun_fact">
-          <h3>Pickups This Year</h3>
-          <div>
-            <p> <%= pickups_this_year %></p>
-          </div>
-        </div>-->
         </div>
       </div>
       <div class="a_fact_section">
@@ -237,8 +160,8 @@ end
         </p>
         <p class="food_pickup text_link"> chart </p>
         <div class="fact_info">
-        <%= high_chart("food_chart_day", food_chart_day) %>
-        <%= high_chart("food_chart_month", food_chart_month) %>
+        <div id="highchart_day" style="width:500px"></div>
+        <div id="highchart_month" style="width:500px"></div>
         </div>
       </div>
       <div class="a_fact_section">  
@@ -344,7 +267,7 @@ end
         </p>
         <p class="show_trans_chart text_link"> chart </p>
         <div class="fact_info transportation_chart">
-        <%= high_chart("trans_chart", h) %>
+        <div id="highchart_pie" style="width: 500px;"></div>
         </div>
       </div>
       </div>
@@ -360,5 +283,61 @@ end
     <p>Copyright (c) <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
     </div>
   </div>
+
+<script type="text/javascript">
+$(function () { 
+    $('#highchart_month').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Monthly Stats'
+        },
+        xAxis: {
+            categories: ['<%= raw month_labels.join("','") %>'],
+            title: { text: 'Month' }
+        },
+        yAxis: {
+          title: { text: 'Pounds of food' }
+        },
+        series: [{
+            name: 'Data',
+            data: [<%= food_per_month.join(",") %>]
+        }]
+    });
+    $('#highchart_day').highcharts({
+        chart: {
+            type: 'area'
+        },
+        title: {
+            text: 'Total Food Rescued'
+        },
+        xAxis: {
+          title: { text: 'Days' }
+        },
+        yAxis: {
+          title: { text: 'Thousands of pounds' }
+        },
+        series: [{
+            name: 'Data',
+            data: [<%= food_per_day.join(",") %>]
+        }]
+    });
+    $('#highchart_pie').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Transportation'
+        },
+        series: [{
+            name: 'Transport',
+            data: [<%= raw pie_data.collect{ |e| "['#{escape_javascript e[0]}',#{e[1]}]" }.join(",") %>]
+        }]
+    });
+
+});
+</script>
+
 </body>
 </html>

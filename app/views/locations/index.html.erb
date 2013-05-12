@@ -25,7 +25,7 @@ New Recipient For <%= select_tag(:region_id, options_for_select(@my_admin_region
 No locations.
 </p>
 <% else %>
-<table id="my_schedule_table">
+<table id="data_table">
   <thead>
   <tr>
     <th> Name </th>
@@ -64,3 +64,10 @@ No locations.
   </tbody>
 </table>
 <% end %>
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+  });
+});
+</script>

@@ -41,18 +41,17 @@ current_day = date.day
 
 food_per_day = []
 food_per_month = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-start_date = Date.new(2012, 6, 26)
-range = Date.today - start_date
-for i in 0..range
-  start_date += 1
-  total = Log.where(:when => start_date).where("complete").collect{ |l| l.summed_weight }.sum
-  if total != nil
-    running_total += total
-    food_per_month[start_date.month - 1] += total
+running_total = 0.0
+Log.select("sum(weight) as weight_sum, count(*) as count, logs.when").joins(:log_parts).where("complete").
+    group("\"when\"").order("\"when\"").each{ |l|
+  next if l.weight_sum.nil? or l.weight_sum.to_f <= 0
+  if l.when > (Date.today << 12)
+    food_per_month[l.when.month - 1] += l.weight_sum.to_f
   end
+  running_total += l.weight_sum.to_f
   food_per_day << running_total/1000.0
-end
-
+}
+  
 month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 for i in 1..current_month
   month_labels = month_labels.push(month_labels.shift)
@@ -62,9 +61,10 @@ end
 #Volunteer info
 number_of_volunteers = Volunteer.count()
 largest_pickup = nil
-Log.where("complete").each{ |l|
-  largest_pickup = l if largest_pickup.nil? or largest_pickup.summed_weight < l.summed_weight
+Log.joins(:log_parts).select("logs.id, sum(weight) as weight_sum").where("complete").group("logs.id").each{ |l|
+  largest_pickup = l if largest_pickup.nil? or largest_pickup.weight_sum < l.weight_sum
 }
+largest_pickup = Log.find(largest_pickup.id)
 pickups_today = Schedule.where(:day_of_week => date.wday)
   
 #Recipient Stats
@@ -194,16 +194,16 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
           <% 
           pickups_today.each do |pickup|
             next if pickup.volunteer.nil? or pickup.donor.nil?
-              if donor.website != nil%>
+              if pickup.donor.website != nil%>
                 <div>
                   <p>
-                    <%= pickup.volunteer.name %> - <a href="<%= donor.website %>"><%= donor.name %></a>
+                    <%= pickup.volunteer.name %> - <a href="<%= pickup.donor.website %>"><%= pickup.donor.name %></a>
                   </p>
                 </div>
             <% else %>
                 <div>
                   <p>
-                    <%= pickup.volunteer.name %> - <%= donor.name %>
+                    <%= pickup.volunteer.name %> - <%= pickup.donor.name %>
                   </p>
                 </div>
             <% end %>

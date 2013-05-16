@@ -226,7 +226,7 @@ class VolunteersController < ApplicationController
     
     #Pickup Stats
     @completed_pickup_count = Log.count(:conditions => {:volunteer_id => current_volunteer})
-    @total_food_rescued = Log.where(:volunteer_id => current_volunteer).where("complete").collect{ |l| l.summed_weight }.sum
+    @total_food_rescued = Log.joins(:log_parts).where(:volunteer_id => current_volunteer).where("complete").sum(:weight)
     @dis_traveled = 0.0
     Log.where(:volunteer_id => current_volunteer).where("complete").each do |pickup|
       if pickup.schedule != nil

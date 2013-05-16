@@ -34,7 +34,7 @@ No unassigned volunteers...
     <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
     <td> <%= v.phone %>
     <td> <%= v.requested_region.nil? ? "?" : v.requested_region.name %>
-    <td> <%= v.created_at.strftime('%Y-%m-%d') %>
+    <td> <%= (Date.today - v.created_at.to_date).to_i  %>
     <td>
        <%= form_tag("/volunteers/assign", :method => "get") do %>
         <%= hidden_field_tag(:volunteer_id,v.id) %>

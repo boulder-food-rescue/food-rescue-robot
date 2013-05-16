@@ -229,14 +229,14 @@ $(function () {
         },
         xAxis: {
             title: { text: 'Month' },
-            categories: ['<%= raw @by_month.keys.join("','") %>']
+            categories: ['<%= raw @by_month.sort_by{ |k,v| k}.collect{ |pair| pair[0] }.join("','") %>']
         },
         yAxis: {
             title: { text: 'Pounds' }
         },
         series: [{
             name: 'Food Rescued',
-            data: [<%= @by_month.values.join(",") %>]
+            data: [<%= @by_month.sort_by{ |k,v| k}.collect{ |pair| pair[1] }.join(",") %>]
         }]
     });
 });

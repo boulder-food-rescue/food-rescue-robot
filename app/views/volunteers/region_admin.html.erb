@@ -3,7 +3,7 @@
 </div>
 <div class="home_sections">
   <div class="home_section">
-    <h1> User Controls </h1>
+    <h1> Region Admin Controls </h1>
     <div class="home_sub_section">
       <h2> Switch to User </h2>
       <div class="home_section_content">
@@ -60,67 +60,27 @@
 
       </div>
     </div>
-    <% if current_volunteer.super_admin? %>
     <div class="home_sub_section">
-      <h2> Toggle Super-Admin Priviledges </h2>
-      <div class="home_section_content">
-      <p>
-      Super-admins can do most anything for any region. This should only be given to site 
-      administrators. See <%= link_to assignments_path do "assignments" end %> to assign per-region admins.
-      </p>
-      <%= form_tag("/volunteers/knight", :method => "get") do %>
-      <table>
-      <tr>
-        <td>Volunteer:</td>
-        <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.all.collect{ |v| 
-                name = v.name + " [" + v.assignments.collect{ |a| (a.admin ? "*" : "") + (a.region.nil? ? "" : a.region.name) }.join(",") + "]"
-                name = "*#{name}" if v.admin
-                [name,v.id] 
-                }))
-            %></td>
-      </tr>
-    </table>
-    <%= submit_tag "Toggle" %>
-    <% end %>
-      </div>
+     <h2> Regional Admin Appointment </h2>
+     <div class="home_section_content">
+       <%= form_tag("/assignments/knight", :method => "get") do %>
+        <table class>
+          <tr>
+            <td>Volunteer:</td>
+            <td><%= select_tag(:volunteer_id, options_for_select(@my_admin_volunteers.collect{ |v| [v.name+" ["+v.assignments.collect{ |a| ((a.region.nil?) ? "" : a.region.name) + (a.admin ? "*" : "") }.join(",")+"]",v.id] })) %></td>
+          </tr>
+          <tr>
+            <td>Region:</td>
+            <td><%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %></td>
+          </tr>
+          <tr>
+           <td>Un-Knight:</td>
+           <td><%= check_box_tag(:unassign) %></td>
+          </tr>
+        </table>
+        <%= submit_tag %>
+        <% end %>
     </div>
-    <% end %>
+   </div>
   </div>
-
-  <div class="home_section">
-    <h1> Pickup Stats </h1>
-    <div class="home_sub_section">
-      <h2> Pickup Stats </h2>
-      <div class="home_section_content">
-      </div>
-    </div>
-    <div class="home_sub_section">
-      <h2> Food Collected by Day </h2>
-      <div class="home_section_content">
-      </div>
-    </div>
-    <div class="home_sub_section">
-      <h2> Food Collected by Month </h2>
-      <div class="home_section_content">
-      </div>
-    </div>
-  </div>
-  <div class="home_section">
-    <h1>Additional Information</h1>
-    <div class="home_sub_section">
-      <h2> Your Info </h2>
-      <div class="home_section_content">
-      </div>
-    </div>
-    <div class="home_sub_section">
-      <h2> Your Donor/Recipient Map </h2>
-      <div class="home_section_content">
-      </div>
-    </div>
-    <div class="home_sub_section">
-      <h2> Next Meeting Info </h2>
-      <div class="home_section_content">
-      </div>
-    </div>
-  </div>
-</div>
+</div></div>

@@ -1,0 +1,58 @@
+<h2><%= @header %></h2>
+<% if @volunteers.length == 0 %>
+<p> 
+No unassigned volunteers...
+</p>
+<% else %>
+<table id="data_table">
+  <thead>
+  <tr>
+    <th> Name </th>
+    <th> Email </th>
+    <th> Phone </th>
+    <th> Requested Region </th>
+    <th> Days Waiting </th>
+    <th> Region </th>
+    <th> Send<br>Welcome<br>Email </th>
+    <th> Assign</th>
+  </tr>
+  </thead>
+  <tbody>
+  <%
+  @volunteers.each do |v|
+    row_bgcolor = nil
+    if v.super_admin?
+      row_bgcolor = "red"
+    elsif v.any_admin?
+      row_bgcolor = "pink"
+    elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Date.today)
+      row_bgcolor = "grey"
+    end
+  %>
+  <tr<% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+    <td> <%= link_to v.name, v unless v.name.nil? %>
+    <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
+    <td> <%= v.phone %>
+    <td> <%= v.requested_region.nil? ? "?" : v.requested_region.name %>
+    <td> <%= v.created_at.strftime('%Y-%m-%d') %>
+    <td>
+       <%= form_tag("/volunteers/assign", :method => "get") do %>
+        <%= hidden_field_tag(:volunteer_id,v.id) %>
+        <%= select_tag(:region_id, options_for_select(Region.all_admin(current_volunteer).collect{ |r| [r.name,r.id] })) %>
+    <td>
+        <%= check_box_tag(:send_welcome_email,1,:checked=>true) %>
+    <td>
+        <%= submit_tag("Assign") %>
+        <% end %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<% end %>
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+  });
+});
+</script>

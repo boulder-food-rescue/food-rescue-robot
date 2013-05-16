@@ -3,7 +3,7 @@ We have data entered for <%= @num_entered %> of those.
 
 We picked up /at least/ <%= @lbs %> pounds of food. 
 
-The biggest pickup was <%= @biggest.weight %> lbs, done by <%= @biggest.volunteer.name %>
+The biggest pickup was <%= @biggest.summed_weight %> lbs, done by <%= @biggest.volunteer.name %>
 from <%= @biggest.donor.name %> to <%= @biggest.recipient.name %> on <%= @biggest.when.strftime('%A') %>.
 
 <% if @flagged_logs.length > 0 %>
@@ -11,8 +11,8 @@ These logs were flagged for us:
 
 <% @flagged_logs.each{ |l| %>
 <%= l.volunteer.name %> (<%= [l.volunteer.email,l.volunteer.phone].compact.join(",") %>)
-<%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %> for <%= l.weight %> lbs
-Description: <%= word_wrap(l.description,70) %>
+<%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %> for <%= l.summed_weight %> lbs
+Description: <%= word_wrap(l.log_parts.collect{ |lp| lp.description }.join("\n\n"),70) %>
 Note: <%= word_wrap(l.notes,:line_width => 70) %>
 
   <% } %>

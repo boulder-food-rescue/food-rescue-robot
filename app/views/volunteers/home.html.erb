@@ -27,7 +27,7 @@
           <% @upcoming_pickups.each do |pickup| %>
           <tr>
             <td> <%= link_to pickup.donor.name, pickup.donor %> 
-                 <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_type.name %>)</span>
+                 <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
             </td>
             <td> <%= pickup.when %> </td>
             <td> <%= link_to 'Info', pickup.schedule %> </td>
@@ -48,7 +48,7 @@
           </tr>
           <% @to_do_reports.each do |report| %>
           <tr>
-            <td> <%= link_to report.donor.name, report.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_type.name %>)</span></td>
+            <td> <%= link_to report.donor.name, report.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
             <td> <%= report.when %> </td>
             <td> <%= link_to "Fill In", edit_log_path(report) %></td>
           </tr>
@@ -74,7 +74,7 @@
                break if n > 5
            %>
           <tr>
-            <td> <%= link_to pickup.donor.name, pickup.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_type.name %>)</span></td>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
             <td> <%= pickup.when %> </td>
             <td> <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => pickup.id %>
             <td> <%= link_to "Info", pickup.schedule %></td>
@@ -137,7 +137,7 @@
     <div class="home_sub_section">
       <h2> Food Collected by Month </h2>
       <div class="home_section_content">
-        <%= high_chart("chart_food_per_month_mine", @food_chart_month_mine)  %>
+      <div id="highchart" style="width:500px;"></div>
       </div>
     </div>
   </div>
@@ -217,3 +217,27 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+$(function () { 
+    $('#highchart').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Monthly Stats'
+        },
+        xAxis: {
+            title: { text: 'Month' },
+            categories: ['<%= raw @by_month.keys.join("','") %>']
+        },
+        yAxis: {
+            title: { text: 'Pounds' }
+        },
+        series: [{
+            name: 'Food Rescued',
+            data: [<%= @by_month.values.join(",") %>]
+        }]
+    });
+});
+</script>

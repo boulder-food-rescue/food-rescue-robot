@@ -3,11 +3,38 @@ class VolunteersController < ApplicationController
   before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
 
   def unassigned
-    @filter = "(SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0"
+    @filter = "(not assigned or (SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0) AND ((requested_region_id IS NULL) OR (requested_region_id in (#{current_volunteer.admin_region_ids.join(",")})))"
     @volunteers = Volunteer.where(@filter)
     @header = "Unassigned"
-    render :index
   end
+
+  def assign
+    v = Volunteer.find(params[:volunteer_id])
+    r = Region.find(params[:region_id])
+    a = Assignment.where("volunteer_id = ? and region_id = ?",v.id,r.id)
+    if params[:unassign]
+      a.each{ |e| e.destroy }
+      if v.assignments.length == 0
+        v.assigned = false
+        v.save
+      end
+    else
+      if a.length == 0
+        a = Assignment.new
+        a.volunteer = v
+        a.region = r
+        a.save
+      end
+      v.assigned = true
+      v.save
+      unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
+        m = Notifier.region_welcome_email(r,v)
+        m.deliver unless m.nil?
+      end
+    end
+    redirect_to :action => "unassigned", :alert => "Assignment worked"
+  end
+
   def shiftless
     index("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
            (gone_until IS NULL or gone_until < current_date)","Shiftless") 
@@ -130,8 +157,23 @@ class VolunteersController < ApplicationController
   end
 
   # special settings/stats page for admins only
-  def admin
-    render :admin
+  def super_admin
+  end
+
+  def region_admin
+    @regions = Region.all
+    if current_volunteer.super_admin?
+      @my_admin_regions = @regions
+      @my_admin_volunteers = Volunteer.all
+    else
+      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+      adminrids = @my_admin_regions.collect{ |m| m.id }
+      @my_admin_volunteers = Volunteer.all.collect{ |v|
+        ((v.regions.length == 0) or (adminrids & v.regions.collect{ |r| r.id }).length > 0) ? v : nil }.compact
+    end
+  end
+
+  def region_stats
   end
 
   def waiver
@@ -173,20 +215,20 @@ class VolunteersController < ApplicationController
     
     #Upcoming pickup list
     @upcoming_pickups = Log.where(:when => today...(today + 7)).where(:volunteer_id => current_volunteer)
-    @sncs_pickups = Log.where(:when => today...(today+7), :weight => nil, :volunteer_id => nil).order("\"when\"").collect{ |l| 
+    @sncs_pickups = Log.where(:when => today...(today+7), :complete => false, :volunteer_id => nil).order("\"when\"").collect{ |l| 
       (current_volunteer.region_ids.include? l.region_id) ? l : nil }.compact
     
     #To Do Pickup Reports
-    @to_do_reports = Log.where('"logs"."when" <= ?', today).where("weight IS NULL").where(:volunteer_id => current_volunteer)
+    @to_do_reports = Log.where('"logs"."when" <= ?', today).where("NOT complete").where(:volunteer_id => current_volunteer)
     
     #Last 10 pickups
-    @last_ten_pickups = Log.where(:volunteer_id => current_volunteer).where("weight IS NOT NULL").order('"logs"."when" DESC').limit(10)
+    @last_ten_pickups = Log.where(:volunteer_id => current_volunteer).where("complete").order('"logs"."when" DESC').limit(10)
     
     #Pickup Stats
     @completed_pickup_count = Log.count(:conditions => {:volunteer_id => current_volunteer})
-    @total_food_rescued = Log.where(:volunteer_id => current_volunteer).where("weight IS NOT NULL").sum(:weight)
+    @total_food_rescued = Log.joins(:log_parts).where(:volunteer_id => current_volunteer).where("complete").sum(:weight)
     @dis_traveled = 0.0
-    Log.where(:volunteer_id => current_volunteer).where("weight IS NOT NULL").each do |pickup|
+    Log.where(:volunteer_id => current_volunteer).where("complete").each do |pickup|
       if pickup.schedule != nil
         donor = pickup.donor
         recipient = pickup.recipient
@@ -213,7 +255,7 @@ class VolunteersController < ApplicationController
     end
 
     # FIXME: the below is Sean's code. It's quite nonDRY and should be cleaned up substantially
-    @pickups = Log.where("volunteer_id = ? AND weight IS NOT NULL",current_volunteer.id)
+    @pickups = Log.where("volunteer_id = ? AND complete",current_volunteer.id)
     @lbs = 0.0
     @human_pct = 0.0
     @num_pickups = {}
@@ -221,37 +263,24 @@ class VolunteersController < ApplicationController
     @biggest = nil
     @earliest = nil
     @bike = TransportType.where("name = 'Bike'").shift
-    by_month = {}
+    @by_month = {}
     @pickups.each{ |l|
       l.transport_type = @bike if l.transport_type.nil?
       @num_pickups[l.transport_type] = 0 if @num_pickups[l.transport_type].nil?
       @num_pickups[l.transport_type] += 1
       @num_covered += 1 if l.orig_volunteer != current_volunteer and !l.orig_volunteer.nil?
-      @lbs += l.weight
-      @biggest = l if @biggest.nil? or l.weight > @biggest.weight
+      @lbs += l.summed_weight
+      @biggest = l if @biggest.nil? or l.summed_weight > @biggest.summed_weight
       @earliest = l if @earliest.nil? or l.when < @earliest.when
       yrmo = l.when.strftime("%Y-%m")
-      by_month[yrmo] = 0.0 if by_month[yrmo].nil?
-      by_month[yrmo] += l.weight unless l.weight.nil?
+      @by_month[yrmo] = 0.0 if @by_month[yrmo].nil?
+      @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
     @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count
     @num_to_cover = Log.where("volunteer_id IS NULL#{@base_conditions}").count
     @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Date.today.to_s).count
     @num_unassigned = Schedule.where("volunteer_id IS NULL AND donor_id IS NOT NULL and recipient_id IS NOT NULL#{@base_conditions}").count
-    
-    @food_chart_month_mine = LazyHighCharts::HighChart.new('column') do |f|
-      f.options[:chart][:defaultSeriesType] = "column"
-      f.options[:chart][:plotBackgroundColor] = nil
-      f.options[:title][:text] = "Food Rescued By Month"
-        f.options[:xAxis] = {
-        :plot_bands => "none",
-        :title=>{:text=>"Month"},
-        :categories => by_month.keys.sort}
-      f.options[:yAxis][:title][:text] = "lbs of food"
-      f.series(:name=>'Pounds of Food Rescued by You', :data=> by_month.keys.sort.collect{ |k| by_month[k] })
-    end
-
     render :home
   end
 end

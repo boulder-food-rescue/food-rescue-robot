@@ -7,7 +7,6 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
   <%= stylesheet_link_tag "common", "devise", :media => "all" %>
   <%= javascript_include_tag "application" %>
-  <%= javascript_include_tag :highcharts  %>
   <%= csrf_meta_tags %>
 </head>
 <%
@@ -42,67 +41,30 @@ current_day = date.day
 
 food_per_day = []
 food_per_month = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-start_date = Date.new(2012, 6, 26)
-range = Date.today - start_date
-for i in 0..range
-  start_date += 1
-  total = Log.where(:when => start_date).where("weight IS NOT NULL").sum(:weight)
-  if total != nil
-    running_total += total
-    food_per_month[start_date.month - 1] += total
+running_total = 0.0
+Log.select("sum(weight) as weight_sum, count(*) as count, logs.when").joins(:log_parts).where("complete").
+    group("\"when\"").order("\"when\"").each{ |l|
+  next if l.weight_sum.nil? or l.weight_sum.to_f <= 0
+  if l.when > (Date.today << 12)
+    food_per_month[l.when.month - 1] += l.weight_sum.to_f
   end
+  running_total += l.weight_sum.to_f
   food_per_day << running_total/1000.0
-end
-
-food_chart_day = LazyHighCharts::HighChart.new('area') do |f|
-  f.options[:chart][:defaultSeriesType] = "area"
-  f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Food Rescued Since June 26, 2012"
-  f.options[:xAxis][:title] = {:enabled => true, :text => "Days Since 06/26/2012"}
-  f.options[:yAxis][:title][:text] = "thousand lbs of food"
-  f.plot_options(:area => {
-    :pointStart => 0,
-    :marker => {
-      :enabled => false,
-      :symbol => 'circle',
-      :radius => 2,
-      :states => {
-        :hover => {
-          :enabled => true
-        }
-      }
-    }
-  })
-  f.series(
-    :name => 'Pounds of Food Rescued',
-    :data => food_per_day
-  )
-end
-
+}
+  
 month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 for i in 1..current_month
   month_labels = month_labels.push(month_labels.shift)
   food_per_month = food_per_month.push(food_per_month.shift)
 end
 
-food_chart_month = LazyHighCharts::HighChart.new('column') do |f|
-  f.options[:chart][:defaultSeriesType] = "column"
-  f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Food Rescued By Month (since 6/26/2012)"
-    f.options[:xAxis] = {
-    :plot_bands => "none",
-    :title=>{:text=>"Month"},
-    :categories => month_labels}
-  f.options[:yAxis][:title][:text] = "lbs of food"
-  f.series(
-    :name => 'Pounds of Food Rescued',
-    :data => food_per_month
-  )
-end
-
 #Volunteer info
 number_of_volunteers = Volunteer.count()
-largest_pickup = Log.where("logs.weight IS NOT NULL").order("weight DESC").first
+largest_pickup = nil
+Log.joins(:log_parts).select("logs.id, sum(weight) as weight_sum").where("complete").group("logs.id").each{ |l|
+  largest_pickup = l if largest_pickup.nil? or largest_pickup.weight_sum < l.weight_sum
+}
+largest_pickup = Log.find(largest_pickup.id)
 pickups_today = Schedule.where(:day_of_week => date.wday)
   
 #Recipient Stats
@@ -125,32 +87,6 @@ TransportType.all.each{ |tt|
 }
 nil_values = Log.count(:conditions => { :transport_type_id => nil })
 human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
-
-#Transporation Pie Chart
-h = LazyHighCharts::HighChart.new('pie') do |f|
-  f.chart({:defaultSeriesType => 'pie'})
-  f.options[:chart][:renderTo] = "container"
-  f.options[:chart][:plotBackgroundColor] = nil
-  f.options[:title][:text] = "Transportation Type"
-  f.plot_options(:pie => {
-    :allowPointSelect=>true, 
-    :cursor=>"pointer" , 
-    :dataLabels=>{
-      :enabled=>true,
-      :color=>"black",
-      :style=>{
-        :font=>"13px Trebuchet MS, Verdana, sans-serif"
-      }
-    }
-  })
-  series = {
-    :type => 'pie',
-    :name => 'Tansportation Type',
-    :data => pie_data
-  }
-  f.series(series)
-end
-
 %>
 <body>
   <div class="container">
@@ -181,20 +117,16 @@ end
         <p class="show_recipient_facts text_link"> list </p>
                           <div class="fact_info donor_list">
                                 <div class="fun_fact">
+                                  <ul>
                                   <%
                                   list_of_regions.each do |r|
                                     if r.website != nil%>
-                                      <div>
-                                        <p class>
-                                          <a href="<%= r.website %>"><%= r.title %></a>: <%= r.tagline %>
-                                        </p>
-                                      </div>
+                                        <li><a href="<%= r.website %>"><%= r.title %></a><%= ": #{r.tagline}" unless r.tagline.nil? %>
                                     <% else %>
-                                      <div>
-                                        <p> <%= r.name %>: <%= r.tagline %></p>
-                                      </div>
+                                        <li><%= r.name %><%= ": #{r.tagline}" unless r.tagline.nil? %>
                                     <% end %>
                                   <% end %>
+                                  </ul>
                                 </div>
                           </div>
 
@@ -203,10 +135,6 @@ end
         <p>Total Food Pickups To Date: <%= total_number_pickups %> pickups</p>
         <p class="show_pickups_to_date text_link"> fun facts </p>
         <div class="fact_info">
-<!--          <div class="fun_fact">
-            <h3>Pickups Today</h3>
-            <div><p> <%= pickups_this_day %></p></div>
-        </div>-->
         <div class="fun_fact">
           <h3>Pickups This Week</h3>
           <div>
@@ -219,12 +147,6 @@ end
             <p> <%= pickups_this_month %></p>
           </div>
         </div>
-<!--        <div class="fun_fact">
-          <h3>Pickups This Year</h3>
-          <div>
-            <p> <%= pickups_this_year %></p>
-          </div>
-        </div>-->
         </div>
       </div>
       <div class="a_fact_section">
@@ -234,8 +156,8 @@ end
         </p>
         <p class="food_pickup text_link"> chart </p>
         <div class="fact_info">
-        <%= high_chart("food_chart_day", food_chart_day) %>
-        <%= high_chart("food_chart_month", food_chart_month) %>
+        <div id="highchart_day" style="width:500px"></div>
+        <div id="highchart_month" style="width:500px"></div>
         </div>
       </div>
       <div class="a_fact_section">  
@@ -250,14 +172,14 @@ end
               if donor.website != nil %>
                 <div>
                   <p>
-                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from 
+                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.summed_weight %> lbs of food from 
                     <a href="<% donor.website %>"><%= donor.name %></a>
                   </p>
                 </div>
               <% else %>
                 <div>
                   <p>
-                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.weight %> lbs of food from <%= donor.name %>
+                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.summed_weight %> lbs of food from <%= donor.name %>
                   </p>
                 </div>
               <%end%>
@@ -268,16 +190,16 @@ end
           <% 
           pickups_today.each do |pickup|
             next if pickup.volunteer.nil? or pickup.donor.nil?
-              if donor.website != nil%>
+              if pickup.donor.website != nil%>
                 <div>
                   <p>
-                    <%= pickup.volunteer.name %> - <a href="<%= donor.website %>"><%= donor.name %></a>
+                    <%= pickup.volunteer.name %> - <a href="<%= pickup.donor.website %>"><%= pickup.donor.name %></a>
                   </p>
                 </div>
             <% else %>
                 <div>
                   <p>
-                    <%= pickup.volunteer.name %> - <%= donor.name %>
+                    <%= pickup.volunteer.name %> - <%= pickup.donor.name %>
                   </p>
                 </div>
             <% end %>
@@ -341,7 +263,7 @@ end
         </p>
         <p class="show_trans_chart text_link"> chart </p>
         <div class="fact_info transportation_chart">
-        <%= high_chart("trans_chart", h) %>
+        <div id="highchart_pie" style="width: 500px;"></div>
         </div>
       </div>
       </div>
@@ -357,5 +279,61 @@ end
     <p>Copyright (c) <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> 2012</p>
     </div>
   </div>
+
+<script type="text/javascript">
+$(function () { 
+    $('#highchart_month').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Monthly Stats'
+        },
+        xAxis: {
+            categories: ['<%= raw month_labels.join("','") %>'],
+            title: { text: 'Month' }
+        },
+        yAxis: {
+          title: { text: 'Pounds of food' }
+        },
+        series: [{
+            name: 'Data',
+            data: [<%= food_per_month.join(",") %>]
+        }]
+    });
+    $('#highchart_day').highcharts({
+        chart: {
+            type: 'area'
+        },
+        title: {
+            text: 'Total Food Rescued'
+        },
+        xAxis: {
+          title: { text: 'Days' }
+        },
+        yAxis: {
+          title: { text: 'Thousands of pounds' }
+        },
+        series: [{
+            name: 'Data',
+            data: [<%= food_per_day.join(",") %>]
+        }]
+    });
+    $('#highchart_pie').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Transportation'
+        },
+        series: [{
+            name: 'Transport',
+            data: [<%= raw pie_data.collect{ |e| "['#{escape_javascript e[0]}',#{e[1]}]" }.join(",") %>]
+        }]
+    });
+
+});
+</script>
+
 </body>
 </html>

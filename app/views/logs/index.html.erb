@@ -16,7 +16,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   No shifts found.
 </p>
 <% else %>
-<table id="my_schedule_table">
+<table id="data_table">
   <thead>
   <tr>
     <th> When </th>
@@ -27,7 +27,6 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Transport Type </th>
     <th> Food Type </th>
     <th> Original Volunteer </th>
-    <th> Description </th>
     <th> Time Window </th>
     <th> Notes </th>
     <th> Link </th>
@@ -55,11 +54,10 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
          <% end %></td>
     <td> <%= shift.donor != nil ? (link_to shift.donor.name, shift.donor) : ""%> </td>
     <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
-    <td> <%= shift.weight %> </td>
+    <td> <%= shift.complete ? shift.summed_weight : "?" %> </td>
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
-    <td> <%= shift.food_type.name unless shift.food_type.nil? %>
+    <td> <%= shift.food_types.collect{ |ft| ft.name }.join(", ") unless shift.food_types.length == 0 %>
     <td> <%= link_to shift.orig_volunteer.name, shift.orig_volunteer unless shift.orig_volunteer.nil? %>
-    <td> <%= word_wrap(shift.description,:line_width => 20).gsub("\n","<br>").html_safe unless shift.description.nil? %>
     <td> <%= shift.schedule.time_start.to_s + " - " + shift.schedule.time_stop.to_s unless shift.schedule.nil? %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
     <td> <%= link_to 'map', shift.schedule unless shift.schedule.nil? %><br>
@@ -72,3 +70,10 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   </tbody>
 </table>
 <% end %>
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+  });
+});
+</script>

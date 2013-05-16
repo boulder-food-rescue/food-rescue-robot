@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130309045432) do
+ActiveRecord::Schema.define(:version => 20130512224042) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -33,11 +33,7 @@ ActiveRecord::Schema.define(:version => 20130309045432) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-  end
-
-  create_table "food_types_schedules", :force => true do |t|
-    t.integer "food_type_id"
-    t.integer "schedule_id"
+    t.integer  "region_id"
   end
 
   create_table "locations", :force => true do |t|
@@ -60,24 +56,36 @@ ActiveRecord::Schema.define(:version => 20130309045432) do
     t.string   "receipt_key"
   end
 
+  create_table "log_parts", :force => true do |t|
+    t.integer  "log_id"
+    t.integer  "food_type_id"
+    t.boolean  "required"
+    t.decimal  "weight"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.integer  "count"
+    t.text     "description"
+  end
+
+  add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"
+  add_index "log_parts", ["log_id"], :name => "index_log_parts_on_log_id"
+
   create_table "logs", :force => true do |t|
     t.integer  "schedule_id"
     t.date     "when"
     t.integer  "volunteer_id"
     t.integer  "orig_volunteer_id"
-    t.decimal  "weight"
-    t.text     "description"
     t.text     "notes"
     t.integer  "num_reminders"
     t.boolean  "flag_for_admin"
     t.string   "weighed_by"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
     t.integer  "donor_id"
     t.integer  "recipient_id"
     t.integer  "transport_type_id"
-    t.integer  "food_type_id"
     t.integer  "region_id"
+    t.boolean  "complete",          :default => false
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"
@@ -90,8 +98,8 @@ ActiveRecord::Schema.define(:version => 20130309045432) do
     t.string   "website"
     t.text     "address"
     t.text     "notes"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
     t.string   "handbook_url"
     t.integer  "prior_lbs_rescued"
     t.integer  "prior_num_pickups"
@@ -111,7 +119,19 @@ ActiveRecord::Schema.define(:version => 20130309045432) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
+    t.string   "weight_unit",            :default => "pound", :null => false
   end
+
+  create_table "schedule_parts", :force => true do |t|
+    t.integer  "schedule_id"
+    t.integer  "food_type_id"
+    t.boolean  "required"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "schedule_parts", ["food_type_id"], :name => "index_schedule_parts_on_food_type_id"
+  add_index "schedule_parts", ["schedule_id"], :name => "index_schedule_parts_on_schedule_id"
 
   create_table "schedules", :force => true do |t|
     t.integer  "recipient_id"
@@ -174,6 +194,8 @@ ActiveRecord::Schema.define(:version => 20130309045432) do
     t.boolean  "waiver_signed",          :default => false, :null => false
     t.datetime "waiver_signed_at"
     t.boolean  "needs_training",         :default => true
+    t.boolean  "assigned",               :default => false, :null => false
+    t.integer  "requested_region_id"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  schedule: 
+  food_type: 
+  required: false
+
+two:
+  schedule: 
+  food_type: 
+  required: false

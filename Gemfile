@@ -22,6 +22,7 @@ group :assets do
 end
 
 gem 'jquery-rails', '2.1.4'
+gem "highcharts-rails", "~> 3.0.0"
 
 # Added by Caleb
 gem 'active_scaffold'
@@ -30,32 +31,7 @@ gem 'devise'
 gem 'thin'
 gem 'pg'
 gem 'twitter'
-# This gem is for moving data easily between databases
-# use rake db:data:dump to dump the data in your current db into a db/data.yaml
-# use rake db:data:load to load the data in that file into your current db
 gem 'yaml_db' 
 gem 'paperclip', '~> 3.1'
 gem 'prawn'
 gem 'gmaps4rails'
-
-# Added by Sean
-gem 'lazy_high_charts'
-
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano'
-
-# To use debugger
-# gem 'ruby-debug'
-
-group :production do
-  gem 'mysql2'
-end

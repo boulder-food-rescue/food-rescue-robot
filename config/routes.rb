@@ -9,7 +9,6 @@ Webapp::Application.routes.draw do
   resources :assignments do
     collection do
       get :index
-      get :assign
       get :knight
     end
   end
@@ -17,7 +16,8 @@ Webapp::Application.routes.draw do
   resources :cell_carriers do as_routes end
   resources :regions do as_routes end
   resources :transport_types do as_routes end
-  resources :food_types do as_routes end
+
+  resources :food_types
 
   resources :logs do 
     collection do
@@ -33,7 +33,6 @@ Webapp::Application.routes.draw do
       get :new_absence
       get :create_absence
       get :receipt
-      get :stats
       get :index
       get :edit
       get :update
@@ -85,7 +84,9 @@ Webapp::Application.routes.draw do
       get :shiftless
       get :shiftless_old
       get :need_training
-      get :admin
+      get :super_admin
+      get :region_admin
+      get :region_stats
       get :switch_user
       get :knight
       get :index
@@ -95,6 +96,7 @@ Webapp::Application.routes.draw do
       get :destroy
       get :waiver
       get :sign_waiver
+      get :assign
     end
   end
 

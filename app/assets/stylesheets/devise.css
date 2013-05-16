@@ -140,3 +140,17 @@ form div label{
   width: 493px;
   background: none;
 }
+
+div#error_explanation{
+  border: 1px solid black;
+  background: orange;
+  padding: 1em;
+  margin-bottom: 0.5em;
+}
+div#error_explanation h2{
+  color: grey;
+  margin: 0;
+  margin-bottom: 0.3em;
+  padding: 0;
+}
+

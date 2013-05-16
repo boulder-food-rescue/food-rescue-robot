@@ -5,7 +5,11 @@ class LocationsController < ApplicationController
     @loc = Location.find(params[:id])
     if (params[:key] == @loc.receipt_key) or current_volunteer.region_admin?(@loc.region) or current_volunteer.super_admin?
       @schedules = @loc.is_donor ? Schedule.where("donor_id = ?",@loc.id) : Schedule.where("recipient_id = ?",@loc.id)
-      @logs = @loc.is_donor ? Log.where("donor_id = ?",@loc.id) : Log.where("recipient_id = ?",@loc.id).order("\"when\" ASC")
+      if @loc.is_donor
+        @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").where("donor_id = ?",@loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").order("logs.when ASC")
+      else 
+        @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").where("recipient_id = ?",@loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").order("logs.when ASC")
+      end
       render :hud
     else
       flash[:notice] = "Sorry, the key you're using is expired or you're not authorized to do that"
@@ -112,7 +116,5 @@ class LocationsController < ApplicationController
       render :edit
     end
   end
-
-  #  conf.columns[:donor_type].options = {:options => [["",nil],["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]]}
 
 end 

@@ -117,20 +117,16 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
         <p class="show_recipient_facts text_link"> list </p>
                           <div class="fact_info donor_list">
                                 <div class="fun_fact">
+                                  <ul>
                                   <%
                                   list_of_regions.each do |r|
                                     if r.website != nil%>
-                                      <div>
-                                        <p class>
-                                          <a href="<%= r.website %>"><%= r.title %></a>: <%= r.tagline %>
-                                        </p>
-                                      </div>
+                                        <li><a href="<%= r.website %>"><%= r.title %></a><%= ": #{r.tagline}" unless r.tagline.nil? %>
                                     <% else %>
-                                      <div>
-                                        <p> <%= r.name %>: <%= r.tagline %></p>
-                                      </div>
+                                        <li><%= r.name %><%= ": #{r.tagline}" unless r.tagline.nil? %>
                                     <% end %>
                                   <% end %>
+                                  </ul>
                                 </div>
                           </div>
 

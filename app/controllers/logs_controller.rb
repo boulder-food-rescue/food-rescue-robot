@@ -214,30 +214,27 @@ class LogsController < ApplicationController
     n = 0
     while from <= to
       pickups.each{ |p|
-        if from.wday.to_i == p.day_of_week.to_i
-          p.food_types.each{ |ft|
-            # make sure we don't create more than one for the same absence
-            found = Log.where('"when" = ? AND schedule_id = ? AND food_type_id = ?',from,p.id,ft.id)
-            next if found.length > 0
+        next unless from.wday.to_i == p.day_of_week.to_i
+        # make sure we don't create more than one for the same absence
+        found = Log.where('"when" = ? AND schedule_id = ?',from,p.id)
+        next if found.length > 0
 
-            # create the null record
-            lo = Log.new
-            if current_volunteer.admin and !params[:volunteer_id].nil?
-              lo.orig_volunteer = Volunteer.find(params[:volunteer_id].to_i)
-            else
-              lo.orig_volunteer = current_volunteer
-            end
-            lo.volunteer = nil
-            lo.schedule = p
-            lo.donor = p.donor
-            lo.recipient = p.recipient
-            lo.when = from
-            lo.food_type = ft
-            lo.region = p.region
-            lo.save
-          }
-          n += 1
+        # create the null record
+        lo = Log.new
+        if current_volunteer.admin and !params[:volunteer_id].nil?
+          lo.orig_volunteer = Volunteer.find(params[:volunteer_id].to_i)
+        else
+          lo.orig_volunteer = current_volunteer
         end
+        lo.volunteer = nil
+        lo.schedule = p
+        lo.donor = p.donor
+        lo.recipient = p.recipient
+        lo.when = from
+        lo.food_types = p.food_types
+        lo.region = p.region
+        lo.save
+        n += 1
       }
       break if n >= 12      
       from += 1

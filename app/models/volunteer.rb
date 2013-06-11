@@ -12,6 +12,8 @@ class Volunteer < ActiveRecord::Base
 
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
 
+  before_save :auto_assign_region
+
   # Admin info accessors
   def super_admin?
     self.admin
@@ -33,6 +35,10 @@ class Volunteer < ActiveRecord::Base
     return sprintf(self.cell_carrier.format,$1) 
   end 
 
+  def has_main_region?
+    !main_region.nil?
+  end
+
   def main_region
     self.regions[0]
   end
@@ -49,6 +55,13 @@ class Volunteer < ActiveRecord::Base
 
   def self.all_for_region region_id
     self.includes(:regions).where(:regions=>{:id=>region_id}).compact
+  end
+
+  # better first-time experience: if there is only one region, add the user to that one automatically when they sign up
+  def auto_assign_region
+    if Region.count==1 and self.regions.count==0
+      self.regions = Region.all
+    end
   end
 
   # Setup accessible (or protected) attributes for your model

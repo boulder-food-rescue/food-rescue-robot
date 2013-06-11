@@ -185,8 +185,8 @@ end
                   list_of_regions.each do |r|
                     if r.website != nil%>
                       <div>
-                        <p class>
-                          <a href="<%= r.website %>"><%= r.title %></a>: <%= r.tagline %>
+                        <p>
+                        <%= link_to r.name, r.website %>: <%= r.tagline %> (<%=link_to('recipients', region_path(r)+'/recipients')%>)
                         </p>
                       </div>
                     <% else %>

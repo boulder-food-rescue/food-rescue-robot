@@ -27,7 +27,7 @@ class LogsController < ApplicationController
     index("\"when\" >= current_date AND orig_volunteer_id IS NOT NULL AND orig_volunteer_id != volunteer_id","Shifts Being Covered")
   end
   def tardy
-    index("\"when\" < current_date AND weight IS NULL and num_reminders >= 3","Missing Data (>= 3 Reminders)")
+    index("\"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)")
   end
 
   def index(filter=nil,header="Entire Log")
@@ -57,24 +57,24 @@ class LogsController < ApplicationController
     case params[:what]
     when 'poundage'
       if params[:region_id].nil?
-        t = Log.where("weight IS NOT NULL").sum("weight") +
+        t = Log.where("complete").collect{ |l| l.summed_weight } +
             Region.where("prior_lbs_rescued IS NOT NULL").sum("prior_lbs_rescued")
       else
         r = params[:region_id]
         @region = Region.find(r)
-        t = Log.where("region_id = ? AND weight IS NOT NULL",r).sum("weight")
+        t = Log.where("region_id = ? AND complete",r).sum("weight")
         t += @region.prior_lbs_rescued unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
       render :text => t.to_s
     when 'wordcloud'
       logs = nil
       if params[:region_id].nil?
-        logs = Log.select("description").where("weight IS NOT NULL and description IS NOT NULL")
+        logs = Log.select("description").where("complete and description IS NOT NULL")
       else 
-        logs = Log.select("description").where("weight IS NOT NULL and description IS NOT NULL AND region_id = ?",params[:region_id].to_i)
+        logs = Log.select("description").where("complete and description IS NOT NULL AND region_id = ?",params[:region_id].to_i)
       end
       words = {}
-      Log.select("description").where("weight IS NOT NULL and description IS NOT NULL").each{ |l|
+      Log.select("description").where("complete and description IS NOT NULL").each{ |l|
         l.description.strip.split(/\s*\,\s*/).each{ |w|
           w = w.strip.downcase.tr(',','')
           next if w =~ /(nothing|no |none)/ or w =~ /etc/ or w =~ /n\/a/ or w =~ /misc/
@@ -96,8 +96,8 @@ class LogsController < ApplicationController
           wq = "AND \"when\" > NOW() - interval '1 month'"
         end
       end
-      noncar = Log.where("weight is NOT NULL AND transport_type_id IN (SELECT id FROM transport_types WHERE name != 'Car') #{rq} #{wq}").count.to_f
-      car = Log.where("weight is NOT NULL AND transport_type_id IN (SELECT id FROM transport_types WHERE name = 'Car') #{rq} #{wq}").count.to_f
+      noncar = Log.where("complete AND transport_type_id IN (SELECT id FROM transport_types WHERE name != 'Car') #{rq} #{wq}").count.to_f
+      car = Log.where("complete AND transport_type_id IN (SELECT id FROM transport_types WHERE name = 'Car') #{rq} #{wq}").count.to_f
       render :text => "#{100.0*noncar/(noncar+car)} #{100.0*car/(noncar+car)}"
     else
       render :text => "NO"
@@ -123,6 +123,7 @@ class LogsController < ApplicationController
       return
     end
     @log = Log.new
+    @log.region = @region
     @action = "create"
     session[:my_return_to] = request.referer
     set_vars_for_form @region
@@ -170,6 +171,14 @@ class LogsController < ApplicationController
       redirect_to(root_path)
       return
     end
+    params["log_parts"].each{ |dc,lpdata|
+      lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
+      lp.weight = lpdata["weight"]
+      lp.food_type_id = lpdata["food_type_id"].to_i
+      lp.log_id = @log.id
+      lp.save
+    } unless params["log_parts"].nil?
+    @log.complete = @log.log_parts.collect{ |lp| lp.required ? !lp.weight.nil? : nil }.compact.all?
     if @log.update_attributes(params[:log])
       flash[:notice] = "Updated Successfully."
       # could be nil if they clicked on the link in an email
@@ -292,8 +301,8 @@ class LogsController < ApplicationController
         pdf.font "Helvetica"
         sum = 0.0
         pdf.table([["Date","Description","Log #","Weight (lbs)"]] + @logs.collect{ |l|
-          sum += l.weight unless l.weight.nil?
-          (l.weight == 0.0 or l.weight.nil?) ? nil : [l.when,l.description,l.id,l.weight] 
+          sum += l.summed_weight
+          [l.when,l.description,l.id,l.summed_weight] 
         }.compact + [["Total:","","",sum]])
         pdf.move_down 20
         pdf.font_size 10

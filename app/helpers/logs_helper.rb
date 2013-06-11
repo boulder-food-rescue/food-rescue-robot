@@ -149,7 +149,7 @@ def send_reminder_emails(n=2,r=3)
   short_term_cover_list = {}
   pre_reminder_list = {}
   c = 0
-  Log.where(:weight => nil).each{ |l| 
+  Log.where("NOT complete").each{ |l| 
 
     # FUTURE reminders...
     days_future = (l.when - Date.today).to_i
@@ -250,10 +250,10 @@ def send_weekly_pickup_summary
     num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?',r.id,Date.today-7,Date.today).count
     num_entered = 0
     next unless num_logs > 0
-    Log.where('region_id = ? AND "when" > ? AND "when" < ? AND weight IS NOT NULL',r.id,Date.today-7,Date.today).each{ |l|
-      lbs += l.weight
+    Log.where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Date.today-7,Date.today).each{ |l|
+      lbs += l.summed_weight
       flagged_logs << l if l.flag_for_admin
-      biggest = l if biggest.nil? or l.weight > biggest.weight
+      biggest = l if biggest.nil? or l.summed_weight > biggest.summed_weight
       num_entered += 1
     }
     next if biggest.nil?

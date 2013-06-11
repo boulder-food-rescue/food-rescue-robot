@@ -26,6 +26,7 @@
   <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
     <%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
     <%= f2.text_field(:weight,:size=>5) %> <%= "(required)" if lp.required %><br>
+    <%= f2.hidden_field(:id) %>
   <% end %>
   </div>
 <% } %>

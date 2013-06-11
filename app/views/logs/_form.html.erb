@@ -1,82 +1,58 @@
 <%= form_for @log, :url => {:action => @action } do |f| %>
-
-  <%= hidden_field_tag "log[region_id]", @region.id %>
-  <%= hidden_field_tag "log[schedule_id]", @log.schedule.nil? ? nil : @log.schedule.id  %>
-
-  <table>
-    <tr><td>Date</td>
-        <td><%= f.date_select :when %></td>
-    </tr>
-    <tr><td>Volunteer</td>
-        <td><%= f.select(:volunteer_id, @volunteers,{:include_blank => true}) %></td>
-    </tr>
-    <tr><td>Donor</td>
-        <td><%= f.select(:donor_id, @donors, {:include_blank => true}) %></td>
-    </tr>
-    <tr><td>Recipient</td>
-        <td><%= f.select(:recipient_id, @recipients, {:include_blank => true}) %></td>
-    </tr>
-    <tr><td>Food Type</td>
-        <td><%= f.select(:food_type_id, @food_types, {:include_blank => true}) %></td>
-    </tr>
-
-<tr><td>Weights<br><span class="subtext">e.g., 42. Put a 0 if the pick-up didn't happen for some reason.</span></td><td>
+<table>
+<%= hidden_field_tag "log[region_id]", @region.id %>
+<%= hidden_field_tag "log[schedule_id]", @log.schedule.nil? ? nil : @log.schedule.id  %>
+<tr><td>Date<td><%= f.date_select :when %>
+<tr><td>Volunteer<td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| (v.region_ids.include? @region.id) ? v : nil }.compact.collect{ |v| [v.name,v.id] },{:include_blank => true}) %>
+<tr><td>Donor<td><%= f.select(:donor_id, Location.where("is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
+<tr><td>Recipient<td><%= f.select(:recipient_id, Location.where("NOT is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
+<tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br>Put a 0 if the pick-up didn't happen for some reason.</span></td><td>
+<table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.region.weight_unit %>s)<th> Count<th>Comment
 <% @log.log_parts.each{ |lp| %>
-  <div class="log_part">
   <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
-    <%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
-    <%= f2.text_field(:weight,:size=>5) %> <%= "(required)" if lp.required %><br>
-    <%= f2.hidden_field(:id) %>
+    <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
+    <td><%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
+    <td><%= f2.text_field(:weight,:size=>5) %>
+    <td><%= f2.text_field(:count,:size=>5) %>
+    <td><%= f2.text_field(:description,:size=>20) %>
+        <%= f2.hidden_field(:id) %>
+    </tr>
   <% end %>
-  </div>
 <% } %>
 <%= fields_for :log_parts, LogPart.new, :index => "new_0" do |f2| %>
-  <div class="log_part">
-  <%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
-  <%= f2.text_field(:weight,:size=>5) %>
-  </div>
+  <tr class="log_part">
+  <td><%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
+  <td><%= f2.text_field(:weight,:size=>5) %>
+  <td><%= f2.text_field(:count,:size=>5) %>
+  <td><%= f2.text_field(:description,:size=>20) %>
+  </tr>
+</table>
 <% end %>
   <%=
-    task = "<div>"
+    task = "<tr class=\"log_part\">"
     fields_for :log_parts, LogPart.new, :index => "new_42" do |f2|
-      task += f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true})
-      task += " "
-      task += f2.text_field(:weight,:size=>5)
+      task += "<td>" + f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true})
+      task += "<td>" + f2.text_field(:weight,:size=>5)
+      task += "<td>" + f2.text_field(:count,:size=>5)
+      task += "<td>" + f2.text_field(:description,:size=>20)
     end
-    task += "</div>"
+    task += "</tr>"
     func_str = <<EOF
       var new_id = "new_" + new Date().getTime();
       $('#{ escape_javascript task }'.replace(/new_\\d+/g, new_id)).insertAfter($('.log_part').last());
 EOF
     link_to_function "+ Add Another", func_str
    %>
-
 </td></tr>
-
-    <tr><td>Weighed With</td>
-        <td><%= f.select(:weighed_by, [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],["Guesstimate","Guesstimate"]],{:include_blank => true}) %>
-    </tr>
-    <tr><td>Description Of Food<br>
-            <span class="subtext">e.g., pears, apples, mangos, celery</span></td>
-        <td><%= f.text_area(:description, :size => "30x6") %></td>
-    </tr>
-    <tr><td>Transported With</td>
-        <td><%= f.select(:transport_type_id, @transport_types,{:include_blank => true}) %></td>
-    </tr>
-    <tr><td>Notes<br>
-            <span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.</td>
-        <td><%= f.text_area(:notes, :size => "30x6") %></td>
-    </tr>
-    <tr><td>Flag For Admin<br>
-            <span class="subtext">Check this if you want to make sure someone reads this.</span></td>
-        <td><%= f.check_box(:flag_for_admin) %></td>
-    </tr>
-    <tr><td>Original Volunteer<br>
-            <span class="subtext">The person originally scheduled to do<br>this shift, if you are covering it.</td>
-        <td><%= f.select(:orig_volunteer_id, @volunteers, {:include_blank => true}) %></td>
-    </tr>
-  </table>
-
-  <%= submit_tag %>
-
+<tr><td>Weighed With<td><%= f.select(:weighed_by, [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],["Guesstimate","Guesstimate"]],{:include_blank => true}) %>
+<tr><td>Description Of Food<br>
+        <span class="subtext">e.g., pears, apples, mangos, celery</span><td><%= f.text_area(:description, :size => "30x6") %>
+<tr><td>Transported With<td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{:include_blank => true}) %>
+<tr><td>Notes<br>
+<span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.<td><%= f.text_area(:notes, :size => "30x6") %>
+<tr><td>Flag For Admin<br>
+<span class="subtext">Check this if you want to make sure someone reads this.</span><td><%= f.check_box(:flag_for_admin) %>
+<tr><td>Original Volunteer<br><span class="subtext">The person originally scheduled to do<br>this shift, if you are covering it.<td><%= f.select(:orig_volunteer_id, Volunteer.all.collect{ |v| (v.region_ids.include? @region.id) ? v : nil }.compact.collect{ |v| [v.name,v.id] },{:include_blank => true}) %>
+</table>
+<%= submit_tag %>
 <% end %>

@@ -128,6 +128,15 @@ class LogsController < ApplicationController
       redirect_to(root_path)
       return
     end
+    params["log_parts"].each{ |dc,lpdata|
+      lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
+      lp.weight = lpdata["weight"]
+      lp.count = lpdata["count"]
+      lp.description = lpdata["description"]
+      lp.food_type_id = lpdata["food_type_id"].to_i
+      lp.log_id = @log.id
+      lp.save
+    } unless params["log_parts"].nil?
     if @log.save
       flash[:notice] = "Created successfully."
       unless session[:my_return_to].nil?
@@ -165,11 +174,13 @@ class LogsController < ApplicationController
     params["log_parts"].each{ |dc,lpdata|
       lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
       lp.weight = lpdata["weight"]
+      lp.count = lpdata["count"]
+      lp.description = lpdata["description"]
       lp.food_type_id = lpdata["food_type_id"].to_i
       lp.log_id = @log.id
       lp.save
     } unless params["log_parts"].nil?
-    @log.complete = @log.log_parts.collect{ |lp| lp.required ? !lp.weight.nil? : nil }.compact.all?
+    @log.complete = @log.log_parts.collect{ |lp| lp.required ? (!lp.weight.nil? or !lp.count.nil?) : nil }.compact.all?
     if @log.update_attributes(params[:log])
       flash[:notice] = "Updated Successfully."
       # could be nil if they clicked on the link in an email

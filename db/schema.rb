@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130512173058) do
+ActiveRecord::Schema.define(:version => 20130512224042) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -66,6 +66,8 @@ ActiveRecord::Schema.define(:version => 20130512173058) do
     t.decimal  "weight"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.integer  "count"
+    t.string   "description"
   end
 
   add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"
@@ -100,8 +102,8 @@ ActiveRecord::Schema.define(:version => 20130512173058) do
     t.string   "website"
     t.text     "address"
     t.text     "notes"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
     t.string   "handbook_url"
     t.integer  "prior_lbs_rescued"
     t.integer  "prior_num_pickups"
@@ -123,6 +125,7 @@ ActiveRecord::Schema.define(:version => 20130512173058) do
     t.text     "splash_html"
     t.integer  "tz_offset"
     t.text     "time_zone"
+    t.string   "weight_unit",            :default => "pound", :null => false
   end
 
   create_table "schedule_parts", :force => true do |t|

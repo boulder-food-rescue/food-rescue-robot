@@ -115,22 +115,19 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
       <div class="a_fact_section">
         <p>Number of Cities Using the Robot: <%= list_of_regions.length %></p>
         <p class="show_recipient_facts text_link"> list </p>
+
           <div class="fact_info donor_list">
                 <div class="fun_fact">
+                  <ul>
                   <%
                   list_of_regions.each do |r|
                     if r.website != nil%>
-                      <div>
-                        <p>
-                        <%= link_to r.name, r.website %>: <%= r.tagline %> (<%=link_to('recipients', region_path(r)+'/recipients')%>)
-                        </p>
-                      </div>
+                        <li><a href="<%= r.website %>"><%= r.title %></a><%= ": #{r.tagline}" unless r.tagline.nil? %> (<%=link_to('recipients', region_path(r)+'/recipients')%>)
                     <% else %>
-                      <div>
-                        <p> <%= r.name %>: <%= r.tagline %> (<%=link_to('recipients', region_path(r)+'/recipients')%>)</p>
-                      </div>
+                        <li><%= r.name %><%= ": #{r.tagline}" unless r.tagline.nil? %> (<%=link_to('recipients', region_path(r)+'/recipients')%>)
                     <% end %>
                   <% end %>
+                  </ul>
                 </div>
           </div>
 

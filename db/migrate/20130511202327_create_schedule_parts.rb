@@ -11,7 +11,7 @@ class CreateScheduleParts < ActiveRecord::Migration
     add_index :schedule_parts, :food_type_id
 
     execute "INSERT INTO schedule_parts (food_type_id,schedule_id,created_at,updated_at) 
-             SELECT food_type_id,schedule_id,NOW(),NOW() FROM food_types_schedules;"
+             SELECT food_type_id,schedule_id,'now','now' FROM food_types_schedules;"
     drop_table :food_types_schedules    
   end
   def down

@@ -41,7 +41,6 @@ current_day = date.day
 
 food_per_day = []
 food_per_month = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-running_total = 0.0
 Log.select("sum(weight) as weight_sum, count(*) as count, logs.when").joins(:log_parts).where("complete").
     group("\"when\"").order("\"when\"").each{ |l|
   next if l.weight_sum.nil? or l.weight_sum.to_f <= 0
@@ -62,7 +61,7 @@ end
 number_of_volunteers = Volunteer.count()
 largest_pickup = nil
 Log.joins(:log_parts).select("logs.id, sum(weight) as weight_sum").where("complete").group("logs.id").each{ |l|
-  largest_pickup = l if largest_pickup.nil? or largest_pickup.weight_sum < l.weight_sum
+  largest_pickup = l if largest_pickup.nil? or largest_pickup.weight_sum.to_f < l.weight_sum.to_f
 }
 largest_pickup = Log.find(largest_pickup.id)
 pickups_today = Schedule.where(:day_of_week => date.wday)

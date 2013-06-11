@@ -73,7 +73,7 @@
       <tr>
         <td>Volunteer:</td>
         <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.all.collect{ |v| 
-                name = v.name + " [" + v.assignments.collect{ |a| (a.admin ? "*" : "") + a.region.name }.join(",") + "]"
+                name = v.name + " [" + v.assignments.collect{ |a| (a.admin ? "*" : "") + (a.region.nil? ? "" : a.region.name) }.join(",") + "]"
                 name = "*#{name}" if v.admin
                 [name,v.id] 
                 }))

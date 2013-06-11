@@ -35,7 +35,15 @@
   </tr>
 
   <tr>
-    <td>Hours</td>
+    <td>Hours
+      <small>
+        <% if @location.is_donor %>
+          for <em>pickup</em> at this donor
+        <% else %>
+          for <em>dropoff</em> at this recipient
+        <% end %>
+      </small>
+    </td>
 <% if use_detailed_hours? %>
       <td>
       <% Date::DAYNAMES.each_with_index do |day_name, index| 

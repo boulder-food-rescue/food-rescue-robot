@@ -7,8 +7,8 @@
   pounds_per_year = {}
   pounds_per_month = {}
   first_recorded_pickup = nil
-  per_volunteer_weight_by_year = {}
-  per_volunteer_weight_by_month = {}
+  per_volunteer = {}
+  per_volunteer2 = {}
   
   Log.where("weight is not null and region_id = #{r.id}").each{ |l|
     pounds_per_year[l.when.year] = 0 if pounds_per_year[l.when.year].nil?
@@ -17,12 +17,21 @@
     pounds_per_month[mokey] = 0 if pounds_per_month[mokey].nil?
     pounds_per_month[mokey] += l.weight
     first_recorded_pickup = l.when if first_recorded_pickup.nil? or l.when < first_recorded_pickup
-    per_volunteer_weight_by_year[l.when.year] = {} if per_volunteer_weight_by_year[l.when.year].nil?
-    per_volunteer_weight_by_month[mokey] = {} if per_volunteer_weight_by_month[mokey].nil?
-    per_volunteer_weight_by_year[l.when.year][l.volunteer.id] = 0 if per_volunteer_weight_by_year[l.when.year][l.volunteer.id].nil?
-    per_volunteer_weight_by_month[mokey][l.volunteer.id] = 0 if per_volunteer_weight_by_month[mokey][l.volunteer.id].nil?
-    per_volunteer_weight_by_year[l.when.year][l.volunteer.id] += l.weight
-    per_volunteer_weight_by_month[mokey][l.volunteer.id] += l.weight
+    next if l.volunteer.nil?
+    per_volunteer[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if per_volunteer[l.volunteer.id].nil?
+    per_volunteer2[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if per_volunteer2[l.volunteer.id].nil?
+    if l.when >= (Date.today << 12)
+      per_volunteer[l.volunteer.id][:weight] += l.weight
+      per_volunteer[l.volunteer.id][:count] += 1
+      per_volunteer[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+      per_volunteer[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+    end
+    if l.when >= (Date.today << 1)
+      per_volunteer2[l.volunteer.id][:weight] += l.weight
+      per_volunteer2[l.volunteer.id][:count] += 1
+      per_volunteer2[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+      per_volunteer2[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+    end
   }
 %>
 Before <%= first_recorded_pickup.to_s %>: <%= r.prior_lbs_rescued %><br>
@@ -62,15 +71,6 @@ Before <%= first_recorded_pickup.to_s %>: <%= r.prior_lbs_rescued %><br>
    <div style="width: 500px;"><%= high_chart("chart_food_per_month_#{r.id}", food_chart_month)  %></div>
    <%= gmaps(:map_options => { :id => "map_#{r.id}" },
              :markers => { "data" => Location.where("region_id" => r.id).to_gmaps4rails }) %>
-   <% end %>
-<% per_volunteer_weight_by_year.keys.sort.each{ |y| %>
-   <h2><%= y %></h2>
-   <table><tr><th>Volunteer<th>Amount</tr>
-<% per_volunteer_weight_by_year[y].sort_by{|k,v| v}.each{ |v,s| %>
-   <tr><td><%= Volunteer.find(v).name %><td><%= s %>
-<% } %>
-   </table>
-<% } %> 
    <br><br>
    <h2>Last 12 Months</h2>
    <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count<th>By Car<th>Covered</tr></thead><tbody>

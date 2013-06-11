@@ -173,20 +173,20 @@ class VolunteersController < ApplicationController
     
     #Upcoming pickup list
     @upcoming_pickups = Log.where(:when => today...(today + 7)).where(:volunteer_id => current_volunteer)
-    @sncs_pickups = Log.where(:when => today...(today+7), :weight => nil, :volunteer_id => nil).order("\"when\"").collect{ |l| 
+    @sncs_pickups = Log.where(:when => today...(today+7), :complete => false, :volunteer_id => nil).order("\"when\"").collect{ |l| 
       (current_volunteer.region_ids.include? l.region_id) ? l : nil }.compact
     
     #To Do Pickup Reports
-    @to_do_reports = Log.where('"logs"."when" <= ?', today).where("weight IS NULL").where(:volunteer_id => current_volunteer)
+    @to_do_reports = Log.where('"logs"."when" <= ?', today).where("NOT complete").where(:volunteer_id => current_volunteer)
     
     #Last 10 pickups
-    @last_ten_pickups = Log.where(:volunteer_id => current_volunteer).where("weight IS NOT NULL").order('"logs"."when" DESC').limit(10)
+    @last_ten_pickups = Log.where(:volunteer_id => current_volunteer).where("complete").order('"logs"."when" DESC').limit(10)
     
     #Pickup Stats
     @completed_pickup_count = Log.count(:conditions => {:volunteer_id => current_volunteer})
-    @total_food_rescued = Log.where(:volunteer_id => current_volunteer).where("weight IS NOT NULL").sum(:weight)
+    @total_food_rescued = Log.where(:volunteer_id => current_volunteer).where("complete").collect{ |l| l.weight }.sum
     @dis_traveled = 0.0
-    Log.where(:volunteer_id => current_volunteer).where("weight IS NOT NULL").each do |pickup|
+    Log.where(:volunteer_id => current_volunteer).where("complete").each do |pickup|
       if pickup.schedule != nil
         donor = pickup.donor
         recipient = pickup.recipient
@@ -213,7 +213,7 @@ class VolunteersController < ApplicationController
     end
 
     # FIXME: the below is Sean's code. It's quite nonDRY and should be cleaned up substantially
-    @pickups = Log.where("volunteer_id = ? AND weight IS NOT NULL",current_volunteer.id)
+    @pickups = Log.where("volunteer_id = ? AND complete",current_volunteer.id)
     @lbs = 0.0
     @human_pct = 0.0
     @num_pickups = {}

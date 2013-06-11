@@ -19,10 +19,39 @@
     <tr><td>Food Type</td>
         <td><%= f.select(:food_type_id, @food_types, {:include_blank => true}) %></td>
     </tr>
-    <tr><td>Weight (lbs)<br>
-            <span class="subtext">e.g., 42. Put a 0 if the pick-up didn't happen for some reason.</span></td>
-        <td><%= f.text_field(:weight) %>
-    </tr>
+
+<tr><td>Weights<br><span class="subtext">e.g., 42. Put a 0 if the pick-up didn't happen for some reason.</span></td><td>
+<% @log.log_parts.each{ |lp| %>
+  <div class="log_part">
+  <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
+    <%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
+    <%= f2.text_field(:weight,:size=>5) %> <%= "(required)" if lp.required %><br>
+  <% end %>
+  </div>
+<% } %>
+<%= fields_for :log_parts, LogPart.new, :index => "new_0" do |f2| %>
+  <div class="log_part">
+  <%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
+  <%= f2.text_field(:weight,:size=>5) %>
+  </div>
+<% end %>
+  <%=
+    task = "<div>"
+    fields_for :log_parts, LogPart.new, :index => "new_42" do |f2|
+      task += f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true})
+      task += " "
+      task += f2.text_field(:weight,:size=>5)
+    end
+    task += "</div>"
+    func_str = <<EOF
+      var new_id = "new_" + new Date().getTime();
+      $('#{ escape_javascript task }'.replace(/new_\\d+/g, new_id)).insertAfter($('.log_part').last());
+EOF
+    link_to_function "+ Add Another", func_str
+   %>
+
+</td></tr>
+
     <tr><td>Weighed With</td>
         <td><%= f.select(:weighed_by, [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],["Guesstimate","Guesstimate"]],{:include_blank => true}) %>
     </tr>

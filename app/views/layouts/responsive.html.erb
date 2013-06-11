@@ -92,21 +92,22 @@
               <%= menu_item "Being Covered", being_covered_logs_path %>
             <% end %>
 
-            <%= drop_down "Administrative" do %>
+            <%= drop_down "Region Admin" do %>
               <%= menu_item "Recipients", recipients_locations_path %>
               <%= menu_item "Donors", donors_locations_path %>
-              <%= menu_item "Controls", admin_volunteers_path %>
-              <%= menu_item "Statistics", stats_logs_path %>
-
-              <% if current_volunteer.super_admin? %>
-                <%= menu_item "Food Types", food_types_path %>
-                <%= menu_item "Transport Types", transport_types_path %>
-                <%= menu_item "Cell Carries", cell_carriers_path %>
-                <%= menu_item "Regions", regions_path %>              
-              <% end %>
-
+              <%= menu_item "Food Types", food_types_path %>
+              <%= menu_item "Controls", '/volunteers/region_admin' %>
+              <%= menu_item "Statistics", '/volunteers/region_stats' %>
             <% end %>
-  
+
+            <% if current_volunteer.super_admin? %>
+              <%= drop_down "Super Admin" do %>
+              <%= menu_item "Cell Carries", cell_carriers_path %>
+              <%= menu_item "Manage Regions", regions_path %>              
+              <%= menu_item "Transport Types", transport_types_path %>
+              <%= menu_item "Controls", '/volunteers/super_admin' %>
+            <% end %>
+
           <% end # if signed in %>
 
         <% end # menu group %>

@@ -292,7 +292,7 @@ class LogsController < ApplicationController
         sum = 0.0
         pdf.table([["Date","Description","Log #","Weight (lbs)"]] + @logs.collect{ |l|
           sum += l.summed_weight
-          [l.when,l.description,l.id,l.summed_weight] 
+          [l.when,l.log_parts.collect{ |lp| lp.food_type.nil? ? nil : lp.food_type.name }.compact.join(","),l.id,l.summed_weight] 
         }.compact + [["Total:","","",sum]])
         pdf.move_down 20
         pdf.font_size 10

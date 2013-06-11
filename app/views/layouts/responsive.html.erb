@@ -102,10 +102,11 @@
 
             <% if current_volunteer.super_admin? %>
               <%= drop_down "Super Admin" do %>
-              <%= menu_item "Cell Carries", cell_carriers_path %>
-              <%= menu_item "Manage Regions", regions_path %>              
-              <%= menu_item "Transport Types", transport_types_path %>
-              <%= menu_item "Controls", '/volunteers/super_admin' %>
+                <%= menu_item "Cell Carries", cell_carriers_path %>
+                <%= menu_item "Manage Regions", regions_path %>              
+                <%= menu_item "Transport Types", transport_types_path %>
+                <%= menu_item "Controls", '/volunteers/super_admin' %>
+              <% end %>
             <% end %>
 
           <% end # if signed in %>
@@ -116,8 +117,6 @@
           <% if volunteer_signed_in? %>
             <%= drop_down current_volunteer.name  do %>
               <%= menu_item "Settings", edit_volunteer_path(current_volunteer.id) %>
-              <%= menu_item "Account", edit_volunteer_registration_path %>
-              <%= menu_item "Controls", admin_volunteers_path %>
               <%= menu_item "Waiver", waiver_volunteers_path %>
               <%= menu_item "Logout", destroy_volunteer_session_path, :method => :delete %>
             <% end %>

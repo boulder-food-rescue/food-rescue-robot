@@ -36,15 +36,18 @@ class VolunteersController < ApplicationController
   end
 
   def shiftless
-    index("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
-           (gone_until IS NULL or gone_until < current_date)","Shiftless") 
+    index(Volunteer.where(:is_disabled=>false).where("(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
+           (gone_until IS NULL or gone_until < current_date)"),
+      "Shiftless") 
   end
   def need_training
-    index("NOT is_disabled AND needs_training AND (gone_until IS NULL or gone_until < current_date)","Needs Training")
+    index(Volunteer.where(:is_disabled=>false, :needs_training=>true).where("gone_until IS NULL or gone_until < current_date"),
+      "Needs Training")
   end
 
-  def index(filter=nil,header="All Volunteers")
-    @volunteers = Volunteer.where(filter).collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+  def index(base=nil,header="All Volunteers")
+    base = Volunteer.all if base.nil?
+    @volunteers = base.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
     @header = header
     render :index
   end

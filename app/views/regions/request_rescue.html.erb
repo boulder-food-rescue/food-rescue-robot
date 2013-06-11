@@ -1,0 +1,68 @@
+
+<h2>Request a Rescue</h2>
+
+<p>
+Have some extra food to donate?  Fill in this form and we'll contact you to schedule a pickup!
+</p>
+
+<%= form_for @schedule, :url => {:action => 'request_rescue' }, :class=>'form-horizontal' do |f| %>
+
+  <%= hidden_field_tag :region_id, @region.id %>
+
+  <div class="row-fluid">
+    <div class="span4">
+      <fieldset>
+        <legend>When</legend>
+        <label>On Date</label>
+        <input type="date" name="date" value="<%=Date.today.strftime('%Y-%m-%d')%>"/>
+        <label>Between<label>
+        <%= select_tag 'time_start',  options_for_select(@time_options, Time.now.strftime('%-l:00 %P')) %>
+        <label>And</label>
+        <%= select_tag 'time_stop',  options_for_select(@time_options, (Time.now+1.hours).strftime('%-l:00 %P')) %>
+      </fieldset>
+    </div>
+    <div class="span4">
+      <fieldset>
+        <legend>Where</legend>
+        <%= f.select :donor_id,  ['[use custom address]'].concat(@donors) %>
+        <span id="custom-address">
+          <label>Custom Address</label>
+          <textarea name="address" rows="3"></textarea>
+        </span>
+      </fieldset>
+    </div>
+    <div class="span4">
+      <fieldset>
+        <legend>Who</legend>
+        <label>Name</label>
+        <input name="contact"/>
+        <label>Phone</label>
+        <input type="tel" name="phone"/>
+        <label>Email</label>
+        <input type="email" name="email"/>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= submit_tag 'Request It!', :class=>'btn, btn-primary'%>
+    <i>We'll contact you to follow up</i>
+  </div>  
+
+<% end %>
+
+<% content_for :scripts do %> 
+<script type="text/javascript">
+$(function(){
+  $('#schedule_donor_id').bind('change',function(){
+    var selectedOptionIndex = $('#schedule_donor_id').find(':selected').index();
+    if(selectedOptionIndex==0) {
+      $('#custom-address').show();
+    } else {
+      $('#custom-address').hide();
+    }
+  });
+  $('#schedule_donor_id').change();
+})
+</script>
+<% end %>

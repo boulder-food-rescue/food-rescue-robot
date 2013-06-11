@@ -39,7 +39,7 @@
 
   <body>
 
-    <%= nav_bar :fixed=>:top, :brand=>'The Food Rescue Robot', :responsive=>true do %>
+    <%= nav_bar :brand=>'The Food Rescue Robot', :responsive=>true do %>
 
       <%= menu_group do %>
       
@@ -122,7 +122,7 @@
               <%= menu_item "Logout", destroy_volunteer_session_path, :method => :delete %>
             <% end %>
           <% else %>
-            <%= menu_item "Login", sign_in_volunteers_path %>
+            <%= menu_item "Login", '/volunteers/sign_in' %>
           <% end %>
         <% end %>
 
@@ -130,6 +130,19 @@
 
     <% end %>
 
+    <!-- header -->
+    <% if @region or (volunteer_signed_in? and current_volunteer.has_main_region?) %>
+      <div class="subhead">
+        <div class="container-fluid">
+          <div class="page-header">
+            <% current_region = (volunteer_signed_in?) ? current_volunteer.main_region : @region %>
+            <h1><%= current_region.title %> <small><%= current_region.tagline %></small></h1>
+          </div>
+        </div>
+      <div>
+    <% end %>
+
+    <!-- content -->
     <div class="container-fluid">
       
       <div class="row-fluid">

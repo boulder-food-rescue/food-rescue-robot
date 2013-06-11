@@ -1,5 +1,5 @@
 class RegionsController < ApplicationController
-  before_filter :authenticate_volunteer!, :except => [:recipients]
+  before_filter :authenticate_volunteer!, :except => [:recipients, :request_rescue]
 
   active_scaffold :region do |conf|
     conf.columns = [:logo,:name,:title,:tagline,:address,:phone,:tax_id,:lat,:lng,:notes,:website,:time_zone]
@@ -27,6 +27,21 @@ class RegionsController < ApplicationController
         "picture" => loc.open? ? 'http://maps.google.com/mapfiles/marker_green.png' : 'http://maps.google.com/mapfiles/marker.png',
         "width" =>  '32', "height" => '37'
       })
+    end
+    render :layout => 'responsive'
+  end
+
+  def request_rescue
+    @region = Region.find(params[:id])
+    set_vars_for_form @region
+    @schedule = Schedule.new
+    @time_options = []
+    ['am','pm'].each do |ampm|
+      (1..12).each do |hour|
+        ['00','30'].each do |min|
+          @time_options << hour.to_s+':'+min+' '+ampm
+        end
+      end
     end
     render :layout => 'responsive'
   end

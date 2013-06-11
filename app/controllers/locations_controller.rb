@@ -115,6 +115,4 @@ class LocationsController < ApplicationController
     end
   end
 
-  #  conf.columns[:donor_type].options = {:options => [["",nil],["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]]}
-
 end 

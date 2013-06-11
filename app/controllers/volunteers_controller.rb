@@ -40,7 +40,7 @@ class VolunteersController < ApplicationController
            (gone_until IS NULL or gone_until < current_date)","Shiftless") 
   end
   def need_training
-    index("NOT is_disabled AND needs_training AND (gone_until IS NULL or gone_until < current_date)")
+    index("NOT is_disabled AND needs_training AND (gone_until IS NULL or gone_until < current_date)","Needs Training")
   end
 
   def index(filter=nil,header="All Volunteers")

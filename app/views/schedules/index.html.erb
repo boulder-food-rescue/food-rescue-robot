@@ -21,7 +21,7 @@
   </p>
 <% else %>
 
-<table id="my_schedule_table">
+<table id="data_table">
   <thead>
     <tr>
       <th> Frequency </th>
@@ -109,3 +109,11 @@ Key:
   <span style="background: yellow">Missing Donor/Recipient</span>
   <span style="background: pink">No Volunteer</span>
   <span style="background: lightgreen">Needs Training</span>
+
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+  });
+});
+</script>

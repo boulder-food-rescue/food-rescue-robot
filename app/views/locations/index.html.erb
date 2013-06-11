@@ -26,7 +26,7 @@
 
 <% else %>
 
-  <table id="my_schedule_table">
+  <table id="data_table">
     
     <thead>
       <tr>
@@ -71,3 +71,10 @@
   </table>
 
 <% end %>
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+  });
+});
+</script>

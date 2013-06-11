@@ -43,9 +43,6 @@ gem 'pg'
 # lets us post things to twitter programatically
 gem 'twitter'
 
-# This gem is for moving data easily between databases
-# use rake db:data:dump to dump the data in your current db into a db/data.yaml
-# use rake db:data:load to load the data in that file into your current db
 gem 'yaml_db' 
 
 # smart image attachment management
@@ -58,9 +55,4 @@ gem 'prawn'
 gem 'gmaps4rails'
 
 # lets us render charts in-browser
-gem 'lazy_high_charts'
-
-# To use debugger (dev only)
-group :development do
-  gem 'ruby-debug19'
-end
+gem "highcharts-rails", "~> 3.0.0"

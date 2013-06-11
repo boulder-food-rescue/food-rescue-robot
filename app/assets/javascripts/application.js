@@ -13,6 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require twitter/bootstrap
-//= require_tree .
-//= require active_scaffold
 //= require highcharts
+//= require active_scaffold
+//= require_tree .

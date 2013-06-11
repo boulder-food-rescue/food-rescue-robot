@@ -137,7 +137,7 @@
     <div class="home_sub_section">
       <h2> Food Collected by Month </h2>
       <div class="home_section_content">
-        <%= high_chart("chart_food_per_month_mine", @food_chart_month_mine)  %>
+      <div id="highchart" style="width:500px;"></div>
       </div>
     </div>
   </div>
@@ -217,3 +217,27 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+$(function () { 
+    $('#highchart').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Monthly Stats'
+        },
+        xAxis: {
+            title: { text: 'Month' },
+            categories: ['<%= raw @by_month.keys.join("','") %>']
+        },
+        yAxis: {
+            title: { text: 'Pounds' }
+        },
+        series: [{
+            name: 'Food Rescued',
+            data: [<%= @by_month.values.join(",") %>]
+        }]
+    });
+});
+</script>

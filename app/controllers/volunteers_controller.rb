@@ -173,6 +173,9 @@ class VolunteersController < ApplicationController
     end
   end
 
+  def region_stats
+  end
+
   def waiver
     render :waiver
   end
@@ -260,7 +263,7 @@ class VolunteersController < ApplicationController
     @biggest = nil
     @earliest = nil
     @bike = TransportType.where("name = 'Bike'").shift
-    by_month = {}
+    @by_month = {}
     @pickups.each{ |l|
       l.transport_type = @bike if l.transport_type.nil?
       @num_pickups[l.transport_type] = 0 if @num_pickups[l.transport_type].nil?
@@ -270,27 +273,14 @@ class VolunteersController < ApplicationController
       @biggest = l if @biggest.nil? or l.summed_weight > @biggest.summed_weight
       @earliest = l if @earliest.nil? or l.when < @earliest.when
       yrmo = l.when.strftime("%Y-%m")
-      by_month[yrmo] = 0.0 if by_month[yrmo].nil?
-      by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
+      @by_month[yrmo] = 0.0 if @by_month[yrmo].nil?
+      @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
     @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count
     @num_to_cover = Log.where("volunteer_id IS NULL#{@base_conditions}").count
     @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Date.today.to_s).count
     @num_unassigned = Schedule.where("volunteer_id IS NULL AND donor_id IS NOT NULL and recipient_id IS NOT NULL#{@base_conditions}").count
-    
-    @food_chart_month_mine = LazyHighCharts::HighChart.new('column') do |f|
-      f.options[:chart][:defaultSeriesType] = "column"
-      f.options[:chart][:plotBackgroundColor] = nil
-      f.options[:title][:text] = "Food Rescued By Month"
-        f.options[:xAxis] = {
-        :plot_bands => "none",
-        :title=>{:text=>"Month"},
-        :categories => by_month.keys.sort}
-      f.options[:yAxis][:title][:text] = "lbs of food"
-      f.series(:name=>'Pounds of Food Rescued by You', :data=> by_month.keys.sort.collect{ |k| by_month[k] })
-    end
-
     render :home
   end
 end

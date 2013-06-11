@@ -56,7 +56,7 @@
         <td><%= f.select(:transport_type_id, @transport_types) %>
     <%= hidden_field_tag "schedule[food_type_ids][]","" %></td>
     </tr>
-    <tr><td>Food Type(s)</td><td><% FoodType.all.each{ |ft| %>
+    <tr><td>Food Type(s)</td><td><% FoodType.regional(@schedule.region).each{ |ft| %>
       <%= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <%= ft.name %>
     <% } %></td>
     </tr>

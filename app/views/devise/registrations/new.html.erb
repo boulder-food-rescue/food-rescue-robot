@@ -18,6 +18,10 @@
   <div><%= f.label :password_confirmation %><br />
   <%= f.password_field :password_confirmation %></div>
 
+  <div><%= f.label :region %><br />
+  <%= f.select(:requested_region_id,Region.all.collect{ |r| [r.name,r.id] }) %></div>
+  <br>
+
   <div><%= f.submit "Sign up" %></div>
 <% end %>
 

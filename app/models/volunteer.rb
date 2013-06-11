@@ -3,16 +3,39 @@ class Volunteer < ActiveRecord::Base
   belongs_to :cell_carrier
   has_many :assignments
   has_many :regions, :through => :assignments
-
-  # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable,
-  # :lockable, :timeoutable and :omniauthable
+  belongs_to :requested_region, :class_name => "Region"
+  attr_accessible :pre_reminders_too, :region_ids, :password, :password_confirmation, 
+    :remember_me, :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, 
+    :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, 
+    :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id, :photo, :get_sncs_email, 
+    :needs_training, :assigned, :requested_region_id
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
 
   before_save :auto_assign_region
+
+  # devise overrides to deal with not approved stuff
+  # https://github.com/plataformatec/devise/wiki/How-To:-Require-admin-to-activate-account-before-sign_in
+  def active_for_authentication?
+    super && assigned?
+  end
+  def inactive_message
+    if not assigned
+      :not_assigned
+    else
+      super
+    end
+  end
+  def self.send_reset_password_instructions(attributes={})
+    recoverable = find_or_initialize_with_errors(reset_password_keys, attributes, :not_found)
+    if !recoverable.assigned?
+      recoverable.errors[:base] << I18n.t("devise.failure.not_approved")
+    elsif recoverable.persisted?
+      recoverable.send_reset_password_instructions
+    end
+    recoverable
+  end
 
   # Admin info accessors
   def super_admin?
@@ -46,7 +69,11 @@ class Volunteer < ActiveRecord::Base
     self.regions.collect{ |r| r.id }
   end
   def admin_region_ids
-    self.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+    if self.super_admin?
+      Region.all.collect{ |r| r.id }
+    else
+      self.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+    end
   end
 
   def gone?
@@ -64,6 +91,4 @@ class Volunteer < ActiveRecord::Base
     end
   end
 
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :pre_reminders_too, :region_ids, :password, :password_confirmation, :remember_me, :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id, :photo, :get_sncs_email, :needs_training
 end

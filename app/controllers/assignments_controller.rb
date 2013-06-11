@@ -25,7 +25,7 @@ class AssignmentsController < ApplicationController
       }
     end
     flash[:notice] = "Assignment succeeded."
-    index
+    redirect_to :back
   end
 
   def admin_only

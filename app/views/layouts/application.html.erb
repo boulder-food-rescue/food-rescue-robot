@@ -79,7 +79,7 @@
           </ul>
         </li>
       <% end %>
-      <% if volunteer_signed_in? and current_volunteer.regions.collect{ |r| r.handbook_url }.compact.length > 0 %>
+      <% if volunteer_signed_in? and Region.has_any_handbooks? current_volunteer.regions %>
         <li class="has-sub">
           <a href="#">
             <span>Handbook</span>

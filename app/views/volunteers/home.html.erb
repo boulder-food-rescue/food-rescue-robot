@@ -46,7 +46,9 @@
             <th>Date</th>
             <th></th>
           </tr>
-          <% @to_do_reports.each do |report| %>
+          <% @to_do_reports.each do |report| 
+              next if report.donor.nil?
+            %>
           <tr>
             <td> <%= link_to report.donor.name, report.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
             <td> <%= report.when %> </td>

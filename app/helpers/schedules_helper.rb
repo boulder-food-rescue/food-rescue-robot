@@ -1,19 +1,23 @@
 module SchedulesHelper
 
   def readable_start_time schedule
+    str = "unknown"
     if use_detailed_hours?
-      schedule.detailed_start_time.to_s(:clean_time)
+      str = schedule.detailed_start_time.to_s(:clean_time) unless schedule.detailed_start_time.nil?
     else
-      schedule.time_start
+      str = schedule.time_start unless schedule.time_start.nil?
     end
+    str
   end
 
   def readable_stop_time schedule
+   str = "unknown"
    if use_detailed_hours?
-      schedule.detailed_stop_time.to_s(:clean_time)
+      str = schedule.detailed_stop_time.to_s(:clean_time) unless schedule.detailed_stop_time.nil?
     else
-      schedule.time_stop
-    end    
+      str = schedule.time_stop unless schedule.time_stop.nil?
+    end
+    str
   end
 
   def readable_pickup_timespan schedule

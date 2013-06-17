@@ -3,8 +3,11 @@ class VolunteersController < ApplicationController
   before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
 
   def unassigned
-    @filter = "(not assigned or (SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0) AND ((requested_region_id IS NULL) OR (requested_region_id in (#{current_volunteer.admin_region_ids.join(",")})))"
-    @volunteers = Volunteer.where(@filter)
+    unassigned = Volunteer.where(:assigned=>false)
+    no_assingments = Volunteer.where("((SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0)")
+    unrequested = Volunteer.where(:requested_region_id=>nil)
+    requested_my_region = Volunteer.where(:requested_region_id=>current_volunteer.admin_region_ids)
+    @volunteers = unassigned | (no_assingments & (unrequested | requested_my_region))
     @header = "Unassigned"
   end
 

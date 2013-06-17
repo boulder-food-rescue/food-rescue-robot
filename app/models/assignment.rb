@@ -16,10 +16,12 @@ class Assignment < ActiveRecord::Base
 
   def self.add_volunteer_to_region volunteer, region
     return false if volunteer.new_record?
-    a = Assignment.new
-    a.volunteer = volunteer
-    a.region = region
-    a.save
+    if Assignment.where(:volunteer_id=>volunteer, :region_id=>region.id).count==0
+      a = Assignment.new
+      a.volunteer = volunteer
+      a.region = region
+      a.save
+    end
     volunteer.assigned = true
     volunteer.save
     return true

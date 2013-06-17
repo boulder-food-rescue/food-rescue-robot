@@ -14,17 +14,14 @@ class VolunteersController < ApplicationController
   def assign
     v = Volunteer.find(params[:volunteer_id])
     r = Region.find(params[:region_id])
-    a = Assignment.where("volunteer_id = ? and region_id = ?",v.id,r.id)
     if params[:unassign]
-      a.each{ |e| e.destroy }
+      Assignment.where(:volunteer_id=>v.id, :region_id=>r.id).each{ |e| e.destroy }
       if v.assignments.length == 0
         v.assigned = false
         v.save
       end
     else
-      if a.length == 0
-        Assignment.add_volunteer_to_region v, r
-      end
+      Assignment.add_volunteer_to_region v, r
       unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
         m = Notifier.region_welcome_email(r,v)
         m.deliver unless m.nil?

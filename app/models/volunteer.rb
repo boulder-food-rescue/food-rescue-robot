@@ -13,7 +13,7 @@ class Volunteer < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
 
-  before_save :auto_assign_region
+  after_save :auto_assign_region
 
   # devise overrides to deal with not approved stuff
   # https://github.com/plataformatec/devise/wiki/How-To:-Require-admin-to-activate-account-before-sign_in
@@ -87,7 +87,8 @@ class Volunteer < ActiveRecord::Base
   # better first-time experience: if there is only one region, add the user to that one automatically when they sign up
   def auto_assign_region
     if Region.count==1 and self.regions.count==0
-      self.regions = Region.all
+      Assignment.add_volunteer_to_region self, Region.first
+      logger.info "Automatically assigned new user to region #{self.regions.first.name}"
     end
   end
 

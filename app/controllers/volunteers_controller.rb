@@ -20,13 +20,8 @@ class VolunteersController < ApplicationController
       end
     else
       if a.length == 0
-        a = Assignment.new
-        a.volunteer = v
-        a.region = r
-        a.save
+        Assignment.add_volunteer_to_region v, r
       end
-      v.assigned = true
-      v.save
       unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
         m = Notifier.region_welcome_email(r,v)
         m.deliver unless m.nil?

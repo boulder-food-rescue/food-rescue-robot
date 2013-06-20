@@ -5,45 +5,7 @@ div#sncs_notice {
   border: 1px solid grey;
 }
 
-/* Side Bar */
-.home_sidebar{
-  float: left;
-  width: 225px;
-}
-
-.home_sidebar.floating{
-  position: absolute;
-  top: 0px;
-}
-
-.home_sidebar ul ul{
-  padding-left: 10px;
-}
-
-.home_sidebar a{
-  color: black;
-  text-decoration: none;
-}
-
-.home_sidebar .section_link{
-  font-weight: bold;
-}
-
-.home_sidebar a:hover{
-  text-decoration: underline;
-}
-
-.home_sidebar h1{
-  font-size: 1.1em;
-  color: #0E30B7;
-  font-weight: bold;
-  border-bottom: 2px solid #B5B5B5;
-  text-align: center;
-  margin-right: 10px;
-}
-
 .home_sections{
-  margin-left: 225px;
   display: block;
 }
 

@@ -280,6 +280,7 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
     </div>
   </div>
 
+<% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 
     $('#highchart_month').highcharts({
@@ -334,6 +335,7 @@ $(function () {
 
 });
 </script>
+<% end %>
 
 </body>
 </html>

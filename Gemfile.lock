@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/rweng/jquery-datatables-rails.git
+  revision: 494f752b8eb8350f33841c822a67d014c869219f
+  specs:
+    jquery-datatables-rails (1.11.2)
+      jquery-rails
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -176,6 +183,7 @@ DEPENDENCIES
   geocoder
   gmaps4rails
   highcharts-rails (~> 3.0.0)
+  jquery-datatables-rails!
   jquery-rails (= 2.1.4)
   json
   paperclip (~> 3.1)

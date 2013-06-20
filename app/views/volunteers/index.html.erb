@@ -65,6 +65,7 @@ Key: <span style="background: red">Admin</span>
 <br><br>
 Email List: <%= @volunteers.collect{ |v| v.email }.join(", ") %>
 <% end %>
+<% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 
   $('#data_table').dataTable( {
@@ -72,3 +73,4 @@ $(function () {
   });
 });
 </script>
+<% end %>

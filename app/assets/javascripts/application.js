@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require twitter/bootstrap
 //= require highcharts
 //= require active_scaffold
 //= require_tree .

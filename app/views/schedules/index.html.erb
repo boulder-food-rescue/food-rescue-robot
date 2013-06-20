@@ -1,91 +1,115 @@
 <h2>Schedule</h2>
 
 <% if current_volunteer.any_admin? %>
-<div style="text-align: right;">
-<%= form_tag("/schedules/new", :method => "get") do %>
-New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
-<%= submit_tag("Go") %>
-<% end %>
-</div>
+  <div style="text-align: right;">
+    <%= form_tag("/schedules/new", :method => "get") do %>
+      New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
+      <%= submit_tag("Go") %>
+    <% end %>
+  </div>
 <% end %>
 
 <% if current_volunteer.assignments.length == 0 %>
-<p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
+  <p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
 <% elsif @volunteer_schedules.length == 0 %>
-<p> 
-Schedule is empty.
-</p>
+  <p> 
+  Schedule is empty.
+  </p>
 <% elsif current_volunteer.regions.length == 0 %>
-<p>
-You aren't assigned to any regions, so you can't see anything yet. Ask a coordinator in your region to assign you!
-</p>
+  <p>
+  You aren't assigned to any regions, so you can't see anything yet. Ask a coordinator in your region to assign you!
+  </p>
 <% else %>
-<% days_of_week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ] %>
+
 <table id="data_table">
   <thead>
-  <tr>
-    <th> Day of Week</th>
-    <th> Donor </th>
-    <th> Recipient </th>
-    <th> Volunteer </th>
-    <th> Start Time </th>
-    <th> End Time </th>
-    <th> Notes </th>
-    <% if current_volunteer.any_admin? %>
-    <th> Admin Notes </th>
-    <% end %>
-    <th> Prior Volunteer </th>
-    <th> Transport </th>
-    <th> Food Types </th>
-    <% if current_volunteer.any_admin? %>
-    <th> Link </th>
-    <% end %>
-  </tr>
+    <tr>
+      <th> Frequency </th>
+      <th> Day</th>
+      <th> Donor </th>
+      <th> Recipient </th>
+      <th> Volunteer </th>
+      <th> Start Time </th>
+      <th> End Time </th>
+      <th> Notes </th>
+      <% if current_volunteer.any_admin? %>
+        <th> Admin Notes </th>
+      <% end %>
+      <th> Prior Volunteer </th>
+      <th> Transport </th>
+      <th> Food Types </th>
+      <% if current_volunteer.any_admin? %>
+        <th> Link </th>
+      <% end %>
+    </tr>
   </thead>
   <tbody>
-  <%
-  @volunteer_schedules.each do |schedule|
-    row_bgcolor = nil
-    if schedule.volunteer.nil?
-      row_bgcolor = "pink"
-    elsif schedule.volunteer.needs_training
-      row_bgcolor = "lightgreen"
-    elsif schedule.recipient.nil? or schedule.donor.nil?
-      row_bgcolor = "yellow"
-    end
-  %>
-  <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-    <td> <span style="display:none;"><%= schedule.day_of_week %></span> <%= schedule.day_of_week.nil? ? "" : days_of_week[schedule.day_of_week] %> </td>
-    <td> <%= link_to schedule.donor.name, schedule.donor unless schedule.donor.nil? %> </td>
-    <td> <%= link_to schedule.recipient.name, schedule.recipient unless schedule.recipient.nil? %> </td>
-    <td <% if schedule.volunteer.nil? %>style="background: yellow;text-align: center;"<% end %>> <% if schedule.volunteer.nil? %>
-         <%=  link_to "Take it!", :controller => "schedules", :action => "take", :id => schedule %>
-         <% else %>
-         <%= link_to schedule.volunteer.name, schedule.volunteer %> </td>
-         <% end %>
-    <td> <%= schedule.time_start %> </td>
-    <td> <%= schedule.time_stop %> </td>
-    <td><%= word_wrap(schedule.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.public_notes.nil? %></td>
-    <% if current_volunteer.any_admin? %>
-    <td><%= word_wrap(schedule.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.admin_notes.nil? or !current_volunteer.region_admin?(schedule.region) %></td>
+    <%
+    @volunteer_schedules.each do |schedule|
+      row_bgcolor = nil
+      if schedule.volunteer.nil?
+        row_bgcolor = "pink"
+      elsif schedule.volunteer.needs_training
+        row_bgcolor = "lightgreen"
+      elsif schedule.recipient.nil? or schedule.donor.nil?
+        row_bgcolor = "yellow"
+      end
+    %>
+    <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+      <td> <%= schedule.frequency%> </td>
+      <td> 
+        <% if schedule.one_time? %>
+          <%= schedule.detailed_date %>
+        <% else %>
+          <span style="display:none;"><%= schedule.day_of_week %></span> <%= schedule.day_of_week.nil? ? "" : Date::DAYNAMES[schedule.day_of_week] %>
+        <% end %>
+      </td>
+      <td> 
+        <% unless schedule.donor.nil? %>
+          <%= schedule.donor.name %>
+          <br />
+          ( <%= link_to "click for details", schedule.donor %> )
+
+        <% end %>
+      </td>
+      <td> <%= link_to schedule.recipient.name, schedule.recipient unless schedule.recipient.nil? %> </td>
+      <td <% if schedule.volunteer.nil? %>style="background: yellow;text-align: center;"<% end %>> <% if schedule.volunteer.nil? %>
+           <%=  link_to "Take it!", :controller => "schedules", :action => "take", :id => schedule %>
+           <% else %>
+           <%= link_to schedule.volunteer.name, schedule.volunteer %> </td>
+           <% end %>
+      <td>
+        <%= readable_start_time schedule %>
+      </td>
+      <td> 
+        <%= readable_stop_time schedule %>
+      </td>
+      <td><%= word_wrap(schedule.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.public_notes.nil? %></td>
+      <% if current_volunteer.any_admin? %>
+        <td><%= word_wrap(schedule.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.admin_notes.nil? or !current_volunteer.region_admin?(schedule.region) %></td>
+      <% end %>
+      <td><%= link_to schedule.prior_volunteer.name, schedule.prior_volunteer unless schedule.prior_volunteer.nil? %> </td>
+      <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
+      <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
+      <td> <%= link_to 'map', schedule %><br>
+        <% if current_volunteer.any_admin? %>
+          <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %><br>
+          <%= link_to "delete", schedule, :confirm => "Are you sure?", :method => :delete %>
+        <% end %>
+      </td>
+    </tr>
     <% end %>
-    <td><%= link_to schedule.prior_volunteer.name, schedule.prior_volunteer unless schedule.prior_volunteer.nil? %> </td>
-    <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
-    <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
-    <td> <%= link_to 'map', schedule %><br>
-         <% if current_volunteer.any_admin? %>
-         <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %><br>
-         <%= link_to "delete", schedule, :confirm => "Are you sure?", :method => :delete %> </td>
-         <% end %>
-  </tr>
-  <% end %>
   </tbody>
 </table>
+
 <% end %>
+
 <br><br>
-Key: <span style="background: yellow">Missing Donor/Recipient</span>
-<span style="background: pink">No Volunteer</span>
-<span style="background: lightgreen">Needs Training</span>
+Key:
+  <span style="background: yellow">Missing Donor/Recipient</span>
+  <span style="background: pink">No Volunteer</span>
+  <span style="background: lightgreen">Needs Training</span>
+
 <script type="text/javascript">
 $(function () { 
   $('#data_table').dataTable( {

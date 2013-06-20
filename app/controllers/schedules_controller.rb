@@ -25,7 +25,7 @@ class SchedulesController < ApplicationController
   end
 
   def show
-    @s = Schedule.find(params[:id])
+    @schedule = Schedule.find(params[:id])
   end
 
   def today
@@ -42,7 +42,7 @@ class SchedulesController < ApplicationController
 
   def destroy
     @s = Schedule.find(params[:id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @s.region
+    unless current_volunteer.any_admin? @s.region
       flash[:notice] = "Not authorized to delete schedule items for that region"
       redirect_to(root_path)
       return
@@ -53,20 +53,21 @@ class SchedulesController < ApplicationController
 
   def new
     @region = Region.find(params[:region_id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @region
+    unless current_volunteer.any_admin? @region
       flash[:notice] = "Not authorized to create schedule items for that region"
       redirect_to(root_path)
       return
     end
     @schedule = Schedule.new
     @schedule.region = @region
+    set_vars_for_form @region
     @action = "create"
     render :new
   end
 
   def create
     @schedule = Schedule.new(params[:schedule])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+    unless current_volunteer.any_admin? @schedule.region
       flash[:notice] = "Not authorized to create schedule items for that region"
       redirect_to(root_path)
       return
@@ -82,18 +83,19 @@ class SchedulesController < ApplicationController
 
   def edit
     @schedule = Schedule.find(params[:id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+    unless current_volunteer.any_admin? @schedule.region
       flash[:notice] = "Not authorized to edit schedule items for that region"
       redirect_to(root_path)
       return
     end
     @region = @schedule.region
+    set_vars_for_form @region
     @action = "update"
   end
 
   def update
     @schedule = Schedule.find(params[:id])
-    unless current_volunteer.super_admin? or current_volunteer.region_admin? @schedule.region
+    unless current_volunteer.any_admin? @schedule.region
       flash[:notice] = "Not authorized to edit schedule items for that region"
       redirect_to(root_path)
       return
@@ -120,7 +122,7 @@ class SchedulesController < ApplicationController
   end
 
   def admin_only
-    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
+    redirect_to(root_path) unless current_volunteer.any_admin?
   end
 
 end 

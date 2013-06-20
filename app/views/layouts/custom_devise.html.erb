@@ -41,8 +41,8 @@ current_day = date.day
 
 food_per_day = []
 food_per_month = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-Log.select("sum(weight) as weight_sum, count(*) as count, logs.when").joins(:log_parts).where("complete").
-    group("\"when\"").order("\"when\"").each{ |l|
+Log.select('sum(weight) as weight_sum, count(*) as count, "logs"."when"').joins(:log_parts).where(:complete=>true).
+    group('"logs"."when"').order('"logs"."when"').each{ |l|
   next if l.weight_sum.nil? or l.weight_sum.to_f <= 0
   if l.when > (Date.today << 12)
     food_per_month[l.when.month - 1] += l.weight_sum.to_f
@@ -63,7 +63,7 @@ largest_pickup = nil
 Log.joins(:log_parts).select("logs.id, sum(weight) as weight_sum").where("complete").group("logs.id").each{ |l|
   largest_pickup = l if largest_pickup.nil? or largest_pickup.weight_sum.to_f < l.weight_sum.to_f
 }
-largest_pickup = Log.find(largest_pickup.id)
+largest_pickup = Log.find(largest_pickup.id) unless largest_pickup.nil?
 pickups_today = Schedule.where(:day_of_week => date.wday)
   
 #Recipient Stats
@@ -114,20 +114,21 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
       <div class="a_fact_section">
         <p>Number of Cities Using the Robot: <%= list_of_regions.length %></p>
         <p class="show_recipient_facts text_link"> list </p>
-                          <div class="fact_info donor_list">
-                                <div class="fun_fact">
-                                  <ul>
-                                  <%
-                                  list_of_regions.each do |r|
-                                    if r.website != nil%>
-                                        <li><a href="<%= r.website %>"><%= r.title %></a><%= ": #{r.tagline}" unless r.tagline.nil? %>
-                                    <% else %>
-                                        <li><%= r.name %><%= ": #{r.tagline}" unless r.tagline.nil? %>
-                                    <% end %>
-                                  <% end %>
-                                  </ul>
-                                </div>
-                          </div>
+
+          <div class="fact_info donor_list">
+                <div class="fun_fact">
+                  <ul>
+                  <%
+                  list_of_regions.each do |r|
+                    if r.website != nil%>
+                        <li><a href="<%= r.website %>"><%= r.title %></a><%= ": #{r.tagline}" unless r.tagline.nil? %> (<%=link_to('recipients', region_path(r)+'/recipients')%>)
+                    <% else %>
+                        <li><%= r.name %><%= ": #{r.tagline}" unless r.tagline.nil? %> (<%=link_to('recipients', region_path(r)+'/recipients')%>)
+                    <% end %>
+                  <% end %>
+                  </ul>
+                </div>
+          </div>
 
       </div>
       <div class="a_fact_section">

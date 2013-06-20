@@ -9,11 +9,23 @@ class ApplicationController < ActionController::Base
 
   protected
   
-  def layout_by_resource
-    if devise_controller?
-      "custom_devise"
-    else
-      "application"
+    def layout_by_resource
+      if devise_controller?
+        "custom_devise"
+      else
+        "application"
+      end
     end
-  end
+
+  private
+
+    # add in the variables needed by the form partial for schedules and logs
+    def set_vars_for_form region
+      @volunteers = Volunteer.all_for_region(region.id).collect{ |v| [v.name,v.id] }
+      @donors = Location.donors.where(:region_id=>region.id).collect{ |d| [d.name,d.id] }
+      @recipients = Location.recipients.where(:region_id=>region.id).collect{ |r| [r.name,r.id] }
+      @food_types = FoodType.all.collect{ |ft| [ft.name,ft.id] }
+      @transport_types = TransportType.all.collect{ |tt| [tt.name,tt.id] }
+    end
+
 end

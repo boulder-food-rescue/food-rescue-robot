@@ -19,16 +19,16 @@ class LocationsController < ApplicationController
   end
 
   def donors
-    index("is_donor")
+    index({:is_donor=>true},"Donors")
   end
 
   def recipients
-    index("NOT is_donor")
+    index({:is_donor=>false},"Recipients")
   end
 
-  def index(filter=nil,header="All Locations")
-    filter = filter.nil? ? "" : " AND #{filter}"
-    @locations = Location.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}")
+  def index(filters={},header="Donors and Recipients")
+    filters['region_id'] = current_volunteer.region_ids
+    @locations = Location.where(filters)
     @header = header
     @regions = Region.all
     if current_volunteer.super_admin?
@@ -77,6 +77,7 @@ class LocationsController < ApplicationController
 
   def create
     @location = Location.new(params[:location])
+    @location.populate_detailed_hours_from_form params
     return unless check_permissions(@location)
     # can't set admin bits from CRUD controls
     if @location.save
@@ -102,6 +103,7 @@ class LocationsController < ApplicationController
 
   def update
     @location = Location.find(params[:id])
+    @location.populate_detailed_hours_from_form params
     return unless check_permissions(@location)
     # can't set admin bits from CRUD controls
     if @location.update_attributes(params[:location])

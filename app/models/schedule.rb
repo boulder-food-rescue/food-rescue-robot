@@ -8,5 +8,17 @@ class Schedule < ActiveRecord::Base
   has_many :schedule_parts
   has_many :food_types, :through => :schedule_parts
 
-  attr_accessible :region_id, :volunteer_id, :irregular, :backup, :transport_type_id, :food_type_ids, :weekdays, :admin_notes, :day_of_week, :donor_id, :prior_volunteer_id, :public_notes, :recipient_id, :time_start, :time_stop
+  attr_accessible :region_id, :volunteer_id, :irregular, :backup, :transport_type_id, :food_type_ids, 
+                  :weekdays, :admin_notes, :day_of_week, :donor_id, :prior_volunteer_id, :public_notes, 
+                  :recipient_id, :time_start, :time_stop, 
+                  :detailed_start_time, :detailed_stop_time, :frequency, :detailed_date
+
+  def one_time?
+    frequency=='one-time'
+  end
+
+  def weekly?
+    frequency=='weekly'
+  end
+
 end

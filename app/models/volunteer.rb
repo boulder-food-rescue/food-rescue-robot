@@ -13,6 +13,8 @@ class Volunteer < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
 
+  after_save :auto_assign_region
+
   # devise overrides to deal with not approved stuff
   # https://github.com/plataformatec/devise/wiki/How-To:-Require-admin-to-activate-account-before-sign_in
   def active_for_authentication?
@@ -45,8 +47,8 @@ class Volunteer < ActiveRecord::Base
     }
     return false
   end
-  def any_admin?
-    self.super_admin? or self.region_admin?
+  def any_admin? region=nil
+    self.super_admin? or self.region_admin? region
   end
 
   def sms_email
@@ -55,6 +57,10 @@ class Volunteer < ActiveRecord::Base
     # a little scary that we're blindly assuming the format is reasonable, but only admin can edit it...
     return sprintf(self.cell_carrier.format,$1) 
   end 
+
+  def has_main_region?
+    !main_region.nil?
+  end
 
   def main_region
     self.regions[0]
@@ -73,4 +79,17 @@ class Volunteer < ActiveRecord::Base
   def gone?
     !self.gone_until.nil? and self.gone_until > Date.today
   end
+
+  def self.all_for_region region_id
+    self.includes(:regions).where(:regions=>{:id=>region_id}).compact
+  end
+
+  # better first-time experience: if there is only one region, add the user to that one automatically when they sign up
+  def auto_assign_region
+    if Region.count==1 and self.regions.count==0
+      Assignment.add_volunteer_to_region self, Region.first
+      logger.info "Automatically assigned new user to region #{self.regions.first.name}"
+    end
+  end
+
 end

@@ -1,58 +1,75 @@
 <%= form_for @volunteer, :url => {:action => @action } do |f| %>
+
 <table>
-<tr><td>Name</td>
-   <td><%= f.text_field(:name) %></td>
-</tr>
-<tr><td>Photo</td>
-    <td><%= image_tag @volunteer.photo.url(:thumb)%>
-      <%= f.file_field(:photo) %></td>
-</tr>
-<tr><td>Phone</td>
-  <td><%= f.text_field(:phone) %> with <%= f.select(:cell_carrier_id,CellCarrier.all.collect{ |cc| [cc.name,cc.id] },{:include_blank => true}) %></tr>
-</tr>
-<tr><td>Email</td>
-  <td><%= f.text_field(:email) %></td>
-</tr>
-<tr><td>Preferred Contact</td>
-  <td><%= f.select(:preferred_contact,[["Email","Email"],["Phone","Phone"],["Text","Text"]],{:include_blank => true}) %></td>
-</tr>
-<tr><td>Receive From Robot</td>
-  <td><%= f.check_box(:sms_too) %> Text Messages <%= f.check_box(:pre_reminders_too) %> Pre-Pickup-Reminders <%= f.check_box(:get_sncs_email) %> SNCS Email</td>
-</tr>
-<tr><td>On Email List</td>
-  <td><%= f.check_box(:on_email_list) %></td>
-</tr>
-<tr><td>Transport</td>
-  <td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{:include_blank => true}) %></td>
-</tr>
-<tr><td>Has Car</td>
-  <td><%= f.check_box(:has_car) %></td>
-</tr>
-<tr><td>Pickup Preferences</td>
-  <td><%= f.text_area(:pickup_prefs, :size => "30x6") %></td>
-</tr>
-<tr><td>Vacation Until</td>
-  <td><%= f.date_select(:gone_until,{:include_blank => true}) %></td>
-</tr>
-<tr><td>Needs Training</td>
-  <td><%= f.check_box(:needs_training) %></td>
-</tr>
-<% if current_volunteer.any_admin? %>
-  <tr><td>Admin Notes</td>
-    <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>
+  
+  <tr><td>Name</td>
+     <td><%= f.text_field(:name) %></td>
   </tr>
-  <%= hidden_field_tag "volunteer[region_ids][]","" %>
-  <tr><td>Region(s)</td>
-    <td>
-      <% @my_admin_regions.each{ |r| %>
-      <%= check_box_tag "volunteer[region_ids][]", r.id, @volunteer.regions.include?(r) %> <%= r.name %>
-      <% } %>
-    </td>
+  
+  <tr><td>Photo</td>
+      <td><%= image_tag @volunteer.photo.url(:thumb)%>
+        <%= f.file_field(:photo) %></td>
   </tr>
-  <tr><td>Account Disabled</td>
-    <td><%= f.check_box(:is_disabled) %></td>
+  
+  <tr><td>Phone</td>
+    <td><%= f.text_field(:phone) %> with <%= f.select(:cell_carrier_id,CellCarrier.all.collect{ |cc| [cc.name,cc.id] },{:include_blank => true}) %></tr>
   </tr>
-<% end %>
+  
+  <tr><td>Email</td>
+    <td><%= f.text_field(:email) %></td>
+  </tr>
+  
+  <tr><td>Preferred Contact</td>
+    <td><%= f.select(:preferred_contact,[["Email","Email"],["Phone","Phone"],["Text","Text"]],{:include_blank => true}) %></td>
+  </tr>
+  
+  <tr><td>Receive From Robot</td>
+    <td><%= f.check_box(:sms_too) %> Text Messages <%= f.check_box(:pre_reminders_too) %> Pre-Pickup-Reminders <%= f.check_box(:get_sncs_email) %> SNCS Email</td>
+  </tr>
+  
+  <tr><td>On Email List</td>
+    <td><%= f.check_box(:on_email_list) %></td>
+  </tr>
+  
+  <tr><td>Transport</td>
+    <td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{:include_blank => true}) %></td>
+  </tr>
+  
+  <tr><td>Has Car</td>
+    <td><%= f.check_box(:has_car) %></td>
+  </tr>
+  
+  <tr><td>Pickup Preferences</td>
+    <td><%= f.text_area(:pickup_prefs, :size => "30x6") %></td>
+  </tr>
+  
+  <tr><td>Vacation Until</td>
+    <td><%= f.date_select(:gone_until,{:include_blank => true}) %></td>
+  </tr>
+  
+  <tr><td>Needs Training</td>
+    <td><%= f.check_box(:needs_training) %></td>
+  </tr>
+
+  <% if current_volunteer.any_admin? %>
+    <tr><td>Admin Notes</td>
+      <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>
+    </tr>
+    <%= hidden_field_tag "volunteer[region_ids][]","" %>
+    <tr><td>Region(s)</td>
+      <td>
+        <% @my_admin_regions.each{ |r| %>
+        <%= check_box_tag "volunteer[region_ids][]", r.id, @volunteer.regions.include?(r) %> <%= r.name %>
+        <% } %>
+      </td>
+    </tr>
+    <tr><td>Account Disabled</td>
+      <td><%= f.check_box(:is_disabled) %></td>
+    </tr>
+  <% end %>
+
 </table>
+
 <%= submit_tag %>
+
 <% end %>

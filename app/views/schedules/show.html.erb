@@ -1,41 +1,51 @@
 <% 
-days_of_week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ] 
 next_pickup = nil
-unless @s.irregular
+if @schedule.weekly? and not @schedule.irregular
   next_pickup = Date.today
-  next_pickup += 1 if @s.day_of_week == next_pickup.wday and @s.time_start.to_i < Time.now.strftime("%H%m").to_i
-  while next_pickup.wday != @s.day_of_week
+  next_pickup += 1 if @schedule.day_of_week == next_pickup.wday and @schedule.time_start.to_i < Time.now.strftime("%H%m").to_i
+  while next_pickup.wday != @schedule.day_of_week
     next_pickup += 1
   end
-  time_start_hour = @s.time_start/100
-  time_start_minute = @s.time_start - time_start_hour*100
-  time_stop_hour = @s.time_stop/100
-  time_stop_minute = @s.time_stop - time_stop_hour*100
+  if use_detailed_hours?
+    time_start_hour = @schedule.detailed_start_time.hour
+    time_start_minute = @schedule.detailed_start_time.min
+    time_stop_hour = @schedule.detailed_stop_time.hour
+    time_stop_minute = @schedule.detailed_stop_time.min
+  else
+    time_start_hour = @schedule.time_start/100
+    time_start_minute = @schedule.time_start - time_start_hour*100
+    time_stop_hour = @schedule.time_stop/100
+    time_stop_minute = @schedule.time_stop - time_stop_hour*100
+  end
   next_pickup_start = Time.new(next_pickup.year,next_pickup.month,next_pickup.day,time_start_hour,time_start_minute)
   next_pickup_stop = Time.new(next_pickup.year,next_pickup.month,next_pickup.day,time_stop_hour,time_stop_minute)
 end 
 %>
 
-<h2><%= @s.donor.nil? ? "?" : @s.donor.name %> -> <%= @s.recipient.nil? ? "?" : @s.recipient.name %></h2>
-<br>
-Pickup Between: <%= @s.time_start %> - <%= @s.time_stop %> <% unless @s.irregular %>on <%= days_of_week[@s.day_of_week] %><% else %>(Irregular)<% end %>
-<br><br>
-<% unless @s.public_notes.nil? or @s.public_notes.strip == "" %>
-Notes: <%= @s.public_notes %>
-<br><br>
-<% end %>
-<% unless next_pickup.nil? %>
-<a href="http://www.google.com/calendar/event?action=TEMPLATE&text=<%=u "Food Rescue: #{@s.donor.name} -> #{@s.recipient.name}" %>&dates=<%=u next_pickup_start.gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u next_pickup_stop.gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @s.public_notes%>&location=<%=u @s.donor.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
-<% end %>
-<br><br>
-<% unless @s.donor.address.nil? or @s.recipient.address.nil? %>
-<%= gmaps("direction" => {"data" => {"from" => @s.donor.address.tr("\n\r",","), "to" => @s.recipient.address.tr("\n\r",",") }, 
-          "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}}) %>
-<div id="instructions"></div>
-<% else %>
-Sorry, can't draw map: missing an address for the donor or recipient.
+<h2><%= @schedule.donor.nil? ? "?" : @schedule.donor.name %> &rarr; <%= @schedule.recipient.nil? ? "?" : @schedule.recipient.name %></h2>
+
+<p>
+<%= readable_pickup_timespan @schedule %>
+</p>
+
+<% unless @schedule.public_notes.nil? or @schedule.public_notes.strip == "" %>
+  <p>
+  <b>Notes:</b> <%= @schedule.public_notes %>
+  </p>
 <% end %>
 
-<%
-  next_pickup = Date.today
-%>
+<% unless next_pickup.nil? or @schedule.donor.nil? or @schedule.recipient.nil? %>
+  <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=<%=u "Food Rescue: #{@schedule.donor.name} -> #{@schedule.recipient.name}" %>&dates=<%=u next_pickup_start.gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u next_pickup_stop.gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @schedule.public_notes%>&location=<%=u @schedule.donor.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
+
+  <% unless @schedule.donor.address.nil? or @schedule.recipient.address.nil? %>
+    <%= gmaps("direction" => {"data" =>
+              {"from" => @schedule.donor.address.tr("\n\r",","), 
+                "to" => @schedule.recipient.address.tr("\n\r",",") }, 
+              "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}
+        }) %>
+  
+    <div id="instructions"></div>
+  <% end %>
+<% else %>
+  <i>Sorry, can't draw map: missing an address for the donor or recipient.</i>
+<% end %>

@@ -1,21 +1,117 @@
 <%= form_for @location, :url => {:action => @action } do |f| %>
-<table>
+
 <%= hidden_field_tag "location[region_id]", @location.region_id %>
+
 <%= hidden_field_tag "location[is_donor]", @location.is_donor %>
-<tr><td>Name<td><%= f.text_field(:name) %>
-<tr><td>Address<td><%= f.text_area(:address, :size => "30x6") %>
-<tr><td>Contact Info<td><%= f.text_area(:contact, :size => "30x6") %>
-<tr><td>Website<br><span class="subtext">e.g., http://luckysmarket.com/</span><td><%= f.text_field(:website) %>
-<tr><td>Twitter Handle<br><span class="subtext">e.g., IdealMarket</span><td><%= f.text_field(:twitter_handle) %>
-<tr><td>Hours<td><%= f.text_area(:hours, :size => "30x6") %>
-<% if @location.is_donor %>
-<tr><td>Type<td><%= f.select(:donor_type, [["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]],{:include_blank => true}) %>
+
+<table>
+
+  <tr><td width="300px">Name</td>
+      <td><%= f.text_field(:name) %></td>
+  </tr>
+
+  <tr><td>Address</td>
+      <td><%= f.text_area(:address, :size => "30x6") %></td>
+  </tr>
+
+  <tr><td>Email</td>
+      <td><%= f.text_field(:email) %></td>
+  </tr>
+
+  <tr><td>Phone</td>
+      <td><%= f.text_field(:phone) %></td>
+  </tr>
+
+  <tr><td>Contact Info</td>
+      <td><%= f.text_area(:contact, :size => "30x6") %></td>
+  </tr>
+
+  <tr><td>Website<br><span class="subtext">e.g., http://luckysmarket.com/</span></td>
+      <td><%= f.text_field(:website) %></td>
+  </tr>
+
+  <tr><td>Twitter Handle<br><span class="subtext">e.g., IdealMarket</span></td>
+      <td><%= f.text_field(:twitter_handle) %></td>
+  </tr>
+
+  <tr>
+    <td>Hours
+      <small>
+        <% if @location.is_donor %>
+          for <em>pickup</em> at this donor
+        <% else %>
+          for <em>dropoff</em> at this recipient
+        <% end %>
+      </small>
+    </td>
+<% if use_detailed_hours? %>
+      <td>
+      <% Date::DAYNAMES.each_with_index do |day_name, index| 
+          day_html_prefix = "day"+index.to_s
+      %>
+        <div id="<%=day_html_prefix%>" data-day="<%=index%>" class="day-wrapper">
+          <%=day_name%>: 
+          <%=select_tag( day_html_prefix+"[status]", options_for_select([["closed",0],["open",1]], 
+            @location[day_html_prefix+"_status"]) )%>
+          <span id="<%=day_html_prefix%>-times">
+            from 
+            <%= select_time(@location[day_html_prefix+"_start"],:minute_step=>30, :ampm=>true, :prefix=>day_html_prefix+"[start]") %>
+            to 
+            <%= select_time(@location[day_html_prefix+"_end"],:minute_step=>30, :ampm=>true, :prefix=>day_html_prefix+"[end]") %>
+          </span>
+        </div>
+      <% end %>
+      </td>
 <% else %>
-<tr><td>Category<td><%= f.select(:recip_category, [["A","A"],["B","B"],["C","C"],["D","D"]],{:include_blank => true}) %>
+      <td><%= f.text_area(:hours, :size => "30x6") %></td>
 <% end %>
-<tr><td>Public Notes<td><%= f.text_area(:public_notes, :size => "30x6") %>
-<tr><td>Admin Notes<td><%= f.text_area(:admin_notes, :size => "30x6") %>
-<tr><td>Receipt Key<br><span class="subtext">i.e., a random password donors will use to login</span><td><%= f.text_field(:receipt_key) %>
+  </tr>
+
+  <tr>
+  <% if @location.is_donor %>
+    <td>Type</td>
+    <td><%= f.select(:donor_type, [["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]],{:include_blank => true}) %></td>
+  <% else %>
+    <td>Category</td>
+    <td><%= f.select(:recip_category, [["A","A"],["B","B"],["C","C"],["D","D"]],{:include_blank => true}) %></td>      
+  <% end %>
+  </tr>
+
+  <tr><td>Public Notes</td>
+      <td><%= f.text_area(:public_notes, :size => "30x6") %></td>
+  </tr>
+
+  <tr><td>Admin Notes</td>
+      <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>
+  </tr>
+
+  <tr><td>Receipt Key<br><span class="subtext">i.e., a random password donors will use to login</span></td>
+      <td><%= f.text_field(:receipt_key) %></td>
+  </tr>
+
 </table>
+
 <%= submit_tag %>
+
+<% end %>
+
+<% if use_detailed_hours? %>
+<script type="text/javascript">
+$(function(){
+  $('.day-wrapper').each(function(idx,el){
+    var day = $(el).attr('data-day');
+    var statusSelect = $('#day'+day+'_status');
+    statusSelect.bind('change',function(){
+      var dayIndex = $(this).parent().attr('data-day');
+      var timesWrapper = $('#day'+dayIndex+"-times");
+      if ($(this).find(':selected').val()==0) {
+        timesWrapper.hide();
+      } else {
+        timesWrapper.show();
+      }
+    })
+    statusSelect.change();
+  });
+})
+</script>
 <% end %>

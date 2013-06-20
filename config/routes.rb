@@ -13,8 +13,13 @@ Webapp::Application.routes.draw do
     end
   end
  
+  resources :regions do 
+    get 'recipients', :on => :member
+    get 'request_rescue', :on => :member
+    as_routes 
+  end
+
   resources :cell_carriers do as_routes end
-  resources :regions do as_routes end
   resources :transport_types do as_routes end
 
   resources :food_types

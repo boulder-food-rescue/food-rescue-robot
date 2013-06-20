@@ -3,30 +3,25 @@ class VolunteersController < ApplicationController
   before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
 
   def unassigned
-    @filter = "(not assigned or (SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0) AND ((requested_region_id IS NULL) OR (requested_region_id in (#{current_volunteer.admin_region_ids.join(",")})))"
-    @volunteers = Volunteer.where(@filter)
+    unassigned = Volunteer.where(:assigned=>false)
+    no_assingments = Volunteer.where("((SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0)")
+    unrequested = Volunteer.where(:requested_region_id=>nil)
+    requested_my_region = Volunteer.where(:requested_region_id=>current_volunteer.admin_region_ids)
+    @volunteers = unassigned | (no_assingments & (unrequested | requested_my_region))
     @header = "Unassigned"
   end
 
   def assign
     v = Volunteer.find(params[:volunteer_id])
     r = Region.find(params[:region_id])
-    a = Assignment.where("volunteer_id = ? and region_id = ?",v.id,r.id)
     if params[:unassign]
-      a.each{ |e| e.destroy }
+      Assignment.where(:volunteer_id=>v.id, :region_id=>r.id).each{ |e| e.destroy }
       if v.assignments.length == 0
         v.assigned = false
         v.save
       end
     else
-      if a.length == 0
-        a = Assignment.new
-        a.volunteer = v
-        a.region = r
-        a.save
-      end
-      v.assigned = true
-      v.save
+      Assignment.add_volunteer_to_region v, r
       unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
         m = Notifier.region_welcome_email(r,v)
         m.deliver unless m.nil?
@@ -36,15 +31,18 @@ class VolunteersController < ApplicationController
   end
 
   def shiftless
-    index("NOT is_disabled AND (SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
-           (gone_until IS NULL or gone_until < current_date)","Shiftless") 
+    index(Volunteer.where(:is_disabled=>false).where("(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
+           (gone_until IS NULL or gone_until < current_date)"),
+      "Shiftless") 
   end
   def need_training
-    index("NOT is_disabled AND needs_training AND (gone_until IS NULL or gone_until < current_date)")
+    index(Volunteer.where(:is_disabled=>false, :needs_training=>true).where("gone_until IS NULL or gone_until < current_date"),
+      "Needs Training")
   end
 
-  def index(filter=nil,header="All Volunteers")
-    @volunteers = Volunteer.where(filter).collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+  def index(base=nil,header="All Volunteers")
+    base = Volunteer.all if base.nil?
+    @volunteers = base.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
     @header = header
     render :index
   end
@@ -203,7 +201,7 @@ class VolunteersController < ApplicationController
   end
 
   def admin_only
-    redirect_to(root_path) unless current_volunteer.super_admin? or current_volunteer.region_admin?
+    redirect_to(root_path) unless current_volunteer.any_admin?
   end
 
   def home

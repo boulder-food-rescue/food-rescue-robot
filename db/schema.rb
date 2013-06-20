@@ -49,11 +49,14 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.text     "admin_notes"
     t.text     "public_notes"
     t.text     "hours"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "region_id"
     t.string   "twitter_handle"
     t.string   "receipt_key"
+    t.text     "detailed_hours_json"
+    t.text     "email"
+    t.text     "phone"
   end
 
   create_table "log_parts", :force => true do |t|
@@ -119,6 +122,8 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
+    t.integer  "tz_offset"
+    t.text     "time_zone"
     t.string   "weight_unit",            :default => "pound", :null => false
   end
 
@@ -143,15 +148,17 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.integer  "time_stop"
     t.text     "admin_notes"
     t.text     "public_notes"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.boolean  "irregular"
     t.boolean  "backup"
     t.integer  "transport_type_id"
     t.integer  "region_id"
+    t.time     "detailed_start_time"
+    t.time     "detailed_stop_time"
+    t.date     "detailed_date"
+    t.text     "frequency"
   end
-
-  add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"
 
   create_table "transport_types", :force => true do |t|
     t.string   "name"

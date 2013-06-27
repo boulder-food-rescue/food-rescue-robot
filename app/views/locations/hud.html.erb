@@ -23,8 +23,8 @@
   <tr>
     <td> <span style="display:none;"><%= schedule.day_of_week %></span> <%= days_of_week[schedule.day_of_week] %> </td>
     <td> <%= schedule.volunteer.nil? ? "Unknown" : schedule.volunteer.name %>
-    <td> <%= schedule.time_start %> </td>
-    <td> <%= schedule.time_stop %> </td>
+    <td> <%= readable_start_time schedule %> </td>
+    <td> <%= readable_stop_time schedule %> </td>
     <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
     <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
   </tr>

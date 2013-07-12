@@ -176,9 +176,17 @@ class LogsController < ApplicationController
       lp.log_id = @log.id
       lp.save
     } unless params["log_parts"].nil?
-    @log.complete = @log.log_parts.collect{ |lp| lp.required ? (!lp.weight.nil? or !lp.count.nil?) : nil }.compact.all?
     if @log.update_attributes(params[:log])
-      flash[:notice] = "Updated Successfully."
+      # mark as complete if deserving
+      filled_count = 0
+      required_unfilled = 0
+      @log.log_parts.each{ |lp|
+        required_unfilled += 1 if lp.required and lp.weight.nil? and lp.count.nil?
+        filled_count += 1 unless lp.weight.nil? and lp.count.nil?
+      }
+      @log.complete = filled_count > 0 and required_unfilled == 0
+      @log.save
+      flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
       # could be nil if they clicked on the link in an email
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])

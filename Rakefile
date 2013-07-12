@@ -7,6 +7,7 @@ require File.expand_path('../config/application', __FILE__)
 Webapp::Application.load_tasks
 
 task(:generate_logs => :environment) do
+  Rails.logger = Logger.new(STDOUT)
   include LogsHelper
   # Generate entries for today and tomorrow (shouldn't duplicate...)
   generate_log_entries(Date.today)
@@ -15,11 +16,13 @@ task(:generate_logs => :environment) do
 end
 
 task(:send_reminders => :environment) do
+  Rails.logger = Logger.new(STDOUT)
   include LogsHelper
   send_reminder_emails(1) # email day-after-pickup
 end
 
 task(:send_weekly_summary => :environment) do
+  Rails.logger = Logger.new(STDOUT)
   include LogsHelper
   send_weekly_pickup_summary # email day-after-pickup
 end

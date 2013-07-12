@@ -3,34 +3,25 @@
   <%= hidden_field_tag "schedule[region_id]", @region.id %>
 
   <table>
-<% if use_detailed_hours? %>
-    <tr><td>Frequency</td>
-        <td>
-        <%= f.select(:frequency, options_for_select(
-            {'Weekly'=>'weekly', 'One Time'=>'one-time'})) %>
-        <div id="frequency-option-weekly" class="frequency-option" style="display:none;">
-            on <%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %>
-        </div>
-        <div id="frequency-option-one-time" class="frequency-option" style="display:none;">
-            on <%= f.date_select(:detailed_date) %>
-        </div>
-        <div>
-            between <%= f.time_select(:detailed_start_time,:minute_step=>30, :ampm=>true) %>
-            and <%= f.time_select(:detailed_stop_time,:minute_step=>30, :ampm=>true) %>
-        </div>
-        </td>
-    </tr>
-<% else %>
-    <tr><td>Day</td>
-        <td><%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %></td>
-    </tr>
-    <tr><td>Time Start</td>
-        <td><%= f.text_field(:time_start) %></td>
-    </tr>
-    <tr><td>Time Stop</td>
-        <td><%= f.text_field(:time_stop) %></td>
-    </tr>
-<% end %>
+   <tr><td>Frequency</td>
+      <td>
+      <%= f.select(:frequency, options_for_select(
+          {'Weekly'=>'weekly', 'One Time'=>'one-time'})) %>
+      <div id="frequency-option-weekly" class="frequency-option" style="display:none;">
+          on <%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %>
+      </div>
+      <div id="frequency-option-one-time" class="frequency-option" style="display:none;">
+          on <%= f.date_select(:detailed_date) %>
+      </div>
+      <div>
+          between <%= f.time_select(:detailed_start_time,:minute_step=>30, :ampm=>true) %>
+          and <%= f.time_select(:detailed_stop_time,:minute_step=>30, :ampm=>true) %>
+      </div>
+      </td>
+  </tr>
+  <tr><td>Day</td>
+      <td><%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %></td>
+  </tr>
     <tr><td>Volunteer</td>
         <td><%= f.select(:volunteer_id, @volunteers, {:include_blank => true}) %></td>
     </tr>

@@ -2,21 +2,15 @@
 next_pickup = nil
 if @schedule.weekly? and not @schedule.irregular
   next_pickup = Date.today
-  next_pickup += 1 if @schedule.day_of_week == next_pickup.wday and @schedule.time_start.to_i < Time.now.strftime("%H%m").to_i
+  next_pickup += 1 if @schedule.day_of_week == next_pickup.wday and 
+                      @schedule.detailed_start_time.strftime("%H%m").to_i < Time.now.strftime("%H%m").to_i
   while next_pickup.wday != @schedule.day_of_week
     next_pickup += 1
   end
-  if use_detailed_hours?
-    time_start_hour = @schedule.detailed_start_time.hour
-    time_start_minute = @schedule.detailed_start_time.min
-    time_stop_hour = @schedule.detailed_stop_time.hour
-    time_stop_minute = @schedule.detailed_stop_time.min
-  else
-    time_start_hour = @schedule.time_start/100
-    time_start_minute = @schedule.time_start - time_start_hour*100
-    time_stop_hour = @schedule.time_stop/100
-    time_stop_minute = @schedule.time_stop - time_stop_hour*100
-  end
+  time_start_hour = @schedule.detailed_start_time.hour
+  time_start_minute = @schedule.detailed_start_time.min
+  time_stop_hour = @schedule.detailed_stop_time.hour
+  time_stop_minute = @schedule.detailed_stop_time.min
   next_pickup_start = Time.new(next_pickup.year,next_pickup.month,next_pickup.day,time_start_hour,time_start_minute)
   next_pickup_stop = Time.new(next_pickup.year,next_pickup.month,next_pickup.day,time_stop_hour,time_stop_minute)
 end 

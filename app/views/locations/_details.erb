@@ -14,7 +14,7 @@
 <%= loc.address %>
 <br />
 
-<% unless loc.website.empty? %>
+<% unless loc.website.nil? %>
   <a target="_new" href="<%=loc.website%>">website</a>
   <br />
 <% end %>

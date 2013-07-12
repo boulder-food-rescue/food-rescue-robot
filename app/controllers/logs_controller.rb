@@ -276,17 +276,25 @@ class LogsController < ApplicationController
         pdf = Prawn::Document.new
         pdf.font_size 20
         pdf.text @loc.region.title, :align => :center
-        pdf.move_down 10
-        pdf.font_size 12
-        pdf.text @loc.region.tagline, :align => :center
-        pdf.font_size 10
-        pdf.font "Times-Roman"
-        pdf.move_down 10
-        pdf.text "#{@loc.region.address.tr("\n",", ")}", :align => :center
-        pdf.move_down 5 
-        pdf.text "#{@loc.region.website}", :align => :center
-        pdf.move_down 5 
-        pdf.text "#{@loc.region.phone}", :align => :center
+        unless @loc.region.tagline.nil?
+          pdf.move_down 10
+          pdf.font_size 12
+          pdf.text @loc.region.tagline, :align => :center
+        end
+        unless @loc.region.address.nil?
+          pdf.font_size 10
+          pdf.font "Times-Roman"
+          pdf.move_down 10
+          pdf.text "#{@loc.region.address.tr("\n",", ")}", :align => :center
+        end
+        unless @loc.region.website.nil?
+          pdf.move_down 5 
+          pdf.text "#{@loc.region.website}", :align => :center
+        end
+        unless @loc.region.phone.nil?
+          pdf.move_down 5 
+          pdf.text "#{@loc.region.phone}", :align => :center
+        end
         pdf.move_down 10
         pdf.text "Federal Tax-ID: #{@loc.region.tax_id}", :align => :right
         pdf.text "Receipt period: #{@start_date} to #{@stop_date}", :align => :left

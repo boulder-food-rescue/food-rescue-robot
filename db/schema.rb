@@ -122,9 +122,8 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
-    t.integer  "tz_offset"
-    t.text     "time_zone"
     t.string   "weight_unit",            :default => "pound", :null => false
+    t.text     "time_zone"
   end
 
   create_table "schedule_parts", :force => true do |t|
@@ -159,6 +158,8 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.date     "detailed_date"
     t.text     "frequency"
   end
+
+  add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"
 
   create_table "transport_types", :force => true do |t|
     t.string   "name"

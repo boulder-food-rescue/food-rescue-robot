@@ -1,0 +1,59 @@
+<h2><%=@header%></h2>
+
+<div style="text-align: right;">
+  <%= form_tag("/regions/new", :method => "get") do %>
+    New Region <%= submit_tag("Go") %>
+  <% end %>
+</div>
+
+<% if @regions.length == 0 %>
+
+  <p>No regions.</p>
+
+<% else %>
+
+  <table id="data_table">
+    <thead>
+      <tr>
+        <th> </th>
+        <th> Short Name </th>
+        <th> Title </th>
+        <th> Address </th>
+        <th> Notes </th>
+        <th> Stats </th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+    <% @regions.each do |r| %>
+      <tr>
+        <td> <% unless r.logo_file_name.nil? %><a href="<%= r.logo(:medium) %>"><img src="<%= r.logo(:thumb) %>"></a><% end %>
+        <td> <%= r.name %>: <% unless r.website.nil? %><%= link_to "website", r.website %><% end %>
+                           <% unless r.handbook_url.nil? %><%= link_to "handbook", r.handbook_url %><% end %></td>
+        <td> <%= r.title %><%= r.tagline.nil? ? "" : ": #{r.tagline}" %>
+        <td> <%= r.address.gsub("\n","<br>").html_safe unless r.address.nil? %></td>    
+        <td><small><%= word_wrap(r.notes,:line_width => 30).gsub("\n","<br>").html_safe unless r.notes.nil? %></small></td>
+        <td>Completed Pickups: <%= Log.where("region_id = ? AND complete",r.id).count %>, 
+            Active Volunteers: <%= Schedule.select("volunteer_id").where("region_id = ?",r.id).uniq.length %>
+        <td>
+               <%= link_to 'edit', :controller => "regions", :action => "edit", :id => r %><br>
+               <%= link_to "delete", r, :confirm => "Are you sure?", :method => :delete %> </td>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+
+  </table>
+
+<% end %>
+<% content_for :scripts do %>
+<script type="text/javascript">
+$(function () { 
+  $('#data_table').dataTable( {
+    'iDisplayLength' : 50,
+     "aaSorting": [[ 1, "asc" ]]
+  });
+});
+</script>
+<% end %>

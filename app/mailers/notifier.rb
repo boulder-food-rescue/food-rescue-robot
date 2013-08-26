@@ -1,4 +1,5 @@
 class Notifier < ActionMailer::Base
+  add_template_helper(ApplicationHelper)
   default :from => "robot@boulderfoodrescue.org"
 
   def region_welcome_email(region,volunteer)

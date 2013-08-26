@@ -165,6 +165,9 @@ class LogsController < ApplicationController
       return
     end
     params["log_parts"].each{ |dc,lpdata|
+      lpdata["weight"] = nil if lpdata["weight"].strip == ""
+      lpdata["count"] = nil if lpdata["count"].strip == ""
+      next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
       lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
       lp.weight = lpdata["weight"]
       lp.count = lpdata["count"]

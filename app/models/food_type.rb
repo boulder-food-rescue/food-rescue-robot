@@ -6,7 +6,7 @@ class FoodType < ActiveRecord::Base
   has_many :logs, :through => :log_parts
   belongs_to :region
 
-  def self.regional(region)
-    where("region_id = ?",region.id)
+  def self.regional(region_id)
+    where(:region_id=>region_id)
   end
 end

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # the base rails libraries
-gem 'rails', '~> 3.2.13'
+gem 'rails', '~> 3.2.14'
 
 # for talking to the sqlite3 on-disk database
 gem 'sqlite3'

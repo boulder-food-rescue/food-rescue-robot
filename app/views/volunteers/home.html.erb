@@ -1,6 +1,3 @@
-<div class="home_sidebar">
-<h1>Sections</h1>
-</div>
 <div class="home_sections">
   <% if @sncs_pickups.length > 0 %>
   <div id="sncs_notice">
@@ -220,6 +217,7 @@
   </div>
 </div>
 
+<% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 
     $('#highchart').highcharts({
@@ -243,3 +241,4 @@ $(function () {
     });
 });
 </script>
+<% end %>

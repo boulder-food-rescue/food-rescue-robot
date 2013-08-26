@@ -96,6 +96,7 @@
 <% end %>
 
 <% if use_detailed_hours? %>
+<% content_for :scripts do %>
 <script type="text/javascript">
 $(function(){
   $('.day-wrapper').each(function(idx,el){
@@ -114,4 +115,5 @@ $(function(){
   });
 })
 </script>
+<% end %>
 <% end %>

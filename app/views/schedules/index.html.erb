@@ -110,6 +110,7 @@ Key:
   <span style="background: pink">No Volunteer</span>
   <span style="background: lightgreen">Needs Training</span>
 
+<% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 
   $('#data_table').dataTable( {
@@ -117,3 +118,4 @@ $(function () {
   });
 });
 </script>
+<% end %>

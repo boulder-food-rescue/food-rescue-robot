@@ -70,6 +70,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   </tbody>
 </table>
 <% end %>
+<% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 
   $('#data_table').dataTable( {
@@ -77,3 +78,4 @@ $(function () {
   });
 });
 </script>
+<% end %>

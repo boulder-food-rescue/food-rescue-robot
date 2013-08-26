@@ -1,6 +1,3 @@
-<div class="home_sidebar">
-  <h1> Sections <h2>
-</div>
 <div class="home_sections">
 <% 
 pounds_per_year = {}
@@ -99,6 +96,7 @@ pounds_per_year.keys.sort.each{ |year| %>
 <% } %>
 </tbody></table>
 <br><br>
+<% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 
   $('.datatable').dataTable( {
@@ -144,4 +142,5 @@ $(function () {
   });
 });
 </script>
+<% end %>
 </div></div>

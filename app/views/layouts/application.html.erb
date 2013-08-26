@@ -1,281 +1,168 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>The Food Rescue Robot</title>
-  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
-  <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
-  <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-  <%= stylesheet_link_tag "active_scaffold", "common", "main", "navigation", "welcome", "test", :media => "all" %>
-  <%= stylesheet_link_tag "gmaps4rails" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-  <script type="text/javascript" language="javascript" src="/DataTables-1.9.2/media/js/jquery.dataTables.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="/DataTables-1.9.2/media/css/demo_table.css">
-</head>
-<body>
-  <div class="container">
-  <div class="navigation">
-    <% unless current_volunteer.nil? %>
-    <div id="cssmenu">
-      <li>
-        <a href="<%=root_path%>">
-          <span>Home</span>
-        </a>
-      </li>
-        <li class='has-sub'>
-          <a href="#">
-            <span>Schedule</span>
-          </a>
-          <ul>
-          <li>
-            <a href="/schedules/mine">My Schedule</a>
-          </li>
-          <li>
-            <a href="/schedules/open">Unassigned</a>
-          </li>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= content_for?(:title) ? yield(:title) : "Webapp" %></title>
+    <%= stylesheet_link_tag    "active_scaffold", "common", "main", "navigation", "welcome", "test", :media => "all" %>
+    <%= csrf_meta_tags %>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js" type="text/javascript"></script>
+    <![endif]-->
+
+    <%= stylesheet_link_tag "application", :media => "all" %>
+
+    <!-- For third-generation iPad with high-resolution Retina display: -->
+    <!-- Size should be 144 x 144 pixels -->
+    <%= favicon_link_tag 'images/apple-touch-icon-144x144-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '144x144' %>
+
+    <!-- For iPhone with high-resolution Retina display: -->
+    <!-- Size should be 114 x 114 pixels -->
+    <%= favicon_link_tag 'images/apple-touch-icon-114x114-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '114x114' %>
+
+    <!-- For first- and second-generation iPad: -->
+    <!-- Size should be 72 x 72 pixels -->
+    <%= favicon_link_tag 'images/apple-touch-icon-72x72-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '72x72' %>
+
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <!-- Size should be 57 x 57 pixels -->
+    <%= favicon_link_tag 'images/apple-touch-icon-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png' %>
+
+    <!-- For all other devices -->
+    <!-- Size should be 32 x 32 pixels -->
+    <%= favicon_link_tag 'favicon.png', :rel => 'shortcut icon' %>
+  </head>
+
+  <body>
+
+    <%= nav_bar :brand=>'The Food Rescue Robot', :responsive=>true do %>
+
+      <%= menu_group do %>
+      
+        <%= menu_item "Home", root_path %>
+
+        <% if volunteer_signed_in? %>
+
+          <%= drop_down "Schedule" do %>
+            <%= menu_item "My Schedule", mine_schedules_path %>
+            <%= menu_item "Unassigned", open_schedules_path %>
+            <% if current_volunteer.any_admin? %>
+              <%= menu_item "Full Schedule", schedules_path %>
+              <%= menu_item "Yesterday", yesterday_schedules_path %>
+              <%= menu_item "Today", today_schedules_path %>
+              <%= menu_item "Tomorrow", tomorrow_schedules_path %>
+            <% end %>
+          <% end %>
+
+          <%= drop_down "Shifts" do %>
+            <%= menu_item "Upcoming Shifts", mine_upcoming_logs_path %>
+            <%= menu_item "Past Shifts", mine_past_logs_path %>
+            <%= menu_item "Cover Shifts", open_logs_path %>
+            <%= menu_item "Schedule Absence", new_absence_logs_path %>
+          <% end %>
+
+          <% if Region.has_any_handbooks? current_volunteer.regions %>
+            <%= drop_down "Handbook" do %>
+              <% current_volunteer.regions.each do |region| %>
+                <%= menu_item region.name+" Handbook", region.handbook_url if region.has_handbook? %> 
+              <% end %>
+            <% end %>
+          <% end %>
+
           <% if current_volunteer.any_admin? %>
-          <li>
-           <a href=<%= schedules_path %>>
-             <span>Full Schedule</span>
-           </a>
-          </li>
-            <a href=<%= yesterday_schedules_path %>>
-              <span>Yesterday</span>
-            </a>
-          </li>
-          <li>
-            <a href=<%= today_schedules_path %>>
-              <span>Today</span>
-            </a>
-          </li>
-          <li>
-            <a href=<%= tomorrow_schedules_path %>>
-              <span>Tomorrow</span>
-            </a>
-          </li>
-  <% end %>
-          </ul>
-        </li>
-      <% if volunteer_signed_in? %>
-        <li class="has-sub">
-          <a href="#">
-            <span>Shifts</span>
-          </a>
-          <ul>
-            <li>
-              <a href="/logs/mine_upcoming">Upcoming Shifts</a>
-            </li>
-            <li>
-              <a href="/logs/mine_past">Past Shifts</a>
-            </li>
-            <li>
-              <a href="/logs/open">Cover Shifts</a>
-            </li>
-            <li>
-              <a href=<%= new_absence_logs_path %>>
-                <span>Schedule Absence</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-      <% end %>
-      <% if volunteer_signed_in? and Region.has_any_handbooks? current_volunteer.regions %>
-        <li class="has-sub">
-          <a href="#">
-            <span>Handbook</span>
-          </a>
-          <ul>
-            <% current_volunteer.regions.each{ |r| 
-                 next if r.handbook_url.nil?
-            %>
-            <li>
-              <a href="<%= r.handbook_url %>">
-                <span><%= r.name %></span>
-              </a>
-            </li>
-            <% } %>
-          </ul>
-        </li>
-      <% end %>
-      <% if volunteer_signed_in? and current_volunteer.any_admin? %>
-        <li class='has-sub'>
-          <a href="#" class="<%= "selected" if request.fullpath == volunteers_path %>">
-            <span>Volunteers</span>
-          </a>
-          <ul>
-            <li>
-             <a href=<%= volunteers_path %> class="<%= "selected" if request.fullpath == volunteers_path %>">
-             <span>Full List</span>
-            </a>
-            <li>
-              <a href=<%= shiftless_volunteers_path %> class="<%= "selected" if request.fullpath == shiftless_volunteers_path %>">
-                <span>Shiftless</span>
-              </a>
-            </li>
-            <li>
-              <a href=<%= need_training_volunteers_path %> class="<%= "selected" if request.fullpath == need_training_volunteers_path %>">
-                <span>Need Training</span>
-              </a>
-            </li>
-            <li>
-              <a href=<%= unassigned_volunteers_path %> class="<%= "selected" if request.fullpath == unassigned_volunteers_path %>">
-                <span>Unassigned</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-      <% end %>
-      <% if volunteer_signed_in? and current_volunteer.any_admin? %>
-        <li class='has-sub'>
-          <a href="#" class="<%= "selected" if request.fullpath == logs_path %>">
-            <span>Rescue Log</span>
-          </a>
-          <ul>
-            <li>
-             <a href=<%= last_ten_logs_path %>>
-               <span>Last 10 Days</span>
-             </a>
-            </li>
-            <li>
-              <a href=<%= yesterday_logs_path %> class="<%= "selected" if request.fullpath == yesterday_logs_path %>">
-                <span>Yesterday</span>
-              </a>
-            </li>
-            <li>
-              <a href=<%= today_logs_path %> class="<%= "selected" if request.fullpath == today_logs_path %>">
-                <span>Today</span>
-              </a>
-            </li>
-            <li>
-              <a href=<%= tomorrow_logs_path %> class="<%= "selected" if request.fullpath == tomorrow_logs_path %>">
-                <span>Tomorrow</span>
-              </a>
-            </li>
-            <li>
-              <a href=<%= logs_path %> class="<%= "selected" if request.fullpath == logs_path %>">
-                <span>Entire Log</span>
-              </a>
-            </li>
-            <li>
-              <a href=<%= tardy_logs_path %> class="<%= "selected" if request.fullpath == tardy_logs_path %>">
-                <span>Tardy</span>
-              </a>
-            </li>
-            <a href=<%= being_covered_logs_path %> class="<%= "selected" if request.fullpath == being_covered_logs_path %>">
-                <span>Being Covered</span>
-              </a>
-            </li>
 
-          </ul>
-        </li>
-      <% end %>
-      <% if volunteer_signed_in? and current_volunteer.any_admin? %>
-        <li class='has-sub '>
-          <a href='#'><span>Region Admin</span></a>
- 	  <ul>
-	   <li>
-	      <a href=<%= recipients_locations_path %> class="<%= "selected" if request.fullpath == recipients_locations_path %>">
-	        <span>Recipients</span>
-	      </a>
-	    </li>
-            <li>
-             <a href=<%= donors_locations_path %> class="<%= "selected" if request.fullpath == donors_locations_path %>">
-              <span>Donors</span>
-             </a>
-           </li>
-          <li>
-            <a href=<%= food_types_path %> class="<%= "selected" if request.fullpath == food_types_path %>">
-              <span>Food Types</span>
-            </a>
-          </li>
-          <li>
-           <a href="/volunteers/region_admin">Controls</a>
-          </li>
-          <li>
-           <a href="/volunteers/region_stats">Statistics</a>
-          </li>
-        </ul>
-        </li>
+            <%= drop_down "Volunteers" do %>
+              <%= menu_item "Full List", volunteers_path %>
+              <%= menu_item "Shiftless", shiftless_volunteers_path %>
+              <%= menu_item "Need Training", need_training_volunteers_path %>
+              <%= menu_item "Unassigned", unassigned_volunteers_path %>
+            <% end %>
+
+            <%= drop_down "Rescue Log" do %>
+              <%= menu_item "Last 10 Days", last_ten_logs_path %>
+              <%= menu_item "Yesterday", yesterday_logs_path %>
+              <%= menu_item "Today", today_logs_path %>
+              <%= menu_item "Tomorrow", tomorrow_logs_path %>
+              <%= menu_item "Entire Log", logs_path %>
+              <%= menu_item "Tardy", tardy_logs_path %>
+              <%= menu_item "Being Covered", being_covered_logs_path %>
+            <% end %>
+
+            <%= drop_down "Region Admin" do %>
+              <%= menu_item "Recipients", recipients_locations_path %>
+              <%= menu_item "Donors", donors_locations_path %>
+              <%= menu_item "Food Types", food_types_path %>
+              <%= menu_item "Controls", '/volunteers/region_admin' %>
+              <%= menu_item "Statistics", '/volunteers/region_stats' %>
+            <% end %>
+
+            <% if current_volunteer.super_admin? %>
+              <%= drop_down "Super Admin" do %>
+                <%= menu_item "Cell Carriers", cell_carriers_path %>
+                <%= menu_item "Manage Regions", regions_path %>              
+                <%= menu_item "Transport Types", transport_types_path %>
+                <%= menu_item "Controls", '/volunteers/super_admin' %>
+              <% end %>
+            <% end %>
+
+          <% end # if signed in %>
+
+        <% end # menu group %>
+
+        <%= menu_group :pull => :right do %>
+          <% if volunteer_signed_in? %>
+            <%= drop_down current_volunteer.name  do %>
+              <%= menu_item "Settings", edit_volunteer_path(current_volunteer.id) %>
+              <%= menu_item "Waiver", waiver_volunteers_path %>
+              <%= menu_item "Logout", destroy_volunteer_session_path, :method => :delete %>
+            <% end %>
+          <% else %>
+            <%= menu_item "Login", '/volunteers/sign_in' %>
+          <% end %>
         <% end %>
-        <% if current_volunteer.super_admin? %>
-        <li class='has-sub'>
-          <a href='#'><span>Super Admin</span></a>
-           <ul>
-          <li>
-            <a href=<%= cell_carriers_path %> class="<%= "selected" if request.fullpath == cell_carriers_path %>">
-              <span>Cell Carriers</span>
-            </a>
-          </li>
-          <li>
-            <a href=<%= regions_path %> class="<%= "selected" if request.fullpath == regions_path %>">
-              <span>Manage Regions</span>
-            </a>
-          </li>
-          <li>
-            <a href=<%= transport_types_path %> class="<%= "selected" if request.fullpath == transport_types_path %>">
-              <span>Transport Types</span>
-            </a>
-          </li>
-            <li>
-               <a href="/volunteers/super_admin">Controls</a>
-            </li>
-	</ul>
-        </li>
+
       <% end %>
-      <% if volunteer_signed_in? %>
-        <li id="user_controls" class="has-sub">
-          <a href="#">
-          	<span><%= current_volunteer.name%></span>
-          </a>
-          <ul>
-            <li>
-                  <%= link_to('Settings', edit_volunteer_path(current_volunteer.id)) %>
-           </li>
-           <li>
-          	  <%= link_to('Account', edit_volunteer_registration_path) %>
-           </li>
-           <li>
-                  <%= link_to('Waiver', '/volunteers/waiver') %>
-           </li>
-           <li>
-          	  <%= link_to('Logout', destroy_volunteer_session_path, :method => :delete) %>
-           </li>
-          </ul>
-        </li>
-    <% end %>
-    </div>
-    <% end %>
-  </div>
-  <div class="header">
-    <% if volunteer_signed_in? and !current_volunteer.main_region.nil? %>
-    <div>
-      <h2 id="bfr_title"><%= current_volunteer.main_region.title %></h2>
-      <h3><%= current_volunteer.main_region.tagline %></h3>
-    </div>
-    <%= link_to current_volunteer.main_region.website do image_tag(current_volunteer.main_region.logo(:thumb), :class => 'logo_image') end %>
-    <% else %>
-    <div>
-      <h2 id="bfr_title">The Food Rescue Robot</h2>
-      <h3>Just-in-Time Food Rescue Logistics</h3>
-    </div> 
-    <% end %> 
-  </div>
-  <div class="wrap">    
-    <% if notice %>
-     <div class="notice"><%= notice %></div>
-    <% end %>
-    <% if alert %>
-     <div class="alert"><%= alert %></div>
-    <% end %>
-    <%= yield %>
-  </div>
-  
-  <div class="footer">
-    <p>Copyright © <a href="http://www.boulderfoodrescue.org">Boulder Food Rescue</a> <%= Time.now.year %></p>
-  </div>
-  </div>
 
-  <%= yield :scripts %>
+    <% end %>
 
-</body>
+    <!-- header -->
+    <% if @region or (volunteer_signed_in? and current_volunteer.has_main_region?) %>
+      <div class="subhead">
+        <div class="container-fluid">
+          <div class="page-header">
+            <% current_region = (volunteer_signed_in?) ? current_volunteer.main_region : @region %>
+            <h1><%= current_region.title %> <small><%= current_region.tagline %></small></h1>
+          </div>
+        </div>
+      <div>
+    <% end %>
+
+    <!-- content -->
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <div class="span12">
+          <%= bootstrap_flash %>
+          <%= yield %>
+        </div>
+      </div><!--/row-->
+      
+      <footer>
+        <p>&copy; Boulder Food Rescue <%=Time.new.year %></p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Javascripts
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <%= javascript_include_tag "application" %>
+    <%= yield :scripts %>
+    
+  </body>
+
 </html>

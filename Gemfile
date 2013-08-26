@@ -56,3 +56,5 @@ gem 'gmaps4rails'
 
 # lets us render charts in-browser
 gem "highcharts-rails", "~> 3.0.0"
+
+gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-rails.git'

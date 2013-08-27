@@ -3,15 +3,15 @@
 <%= hidden_field_tag "log[region_id]", @region.id %>
 <%= hidden_field_tag "log[schedule_id]", @log.schedule.nil? ? nil : @log.schedule.id  %>
 <tr><td>Date<td><%= f.date_select :when %>
-<tr><td>Volunteer<td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| (v.region_ids.include? @region.id) ? v : nil }.compact.collect{ |v| [v.name,v.id] },{:include_blank => true}) %>
-<tr><td>Donor<td><%= f.select(:donor_id, Location.where("is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
-<tr><td>Recipient<td><%= f.select(:recipient_id, Location.where("NOT is_donor AND region_id = ?",@region.id).collect{ |l| [l.name,l.id] },{:include_blank => true}) %>
+<tr><td>Volunteer<td><%= f.select(:volunteer_id, @volunteers,{:include_blank => true}) %>
+<tr><td>Donor<td><%= f.select(:donor_id, @donors,{:include_blank => true}) %>
+<tr><td>Recipient<td><%= f.select(:recipient_id, @recipients,{:include_blank => true}) %>
 <tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br>Put a 0 if the pick-up didn't happen for some reason.</span></td><td>
 <table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.region.weight_unit %>s)<th> Count<th>Description
 <% @log.log_parts.each{ |lp| %>
   <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
     <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
-    <td><%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
+    <td><%= f2.select(:food_type_id, @food_types,{:include_blank => true}) %>
     <td><%= f2.text_field(:weight,:size=>5) %>
     <td><%= f2.text_field(:count,:size=>5) %>
     <td><%= f2.text_field(:description,:size=>20) %>
@@ -21,7 +21,7 @@
 <% } %>
 <%= fields_for :log_parts, LogPart.new, :index => "new_0" do |f2| %>
   <tr class="log_part">
-  <td><%= f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true}) %>
+  <td><%= f2.select(:food_type_id, @food_types,{:include_blank => true}) %>
   <td><%= f2.text_field(:weight,:size=>5) %>
   <td><%= f2.text_field(:count,:size=>5) %>
   <td><%= f2.text_field(:description,:size=>20) %>
@@ -31,7 +31,7 @@
   <%=
     task = "<tr class=\"log_part\">"
     fields_for :log_parts, LogPart.new, :index => "new_42" do |f2|
-      task += "<td>" + f2.select(:food_type_id, FoodType.regional(@log.region).collect{ |ft| [ft.name,ft.id] },{:include_blank => true})
+      task += "<td>" + f2.select(:food_type_id, @food_types,{:include_blank => true})
       task += "<td>" + f2.text_field(:weight,:size=>5)
       task += "<td>" + f2.text_field(:count,:size=>5)
       task += "<td>" + f2.text_field(:description,:size=>20)
@@ -45,12 +45,12 @@ EOF
    %>
 </td></tr>
 <tr><td>Weighed With<td><%= f.select(:weighed_by, [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],["Guesstimate","Guesstimate"]],{:include_blank => true}) %>
-<tr><td>Transported With<td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{:include_blank => true}) %>
+<tr><td>Transported With<td><%= f.select(:transport_type_id, @transport_types,{:include_blank => true}) %>
 <tr><td>Notes<br>
 <span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.<td><%= f.text_area(:notes, :size => "30x6") %>
 <tr><td>Flag For Admin<br>
 <span class="subtext">Check this if you want to make sure someone reads this.</span><td><%= f.check_box(:flag_for_admin) %>
-<tr><td>Original Volunteer<br><span class="subtext">The person originally scheduled to do<br>this shift, if you are covering it.<td><%= f.select(:orig_volunteer_id, Volunteer.all.collect{ |v| (v.region_ids.include? @region.id) ? v : nil }.compact.collect{ |v| [v.name,v.id] },{:include_blank => true}) %>
+<tr><td>Original Volunteer<br><span class="subtext">The person originally scheduled to do<br>this shift, if you are covering it.<td><%= f.select(:orig_volunteer_id, @volunteers,{:include_blank => true}) %>
 </table>
 <%= submit_tag %>
 <% end %>

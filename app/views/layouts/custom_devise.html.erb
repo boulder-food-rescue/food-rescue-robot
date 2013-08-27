@@ -71,7 +71,7 @@ recipient_count = Location.count(:conditions => {:is_donor => false})
   
 #Donor Stats
 list_of_donors = Location.where(:is_donor => true)
-donor_count = list_of_donors.length
+donor_count = Location.where(:is_donor => true).count
 
 list_of_regions = Region.all
 

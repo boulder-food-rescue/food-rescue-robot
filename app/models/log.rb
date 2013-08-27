@@ -29,11 +29,12 @@ class Log < ActiveRecord::Base
   end
 
   def tweet(record)
-    return true if record.region.nil? or record.region.twitter_key.nil?
+    return true if record.region.nil? or record.region.twitter_key.nil? or record.region.twitter_secret.nil? or record.region.twitter_token.nil? or 
+                   record.region.twitter_token_secret.nil?
     return true unless record.complete
 
     poundage = Log.where("complete AND region_id = ?",region.id).collect{ |l| l.summed_weight }.sum
-    poundage += record.region.prior_lbs_rescued
+    poundage += record.region.prior_lbs_rescued unless record.region.prior_lbs_rescued.nil?
     last_poundage = region.twitter_last_poundage.nil? ? 0.0 : region.twitter_last_poundage
 
     if TweetGainOrTime == :time

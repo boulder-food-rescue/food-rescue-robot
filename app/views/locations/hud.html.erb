@@ -42,6 +42,7 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
   <tr>
     <th> When </th>
     <th> Volunteer </th>
+    <% unless @loc.is_donor? %><th> Donor </th><% end %>
     <th> Weight </th>
     <th> Transport Type </th>
     <th> Food Type </th>
@@ -54,6 +55,7 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
   <tr>
     <td> <%= shift.when %> </td>
     <td> <%= shift.volunteer.nil? ? "Unknown" : shift.volunteer.name %>
+    <% unless @loc.is_donor? %><td> <%= shift.donor.nil? ? "Unknown" : shift.donor.name %><% end %>
     <td> <%= shift.weight_sum %> </td>
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types_combined %>
@@ -61,6 +63,7 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
   <% end %>
   </tbody>
 </table>
+
 <% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 

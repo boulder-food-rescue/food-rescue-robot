@@ -8,7 +8,7 @@ class LocationsController < ApplicationController
       if @loc.is_donor
         @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").where("donor_id = ?",@loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").order("logs.when ASC")
       else 
-        @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").where("recipient_id = ?",@loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").order("logs.when ASC")
+        @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.donor_id, logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").where("recipient_id = ?",@loc.id).group("logs.donor_id, logs.id, logs.transport_type_id, logs.when, logs.volunteer_id").order("logs.when ASC")
       end
       render :hud
     else

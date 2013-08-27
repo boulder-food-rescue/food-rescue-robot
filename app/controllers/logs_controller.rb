@@ -234,12 +234,16 @@ class LogsController < ApplicationController
     end
     
     n = 0
+    nexisting = 0
     while from <= to
       pickups.each{ |p|
         next unless from.wday.to_i == p.day_of_week.to_i
         # make sure we don't create more than one for the same absence
         found = Log.where('"when" = ? AND schedule_id = ?',from,p.id)
-        next if found.length > 0
+        if found.length > 0
+          nexisting += 1
+          next
+        end
 
         # create the null record
         lo = Log.new
@@ -261,7 +265,7 @@ class LogsController < ApplicationController
       break if n >= 12      
       from += 1
     end
-    flash[:notice] = "Scheduled #{n} absences (12 is the max at one time)"
+    flash[:notice] = "Thanks for scheduling an absence, if you would like to pick one up to replace it go here: <a href=\"/logs/open\">cover shifts list</a>.<br><br>#{nexisting} absences were already scheduled during this time frame, #{n} new absences were scheduled (12 is the max at one time)."
     render :new_absence
   end
 

@@ -121,16 +121,25 @@ class LogsController < ApplicationController
       redirect_to(root_path)
       return
     end
-    params["log_parts"].each{ |dc,lpdata|
-      lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
-      lp.weight = lpdata["weight"]
-      lp.count = lpdata["count"]
-      lp.description = lpdata["description"]
-      lp.food_type_id = lpdata["food_type_id"].to_i
-      lp.log_id = @log.id
-      lp.save
-    } unless params["log_parts"].nil?
     if @log.save
+
+      # mark as complete if deserving
+      unfilled_count = 0
+      params["log_parts"].each{ |dc,lpdata|
+        lp = LogPart.new
+        lp.weight = lpdata["weight"]
+        lp.count = lpdata["count"]
+        unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
+        lp.description = lpdata["description"]
+        lp.food_type_id = lpdata["food_type_id"].to_i
+        lp.log_id = @log.id
+        lp.save
+      } unless params["log_parts"].nil?
+      if unfilled_count == 0
+        @log.complete = true
+        @log.save
+      end
+
       flash[:notice] = "Created successfully."
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])

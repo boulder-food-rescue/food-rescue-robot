@@ -49,6 +49,8 @@
       row_bgcolor = nil
       if schedule.volunteer.nil?
         row_bgcolor = "pink"
+      elsif schedule.temporary
+        row_bgcolor = "#9999FF"
       elsif schedule.volunteer.needs_training
         row_bgcolor = "lightgreen"
       elsif schedule.recipient.nil? or schedule.donor.nil?
@@ -109,6 +111,7 @@ Key:
   <span style="background: yellow">Missing Donor/Recipient</span>
   <span style="background: pink">No Volunteer</span>
   <span style="background: lightgreen">Needs Training</span>
+  <span style="background: #9999FF">Temporary Cover</span>
 
 <% content_for :scripts do %>
 <script type="text/javascript">

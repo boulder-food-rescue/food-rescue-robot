@@ -3,7 +3,7 @@ class SchedulesController < ApplicationController
   before_filter :admin_only, :only => [:fast_schedule,:today,:tomorrow,:yesterday,:edit,:update,:create,:new]
 
   def open
-    index(nil,nil,"volunteer_id IS NULL and recipient_id IS NOT NULL")
+    index(nil,nil,"temporary OR (volunteer_id IS NULL and recipient_id IS NOT NULL)")
   end
   def mine
     index(nil,current_volunteer.id)

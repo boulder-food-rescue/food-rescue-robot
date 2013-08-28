@@ -43,6 +43,9 @@
     <tr><td>Backup Pick up</td>
         <td><%= f.check_box(:backup) %></td>
     </tr>
+    <tr><td>Temporary Cover</td>
+        <td><%= f.check_box(:temporary) %></td>
+    </tr>
     <tr><td>Scheduled Transport</td>
         <td><%= f.select(:transport_type_id, @transport_types) %>
     <%= hidden_field_tag "schedule[food_type_ids][]","" %></td>

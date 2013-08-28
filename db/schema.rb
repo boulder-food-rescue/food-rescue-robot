@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130512224042) do
+ActiveRecord::Schema.define(:version => 20130827234628) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -147,8 +147,8 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.integer  "time_stop"
     t.text     "admin_notes"
     t.text     "public_notes"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.boolean  "irregular"
     t.boolean  "backup"
     t.integer  "transport_type_id"
@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(:version => 20130512224042) do
     t.time     "detailed_stop_time"
     t.date     "detailed_date"
     t.text     "frequency"
+    t.boolean  "temporary",           :default => false
   end
 
   add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"

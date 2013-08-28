@@ -15,6 +15,7 @@ No unassigned volunteers...
     <th> Region </th>
     <th> Send<br>Welcome<br>Email </th>
     <th> Assign</th>
+    <th> Delete</th>
   </tr>
   </thead>
   <tbody>
@@ -43,6 +44,8 @@ No unassigned volunteers...
         <%= check_box_tag(:send_welcome_email,1,:checked=>true) %>
     <td>
         <%= submit_tag("Assign") %>
+    <td>
+        <%= link_to "Delete", v, :confirm => "Are you sure?", :method => :delete %>
         <% end %></td>
   </tr>
   <% end %>

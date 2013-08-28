@@ -113,6 +113,7 @@ class SchedulesController < ApplicationController
     s = Schedule.find(params[:id])
     if current_volunteer.regions.collect{ |r| r.id }.include? s.region_id
       s.volunteer = current_volunteer
+      s.temporary = false
       s.save
       flash[:notice] = "Successfully took 1 shift."
     else

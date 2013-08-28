@@ -23,10 +23,14 @@
           </tr>
           <% @upcoming_pickups.each do |pickup| %>
           <tr>
-            <td> <%= link_to pickup.donor.name, pickup.donor %> 
+            <td> <%= link_to pickup.donor.name, pickup.donor %> &gt; <%= link_to pickup.recipient.name, pickup.recipient %><br>
                  <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
             </td>
-            <td> <%= pickup.when %> </td>
+            <td> <%= pickup.when %><br>
+                 <% unless pickup.schedule.nil? or pickup.schedule.time_start.nil? or pickup.schedule.time_stop.nil? %>
+                   (between <%= pickup.schedule.time_start %> and <%= pickup.schedule.time_stop %>)
+                 <% end %>
+            </td>
             <td> <%= link_to 'Info', pickup.schedule %> </td>
           </tr>
           <% end %>
@@ -73,8 +77,13 @@
                break if n > 5
            %>
           <tr>
-            <td> <%= link_to pickup.donor.name, pickup.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
-            <td> <%= pickup.when %> </td>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %> <br>
+                 <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
+            <td> <%= pickup.when %>
+                 <% unless pickup.schedule.nil? or pickup.schedule.time_start.nil? or pickup.schedule.time_stop.nil? %><br />
+                  (between <%= pickup.schedule.time_start %> and <%= pickup.schedule.time_stop %>)
+                 <% end %>
+            </td>
             <td> <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => pickup.id %>
             <td> <%= link_to "Info", pickup.schedule %></td>
           </tr>

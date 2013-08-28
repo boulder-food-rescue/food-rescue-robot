@@ -75,7 +75,7 @@
         <% end %>
       </td>
       <td> <%= link_to schedule.recipient.name, schedule.recipient unless schedule.recipient.nil? %> </td>
-      <td <% if schedule.volunteer.nil? %>style="background: yellow;text-align: center;"<% end %>> <% if schedule.volunteer.nil? %>
+      <td <% if schedule.volunteer.nil? or schedule.temporary %>style="background: yellow;text-align: center;"<% end %>> <% if schedule.volunteer.nil? %>
            <%=  link_to "Take it!", :controller => "schedules", :action => "take", :id => schedule %>
            <% else %>
            <%= link_to schedule.volunteer.name, schedule.volunteer %> </td>

@@ -51,8 +51,12 @@
               next if report.donor.nil?
             %>
           <tr>
-            <td> <%= link_to report.donor.name, report.donor %> <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
-            <td> <%= report.when %> </td>
+            <td> <%= link_to report.donor.name, report.donor %> &gt; <%= link_to report.recipient.name, report.recipient %><br>
+                 <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
+            <td> <%= report.when %> <br>
+                 <% unless report.schedule.nil? or report.schedule.time_start.nil? or report.schedule.time_stop.nil? %>
+                   (between <%= report.schedule.time_start %> and <%= report.schedule.time_stop %>)
+                 <% end %>
             <td> <%= link_to "Fill In", edit_log_path(report) %></td>
           </tr>
           <% end %>

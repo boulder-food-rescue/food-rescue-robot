@@ -60,6 +60,7 @@
     <div class="home_sub_section">
      <h2> Regional Admin Appointment </h2>
      <div class="home_section_content">
+       Make a volunteer an admin for your region. Users that are asterisk-ed*, have admin powers already. You can remove those powers by toggling them.
        <%= form_tag("/assignments/knight", :method => "get") do %>
         <table class>
           <tr>
@@ -70,12 +71,8 @@
             <td>Region:</td>
             <td><%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %></td>
           </tr>
-          <tr>
-           <td>Un-Knight:</td>
-           <td><%= check_box_tag(:unassign) %></td>
-          </tr>
         </table>
-        <%= submit_tag %>
+        <%= submit_tag 'Toggle' %>
         <% end %>
     </div>
    </div>

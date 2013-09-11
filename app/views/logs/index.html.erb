@@ -45,7 +45,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     end
   %>
   <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-    <td> <%= shift.when %> </td>
+    <td> <%= shift.when %><br>(<%= time_ago_in_words(shift.when) %> <%= shift.when >= Date.today ? "from now" : "ago" %>)</td>
     <td <% if shift.volunteer.nil? %>style="background: yellow;text-align: center;"<% end %>> 
          <% if shift.volunteer.nil? %>
          <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => shift.id %>

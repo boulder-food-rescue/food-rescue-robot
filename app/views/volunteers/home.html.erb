@@ -31,10 +31,11 @@
             <td> <%= link_to pickup.donor.name, pickup.donor %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %><br>
                  <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
             </td>
-            <td> <%= pickup.when %><br>
-                 <% unless pickup.schedule.nil? or pickup.schedule.time_start.nil? or pickup.schedule.time_stop.nil? %>
-                   (between <%= pickup.schedule.time_start %> and <%= pickup.schedule.time_stop %>)
-                 <% end %>
+            <td> <%= pickup.when %> 
+                 <br>(<%= time_ago_in_words(pickup.when) %> ago
+                 <% unless pickup.schedule.nil? %>
+                   between <%= readable_start_time(pickup.schedule) %> and <%= readable_stop_time(pickup.schedule) %>
+                 <% end %>)
             </td>
             <td> <%= link_to 'Info', pickup.schedule %> </td>
           </tr>
@@ -58,10 +59,11 @@
           <tr>
             <td> <%= link_to report.donor.name, report.donor %> -&gt; <%= link_to report.recipient.name, report.recipient %><br>
                  <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
-            <td> <%= report.when %> <br>
-                 <% unless report.schedule.nil? or report.schedule.time_start.nil? or report.schedule.time_stop.nil? %>
-                   (between <%= report.schedule.time_start %> and <%= report.schedule.time_stop %>)
-                 <% end %>
+            <td> <%= report.when %> 
+                 <br>(<%= time_ago_in_words(report.when) %> ago
+                 <% unless report.schedule.nil? %>
+                   between <%= readable_start_time(report.schedule) %> and <%= readable_stop_time(report.schedule) %>
+                 <% end %>)
             <td> <%= link_to "Fill In", edit_log_path(report) %></td>
           </tr>
           <% end %>
@@ -88,10 +90,11 @@
           <tr>
             <td> <%= link_to pickup.donor.name, pickup.donor %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %> <br>
                  <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
-            <td> <%= pickup.when %>
-                 <% unless pickup.schedule.nil? or pickup.schedule.time_start.nil? or pickup.schedule.time_stop.nil? %><br />
-                  (between <%= pickup.schedule.time_start %> and <%= pickup.schedule.time_stop %>)
-                 <% end %>
+            <td> <%= pickup.when %> 
+                 <br>(<%= time_ago_in_words(pickup.when) %> ago
+                 <% unless pickup.schedule.nil? %>
+                  between <%= readable_start_time(pickup.schedule) %> and <%= readable_stop_time(pickup.schedule) %>
+                 <% end %>)
             </td>
             <td> <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => pickup.id %>
             <td> <%= link_to "Info", pickup.schedule %></td>
@@ -135,10 +138,6 @@
           <tr>
             <td> Pickup Avg </td>
             <td> <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> lbs</td>
-          </tr>
-          <tr>
-            <td># of Shifts Covered </td>
-            <td> <%= @num_covered %> </td>
           </tr>
           <tr>
             <td> % Human Powered </td>

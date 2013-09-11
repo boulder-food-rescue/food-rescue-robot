@@ -213,6 +213,9 @@ class VolunteersController < ApplicationController
     end
     today = Date.today
     
+    @open_shift_count = Schedule.where("NOT irregular AND volunteer_id IS NULL 
+                                        AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})").count
+
     #Upcoming pickup list
     @upcoming_pickups = Log.where(:when => today...(today + 7)).where(:volunteer_id => current_volunteer)
     @sncs_pickups = Log.where(:when => today...(today+7), :complete => false, :volunteer_id => nil).order("\"when\"").collect{ |l| 

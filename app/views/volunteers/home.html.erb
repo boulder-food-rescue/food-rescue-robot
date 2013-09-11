@@ -4,6 +4,11 @@
    <%= @sncs_pickups.length %> Shifts Need Covering Soon. <%= link_to "Pick one up here.", open_logs_path %>
   </div>
   <% end %>
+  <% if @open_shift_count > 0 %>
+  <div id="sncs_notice">
+   <%= @open_shift_count %> Shifts Need A Regular Volunteer. <%= link_to "Grab one here.", open_schedules_path %>
+  </div>
+  <% end %>
   <% unless current_volunteer.main_region.nil? or current_volunteer.main_region.splash_html.nil? %>
   <div class="home_section">
     <h1> Welcome </h1>

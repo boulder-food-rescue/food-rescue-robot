@@ -47,22 +47,13 @@
 
         <% if volunteer_signed_in? %>
 
-          <%= drop_down "Schedule" do %>
-            <%= menu_item "My Schedule", mine_schedules_path %>
-            <%= menu_item "Unassigned", open_schedules_path %>
-            <% if current_volunteer.any_admin? %>
-              <%= menu_item "Full Schedule", schedules_path %>
-              <%= menu_item "Yesterday", yesterday_schedules_path %>
-              <%= menu_item "Today", today_schedules_path %>
-              <%= menu_item "Tomorrow", tomorrow_schedules_path %>
-            <% end %>
-          <% end %>
-
           <%= drop_down "Shifts" do %>
-            <%= menu_item "Upcoming Shifts", mine_upcoming_logs_path %>
-            <%= menu_item "Past Shifts", mine_past_logs_path %>
+            <%= menu_item "Open Shifts", open_schedules_path %>
             <%= menu_item "Cover Shifts", open_logs_path %>
-            <%= menu_item "Schedule Absence", new_absence_logs_path %>
+            <%= menu_item "Your Regular Shifts", mine_schedules_path %>
+            <%= menu_item "Your Upcoming Shifts", mine_upcoming_logs_path %>
+            <%= menu_item "Your Past Shifts", mine_past_logs_path %>
+            <%= menu_item "Schedule An Absence", new_absence_logs_path %>
           <% end %>
 
           <% if Region.has_any_handbooks? current_volunteer.regions %>
@@ -74,6 +65,13 @@
           <% end %>
 
           <% if current_volunteer.any_admin? %>
+
+            <%= drop_down "Schedule" do %>
+              <%= menu_item "Full Schedule", schedules_path %>
+              <%= menu_item "Yesterday", yesterday_schedules_path %>
+              <%= menu_item "Today", today_schedules_path %>
+              <%= menu_item "Tomorrow", tomorrow_schedules_path %>
+            <% end %>
 
             <%= drop_down "Volunteers" do %>
               <%= menu_item "Full List", volunteers_path %>

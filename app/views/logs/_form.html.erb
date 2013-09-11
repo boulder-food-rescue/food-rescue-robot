@@ -1,4 +1,16 @@
 <%= form_for @log, :url => {:action => @action } do |f| %>
+<!-- Errors -->
+<% if @log.errors.any? %>
+  <div id="error_explanation">
+    <strong><%= pluralize(@log.errors.count, "error") %> prohibited this log from being saved:</strong>
+      <ul>
+    <% @log.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <table>
 <%= hidden_field_tag "log[region_id]", @region.id %>
 <%= hidden_field_tag "log[schedule_id]", @log.schedule.nil? ? nil : @log.schedule.id  %>
@@ -6,7 +18,8 @@
 <tr><td>Volunteer<td><%= f.select(:volunteer_id, @volunteers,{:include_blank => true}) %>
 <tr><td>Donor<td><%= f.select(:donor_id, @donors,{:include_blank => true}) %>
 <tr><td>Recipient<td><%= f.select(:recipient_id, @recipients,{:include_blank => true}) %>
-<tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br>Put a 0 if the pick-up didn't happen for some reason.</span></td><td>
+<tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br><br>
+                                      If the pick-up was dropped, put zeroes for the weights, and please explain why using the notes field below.</span></td><td>
 <table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.region.weight_unit %>s)<th> Count<th>Description
 <% @log.log_parts.each{ |lp| %>
   <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>

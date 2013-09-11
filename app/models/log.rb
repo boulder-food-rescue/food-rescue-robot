@@ -10,6 +10,15 @@ class Log < ActiveRecord::Base
   has_many :log_parts
   has_many :food_types, :through => :log_parts
 
+  validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
+            message: "can't be blank if weights/counts are all zero: let us know what happened!" }
+  validates :weighed_by, presence: { if: :complete }
+  validates :transport_type_id, presence: { if: :complete }
+  validates :donor_id, presence: { if: :complete }
+  validates :recipient_id, presence: { if: :complete }
+  validates :volunteer_id, presence: { if: :complete }
+  validates :when, presence: true
+
   attr_accessible :schedule_id, :region_id, :volunteer_id, :donor_id, :recipient_id, 
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :when

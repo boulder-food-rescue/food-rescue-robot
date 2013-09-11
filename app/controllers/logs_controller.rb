@@ -168,6 +168,10 @@ class LogsController < ApplicationController
 
   def update
     @log = Log.find(params[:id])
+    @region = @log.region
+    @action = "update"
+    set_vars_for_form @region
+
     unless current_volunteer.any_admin? @log.region or @log.volunteer == current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
       redirect_to(root_path)
@@ -194,13 +198,17 @@ class LogsController < ApplicationController
         filled_count += 1 unless lp.weight.nil? and lp.count.nil?
       }
       @log.complete = filled_count > 0 and required_unfilled == 0
-      @log.save
-      flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
-      # could be nil if they clicked on the link in an email
-      unless session[:my_return_to].nil?
-        redirect_to(session[:my_return_to])
+      if @log.save
+        flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
+        # could be nil if they clicked on the link in an email
+        unless session[:my_return_to].nil?
+          redirect_to(session[:my_return_to])
+        else
+          mine_past
+        end
       else
-        mine_past
+        flash[:notice] = "Failed to mark as complete."
+        render :edit
       end
     else
       flash[:notice] = "Update failed :("

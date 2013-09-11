@@ -23,7 +23,7 @@
           </tr>
           <% @upcoming_pickups.each do |pickup| %>
           <tr>
-            <td> <%= link_to pickup.donor.name, pickup.donor %> &gt; <%= link_to pickup.recipient.name, pickup.recipient %><br>
+            <td> <%= link_to pickup.donor.name, pickup.donor %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %><br>
                  <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
             </td>
             <td> <%= pickup.when %><br>
@@ -51,7 +51,7 @@
               next if report.donor.nil?
             %>
           <tr>
-            <td> <%= link_to report.donor.name, report.donor %> &gt; <%= link_to report.recipient.name, report.recipient %><br>
+            <td> <%= link_to report.donor.name, report.donor %> -&gt; <%= link_to report.recipient.name, report.recipient %><br>
                  <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
             <td> <%= report.when %> <br>
                  <% unless report.schedule.nil? or report.schedule.time_start.nil? or report.schedule.time_stop.nil? %>

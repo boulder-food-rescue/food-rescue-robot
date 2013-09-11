@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130827234628) do
+ActiveRecord::Schema.define(:version => 20130911233528) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -143,8 +143,6 @@ ActiveRecord::Schema.define(:version => 20130827234628) do
     t.integer  "volunteer_id"
     t.integer  "prior_volunteer_id"
     t.integer  "day_of_week"
-    t.integer  "time_start"
-    t.integer  "time_stop"
     t.text     "admin_notes"
     t.text     "public_notes"
     t.datetime "created_at",                             :null => false

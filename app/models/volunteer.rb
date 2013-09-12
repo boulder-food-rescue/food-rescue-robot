@@ -12,6 +12,7 @@ class Volunteer < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
+  default_scope order('volunteers.name ASC')
 
   after_save :auto_assign_region
 

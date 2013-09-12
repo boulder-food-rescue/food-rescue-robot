@@ -16,10 +16,10 @@
             <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
             if current_volunteer.super_admin? %>
             <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
-                      ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] })) %></td> 
+                      ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }),{:class => "select2"}) %></td> 
             <% else %>
             <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
-                      ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact)) %></td>
+                      ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact),{:class => "select2"}) %></td>
             <% end %>
           </tr>
         </table>
@@ -42,7 +42,7 @@
                 name = v.name + " [" + v.assignments.collect{ |a| (a.admin ? "*" : "") + (a.region.nil? ? "" : a.region.name) }.join(",") + "]"
                 name = "*#{name}" if v.admin
                 [name,v.id] 
-                }))
+                }),{:class => "select2"})
             %></td>
       </tr>
     </table>
@@ -53,3 +53,11 @@
   </div>
 
 </div>
+
+<% content_for :scripts do %>
+<script type="text/javascript" charset="utf-8">
+jQuery(document).ready(function(){
+  jQuery('.select2').select2({width:'element'});
+});
+</script>
+<% end %>

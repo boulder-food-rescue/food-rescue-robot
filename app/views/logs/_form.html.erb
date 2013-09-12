@@ -15,9 +15,9 @@
 <%= hidden_field_tag "log[region_id]", @region.id %>
 <%= hidden_field_tag "log[schedule_id]", @log.schedule.nil? ? nil : @log.schedule.id  %>
 <tr><td>Date<td><%= f.date_select :when %>
-<tr><td>Volunteer<td><%= f.select(:volunteer_id, @volunteers,{:include_blank => true}) %>
-<tr><td>Donor<td><%= f.select(:donor_id, @donors,{:include_blank => true}) %>
-<tr><td>Recipient<td><%= f.select(:recipient_id, @recipients,{:include_blank => true}) %>
+<tr><td>Volunteer<td><%= f.select(:volunteer_id, @volunteers,{:include_blank => true},{:class => "select2"}) %>
+<tr><td>Donor<td><%= f.select(:donor_id, @donors,{:include_blank => true},{:class => "select2"}) %>
+<tr><td>Recipient<td><%= f.select(:recipient_id, @recipients,{:include_blank => true},{:class => "select2"}) %>
 <tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br><br>
                                       If the pick-up was dropped, put zeroes for the weights, and please explain why using the notes field below.</span></td><td>
 <table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.region.weight_unit %>s)<th> Count<th>Description
@@ -63,7 +63,15 @@ EOF
 <span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.<td><%= f.text_area(:notes, :size => "30x6") %>
 <tr><td>Flag For Admin<br>
 <span class="subtext">Check this if you want to make sure someone reads this.</span><td><%= f.check_box(:flag_for_admin) %>
-<tr><td>Original Volunteer<br><span class="subtext">The person originally scheduled to do<br>this shift, if you are covering it.<td><%= f.select(:orig_volunteer_id, @volunteers,{:include_blank => true}) %>
+<tr><td>Original Volunteer<br><span class="subtext">The person originally scheduled to do<br>this shift, if you are covering it.<td><%= f.select(:orig_volunteer_id, @volunteers,{:include_blank => true},{:class => "select2"}) %>
 </table>
 <%= submit_tag %>
+<% end %>
+
+<% content_for :scripts do %>
+<script type="text/javascript" charset="utf-8">
+jQuery(document).ready(function(){
+  jQuery('.select2').select2({width:'element'});
+});
+</script>
 <% end %>

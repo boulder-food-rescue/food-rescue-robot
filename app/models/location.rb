@@ -7,6 +7,8 @@ class Location < ActiveRecord::Base
   before_save :populate_detailed_hours_json_before_save
   after_validation :geocode
 
+  default_scope order('locations.name ASC')
+
   validate :detailed_hours_cannot_end_before_start
 
   attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, 

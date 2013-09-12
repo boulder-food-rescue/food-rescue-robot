@@ -15,5 +15,6 @@
 //= require twitter/bootstrap
 //= require dataTables/jquery.dataTables
 //= require highcharts
+//= require select2
 //= require active_scaffold
 //= require_tree .

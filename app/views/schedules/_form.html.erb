@@ -23,13 +23,13 @@
       <td><%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %></td>
   </tr>
     <tr><td>Volunteer</td>
-        <td><%= f.select(:volunteer_id, @volunteers, {:include_blank => true}) %></td>
+        <td><%= f.select(:volunteer_id, @volunteers, {:include_blank => true},{:class => "select2"}) %></td>
     </tr>
     <tr><td>Donor</td>
-        <td><%= f.select(:donor_id, @donors, {:include_blank => true}) %></td>
+        <td><%= f.select(:donor_id, @donors, {:include_blank => true},{:class => "select2"}) %></td>
     </tr>
     <tr><td>Recipient</td>
-        <td><%= f.select(:recipient_id, @recipients, {:include_blank => true}) %></td>
+        <td><%= f.select(:recipient_id, @recipients, {:include_blank => true},{:class => "select2"}) %></td>
     </tr>
     <tr><td>Public Notes</td>
         <td><%= f.text_area(:public_notes, :size => "30x6") %></td>
@@ -55,7 +55,7 @@
     <% } %></td>
     </tr>
     <tr><td>Prior Volunteer</td>
-        <td><%= f.select(:prior_volunteer_id, @volunteers, {:include_blank => true}) %></td>  
+        <td><%= f.select(:prior_volunteer_id, @volunteers, {:include_blank => true},{:class => "select2"}) %></td>  
     </tr>
   </table>
 
@@ -73,5 +73,13 @@ $(function(){
   });
   $('#schedule_frequency').change();
 })
+</script>
+<% end %>
+
+<% content_for :scripts do %>
+<script type="text/javascript" charset="utf-8">
+jQuery(document).ready(function(){
+  jQuery('.select2').select2({width:'element'});
+});
 </script>
 <% end %>

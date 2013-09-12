@@ -26,6 +26,13 @@ class Location < ActiveRecord::Base
   scope :donors, where(:is_donor=>true)
   scope :recipients, where(:is_donor=>false)
 
+  def weight_stats
+    w = Log.where("donor_id = ? OR recipient_id = ?",self.id,self.id).collect{ |l| l.summed_weight }
+    nozeroes = w.collect{ |e| e == 0 ? nil : e }.compact
+    return {:mean => nozeroes.mean, :median => nozeroes.median, :std => nozeroes.std, :n => w.length, 
+            :zeroes => (w.length-nozeroes.length) }
+  end
+
   def donor?
     return is_donor
   end

@@ -61,13 +61,14 @@ class Notifier < ActionMailer::Base
     mail(:to => to, :subject => "#{region.name} Shifts Needing Coverage Soon (SNCS!)"){ |format| format.text }
   end
 
-  def admin_weekly_summary(region,lbs,flagged_logs,biggest,num_logs,num_entered)
+  def admin_weekly_summary(region,lbs,flagged_logs,biggest,num_logs,num_entered,zero_logs)
     @region = region
     @lbs = lbs
     @flagged_logs = flagged_logs
     @biggest = biggest
     @num_logs = num_logs
     @num_entered = num_entered
+    @zero_logs = zero_logs
     to = admin_emails_for_region(region) 
     mail(:to => to, :subject => "#{region.name} Weekly Summary"){ |format| format.text }
   end

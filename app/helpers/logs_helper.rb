@@ -244,21 +244,24 @@ end
 
 def send_weekly_pickup_summary
   Region.all.each{ |r|
+    puts r.name
     lbs = 0.0
     flagged_logs = []
     biggest = nil
     num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?',r.id,Date.today-7,Date.today).count
     num_entered = 0
     next unless num_logs > 0
-    Log.joins(:log_parts).select("sum(weight) as weight_sum, logs.id, flag_for_admin").where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Date.today-7,Date.today).group("logs.id, flag_for_admin").each{ |l|
+    zero_logs = []
+    Log.joins(:log_parts).select("sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin").where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Date.today-7,Date.today).group("logs.id, flag_for_admin").each{ |l|
       lbs += l.weight_sum.to_f
+      zero_logs.push l if l.weight_sum.to_f == 0.0 and l.count_sum.to_f == 0.0
       flagged_logs << Log.find(l.id) if l.flag_for_admin
       biggest = l if biggest.nil? or l.weight_sum.to_f > biggest.weight_sum.to_f
       num_entered += 1
     }
     next if biggest.nil?
     biggest = Log.find(biggest.id)
-    m = Notifier.admin_weekly_summary(r,lbs,flagged_logs,biggest,num_logs,num_entered)
+    m = Notifier.admin_weekly_summary(r,lbs,flagged_logs,biggest,num_logs,num_entered,zero_logs)
     if DontDeliverEmails
       puts m
     else

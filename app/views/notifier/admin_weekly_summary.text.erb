@@ -17,3 +17,16 @@ Note: <%= word_wrap(l.notes,:line_width => 70) %>
 
   <% } %>
 <% end %>
+
+<% if @zero_logs.length > 0 %>
+These logs were completed with zero pounds (may be dropped):
+
+<% @zero_logs.each{ |l| %>
+<%= l.volunteer.name %> (<%= [l.volunteer.email,l.volunteer.phone].compact.join(",") %>)
+<%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %>
+Description: <%= word_wrap(l.log_parts.collect{ |lp| lp.description }.join("\n\n"),70) %>
+Note: <%= word_wrap(l.notes,:line_width => 70) %>
+
+  <% } %>
+<% end %>
+

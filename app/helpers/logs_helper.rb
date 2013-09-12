@@ -1,7 +1,7 @@
 module LogsHelper
 
 # Set to true to disable emailing and just print the emails to STDOUT
-DontDeliverEmails = false
+DontDeliverEmails = true
 
 def log_volunteer_column(record)
   if record.volunteer.nil?
@@ -254,7 +254,7 @@ def send_weekly_pickup_summary
     zero_logs = []
     Log.joins(:log_parts).select("sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin").where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Date.today-7,Date.today).group("logs.id, flag_for_admin").each{ |l|
       lbs += l.weight_sum.to_f
-      zero_logs.push l if l.weight_sum.to_f == 0.0 and l.count_sum.to_f == 0.0
+      zero_logs.push(Log.find(l.id)) if l.weight_sum.to_f == 0.0 and l.count_sum.to_f == 0.0
       flagged_logs << Log.find(l.id) if l.flag_for_admin
       biggest = l if biggest.nil? or l.weight_sum.to_f > biggest.weight_sum.to_f
       num_entered += 1

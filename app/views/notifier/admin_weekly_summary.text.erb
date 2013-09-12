@@ -7,7 +7,7 @@ The biggest pickup was <%= @biggest.summed_weight %> lbs, done by <%= @biggest.v
 from <%= @biggest.donor.name %> to <%= @biggest.recipient.name %> on <%= @biggest.when.strftime('%A') %>.
 
 <% if @flagged_logs.length > 0 %>
-These logs were flagged for us:
+******** These logs were flagged for us ********
 
 <% @flagged_logs.each{ |l| %>
 <%= l.volunteer.name %> (<%= [l.volunteer.email,l.volunteer.phone].compact.join(",") %>)
@@ -19,11 +19,13 @@ Note: <%= word_wrap(l.notes,:line_width => 70) %>
 <% end %>
 
 <% if @zero_logs.length > 0 %>
-These logs were completed with zero pounds (may be dropped):
+******** These logs were completed with zero pounds (problems!?) *********
 
 <% @zero_logs.each{ |l| %>
+<% unless l.volunteer.nil? %>
 <%= l.volunteer.name %> (<%= [l.volunteer.email,l.volunteer.phone].compact.join(",") %>)
-<%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %>
+<% end %>
+<%= l.donor.nil? ? "?" : l.donor.name %> -> <%= l.recipient.nil? ? "?" : l.recipient.name%> on <%= l.when %>
 Description: <%= word_wrap(l.log_parts.collect{ |lp| lp.description }.join("\n\n"),70) %>
 Note: <%= word_wrap(l.notes,:line_width => 70) %>
 

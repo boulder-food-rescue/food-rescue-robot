@@ -2,6 +2,13 @@ class Notifier < ActionMailer::Base
   add_template_helper(ApplicationHelper)
   default :from => "robot@boulderfoodrescue.org"
 
+  def schedule_collision_warning(schedule,shifts)
+    @schedule = schedule
+    @shifts = shifts
+    to = admin_emails_for_region(@schedule.region)
+    mail(:to => to, :subject => "Schedule Collision Warning"){ |format| format.text }
+  end
+
   def region_welcome_email(region,volunteer)
     return nil if region.welcome_email_text.nil? or region.welcome_email_text.strip.length == 0
     @welcome_email_text = region.welcome_email_text

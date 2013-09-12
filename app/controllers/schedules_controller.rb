@@ -114,8 +114,25 @@ class SchedulesController < ApplicationController
     if current_volunteer.regions.collect{ |r| r.id }.include? s.region_id
       s.volunteer = current_volunteer
       s.temporary = false
-      s.save
-      flash[:notice] = "Successfully took 1 shift."
+      if s.save
+        collided_shifts = []
+        Log.where('schedule_id = ? AND "when" >= current_date AND NOT complete',s.id).each{ |l|
+          if l.volunteer.nil?
+            l.volunteer = current_volunteer
+            l.save
+          else
+            collided_shifts.push(l)
+          end
+        }
+        if collided_shifts.length > 0
+          m = Notifier.schedule_collision_warning(s,collided_shifts)
+          m.deliver
+        end
+        flash[:notice] = "The shift if yours!"
+      else
+        flash[:notice] = "Hrmph. That didn't work..."
+      end
+      
     else
       flash[:notice] = "Cannot take that pickup since you are not a member of that region."
     end

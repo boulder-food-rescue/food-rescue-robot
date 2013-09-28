@@ -40,7 +40,7 @@ GEM
       multi_json (~> 1.0)
     afm (0.2.0)
     arel (3.0.2)
-    bcrypt-ruby (3.1.1)
+    bcrypt-ruby (3.1.2)
     bootstrap-navbar (0.0.13)
     builder (3.0.4)
     climate_control (0.0.3)
@@ -62,13 +62,13 @@ GEM
       warden (~> 1.2.3)
     erubis (2.7.0)
     eventmachine (1.0.3)
-    execjs (2.0.0)
+    execjs (2.0.1)
     faraday (0.8.8)
       multipart-post (~> 1.2.0)
     geocoder (1.1.8)
     gmaps4rails (1.5.6)
     hashery (2.1.1)
-    highcharts-rails (3.0.3)
+    highcharts-rails (3.0.5)
       railties (>= 3.1)
     hike (1.2.3)
     i18n (0.6.5)
@@ -81,8 +81,8 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    mime-types (1.24)
-    multi_json (1.7.9)
+    mime-types (1.25)
+    multi_json (1.8.0)
     multipart-post (1.2.0)
     orm_adapter (0.4.0)
     paperclip (3.5.1)
@@ -96,7 +96,7 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
-    pg (0.16.0)
+    pg (0.17.0)
     polyglot (0.3.3)
     prawn (0.12.0)
       pdf-reader (>= 0.9.0)
@@ -136,8 +136,8 @@ GEM
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    select2-rails (3.3.0)
-      sass-rails (~> 3.2)
+    select2-rails (3.4.9)
+      sass-rails
       thor (~> 0.14)
     simple_oauth (0.2.0)
     sprockets (2.2.2)
@@ -169,7 +169,7 @@ GEM
       rails (>= 3.1)
       railties (>= 3.1)
     tzinfo (0.3.37)
-    uglifier (2.2.0)
+    uglifier (2.2.1)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
     warden (1.2.3)
@@ -182,7 +182,7 @@ PLATFORMS
 DEPENDENCIES
   active_scaffold
   coffee-rails (~> 3.2.1)
-  devise
+  devise (= 3.0.3)
   geocoder
   gmaps4rails
   highcharts-rails (~> 3.0.0)

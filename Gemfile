@@ -66,3 +66,6 @@ gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-ra
 
 # pretty select form elements
 gem 'select2-rails'
+
+# set timezone to browser timezone
+gem 'browser-timezone-rails'

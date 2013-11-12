@@ -45,6 +45,9 @@ GEM
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
     bootstrap-navbar (0.0.13)
+    browser-timezone-rails (0.0.6)
+      jquery-rails
+      rails (>= 3.1)
     builder (3.0.4)
     climate_control (0.0.3)
       activesupport (>= 3.0)
@@ -186,6 +189,7 @@ PLATFORMS
 DEPENDENCIES
   active_scaffold
   better_errors
+  browser-timezone-rails
   coffee-rails (~> 3.2.1)
   devise (= 3.0.3)
   geocoder

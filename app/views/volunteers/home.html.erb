@@ -32,7 +32,12 @@
                  <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
             </td>
             <td> <%= pickup.when %> 
-                 <br>(<%= time_ago_in_words(pickup.when) %> ago
+                 <br>
+                 <% if pickup.when == Date.today %>
+                 (today
+                 <% else %>
+                 (<%= (pickup.when - Date.today).to_i %> days from now
+                 <% end %>
                  <% unless pickup.schedule.nil? %>
                    between <%= readable_start_time(pickup.schedule) %> and <%= readable_stop_time(pickup.schedule) %>
                  <% end %>)
@@ -60,7 +65,12 @@
             <td> <%= link_to report.donor.name, report.donor %> -&gt; <%= link_to report.recipient.name, report.recipient %><br>
                  <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
             <td> <%= report.when %> 
-                 <br>(<%= time_ago_in_words(report.when) %> ago
+                 <br>
+                 <% if report.when == Date.today %>
+                 (today
+                 <% else %>
+                 (<%= (report.when - Date.today).to_i %> days ago
+                 <% end %>
                  <% unless report.schedule.nil? %>
                    between <%= readable_start_time(report.schedule) %> and <%= readable_stop_time(report.schedule) %>
                  <% end %>)
@@ -91,7 +101,12 @@
             <td> <%= link_to pickup.donor.name, pickup.donor %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %> <br>
                  <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
             <td> <%= pickup.when %> 
-                 <br>(<%= time_ago_in_words(pickup.when) %> ago
+                 <br>
+                 <% if pickup.when == Date.today %>
+                 (today
+                 <% else %>
+                 (<%= (pickup.when - Date.today).to_i %> days from now
+                 <% end %>
                  <% unless pickup.schedule.nil? %>
                   between <%= readable_start_time(pickup.schedule) %> and <%= readable_stop_time(pickup.schedule) %>
                  <% end %>)

@@ -31,19 +31,28 @@
     <tr><td>Recipient</td>
         <td><%= f.select(:recipient_id, @recipients, {:include_blank => true},{:class => "select2"}) %></td>
     </tr>
-    <tr><td>Public Notes</td>
+    <tr><td>Hilliness</td>
+        <td><%= f.select(:hilliness, Schedule::Hilliness.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{:class => "select2"}) %></td>
+    </tr>
+    <tr><td>Expected Weight<br /><span class="subtext">Typical weight observed on pickup. Current mean = <%= @schedule.mean_weight %>, max = <%= @schedule.max_weight %>.</span></td>
+        <td><%= f.text_field(:expected_weight, :size => "30x6") %></td>
+    </tr>
+   <tr><td>Overall Difficulty</td>
+        <td><%= f.select(:difficulty_rating, Schedule::Difficulty.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{:class => "select2"}) %></td>
+    </tr>
+    <tr><td>Public Notes<br /><span class="subtext">Notes visible to everyone</span></td>
         <td><%= f.text_area(:public_notes, :size => "30x6") %></td>
     </tr>
-    <tr><td>Admin Notes</td>
+    <tr><td>Admin Notes<br /><span class="subtext">Notes visible only to coordinators</span></td>
         <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>
     </tr>
-    <tr><td>Irregular</td>
+    <tr><td>Irregular/As-Needed<br /><span class="subtext">Irregular pickups happen as needed, not on a particular schedule</span></td>
         <td><%= f.check_box(:irregular) %></td>
     </tr>
-    <tr><td>Backup Pick up</td>
+    <tr><td>Backup Pick up<br /><span class="subtext">Backup pickups only occur if a given pickup is too much for the normal volunteer and needs a second pickup.</span></td>
         <td><%= f.check_box(:backup) %></td>
     </tr>
-    <tr><td>Temporary Cover</td>
+    <tr><td>Temporary Cover<br /><span class="subtext">Temporary covers will still show up in open shifts even if they have a volunteer</span></td>
         <td><%= f.check_box(:temporary) %></td>
     </tr>
     <tr><td>Scheduled Transport</td>
@@ -54,7 +63,7 @@
       <%= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <%= ft.name %>
     <% } %></td>
     </tr>
-    <tr><td>Prior Volunteer</td>
+    <tr><td>Prior Volunteer<br /><span class="subtext">The volunteer who had this shift last</span></td>
         <td><%= f.select(:prior_volunteer_id, @volunteers, {:include_blank => true},{:class => "select2"}) %></td>  
     </tr>
   </table>

@@ -18,6 +18,10 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+group :test, :development do
+  gem 'better_errors'
+end
+
 # mobile-friendly template
 gem 'twitter-bootstrap-rails'
 gem 'rails_bootstrap_navbar'

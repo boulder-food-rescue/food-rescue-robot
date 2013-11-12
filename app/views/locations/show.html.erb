@@ -20,10 +20,29 @@
 <%= @loc.email %>
 </p>
 
+<% unless readable_hours(@loc).blank? %>
 <h3>Hours</h3>
 <p>
 <%= readable_hours @loc %>
 </p>
+<% end %>
+
+<h3>Pickup/Drop Logistics</h3>
+<% unless @loc.entry_info.blank? %>
+<p><strong>Entry:</strong> <%= @loc.entry_info.gsub("\n","<br>").html_safe %></p>
+<% end %>
+<% unless @loc.equipment_storage_info.blank? %>
+<p><strong>Equipment:</strong> <%= @loc.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+<% end %>
+<% unless @loc.food_storage_info.blank? %>
+<p><strong>Food:</strong> <%= @loc.food_storage_info.gsub("\n","<br>").html_safe %><br /></p>
+<% end %>
+<% unless @loc.onsite_contact_info.blank? %>
+<p><strong>Contact:</strong> <%= @loc.onsite_contact_info.gsub("\n","<br>").html_safe %><br /></p>
+<% end %>
+<% unless @loc.exit_info.blank? %>
+<p><strong>Exit:</strong> <%= @loc.exit_info.gsub("\n","<br>").html_safe %><br /></p>
+<% end %>
 
 <h3>Notes</h3>
 <p>

@@ -13,7 +13,9 @@ class Location < ActiveRecord::Base
 
   attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, 
                   :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website, :receipt_key,
-                  :email, :phone
+                  :email, :phone, :equipment_storage_info, :food_storage_info, :entry_info, :exit_info,
+                  :onsite_contact_info
+
   # fake attributes, actually encoded as json into one field
   attr_accessor :day0_status,:day0_start,:day0_end,
                   :day1_status,:day1_start,:day1_end,

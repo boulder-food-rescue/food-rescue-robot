@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130911233528) do
+ActiveRecord::Schema.define(:version => 20131112152346) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -49,14 +49,19 @@ ActiveRecord::Schema.define(:version => 20130911233528) do
     t.text     "admin_notes"
     t.text     "public_notes"
     t.text     "hours"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
     t.integer  "region_id"
     t.string   "twitter_handle"
     t.string   "receipt_key"
     t.text     "detailed_hours_json"
     t.text     "email"
     t.text     "phone"
+    t.text     "equipment_storage_info"
+    t.text     "food_storage_info"
+    t.text     "entry_info"
+    t.text     "exit_info"
+    t.text     "onsite_contact_info"
   end
 
   create_table "log_parts", :force => true do |t|
@@ -156,6 +161,9 @@ ActiveRecord::Schema.define(:version => 20130911233528) do
     t.date     "detailed_date"
     t.text     "frequency"
     t.boolean  "temporary",           :default => false
+    t.integer  "difficulty_rating"
+    t.integer  "expected_weight"
+    t.integer  "hilliness"
   end
 
   add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"

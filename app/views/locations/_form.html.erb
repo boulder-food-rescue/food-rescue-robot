@@ -6,6 +6,10 @@
 
 <table>
 
+  <tr><td colspan=2 style="border-bottom: 1px solid black;">
+    <span style="font-weight: bold; font-size: 12pt;">General Information</span>
+  </td></tr>
+
   <tr><td width="300px">Name</td>
       <td><%= f.text_field(:name) %></td>
   </tr>
@@ -77,16 +81,44 @@
   <% end %>
   </tr>
 
-  <tr><td>Public Notes</td>
-      <td><%= f.text_area(:public_notes, :size => "30x6") %></td>
-  </tr>
-
-  <tr><td>Admin Notes</td>
-      <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>
-  </tr>
-
-  <tr><td>Receipt Key<br><span class="subtext">i.e., a random password donors will use to login</span></td>
+  <tr><td>Receipt Key<br><span class="subtext">A random password donors will use to login</span></td>
       <td><%= f.text_field(:receipt_key) %></td>
+  </tr>
+
+  <tr><td colspan=2 style="border-bottom: 1px solid black;">
+    <span style="font-weight: bold; font-size: 12pt;">Pickup/Drop Logistics</span>
+  </td></tr>
+
+  <tr><td>Equipment Info<br><span class="subtext">If applicable, where our equipment is stored and how to get/use it.</span></td>
+      <td><%= f.text_area(:equipment_storage_info, :size => "30x3") %></td>
+  </tr>
+
+  <tr><td>Entry Info<br><span class="subtext">How to enter the location</span></td>
+      <td><%= f.text_area(:entry_info, :size => "30x3") %></td>
+  </tr>
+
+  <tr><td>Onsite Contact Info<br><span class="subtext">Who to ask for help when on-site</span></td>
+      <td><%= f.text_area(:onsite_contact_info, :size => "30x3") %></td>
+  </tr>
+
+  <tr><td>Food Storage Info<br><span class="subtext">If applicable, where food is stored and how to get it.</span></td>
+      <td><%= f.text_area(:food_storage_info, :size => "30x3") %></td>
+  </tr>
+
+  <tr><td>Exit Info<br><span class="subtext">How to exit the location (if different from entry)</span></td>
+      <td><%= f.text_area(:exit_info, :size => "30x3") %></td>
+  </tr>
+
+  <tr><td colspan=2 style="border-bottom: 1px solid black;">
+    <span style="font-weight: bold; font-size: 12pt;">Additional Notes</span>
+  </td></tr>
+
+  <tr><td>Public Notes<br><span class="subtext">Other information and notes visible to everyone</span></td>
+      <td><%= f.text_area(:public_notes, :size => "30x3") %></td>
+  </tr>
+
+  <tr><td>Admin Notes<br><span class="subtext">Other information and notes visible only to coordinators</span></td>
+      <td><%= f.text_area(:admin_notes, :size => "30x3") %></td>
   </tr>
 
 </table>

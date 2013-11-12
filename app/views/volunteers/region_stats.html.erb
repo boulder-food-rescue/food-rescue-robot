@@ -79,7 +79,6 @@ pounds_per_year.keys.sort.each{ |year| %>
 </div>
 <div class="home_section">
 <h1>Volunteer Statistics</h1>
-<br><br>
 <h2>Last 12 Months</h2>
 <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count<th>By Car<th>Covered</tr></thead><tbody>
 <% per_volunteer.each{ |v,s| %>
@@ -96,6 +95,19 @@ pounds_per_year.keys.sort.each{ |year| %>
 <% } %>
 </tbody></table>
 <br><br>
+<h2>Attrition</h2>
+Volunteers who have done pickups, but not for 90 days or more.
+<table class="datatable"><thead><th>Volunteer<th>Email<th>Last Pickup<th>Num Pickups</thead><tbody>
+<% 
+  Volunteer.select("volunteers.id, name, email, count(*) as count, max(logs.when) as last_date").
+            joins(', logs').where("volunteers.id=logs.volunteer_id").group("volunteers.id, name, email").each{ |v|
+  next if Date.parse(v.last_date) > (Date.today - 90)
+%> 
+<tr><td><%= [v.name,v.email,v.last_date,v.count].join("<td>").html_safe %>
+<% } %>
+</tbody>
+</table>
+  
 <% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 

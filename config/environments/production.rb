@@ -1,5 +1,10 @@
 Webapp::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
+  config.time_zone = 'Mountain Time (US & Canada)'
+
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { :host => 'boulderfoodrescue.org' }
+  config.action_mailer.delivery_method = :sendmail
 
   # Code is not reloaded between requests
   config.cache_classes = true

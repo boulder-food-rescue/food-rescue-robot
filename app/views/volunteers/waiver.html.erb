@@ -1,7 +1,7 @@
 <h2>Volunteer Release and Waiver of Liability</h2>
 <br>
 <pre>
-This Release and Waiver of Liability executed on <%= Date.today.to_s %>,
+This Release and Waiver of Liability executed on <%= Time.zone.today.to_s %>,
 by <%= current_volunteer.name %> (<%= current_volunteer.email %>) 
 releases liability for Boulder Food Rescue, a non-profit corporation
 organized and existing under the laws of the State of Colorado, and each
@@ -66,7 +66,7 @@ this release and waiver of Liability willingly and voluntarily.
 <% unless current_volunteer.waiver_signed %>
 <%= form_tag("/volunteers/sign_waiver", :method => "get") do %>
 Check to sign electronically: <%= check_box_tag 'accept', 1 %><br>
-Date: <%= Date.today.to_s %><br><br>
+Date: <%= Time.zone.today.to_s %><br><br>
 <%= submit_tag 'Sign' %>
 <% end %>
 <% else %>

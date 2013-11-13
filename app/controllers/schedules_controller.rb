@@ -29,13 +29,13 @@ class SchedulesController < ApplicationController
   end
 
   def today
-    index(Date.today.wday)
+    index(Time.zone.today.wday)
   end
   def tomorrow
-    index(Date.today.wday+1 % 6)
+    index(Time.zone.today.wday+1 % 6)
   end
   def yesterday
-    day_of_week = Date.today.wday - 1
+    day_of_week = Time.zone.today.wday - 1
     day_of_week = 6 if day_of_week < 0
     index(day_of_week)
   end
@@ -128,7 +128,7 @@ class SchedulesController < ApplicationController
           m = Notifier.schedule_collision_warning(s,collided_shifts)
           m.deliver
         end
-        flash[:notice] = "The shift if yours!"
+        flash[:notice] = "The shift is yours!"
       else
         flash[:notice] = "Hrmph. That didn't work..."
       end

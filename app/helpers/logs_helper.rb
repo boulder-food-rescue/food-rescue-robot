@@ -117,7 +117,7 @@ end
 
 # Given a date, generates the corresponding log entries for that
 # date based on the /current/ schedule
-def generate_log_entries(d=Date.today)
+def generate_log_entries(d=Time.zone.today)
   n = 0
   Schedule.where("day_of_week = ?",d.wday).each{ |s|
     next if s.recipient.nil? or s.donor.nil? 
@@ -152,7 +152,7 @@ def send_reminder_emails(n=2,r=3)
   Log.where("NOT complete").each{ |l| 
 
     # FUTURE reminders...
-    days_future = (l.when - Date.today).to_i
+    days_future = (l.when - Time.zone.today).to_i
     if days_future == 1 and !l.volunteer.nil? and l.volunteer.pre_reminders_too
       pre_reminder_list[l.volunteer] = [] if pre_reminder_list[l.volunteer].nil?
       pre_reminder_list[l.volunteer].push(l)
@@ -164,7 +164,7 @@ def send_reminder_emails(n=2,r=3)
 
     # PAST reminders...
     next if l.volunteer.nil?
-    days_past = (Date.today - l.when).to_i
+    days_past = (Time.zone.today - l.when).to_i
     next unless days_past >= n
 
     l.num_reminders = 0 if l.num_reminders.nil?
@@ -248,11 +248,11 @@ def send_weekly_pickup_summary
     lbs = 0.0
     flagged_logs = []
     biggest = nil
-    num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?',r.id,Date.today-7,Date.today).count
+    num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?',r.id,Time.zone.today-7,Time.zone.today).count
     num_entered = 0
     next unless num_logs > 0
     zero_logs = []
-    Log.joins(:log_parts).select("sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin").where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Date.today-7,Date.today).group("logs.id, flag_for_admin").each{ |l|
+    Log.joins(:log_parts).select("sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin").where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Time.zone.today-7,Time.zone.today).group("logs.id, flag_for_admin").each{ |l|
       lbs += l.weight_sum.to_f
       zero_logs.push(Log.find(l.id)) if l.weight_sum.to_f == 0.0 and l.count_sum.to_f == 0.0
       flagged_logs << Log.find(l.id) if l.flag_for_admin

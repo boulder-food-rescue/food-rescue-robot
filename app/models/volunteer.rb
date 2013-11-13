@@ -78,7 +78,7 @@ class Volunteer < ActiveRecord::Base
   end
 
   def gone?
-    !self.gone_until.nil? and self.gone_until > Date.today
+    !self.gone_until.nil? and self.gone_until > Time.zone.today
   end
 
   def self.all_for_region region_id

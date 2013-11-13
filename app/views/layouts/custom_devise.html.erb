@@ -26,7 +26,7 @@ donor_count = 0
 
 #Get the pickup stats
 total_number_pickups = Log.count + Region.all.collect{ |r| r.prior_num_pickups }.compact.sum
-date = Date.today
+date = Time.zone.today
 pickups_this_day = Log.count(:conditions => {:when => date})
 pickups_this_week = Log.count(:conditions => {:when => date.at_beginning_of_week(start_day = :sunday)...date.at_end_of_week(start_day = :sunday)})
 pickups_this_month = Log.count(:conditions => {:when => date.at_beginning_of_month()...date.at_end_of_month()})
@@ -44,7 +44,7 @@ food_per_month = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
 Log.select('sum(weight) as weight_sum, count(*) as count, "logs"."when"').joins(:log_parts).where(:complete=>true).
     group('"logs"."when"').order('"logs"."when"').each{ |l|
   next if l.weight_sum.nil? or l.weight_sum.to_f <= 0
-  if l.when > (Date.today << 12)
+  if l.when > (Time.zone.today << 12)
     food_per_month[l.when.month - 1] += l.weight_sum.to_f
   end
   running_total += l.weight_sum.to_f

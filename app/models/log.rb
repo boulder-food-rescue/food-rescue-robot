@@ -47,7 +47,7 @@ class Log < ActiveRecord::Base
     last_poundage = region.twitter_last_poundage.nil? ? 0.0 : region.twitter_last_poundage
 
     if TweetGainOrTime == :time
-      return true unless record.region.twitter_last_timestamp.nil? or (Time.now - record.region.twitter_last_timestamp) > TweetTimeThreshold
+      return true unless record.region.twitter_last_timestamp.nil? or (Time.zone.now - record.region.twitter_last_timestamp) > TweetTimeThreshold
       # flip a coin about whether we'll post this one so we don't always post at the same time of day
       return true if rand > 0.5
     else
@@ -76,7 +76,7 @@ class Log < ActiveRecord::Base
       return true if t.length > 140
       Twitter.update(t)
       record.region.twitter_last_poundage = poundage
-      record.region.twitter_last_timestamp = Time.now
+      record.region.twitter_last_timestamp = Time.zone.now
       record.region.save
       flash[:notice] = "Tweeted: #{t}"
     rescue

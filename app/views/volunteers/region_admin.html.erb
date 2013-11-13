@@ -45,11 +45,11 @@
       </tr>
       <tr>
         <td>Starting On: </td>
-        <td><%= select_date Date.today, :prefix => :start_date %></td>
+        <td><%= select_date Time.zone.today, :prefix => :start_date %></td>
       </tr>
       <tr>
         <td>Ending On: </td>
-        <td><%= select_date Date.today, :prefix => :stop_date %></td>
+        <td><%= select_date Time.zone.today, :prefix => :stop_date %></td>
       </tr>
     </table>
     <%= submit_tag "Generate" %>

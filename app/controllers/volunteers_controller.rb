@@ -183,7 +183,7 @@ class VolunteersController < ApplicationController
   def sign_waiver
     if params[:accept].to_i == 1
       current_volunteer.waiver_signed = true
-      current_volunteer.waiver_signed_at = Time.now
+      current_volunteer.waiver_signed_at = Time.zone.now
       current_volunteer.save
       flash[:notice] = "Waiver signed!"
     end
@@ -211,7 +211,7 @@ class VolunteersController < ApplicationController
       waiver
       return
     end
-    today = Date.today
+    today = Time.zone.today
     
     @open_shift_count = Schedule.where("NOT irregular AND volunteer_id IS NULL 
                                         AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})").count
@@ -282,7 +282,7 @@ class VolunteersController < ApplicationController
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
     @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count
     @num_to_cover = Log.where("volunteer_id IS NULL#{@base_conditions}").count
-    @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Date.today.to_s).count
+    @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Time.zone.today.to_s).count
     @num_unassigned = Schedule.where("volunteer_id IS NULL AND donor_id IS NOT NULL and recipient_id IS NOT NULL#{@base_conditions}").count
     render :home
   end

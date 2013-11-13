@@ -26,7 +26,7 @@ No unassigned volunteers...
       row_bgcolor = "red"
     elsif v.any_admin?
       row_bgcolor = "pink"
-    elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Date.today)
+    elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Time.zone.today)
       row_bgcolor = "grey"
     end
   %>
@@ -35,7 +35,7 @@ No unassigned volunteers...
     <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
     <td> <%= v.phone %>
     <td> <%= v.requested_region.nil? ? "?" : v.requested_region.name %>
-    <td> <%= (Date.today - v.created_at.to_date).to_i  %>
+    <td> <%= (Time.zone.today - v.created_at.to_date).to_i  %>
     <td>
        <%= form_tag("/volunteers/assign", :method => "get") do %>
         <%= hidden_field_tag(:volunteer_id,v.id) %>

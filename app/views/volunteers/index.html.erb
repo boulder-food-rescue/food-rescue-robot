@@ -28,7 +28,7 @@ No volunteers matching that criteria...
       row_bgcolor = "red"
     elsif v.any_admin?
       row_bgcolor = "pink"
-    elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Date.today)
+    elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Time.zone.today)
       row_bgcolor = "grey"
     end
   %>
@@ -40,7 +40,7 @@ No volunteers matching that criteria...
     <td> <%= v.preferred_contact %>
     <td> <%= v.transport_type.nil? ? "?" : v.transport_type.name %> <%= "(has car)" if v.has_car %>
     <td> <%= s = v.is_disabled ? "Disabled" : ""
-             if !v.gone_until.nil? and v.gone_until > Date.today
+             if !v.gone_until.nil? and v.gone_until > Time.zone.today
                s += ", and " if s.length > 0
                s += "Gone until #{v}"
              end

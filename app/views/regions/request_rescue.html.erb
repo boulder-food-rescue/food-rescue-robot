@@ -14,11 +14,11 @@ Have some extra food to donate?  Fill in this form and we'll contact you to sche
       <fieldset>
         <legend>When</legend>
         <label>On Date</label>
-        <input type="date" name="date" value="<%=Date.today.strftime('%Y-%m-%d')%>"/>
+        <input type="date" name="date" value="<%=Time.zone.today.strftime('%Y-%m-%d')%>"/>
         <label>Between<label>
-        <%= select_tag 'time_start',  options_for_select(@time_options, Time.now.strftime('%-l:00 %P')) %>
+        <%= select_tag 'time_start',  options_for_select(@time_options, Time.zone.now.strftime('%-l:00 %P')) %>
         <label>And</label>
-        <%= select_tag 'time_stop',  options_for_select(@time_options, (Time.now+1.hours).strftime('%-l:00 %P')) %>
+        <%= select_tag 'time_stop',  options_for_select(@time_options, (Time.zone.now+1.hours).strftime('%-l:00 %P')) %>
       </fieldset>
     </div>
     <div class="span4">

@@ -17,4 +17,5 @@
 //= require highcharts
 //= require select2
 //= require active_scaffold
+//= require browser_timezone_rails/application.js
 //= require_tree .

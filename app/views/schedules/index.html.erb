@@ -21,10 +21,12 @@
   </p>
 <% else %>
 
+<div id="modal"></div>
+
 <table id="data_table">
   <thead>
     <tr>
-      <th> Frequency </th>
+      <th> Info </th>
       <th> Day</th>
       <th> Donor </th>
       <th> Recipient </th>
@@ -58,7 +60,7 @@
       end
     %>
     <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-      <td> <%= schedule.frequency%> </td>
+      <td> <button class="info" onclick="window.location='/schedules/<%= schedule.id %>';">Info</button>
       <td> 
         <% if schedule.one_time? %>
           <%= schedule.detailed_date %>
@@ -93,7 +95,7 @@
       <td><%= link_to schedule.prior_volunteer.name, schedule.prior_volunteer unless schedule.prior_volunteer.nil? %> </td>
       <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
       <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
-      <td> <%= link_to 'info', schedule %><br>
+      <td>
         <% if current_volunteer.any_admin? %>
           <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %><br>
           <%= link_to "delete", schedule, :confirm => "Are you sure?", :method => :delete %>

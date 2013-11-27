@@ -26,6 +26,11 @@ class SchedulesController < ApplicationController
 
   def show
     @schedule = Schedule.find(params[:id])
+    if params[:nolayout].present? and params[:nolayout].to_i == 1
+      render(:show,:layout => false)
+    else
+      render :show
+    end
   end
 
   def today

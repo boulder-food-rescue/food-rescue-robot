@@ -66,9 +66,9 @@ Webapp::Application.routes.draw do
       get :create
       get :destroy
     end
-    member do
-      get :show
-    end
+    #member do
+    #  get :show
+    #end
   end
 
   resources :locations do

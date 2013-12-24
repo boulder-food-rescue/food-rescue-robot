@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # the base rails libraries
-gem 'rails', '~> 3.2.14'
+gem 'rails', '~> 3.2.16'
 
 # for talking to the sqlite3 on-disk database
 gem 'sqlite3'
@@ -40,9 +40,6 @@ gem 'devise', '3.0.3'
 
 # alternative webserver (>thin start)
 gem 'thin'
-
-# talk to the postgres database engine
-gem 'pg'
 
 # lets us post things to twitter programatically
 gem 'twitter'

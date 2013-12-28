@@ -12,6 +12,22 @@ module ApplicationHelper
     Webapp::Application.config.use_detailed_hours
   end
 
+  def readable_time_until shift
+    ret = shift.when.strftime("%b %e") + " ("
+    if shift.when == Time.zone.today
+      ret += "today"
+    elsif shift.when < Time.zone.today
+      ret += (Time.zone.today - shift.when).to_i.to_s + " days ago"
+    elsif shift.when > Time.zone.today
+      ret += (shift.when - Time.zone.today).to_i.to_s + " days from now"
+    end
+    ret += ")"
+    unless shift.schedule.nil?
+      ret += " <br>between #{readable_start_time(shift.schedule)} and #{readable_stop_time(shift.schedule)}"
+    end
+    ret.html_safe
+  end
+
   def readable_start_time schedule
     str = "unknown"
     str = schedule.detailed_start_time.to_s(:clean_time) unless schedule.detailed_start_time.nil?

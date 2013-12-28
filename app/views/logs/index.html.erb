@@ -16,18 +16,22 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   No shifts found.
 </p>
 <% else %>
+
 <table id="data_table">
   <thead>
   <tr>
+    <th> Date </th>
+    <th> Info </th>
     <th> When </th>
     <th> Volunteer </th>
     <th> Donor </th>
     <th> Recipient </th>
+    <% unless current_page? :controller => "logs", :action => "open" %>
     <th> Weight </th>
     <th> Transport Type </th>
     <th> Food Type </th>
+    <% end %>
     <th> Original Volunteer </th>
-    <th> Time Window </th>
     <th> Notes </th>
     <th> Link </th>
   </tr>
@@ -36,16 +40,20 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   <%
   @shifts.each do |shift|
     row_bgcolor = nil
-    if shift.volunteer.nil?
+    if shift.volunteer.nil? and not current_page?(:controller => "logs", :action => "open")
       row_bgcolor = "pink"
-    elsif shift.volunteer.needs_training
+    elsif !shift.volunteer.nil? and shift.volunteer.needs_training
       row_bgcolor = "lightgreen"
     elsif shift.recipient.nil? or shift.donor.nil?
       row_bgcolor = "yellow"
     end
   %>
   <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-    <td> <%= shift.when %><br>(<%= time_ago_in_words(shift.when) %> <%= shift.when >= Time.zone.today ? "from now" : "ago" %>)</td>
+    <td> <%= shift.when.strftime("%Y-%m-%d") %>
+    <td> <% unless shift.schedule.nil? %>
+         <button class="info" onclick="window.location='/schedules/<%= shift.schedule.id %>';">Info</button>
+         <% end %>
+    <td> <%= readable_time_until shift %></td>
     <td <% if shift.volunteer.nil? %>style="background: yellow;text-align: center;"<% end %>> 
          <% if shift.volunteer.nil? %>
          <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => shift.id %>
@@ -54,17 +62,18 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
          <% end %></td>
     <td> <%= shift.donor != nil ? (link_to shift.donor.name, shift.donor) : ""%> </td>
     <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
+    <% unless current_page? :controller => "logs", :action => "open" %>
     <td> <%= shift.complete ? shift.summed_weight : "?" %> </td>
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types.collect{ |ft| ft.name }.join(", ") unless shift.food_types.length == 0 %>
+    <% end %>
     <td> <%= link_to shift.orig_volunteer.name, shift.orig_volunteer unless shift.orig_volunteer.nil? %>
-    <td> <%= readable_start_time(shift.schedule) + " - " + readable_stop_time(shift.schedule) unless shift.schedule.nil? %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
-    <td> <%= link_to 'info', shift.schedule unless shift.schedule.nil? %><br>
-         <% if current_volunteer.any_admin?(shift.region) %>
-         <%= link_to "edit", edit_log_path(shift) %><br>
-         <%= link_to "delete", shift, :confirm => "Are you sure?", :method => :delete %>
-         <% end %></td>
+    <td><% if current_volunteer.any_admin?(shift.region) %>
+        <%= link_to "edit", edit_log_path(shift) %><br>
+        <%= link_to "delete", shift, :confirm => "Are you sure?", :method => :delete %>
+        <% end %>
+    </td>
   </tr>
   <% end %>
   </tbody>
@@ -73,7 +82,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
 <% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 
-  $('#data_table').dataTable( {
+  $('#data_table').dataTable({
     'iDisplayLength' : 50,
   });
 });

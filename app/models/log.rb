@@ -29,6 +29,10 @@ class Log < ActiveRecord::Base
   TweetTimeThreshold = 3600*24
   TweetGainOrTime = :gain
 
+  def self.pickup_count region_id
+    self.where(:region_id=>region_id, :complete=>true).count
+  end
+
   def self.picked_up_by volunteer_id
     self.where(:volunteer_id=>volunteer_id, :complete=>true)
   end

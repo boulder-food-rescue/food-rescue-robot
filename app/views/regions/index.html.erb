@@ -26,19 +26,26 @@
     </thead>
 
     <tbody>
-    <% @regions.each do |r| %>
+    <% @regions.each do |region| %>
       <tr>
-        <td> <% unless r.logo_file_name.nil? %><a href="<%= r.logo(:medium) %>"><img src="<%= r.logo(:thumb) %>"></a><% end %>
-        <td> <%= r.name %>: <% unless r.website.nil? %><%= link_to "website", r.website %><% end %>
-                           <% unless r.handbook_url.nil? %><%= link_to "handbook", r.handbook_url %><% end %></td>
-        <td> <%= r.title %><%= r.tagline.nil? ? "" : ": #{r.tagline}" %>
-        <td> <%= r.address.gsub("\n","<br>").html_safe unless r.address.nil? %></td>    
-        <td><small><%= word_wrap(r.notes,:line_width => 30).gsub("\n","<br>").html_safe unless r.notes.nil? %></small></td>
-        <td>Completed Pickups: <%= Log.where("region_id = ? AND complete",r.id).count %>, 
-            Active Volunteers: <%= Schedule.select("volunteer_id").where("region_id = ?",r.id).uniq.length %>
+        <td><% unless region.logo_file_name.nil? %>
+              <a href="<%= region.logo(:medium) %>"><img src="<%= region.logo(:thumb) %>"></a>
+            <% end %></td>
+        <td><%= region.name %>:
+            <% unless region.website.nil? %><%= link_to "website", region.website %><% end %>
+            <% unless region.handbook_url.nil? %><%= link_to "handbook", region.handbook_url %><% end %>
+        </td>
+        <td><%= region.title %><%= region.tagline.nil? ? "" : ": #{region.tagline}" %></td>
+        <td><%= region.address.gsub("\n","<br>").html_safe unless region.address.nil? %></td>    
+        <td><small>
+          <%= word_wrap(region.notes,:line_width => 30).gsub("\n","<br>").html_safe unless region.notes.nil? %>
+        </small></td>
+        <td>Completed Pickups: <%= Log.pickup_count region.id %>, 
+            Active Volunteers: <%= region.active_volunteer_count %>
+        </td>
         <td>
-               <%= link_to 'edit', :controller => "regions", :action => "edit", :id => r %><br>
-               <%= link_to "delete", r, :confirm => "Are you sure?", :method => :delete %> </td>
+          <%= link_to 'edit', :controller => "regions", :action => "edit", :id => region %><br>
+          <%= link_to "delete", region, :confirm => "Are you sure?", :method => :delete %> </td>
         </td>
       </tr>
     <% end %>

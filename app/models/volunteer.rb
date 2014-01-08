@@ -14,7 +14,18 @@ class Volunteer < ActiveRecord::Base
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
   default_scope order('volunteers.name ASC')
 
+  has_many :schedule_volunteers
+  has_many :schedules, :through=>:schedule_volunteers, 
+           :conditions=>{"schedule_volunteers.active"=>true}
+  has_many :prior_schedules, :through=>:schedule_volunteers, 
+           :conditions=>{"schedule_volunteers.active"=>false}, :class_name=>"Schedule"
+
   after_save :auto_assign_region
+
+  # more trustworthy and self.assigned? attribute?
+  def unassigned?
+    self.assignments.length == 0
+  end
 
   # devise overrides to deal with not approved stuff
   # https://github.com/plataformatec/devise/wiki/How-To:-Require-admin-to-activate-account-before-sign_in
@@ -69,12 +80,17 @@ class Volunteer < ActiveRecord::Base
   def region_ids
     self.regions.collect{ |r| r.id }
   end
+
   def admin_region_ids
+    admin_regions.collect { |r| r.id }
+  end
+
+  def admin_regions
     if self.super_admin?
-      Region.all.collect{ |r| r.id }
+      Region.all
     else
-      self.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
-    end
+      self.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end    
   end
 
   def gone?
@@ -91,6 +107,10 @@ class Volunteer < ActiveRecord::Base
       Assignment.add_volunteer_to_region self, Region.first
       logger.info "Automatically assigned new user to region #{self.regions.first.name}"
     end
+  end
+
+  def in_region? region_id
+    self.region_ids.include? region_id
   end
 
 end

@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  volunteer_id: 1
+  schedule_id: 1
+
+two:
+  volunteer_id: 1
+  schedule_id: 1

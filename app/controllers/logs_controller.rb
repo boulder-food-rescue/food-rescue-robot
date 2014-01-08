@@ -236,9 +236,11 @@ class LogsController < ApplicationController
     end
 
     if current_volunteer.admin and !params[:volunteer_id].nil?
-      pickups = Schedule.where("volunteer_id = #{params[:volunteer_id].to_i}")
+      # admin scheduling for someone else
+      pickups = Volunteer.find(params[:volunteer_id].to_i).schedules
     else
-      pickups = Schedule.where("volunteer_id = #{current_volunteer.id}")
+      # scheduling for yourself
+      pickups = current_volunteer.schedules
     end
     
     n = 0

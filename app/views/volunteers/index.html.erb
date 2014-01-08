@@ -1,70 +1,77 @@
 <h2><%= @header %></h2>
+
 <% if @volunteers.length == 0 %>
-<p> 
-No volunteers matching that criteria...
-</p>
+
+  <p> 
+  No volunteers matching that criteria...
+  </p>
+
 <% else %>
-<table id="data_table">
-  <thead>
-  <tr>
-    <th> Name </th>
-    <th> Photo </th>
-    <th> Email </th>
-    <th> Phone </th>
-    <th> Preferred Contact </th>
-    <th> Transport </th>
-    <th> Account Status </th>
-    <th> Regions </th>
-    <% if current_volunteer.any_admin? %><th> Admin Notes </th> <% end %>
-    <th> Member since </th>
-    <th> Link </th>
-  </tr>
-  </thead>
-  <tbody>
-  <%
-  @volunteers.each do |v|
-    row_bgcolor = nil
-    if v.super_admin?
-      row_bgcolor = "red"
-    elsif v.any_admin?
-      row_bgcolor = "pink"
-    elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Time.zone.today)
-      row_bgcolor = "grey"
-    end
-  %>
-  <tr<% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-    <td> <%= link_to v.name, v unless v.name.nil? %>
-    <td> <% unless v.photo_file_name.nil? %><a href="<%= v.photo(:medium) %>"><img src="<%= v.photo(:thumb) %>"></a><% end %>
-    <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
-    <td> <%= v.phone %>
-    <td> <%= v.preferred_contact %>
-    <td> <%= v.transport_type.nil? ? "?" : v.transport_type.name %> <%= "(has car)" if v.has_car %>
-    <td> <%= s = v.is_disabled ? "Disabled" : ""
-             if !v.gone_until.nil? and v.gone_until > Time.zone.today
-               s += ", and " if s.length > 0
-               s += "Gone until #{v}"
-             end
-             s %>
-    <td> <%= v.regions.collect{ |r| r.name }.join(", ") %>
-    <% if current_volunteer.any_admin? %>
-    <td> <%= word_wrap(v.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless v.admin_notes.nil? %>
+
+  <table id="data_table">
+    <thead>
+    <tr>
+      <th> Name </th>
+      <th> Photo </th>
+      <th> Email </th>
+      <th> Phone </th>
+      <th> Preferred Contact </th>
+      <th> Transport </th>
+      <th> Account Status </th>
+      <th> Regions </th>
+      <% if current_volunteer.any_admin? %><th> Admin Notes </th> <% end %>
+      <th> Member since </th>
+      <th> Link </th>
+    </tr>
+    </thead>
+    <tbody>
+    <%
+    @volunteers.each do |v|
+      row_bgcolor = nil
+      if v.super_admin?
+        row_bgcolor = "red"
+      elsif v.any_admin?
+        row_bgcolor = "pink"
+      elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Time.zone.today)
+        row_bgcolor = "grey"
+      end
+    %>
+    <tr<% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+      <td> <%= link_to v.name, v unless v.name.nil? %>
+      <td> <% unless v.photo_file_name.nil? %><a href="<%= v.photo(:medium) %>"><img src="<%= v.photo(:thumb) %>"></a><% end %>
+      <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
+      <td> <%= v.phone %>
+      <td> <%= v.preferred_contact %>
+      <td> <%= v.transport_type.nil? ? "?" : v.transport_type.name %> <%= "(has car)" if v.has_car %>
+      <td> <%= s = v.is_disabled ? "Disabled" : ""
+               if !v.gone_until.nil? and v.gone_until > Time.zone.today
+                 s += ", and " if s.length > 0
+                 s += "Gone until #{v}"
+               end
+               s %>
+      <td> <%= v.regions.collect{ |r| r.name }.join(", ") %>
+      <% if current_volunteer.any_admin? %>
+      <td> <%= word_wrap(v.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless v.admin_notes.nil? %>
+      <% end %>
+      <td> <%= Time.at(v.created_at).strftime('%Y-%m-%d') %>
+      <td> <% if current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 %>
+           <%= link_to 'edit', edit_volunteer_path(v) %><br>
+           <%= link_to "delete", v, :confirm => "Are you sure?", :method => :delete %> 
+           <% end %>
+    </tr>
     <% end %>
-    <td> <%= v.created_at.strftime('%Y-%m-%d') %>
-    <td> <% if current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 %>
-         <%= link_to 'edit', edit_volunteer_path(v) %><br>
-         <%= link_to "delete", v, :confirm => "Are you sure?", :method => :delete %> 
-         <% end %>
-  </tr>
-  <% end %>
-  </tbody>
-</table>
-<br><br>
-Key: <span style="background: red">Admin</span>
-<span style="background: pink">Region Admin</span>
-<span style="background: gray">Disabled/Away</span>
-<br><br>
-Email List: <%= @volunteers.collect{ |v| v.email }.join(", ") %>
+    </tbody>
+  </table>
+  <br><br>
+  <b>Key:</b> <span class="label" style="background: red">Admin</span>
+  <span class="label" style="background: pink">Region Admin</span>
+  <span class="label" style="background: gray">Disabled/Away</span>
+  <br><br>
+  <b>Email List:</b>
+  <blockquote><%= @volunteers.collect{ |v| v.email }.join(", ") %></blockquote>
+
 <% end %>
+
 <% content_for :scripts do %>
 <script type="text/javascript">
 $(function () { 

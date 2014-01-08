@@ -33,9 +33,16 @@ class VolunteersController < ApplicationController
   end
 
   def shiftless
-    index(Volunteer.where(:is_disabled=>false).where("(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
-           (gone_until IS NULL or gone_until < current_date)"),
-      "Shiftless") 
+    # TODO: make this more efficient
+    @volunteers = Volunteer.all.keep_if do |volunteer|
+      volunteer.schedules.length ==0 && (volunteer.gone_until.nil? || volunteer.gone_until < Date.today)
+    end
+    @header = "Shiftless"
+    render :index
+
+    #index(Volunteer.where(:is_disabled=>false).where("(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
+    #       (gone_until IS NULL or gone_until < current_date)"),
+    #  "Shiftless") 
   end
   def need_training
     index(Volunteer.where(:is_disabled=>false, :needs_training=>true).where("gone_until IS NULL or gone_until < current_date"),
@@ -213,8 +220,7 @@ class VolunteersController < ApplicationController
     end
     today = Time.zone.today
     
-    @open_shift_count = Schedule.where("NOT irregular AND volunteer_id IS NULL 
-                                        AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})").count
+    @open_shift_count = Schedule.open_in_regions(current_volunteer.region_ids).length
 
     #Upcoming pickup list
     @upcoming_pickups = Log.where(:when => today...(today + 7)).where(:volunteer_id => current_volunteer)
@@ -249,16 +255,10 @@ class VolunteersController < ApplicationController
       end
     end
 
-    if current_volunteer.assignments.length == 0
-      @unassigned = true
-      @base_conditions = nil
-    else
-      @unassigned = false
-      @base_conditions = " AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
-    end
+    @unassigned = current_volunteer.unassigned?
 
     # FIXME: the below is Sean's code. It's quite nonDRY and should be cleaned up substantially
-    @pickups = Log.where("volunteer_id = ? AND complete",current_volunteer.id)
+    @pickups = Log.picked_up_by current_volunteer.id
     @lbs = 0.0
     @human_pct = 0.0
     @num_pickups = {}
@@ -280,10 +280,10 @@ class VolunteersController < ApplicationController
       @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
-    @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count
-    @num_to_cover = Log.where("volunteer_id IS NULL#{@base_conditions}").count
-    @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Time.zone.today.to_s).count
-    @num_unassigned = Schedule.where("volunteer_id IS NULL AND donor_id IS NOT NULL and recipient_id IS NOT NULL#{@base_conditions}").count
+    @num_shifts = current_volunteer.schedules.count
+    @num_to_cover = Log.needing_coverage.count
+    @num_upcoming = Log.upcoming_for(current_volunteer.id).count
+    @num_unassigned = Schedule.unassigned_in_regions(current_volunteer.assignments).count
     render :home
   end
 end

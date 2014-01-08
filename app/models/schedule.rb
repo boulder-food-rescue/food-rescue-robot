@@ -3,6 +3,7 @@ class Schedule < ActiveRecord::Base
   has_many :schedule_volunteers
   has_many :volunteers, :through => :schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>true}
+  has_many :logs
 
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"

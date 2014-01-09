@@ -78,19 +78,6 @@ h3 {
   font: 100% arial, sans-serif; 
 }
 
-.notice {
-  background: lightblue;
-  padding: 0.2em;
-  border: 1px solid grey;
-}
-
-.alert {
-  background: orange;
-  padding: 0.2em;
-  border: 1px solid grey;
-}
-
-
 /* Button */
 input[type=submit] {
 	background-color: #4B8CF5;

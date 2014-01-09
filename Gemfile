@@ -65,5 +65,9 @@ gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-ra
 # pretty select form elements
 gem 'select2-rails'
 
+# nested selecitons of volunteers on schedules
+gem 'cocoon'
+gem 'simple_form'
+
 # set timezone to browser timezone
 gem 'browser-timezone-rails'

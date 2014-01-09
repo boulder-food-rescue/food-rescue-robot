@@ -64,6 +64,7 @@ class SchedulesController < ApplicationController
       return
     end
     @schedule = Schedule.new
+    @schedule.volunteers.build
     @schedule.region = @region
     set_vars_for_form @region
     @action = "create"
@@ -114,37 +115,56 @@ class SchedulesController < ApplicationController
     end
   end
 
+  def leave
+    schedule = Schedule.find(params[:id])
+    if current_volunteer.in_region? schedule.region_id
+      if schedule.has_volunteer? current_volunteer
+        ScheduleVolunteer.where(:volunteer_id=>current_volunteer.id, :schedule_id=>schedule.id).delete_all
+        flash[:notice] = "You are no longer on the pickup from "+schedule.donor.name+" to "+schedule.recipient.name+"."
+      else
+        flash[:error] = "Cannot leave pickup since you're not part of it!"
+      end
+    else
+      flash[:error] = "Cannot leave that pickup since you are not a member of that region!"
+    end
+    redirect_to :action=>'show', :id=>schedule.id
+  end
+
   def take
     schedule = Schedule.find(params[:id])
     if current_volunteer.in_region? schedule.region_id
 
-      schedule_volunteer = ScheduleVolunteer.new
-      schedule_volunteer.volunteer = current_volunteer
-      schedule_volunteer.schedule = schedule
-      if schedule_volunteer.save
-        collided_shifts = []
-        Log.where('schedule_id = ? AND "when" >= current_date AND NOT complete',schedule.id).each{ |l|
-          if l.volunteer.nil?
-            l.volunteer = current_volunteer
-            l.save
-          else
-            collided_shifts.push(l)
-          end
-        }
-        if collided_shifts.length > 0
-          m = Notifier.schedule_collision_warning(schedule,collided_shifts)
-          m.deliver
-        end
-        flash[:notice] = "The shift is yours!"
+      if schedule.has_volunteer? current_volunteer
+        flash[:error] = "You are already on this shift"
       else
-        flash[:notice] = "Hrmph. That didn't work..."
+        schedule_volunteer = ScheduleVolunteer.new(:volunteer_id=>current_volunteer.id, :schedule_id=>schedule.id)
+        if schedule_volunteer.save
+          collided_shifts = []
+          Log.where('schedule_id = ? AND "when" >= current_date AND NOT complete',schedule.id).each{ |l|
+            if l.volunteer.nil?
+              l.volunteer = current_volunteer
+              l.save
+            else
+              collided_shifts.push(l)
+            end
+          }
+          if collided_shifts.length > 0
+            m = Notifier.schedule_collision_warning(schedule,collided_shifts)
+            m.deliver
+          end
+          flash[:notice] = "You have joined the pickup from "+schedule.donor.name+" to "+schedule.recipient.name+"!"
+        else
+          flash[:notice] = "Hrmph. That didn't work..."
+        end
       end
-      
+
     else
-      flash[:notice] = "Cannot take that pickup since you are not a member of that region."
+      
+      flash[:error] = "Cannot take that pickup since you are not a member of that region!"
+    
     end
 
-    open
+    redirect_to :action=>'show', :id=>schedule.id
   end
 
   def admin_only

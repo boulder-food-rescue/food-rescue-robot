@@ -1,0 +1,5 @@
+<% if schedule.has_volunteer? current_volunteer%>
+  <%=link_to "(Leave it)", :controller => "schedules", :action => "leave", :id => schedule %>
+<% else %>
+  <%=link_to (schedule.has_volunteers? ? 'Join it!' : 'Take it!'), :controller => "schedules", :action => "take", :id => schedule %>
+<% end %>

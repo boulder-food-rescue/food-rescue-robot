@@ -16,7 +16,8 @@ class Schedule < ActiveRecord::Base
   attr_accessible :region_id, :irregular, :backup, :transport_type_id, :food_type_ids, 
                   :weekdays, :admin_notes, :day_of_week, :donor_id, :public_notes, 
                   :recipient_id, :detailed_start_time, :detailed_stop_time, :frequency, :detailed_date, :temporary,
-                  :difficulty_rating, :expected_weight, :hilliness
+                  :difficulty_rating, :expected_weight, :hilliness, :schedule_volunteers, :schedule_volunteers_attributes
+  accepts_nested_attributes_for :schedule_volunteers
 
   Hilliness = ["Flat","Mostly Flat","Some Small Hills","Hilly for Reals","Mountaineering"]
   Difficulty = ["Easiest","Typical","Challenging","Most Difficult"]
@@ -42,25 +43,25 @@ class Schedule < ActiveRecord::Base
     schedules
   end
 
-  # backwards compatibility
-  def volunteer_id
-    self.volunteers.first.id
-  end 
-  def volunteer
-    self.volunteers.first
+  def has_volunteers?
+    self.volunteers.count > 0
   end
+
+  def no_volunteers?
+    self.volunteers.count == 0
+  end
+
+  def volunteers_needing_training?
+    somebody_needs_training = false
+    self.volunteers.each { |volunteer| somebody_needs_training |= volunteer.needs_training? }
+    somebody_needs_training
+  end
+
   def prior_volunteers
-    self.schedule_volunteers.collect{ |sv| sv.active ? sv.volunteer : nil }.compact
-  end
-  def prior_volunteer
-    self.prior_volunteers.first
-  end
-  # backwards compatibility
-  def prior_volunteer_id
-    self.prior_volunteer.id
+    self.schedule_volunteers.collect{ |sv| (not sv.active) ? sv.volunteer : nil }.compact
   end
   
-  def has_volunteer volunteer
+  def has_volunteer? volunteer
     return false if volunteer.nil?
     self.volunteers.collect { |v| v.id }.include? volunteer.id
   end

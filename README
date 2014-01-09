@@ -32,8 +32,8 @@ Models:
 
 Rake directives (eventually to be called on crontabs)
 
-  generate_logs - generates logs for today (run at 1am?)
-  send_reminders - sends out reminder emails for any outstanding logs (run at midnight?)
+  foodrobot:generate_logs - generates logs for today (run at 1am?)
+  foodrobot:send_reminders - sends out reminder emails for any outstanding logs (run at midnight?)
 
 Outside of the normal rails-fu, this project uses...
 

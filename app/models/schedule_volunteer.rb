@@ -5,4 +5,6 @@ class ScheduleVolunteer < ActiveRecord::Base
   
   attr_accessible :schedule_id, :volunteer_id, :active
 
+	accepts_nested_attributes_for :volunteer	
+
 end

@@ -38,9 +38,7 @@
     <% @schedule.volunteers.each do |volunteer| %>
       <li><%= volunteer.name %></li>
     <% end %>
-    <% unless @schedule.has_volunteer current_volunteer%>
-      <li><b><%=link_to "Join them now!", :controller => "schedules", :action => "take", :id => @schedule %></b></li>
-    <% end %>
+    <li><b><%= render 'take_or_leave', :schedule=>@schedule%></b></li>
   </ul>
 <% end %>
 </p>

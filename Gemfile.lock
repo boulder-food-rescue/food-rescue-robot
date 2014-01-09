@@ -55,6 +55,7 @@ GEM
       activesupport (>= 3.0)
     cocaine (0.5.1)
       climate_control (>= 0.0.3, < 1.0)
+    cocoon (1.2.5)
     coderay (1.0.8)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
@@ -148,6 +149,9 @@ GEM
     select2-rails (3.4.9)
       sass-rails
       thor (~> 0.14)
+    simple_form (2.1.1)
+      actionpack (~> 3.0)
+      activemodel (~> 3.0)
     simple_oauth (0.2.0)
     sprockets (2.2.2)
       hike (~> 1.2)
@@ -193,6 +197,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   browser-timezone-rails
+  cocoon
   coffee-rails (~> 3.2.1)
   devise (= 3.0.3)
   geocoder
@@ -207,6 +212,7 @@ DEPENDENCIES
   rails_bootstrap_navbar
   sass-rails (~> 3.2.3)
   select2-rails
+  simple_form
   sqlite3
   therubyracer
   thin

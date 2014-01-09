@@ -1,97 +1,110 @@
-<h2><%= @schedule.donor.nil? ? "?" : @schedule.donor.name %> &rarr; <%= @schedule.recipient.nil? ? "?" : @schedule.recipient.name %></h2>
+<div class="row-fluid">
 
-<% unless @schedule.next_pickup_time.nil? or @schedule.donor.nil? or @schedule.recipient.nil? %>
-  <div style="float: right;">
-    <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=<%=u "Food Rescue: #{@schedule.donor.name} -> #{@schedule.recipient.name}" %>&dates=<%=u @schedule.next_pickup_time[:start].gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @schedule.next_pickup_time[:stop].gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @schedule.public_notes%>&location=<%=u @schedule.donor.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
-  </div>
-<% end %>
+  <div class="span6">
 
-<p>
-  <%= readable_pickup_timespan @schedule %>
-  <% unless @schedule.next_pickup_time.nil? %>
-    (next pickup <%= @schedule.next_pickup_time[:start].to_s(:long_ordinal) %>)
-  <% end %>
-  .
-</p>
+    <h2><%= @schedule.donor.nil? ? "?" : @schedule.donor.name %> &rarr; <%= @schedule.recipient.nil? ? "?" : @schedule.recipient.name %></h2>
 
-<% unless @schedule.public_notes.nil? or @schedule.public_notes.strip == "" %>
-  <p><b>Notes:</b> <%= word_wrap(@schedule.public_notes,:line_width => 80).gsub("\n","<br>").html_safe %></p>
-<% end %>
-<% unless @schedule.expected_weight.nil? %>
-  <p><b>Expected Weight:</b> <%= @schedule.expected_weight %> <em>(current mean = <%= @schedule.mean_weight %>, max = <%= @schedule.max_weight %>)</em></p>
-<% end %>
-<% unless @schedule.hilliness.nil? %>
-  <p><b>Hilliness:</b> <%= Schedule::Hilliness[@schedule.hilliness] %></p>
-<% end %>
-<% unless @schedule.difficulty_rating.nil? %>
-  <p><b>Overall Difficulty:</b> <%= Schedule::Difficulty[@schedule.difficulty_rating] %></p>
-<% end %>
-<br />
-
-<h3>Current Volunteers</h3>
-<p>
-  <% if @schedule.volunteers.count == 0 %>
-  No volunteers yet...
-  <b><%=link_to "take this scheduled pickup now!", :controller => "schedules", :action => "take", :id => @schedule %></b>
-<% else %>
-  <ul>
-    <% @schedule.volunteers.each do |volunteer| %>
-      <li><%= volunteer.name %></li>
+    <% unless @schedule.next_pickup_time.nil? or @schedule.donor.nil? or @schedule.recipient.nil? %>
+      <div class="pull-right">
+        <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=<%=u "Food Rescue: #{@schedule.donor.name} -> #{@schedule.recipient.name}" %>&dates=<%=u @schedule.next_pickup_time[:start].gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @schedule.next_pickup_time[:stop].gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @schedule.public_notes%>&location=<%=u @schedule.donor.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
+      </div>
     <% end %>
-    <li><b><%= render 'take_or_leave', :schedule=>@schedule%></b></li>
-  </ul>
-<% end %>
-</p>
 
-<% unless @schedule.donor.nil? %>
-  <h3>Pickup Logistics</h3>
-  <p>
-  <% unless @schedule.donor.entry_info.blank? %>
-    <p><strong>Entry:</strong> <%= @schedule.donor.entry_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-  <% unless @schedule.donor.equipment_storage_info.blank? %>
-    <p><strong>Equipment:</strong> <%= @schedule.donor.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-  <% unless @schedule.donor.food_storage_info.blank? %>
-    <p><strong>Food:</strong> <%= @schedule.donor.food_storage_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-  <% unless @schedule.donor.onsite_contact_info.blank? %>
-    <p><strong>Contact:</strong> <%= @schedule.donor.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-  <% unless @schedule.donor.exit_info.blank? %>
-    <p><strong>Exit:</strong> <%= @schedule.donor.exit_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-<% end %>
+    <p>
+      <%= readable_pickup_timespan @schedule %>
+      <% unless @schedule.next_pickup_time.nil? %>
+        (next pickup <%= @schedule.next_pickup_time[:start].to_s(:long_ordinal) %>)
+      <% end %>
+      .
+    </p>
 
-<% unless @schedule.recipient.nil? %>
-  <h3>Drop Logistics</h3>
-  <p>
-  <% unless @schedule.recipient.entry_info.blank? %>
-   <p><strong>Entry:</strong> <%= @schedule.recipient.entry_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-  <% unless @schedule.recipient.equipment_storage_info.blank? %>
-    <p><strong>Equipment:</strong> <%= @schedule.recipient.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-  <% unless @schedule.recipient.food_storage_info.blank? %>
-    <p><strong>Food:</strong> <%= @schedule.recipient.food_storage_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-  <% unless @schedule.recipient.onsite_contact_info.blank? %>
-    <p><strong>Contact:</strong> <%= @schedule.recipient.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-  <% unless @schedule.recipient.exit_info.blank? %>
-    <p><strong>Exit:</strong> <%= @schedule.recipient.exit_info.gsub("\n","<br>").html_safe %></p>
-  <% end %>
-<% end %>
+    <% unless @schedule.public_notes.nil? or @schedule.public_notes.strip == "" %>
+      <p><b>Notes:</b> <%= word_wrap(@schedule.public_notes,:line_width => 80).gsub("\n","<br>").html_safe %></p>
+    <% end %>
+    <% unless @schedule.expected_weight.nil? %>
+      <p><b>Expected Weight:</b> <%= @schedule.expected_weight %> <em>(current mean = <%= @schedule.mean_weight %>, max = <%= @schedule.max_weight %>)</em></p>
+    <% end %>
+    <% unless @schedule.hilliness.nil? %>
+      <p><b>Hilliness:</b> <%= Schedule::Hilliness[@schedule.hilliness] %></p>
+    <% end %>
+    <% unless @schedule.difficulty_rating.nil? %>
+      <p><b>Overall Difficulty:</b> <%= Schedule::Difficulty[@schedule.difficulty_rating] %></p>
+    <% end %>
+    <br />
 
-<% unless @schedule.donor.address.nil? or @schedule.recipient.address.nil? %>
-  <h3>Bicycling Directions</h3><br>
-  <div style="width: 465px;">
-      <%= gmaps("direction" => {"data" =>
-                {"from" => @schedule.donor.address.tr("\n\r",","), 
-                  "to" => @schedule.recipient.address.tr("\n\r",",") }, 
-                "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}
-          }) %>
-    
-      <div id="instructions"></div>
+    <h3>Current Volunteers</h3>
+    <p>
+      <% if @schedule.volunteers.count == 0 %>
+      No volunteers yet...
+      <b><%=link_to "take this scheduled pickup now!", :controller => "schedules", :action => "take", :id => @schedule %></b>
+    <% else %>
+      <ul>
+        <% @schedule.volunteers.each do |volunteer| %>
+          <li><%= volunteer.name %></li>
+        <% end %>
+        <li><b><%= render 'take_or_leave', :schedule=>@schedule%></b></li>
+      </ul>
+    <% end %>
+    </p>
+
+    <% unless @schedule.donor.nil? %>
+      <h3>Pickup Logistics</h3>
+      <p>
+      <% unless @schedule.donor.entry_info.blank? %>
+        <p><strong>Entry:</strong> <%= @schedule.donor.entry_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+      <% unless @schedule.donor.equipment_storage_info.blank? %>
+        <p><strong>Equipment:</strong> <%= @schedule.donor.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+      <% unless @schedule.donor.food_storage_info.blank? %>
+        <p><strong>Food:</strong> <%= @schedule.donor.food_storage_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+      <% unless @schedule.donor.onsite_contact_info.blank? %>
+        <p><strong>Contact:</strong> <%= @schedule.donor.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+      <% unless @schedule.donor.exit_info.blank? %>
+        <p><strong>Exit:</strong> <%= @schedule.donor.exit_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+    <% end %>
+
+    <% unless @schedule.recipient.nil? %>
+      <h3>Drop Logistics</h3>
+      <p>
+      <% unless @schedule.recipient.entry_info.blank? %>
+       <p><strong>Entry:</strong> <%= @schedule.recipient.entry_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+      <% unless @schedule.recipient.equipment_storage_info.blank? %>
+        <p><strong>Equipment:</strong> <%= @schedule.recipient.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+      <% unless @schedule.recipient.food_storage_info.blank? %>
+        <p><strong>Food:</strong> <%= @schedule.recipient.food_storage_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+      <% unless @schedule.recipient.onsite_contact_info.blank? %>
+        <p><strong>Contact:</strong> <%= @schedule.recipient.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+      <% unless @schedule.recipient.exit_info.blank? %>
+        <p><strong>Exit:</strong> <%= @schedule.recipient.exit_info.gsub("\n","<br>").html_safe %></p>
+      <% end %>
+    <% end %>
+
   </div>
-<% end %>
+  <div class="span6">
+
+    <% unless @schedule.donor.address.nil? or @schedule.recipient.address.nil? %>
+      <h2>Bicycling Directions</h2>
+      <br/>
+      <div style="width: 465px;">
+          <%= gmaps("direction" => {"data" =>
+                    {"from" => @schedule.donor.address.tr("\n\r",","), 
+                      "to" => @schedule.recipient.address.tr("\n\r",",") }, 
+                    "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}
+              }) %>
+        
+          <div id="instructions"></div>
+      </div>
+    <% end %>
+
+  </div>
+
+</div>
+

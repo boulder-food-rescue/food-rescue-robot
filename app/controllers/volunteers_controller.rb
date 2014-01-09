@@ -8,7 +8,7 @@ class VolunteersController < ApplicationController
     unrequested = Volunteer.where(:requested_region_id=>nil)
     requested_my_region = Volunteer.where(:requested_region_id=>current_volunteer.admin_region_ids)
     @volunteers = unassigned | (no_assingments & (unrequested | requested_my_region))
-    @header = "Unassigned"
+    @header = "Unassigned Volunteers"
   end
 
   def assign
@@ -37,7 +37,7 @@ class VolunteersController < ApplicationController
     @volunteers = Volunteer.all.keep_if do |volunteer|
       volunteer.schedules.length ==0 && (volunteer.gone_until.nil? || volunteer.gone_until < Date.today)
     end
-    @header = "Shiftless"
+    @header = "Shiftless Volunteers"
     render :index
   end
 
@@ -45,7 +45,7 @@ class VolunteersController < ApplicationController
     @volunteers = Volunteer.where(:is_disabled=>false, :needs_training=>true).keep_if do |volunteer|
       (volunteer.gone_until.nil? || volunteer.gone_until < Date.today)
     end
-    @header = "Needs Training"
+    @header = "Volunteers Needing Training"
     render :index
   end
 
@@ -58,7 +58,7 @@ class VolunteersController < ApplicationController
   def show
     @v = Volunteer.find(params[:id])
     unless current_volunteer.super_admin? or (current_volunteer.region_ids & @v.region_ids).length > 0
-      flash[:notice] = "Can't view volunteer for a region you're not assigned to..."
+      flash[:error] = "Can't view volunteer for a region you're not assigned to..."
       redirect_to(root_path)
       return
     end
@@ -87,7 +87,7 @@ class VolunteersController < ApplicationController
   def check_permissions(v)
     unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 or
            current_volunteer == v
-      flash[:notice] = "Not authorized to create/edit volunteers for that region"
+      flash[:error] = "Not authorized to create/edit volunteers for that region"
       redirect_to(root_path)
       return false
     end
@@ -108,7 +108,7 @@ class VolunteersController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Didn't save successfully :("
+      flash[:error] = "Didn't save successfully :("
       render :new
     end
   end
@@ -141,7 +141,7 @@ class VolunteersController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Update failed :("
+      flash[:error] = "Update failed :("
       render :edit
     end
   end
@@ -152,7 +152,7 @@ class VolunteersController < ApplicationController
     vrids = v.regions.collect{ |r| r.id }
     adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
     unless current_volunteer.super_admin? or (vrids & adminrids).length > 0
-      flash[:notice] = "You're not authorized to switch to that user!"
+      flash[:error] = "You're not authorized to switch to that user!"
       redirect_to(root_path)
       return
     end
@@ -198,7 +198,7 @@ class VolunteersController < ApplicationController
 
   def knight
     unless current_volunteer.super_admin?
-      flash[:notice] = "You're not permitted to do that!"
+      flash[:error] = "You're not permitted to do that!"
       redirect_to(root_path)
       return
     end

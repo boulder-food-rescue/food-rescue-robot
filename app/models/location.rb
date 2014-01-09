@@ -90,6 +90,10 @@ class Location < ActiveRecord::Base
     region.time_zone
   end
 
+  def read_day_info key
+    @day_info[key]
+  end
+
   private 
   
     def using_detailed_hours? 
@@ -139,10 +143,6 @@ class Location < ActiveRecord::Base
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
         write_day_info( prefix+"end", t )
       end
-    end
-
-    def read_day_info key
-      @day_info[key]
     end
 
     def write_day_info key, value

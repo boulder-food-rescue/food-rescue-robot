@@ -180,6 +180,54 @@ class VolunteersController < ApplicationController
   end
 
   def region_stats
+    @pounds_per_year = {}
+    @pounds_per_month = {}
+    @first_recorded_pickup = nil
+    @per_volunteer = {}
+    @per_volunteer2 = {}
+      
+    Log.select("sum(weight) as weight_sum, `logs`.`id`, `logs`.`when`, logs.transport_type_id, logs.orig_volunteer_id, logs.volunteer_id").
+        joins(:log_parts).where("complete and region_id IN (#{current_volunteer.admin_region_ids.join(",")})").
+        group("`logs`.`id`, `logs`.`when`, logs.transport_type_id, logs.orig_volunteer_id, logs.volunteer_id").
+        each{ |l|
+      @pounds_per_year[l.when.year] = 0 if @pounds_per_year[l.when.year].nil?
+      @pounds_per_year[l.when.year] += l.weight_sum.to_f
+      mokey = l.when.strftime("%Y-%m")
+      @pounds_per_month[mokey] = 0 if @pounds_per_month[mokey].nil?
+      @pounds_per_month[mokey] += l.weight_sum.to_f
+      @first_recorded_pickup = l.when if @first_recorded_pickup.nil? or l.when < @first_recorded_pickup
+      next if l.volunteer.nil?
+      @per_volunteer[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if @per_volunteer[l.volunteer.id].nil?
+      @per_volunteer2[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if @per_volunteer2[l.volunteer.id].nil?
+      if l.when >= (Date.today << 12)
+        @per_volunteer[l.volunteer.id][:weight] += l.weight_sum.to_f
+        @per_volunteer[l.volunteer.id][:count] += 1
+        @per_volunteer[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+        @per_volunteer[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+      end
+      if l.when >= (Date.today << 1)
+        @per_volunteer2[l.volunteer.id][:weight] += l.weight_sum.to_f
+        @per_volunteer2[l.volunteer.id][:count] += 1
+        @per_volunteer2[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+        @per_volunteer2[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+      end
+    }
+
+    @pounds_per_month_data = []
+    @pounds_per_month_labels = @pounds_per_month.keys.sort
+    @pounds_per_month_labels.each{ |i|
+      @pounds_per_month_data << @pounds_per_month[i]
+    }
+    @pounds_per_year_data = []
+    @pounds_per_year_labels = @pounds_per_year.keys.sort
+    @pounds_per_year_labels.each{ |i|
+      @pounds_per_year_data << @pounds_per_year[i]
+    }
+
+    @lazy_volunteers = Volunteer.select("volunteers.id, name, email, count(*) as count, max(`logs`.`when`) as last_date").
+            joins(', logs').where("volunteers.id=logs.volunteer_id").group("volunteers.id, name, email")
+
+    @region_locations = Location.where(:region_id=>current_volunteer.admin_region_ids)
   end
 
   def waiver

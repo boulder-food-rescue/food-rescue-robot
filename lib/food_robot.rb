@@ -4,7 +4,7 @@ require 'csv'
 module FoodRobot 
   
   # Set to true to disable emailing and just print the emails to STDOUT
-  @@DontDeliverEmails = true
+  @@DontDeliverEmails = false
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule

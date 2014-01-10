@@ -227,7 +227,7 @@ class LogsController < ApplicationController
     to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
     volunteer = (params[:volunteer_id].nil?) ? current_volunteer : Volunteer.find(params[:volunteer_id].to_i)
     vrids = volunteer.regions.collect{ |r| r.id }
-    adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+    adminrids = current_volunteer.admin_region_ids
 
     unless volunteer.id == current_volunteer.id or current_volunteer.super_admin? or (vrids & adminrids).length > 0
       flash[:notice] = "Cannot schedule an absence for that person, mmmmk."

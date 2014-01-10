@@ -5,6 +5,7 @@ class SchedulesController < ApplicationController
   def open
     @schedules = Schedule.open_in_regions current_volunteer.region_ids
     @my_admin_regions = current_volunteer.admin_regions
+    @page_title = "Open Shifts"    
     render :index
   end
 
@@ -13,14 +14,16 @@ class SchedulesController < ApplicationController
     # schedules where: (I am a volunteer on)
     @schedules = current_volunteer.schedules
     @my_admin_regions = current_volunteer.admin_regions
+    @page_title = "My Regular Shifts"
     render :index
   end
 
   # TODO: handle volunteer.region_ids==0 case
-  def index(day_of_week=nil)
+  def index(title='Full Schedule', day_of_week=nil)
     dowq = day_of_week.nil? ? "" : "day_of_week = #{day_of_week.to_i}"
     @schedules = Schedule.where(:region_id => current_volunteer.region_ids).where(dowq)
     @my_admin_regions = current_volunteer.admin_regions
+    @page_title = title
     render :index
   end
 
@@ -34,15 +37,15 @@ class SchedulesController < ApplicationController
   end
 
   def today
-    index(Time.zone.today.wday)
+    index("Today's Schedule",Time.zone.today.wday)
   end
   def tomorrow
-    index(Time.zone.today.wday+1 % 6)
+    index("Tomorrow's Schedule",Time.zone.today.wday+1 % 6)
   end
   def yesterday
     day_of_week = Time.zone.today.wday - 1
     day_of_week = 6 if day_of_week < 0
-    index(day_of_week)
+    index("Yesterday's Schedule",day_of_week)
   end
 
   def destroy

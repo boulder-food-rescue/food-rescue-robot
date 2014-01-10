@@ -51,7 +51,7 @@ class SchedulesController < ApplicationController
   def destroy
     @s = Schedule.find(params[:id])
     unless current_volunteer.any_admin? @s.region
-      flash[:notice] = "Not authorized to delete schedule items for that region"
+      flash[:error] = "Not authorized to delete schedule items for that region"
       redirect_to(root_path)
       return
     end
@@ -62,7 +62,7 @@ class SchedulesController < ApplicationController
   def new
     @region = Region.find(params[:region_id])
     unless current_volunteer.any_admin? @region
-      flash[:notice] = "Not authorized to create schedule items for that region"
+      flash[:error] = "Not authorized to create schedule items for that region"
       redirect_to(root_path)
       return
     end
@@ -77,7 +77,7 @@ class SchedulesController < ApplicationController
   def create
     @schedule = Schedule.new(params[:schedule])
     unless current_volunteer.any_admin? @schedule.region
-      flash[:notice] = "Not authorized to create schedule items for that region"
+      flash[:error] = "Not authorized to create schedule items for that region"
       redirect_to(root_path)
       return
     end
@@ -85,7 +85,7 @@ class SchedulesController < ApplicationController
       flash[:notice] = "Created successfully"
       index
     else
-      flash[:notice] = "Didn't save successfully :("
+      flash[:error] = "Didn't save successfully :("
       render :new
     end
   end
@@ -93,7 +93,7 @@ class SchedulesController < ApplicationController
   def edit
     @schedule = Schedule.find(params[:id])
     unless current_volunteer.any_admin? @schedule.region
-      flash[:notice] = "Not authorized to edit schedule items for that region"
+      flash[:error] = "Not authorized to edit schedule items for that region"
       redirect_to(root_path)
       return
     end
@@ -105,7 +105,7 @@ class SchedulesController < ApplicationController
   def update
     @schedule = Schedule.find(params[:id])
     unless current_volunteer.any_admin? @schedule.region
-      flash[:notice] = "Not authorized to edit schedule items for that region"
+      flash[:error] = "Not authorized to edit schedule items for that region"
       redirect_to(root_path)
       return
     end
@@ -113,7 +113,7 @@ class SchedulesController < ApplicationController
       flash[:notice] = "Updated Successfully"
       index
     else
-      flash[:notice] = "Update failed :("
+      flash[:error] = "Update failed :("
       render :edit
     end
   end
@@ -157,7 +157,7 @@ class SchedulesController < ApplicationController
           end
           flash[:notice] = "You have joined the pickup from "+schedule.donor.name+" to "+schedule.recipient.name+"!"
         else
-          flash[:notice] = "Hrmph. That didn't work..."
+          flash[:error] = "Hrmph. That didn't work..."
         end
       end
 

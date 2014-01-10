@@ -141,3 +141,17 @@ td {
     -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
     background: #C5C5C5;
 }
+
+h2.section-head {
+  margin: 0px;
+  margin-top: 10px;
+  font-size: 150%;
+  border-top: 1px solid #EEEEEE;
+  border-bottom: 1px solid #EEEEEE;
+  padding: 10px 0 10px 0;
+}
+
+h2.section-head.first {
+  border-top: 0px;
+  margin-top: 0px;
+}

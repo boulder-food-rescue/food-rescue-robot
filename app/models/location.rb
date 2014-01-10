@@ -91,7 +91,11 @@ class Location < ActiveRecord::Base
   end
 
   def read_day_info key
-    @day_info[key]
+    self.day_info[key]
+  end
+
+  def day_info
+    @day_info
   end
 
   private 
@@ -118,6 +122,7 @@ class Location < ActiveRecord::Base
         prefix = "day"+index.to_s+"_"
         hours_info[index] = {
           :status => read_day_info(prefix+"status").to_s,
+          # save these with the timezone on them!
           :start => read_day_info(prefix+"start").to_formatted_s(:rfc822),
           :end => read_day_info(prefix+"end").to_formatted_s(:rfc822)
         }
@@ -146,7 +151,7 @@ class Location < ActiveRecord::Base
     end
 
     def write_day_info key, value
-      @day_info[key] = value
+      self.day_info[key] = value
     end
 
 end

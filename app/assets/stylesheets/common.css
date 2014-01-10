@@ -156,3 +156,10 @@ h2.section-head.first {
   border-top: 0px;
   margin-top: 0px;
 }
+
+#day1_start_hour, #day2_start_hour, #day3_start_hour, #day4_start_hour, #day5_start_hour, #day6_start_hour, #day6_start_hour,
+#day1_end_hour, #day2_end_hour, #day3_end_hour, #day4_end_hour, #day5_end_hour, #day6_end_hour, #day6_end_hour,
+#day1_start_minute, #day2_start_minute, #day3_start_minute, #day4_start_minute, #day5_start_minute, #day6_start_minute, #day6_start_minute,
+#day1_end_minute, #day2_end_minute, #day3_end_minute, #day4_end_minute, #day5_end_minute, #day6_end_minute, #day6_end_minute {
+  width: 80px;
+}

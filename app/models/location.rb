@@ -83,6 +83,7 @@ class Location < ActiveRecord::Base
         Time.find_zone(self.time_zone).parse( params[prefix]['end']['hour']+":"+params[prefix]['end']['minute'] )
       )
     end
+    populate_detailed_hours_json_before_save
   end
 
   def time_zone
@@ -95,6 +96,7 @@ class Location < ActiveRecord::Base
   end
 
   def day_info
+    @day_info = {} if @day_info.nil?
     @day_info
   end
 

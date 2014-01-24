@@ -22,7 +22,8 @@
   <%= f.select(:requested_region_id,Region.all.collect{ |r| [r.name,r.id] }) %></div>
   <br>
 
-  <div>Please note that, after submitting this form, an administrator-user of the Robot must confirm you as a valid volunteer (specifically, in the region you've selected above) before you can start signing up for deliveries. <br /><br />The exact procedure to follow for confirmation may vary from region to region; you may be required to undergo an orientation process to acquaint you with the Robot's workings. Inquire with your local Food Rescue organization for more information.</div>
+  <div>Thanks for signing up! You will receive a welcome email (and be able to log in) after your account has been
+    approved by an area coordinator..</div>
   <br />
 
   <div><%= f.submit "Sign up" %></div>

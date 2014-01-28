@@ -6,7 +6,7 @@ Installation
 
 1. Make sure you have ruby installed.
 2. Make sure you have ImageMagick installed by running `which convert` (the paperclip plugin needs this).
-2. Grab the [source code](http://code.google.com/p/bfr-webapp/).
+2. Grab the [source code](https://github.com/somerandomsequence/food-rescue-robot).
 3. Run `bundle update` to pull in all the required gems.
 4. Copy `config/database.yml.dist` to `config/database.yml` and edit the `development` configuration as desired (defaults to sqlite).
 5. Create the database by running `rake db:migrate`
@@ -32,8 +32,8 @@ Models:
 
 Rake directives (eventually to be called on crontabs)
 
-  generate_logs - generates logs for today (run at 1am?)
-  send_reminders - sends out reminder emails for any outstanding logs (run at midnight?)
+  foodrobot:generate_logs - generates logs for today (run at 1am?)
+  foodrobot:send_reminders - sends out reminder emails for any outstanding logs (run at midnight?)
 
 Outside of the normal rails-fu, this project uses...
 

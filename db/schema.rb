@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131112152346) do
+ActiveRecord::Schema.define(:version => 20131226160442) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -127,8 +127,8 @@ ActiveRecord::Schema.define(:version => 20131112152346) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
-    t.string   "weight_unit",            :default => "pound", :null => false
     t.text     "time_zone"
+    t.string   "weight_unit",            :default => "pound", :null => false
   end
 
   create_table "schedule_parts", :force => true do |t|
@@ -142,11 +142,20 @@ ActiveRecord::Schema.define(:version => 20131112152346) do
   add_index "schedule_parts", ["food_type_id"], :name => "index_schedule_parts_on_food_type_id"
   add_index "schedule_parts", ["schedule_id"], :name => "index_schedule_parts_on_schedule_id"
 
+  create_table "schedule_volunteers", :force => true do |t|
+    t.integer  "schedule_id"
+    t.integer  "volunteer_id"
+    t.boolean  "active",       :default => true
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+  end
+
+  add_index "schedule_volunteers", ["schedule_id"], :name => "index_schedule_volunteers_on_schedule_id"
+  add_index "schedule_volunteers", ["volunteer_id"], :name => "index_schedule_volunteers_on_volunteer_id"
+
   create_table "schedules", :force => true do |t|
     t.integer  "recipient_id"
     t.integer  "donor_id"
-    t.integer  "volunteer_id"
-    t.integer  "prior_volunteer_id"
     t.integer  "day_of_week"
     t.text     "admin_notes"
     t.text     "public_notes"
@@ -165,8 +174,6 @@ ActiveRecord::Schema.define(:version => 20131112152346) do
     t.integer  "expected_weight"
     t.integer  "hilliness"
   end
-
-  add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"
 
   create_table "transport_types", :force => true do |t|
     t.string   "name"

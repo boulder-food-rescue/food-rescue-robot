@@ -26,6 +26,7 @@ class ApplicationController < ActionController::Base
       @recipients = Location.recipients.where(:region_id=>region.id).collect{ |r| [r.name,r.id] }
       @food_types = FoodType.regional(region.id).collect{ |ft| [ft.name,ft.id] }
       @transport_types = TransportType.all.collect{ |tt| [tt.name,tt.id] }
+      @regions = Region.all
     end
 
 end

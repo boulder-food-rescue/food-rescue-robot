@@ -1,0 +1,4 @@
+<div class="nested_fields">
+  <%= f.association :volunteer, :collection => @region.volunteers, :as=>:select, :label=>false %>
+  <!-- <%= link_to_remove_association 'remove', f, {:class=>'btn'} %> -->
+</div>

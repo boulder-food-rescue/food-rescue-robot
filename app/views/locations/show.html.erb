@@ -1,52 +1,62 @@
 
-<h2><%= @loc.name %></h2>
-
-<br />
-<%= gmaps("markers" => { "data" => @json },"map_options" => {"processing" => "json", "auto_zoom" => false, "zoom" => 14}) %>
-<br />
-
-<h3>Address</h3>
-<p>
-<%= @loc.address.gsub("\n","<br>").html_safe unless @loc.address.nil? %><br>
-</p>
-
-<h3>Contact Info</h3>
-<p>
-<%= @loc.contact.gsub("\n","<br>").html_safe unless @loc.contact.nil? %>
-<% unless @loc.website.nil? %><a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
-<br />
-<%= @loc.phone %>
-<br />
-<%= @loc.email %>
-</p>
-
-<% unless readable_hours(@loc).blank? %>
-<h3>Hours</h3>
-<p>
-<%= readable_hours @loc %>
-</p>
+<h2><%= @loc.name %>
+<% if current_volunteer.any_admin? %>
+	<small>( <%= link_to 'edit', :controller => "locations", :action => "edit", :id => @loc.id %> )</small>
 <% end %>
+</h2>
 
-<h3>Pickup/Drop Logistics</h3>
-<% unless @loc.entry_info.blank? %>
-<p><strong>Entry:</strong> <%= @loc.entry_info.gsub("\n","<br>").html_safe %></p>
-<% end %>
-<% unless @loc.equipment_storage_info.blank? %>
-<p><strong>Equipment:</strong> <%= @loc.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
-<% end %>
-<% unless @loc.food_storage_info.blank? %>
-<p><strong>Food:</strong> <%= @loc.food_storage_info.gsub("\n","<br>").html_safe %><br /></p>
-<% end %>
-<% unless @loc.onsite_contact_info.blank? %>
-<p><strong>Contact:</strong> <%= @loc.onsite_contact_info.gsub("\n","<br>").html_safe %><br /></p>
-<% end %>
-<% unless @loc.exit_info.blank? %>
-<p><strong>Exit:</strong> <%= @loc.exit_info.gsub("\n","<br>").html_safe %><br /></p>
-<% end %>
+<div class="row-fluid">
+	<div class="span6">
+		<%= gmaps("markers" => { "data" => @json },"map_options" => {"processing" => "json", "auto_zoom" => false, "zoom" => 14}) %>
+	</div>
+	<div class="span6">
 
-<h3>Notes</h3>
-<p>
-<%= @loc.public_notes.gsub("\n","<br>").html_safe unless @loc.public_notes.nil? %>
-<br />
-<%= @loc.admin_notes.gsub("\n","<br>").html_safe unless @loc.admin_notes.nil? or !(current_volunteer.region_admin? @loc.region or current_volunteer.super_admin?) %>
-</p>
+		<h3>Address</h3>
+		<p>
+		<%= @loc.address.gsub("\n","<br>").html_safe unless @loc.address.nil? %><br>
+		</p>
+
+		<h3>Contact Info</h3>
+		<p>
+		<%= @loc.contact.gsub("\n","<br>").html_safe unless @loc.contact.nil? %>
+		<% unless @loc.website.nil? %><a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
+		<br />
+		<%= @loc.phone %>
+		<br />
+		<%= @loc.email %>
+		</p>
+
+		<% unless readable_hours(@loc).blank? %>
+			<h3>Hours</h3>
+			<p>
+			<%= readable_hours @loc %>
+			</p>
+		<% end %>
+
+		<h3>Pickup/Drop Logistics</h3>
+		<% unless @loc.entry_info.blank? %>
+			<p><strong>Entry:</strong> <%= @loc.entry_info.gsub("\n","<br>").html_safe %></p>
+		<% end %>
+		<% unless @loc.equipment_storage_info.blank? %>
+			<p><strong>Equipment:</strong> <%= @loc.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+		<% end %>
+		<% unless @loc.food_storage_info.blank? %>
+			<p><strong>Food:</strong> <%= @loc.food_storage_info.gsub("\n","<br>").html_safe %><br /></p>
+		<% end %>
+		<% unless @loc.onsite_contact_info.blank? %>
+			<p><strong>Contact:</strong> <%= @loc.onsite_contact_info.gsub("\n","<br>").html_safe %><br /></p>
+		<% end %>
+		<% unless @loc.exit_info.blank? %>
+			<p><strong>Exit:</strong> <%= @loc.exit_info.gsub("\n","<br>").html_safe %><br /></p>
+		<% end %>
+
+		<h3>Notes</h3>
+		<p>
+		<%= @loc.public_notes.gsub("\n","<br>").html_safe unless @loc.public_notes.nil? %>
+		<br />
+		<%= @loc.admin_notes.gsub("\n","<br>").html_safe unless @loc.admin_notes.nil? or !(current_volunteer.region_admin? @loc.region or current_volunteer.super_admin?) %>
+		</p>
+
+	</div>
+
+</div>

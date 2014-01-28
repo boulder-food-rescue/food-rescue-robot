@@ -1,31 +1,31 @@
 <h2>Schedule an Absence</h2>
 
 <%= form_tag("/logs/create_absence", :method => "get") do %>
-<table class="absence_table">
-  <% if current_volunteer.any_admin? %>
-  <tr>
-  <td>Volunteer:</td>
-  <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
-  if current_volunteer.super_admin? %>
-  <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
-          ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }),{:class => "select2"}) %></td>
-  <% else %>
-  <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
-          ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact),{:class => "select2"}) %></td>
-  <% end %>
-  </tr>
-  <% end %>
+  <table class="absence_table">
+    
+    <% if current_volunteer.any_admin? %>
+      <tr>
+        <td>Volunteer:</td>
+        <% if current_volunteer.super_admin? %>
+          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+                  ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }),{:class => "select2"}) %></td>
+        <% else %>
+          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+                  ((v.regions.collect{ |r| r.id } & current_volunteer.admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact),{:class => "select2"}) %></td>
+        <% end %>
+      </tr>
+    <% end %>
 
-  <tr>
-    <td>Starting On: </td>
-    <td><%= select_date Time.zone.today, :prefix => :start_date %></td>
-  </tr>
-  <tr>
-  	<td>Ending On: </td>
-  	<td><%= select_date Time.zone.today, :prefix => :stop_date %></td>
-  </tr>
-</table>
-<%= submit_tag %>
+    <tr>
+      <td>Starting On: </td>
+      <td><%= select_date Time.zone.today, :prefix => :start_date %></td>
+    </tr>
+    <tr>
+    	<td>Ending On: </td>
+    	<td><%= select_date Time.zone.today, :prefix => :stop_date %></td>
+    </tr>
+  </table>
+  <%= submit_tag %>
 <% end %>
 
 <% content_for :scripts do %>

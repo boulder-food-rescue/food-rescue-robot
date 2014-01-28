@@ -29,6 +29,26 @@ class Log < ActiveRecord::Base
   TweetTimeThreshold = 3600*24
   TweetGainOrTime = :gain
 
+  def self.pickup_count region_id
+    self.where(:region_id=>region_id, :complete=>true).count
+  end
+
+  def self.picked_up_by volunteer_id
+    self.where(:volunteer_id=>volunteer_id, :complete=>true)
+  end
+
+  def self.upcoming_for volunteer_id
+    self.where(:volunteer_id=>volunteer_id).where("\"when\" >= "+Time.zone.today.to_s)
+  end
+
+  def self.needing_coverage region_id_list=nil
+    if not region_id_list.nil?
+      return self.where("volunteer_id IS NULL").where(:region_id=>region_id_list)
+    else
+      return self.where("volunteer_id IS NULL")
+    end
+  end
+
   def summed_weight
     self.log_parts.collect{ |lp| lp.weight }.compact.sum
   end

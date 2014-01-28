@@ -106,7 +106,7 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
       by Boulder Food Rescue, the robot is now used by multiple organizations around the world, fighting malnutrition
       and food waste with love, community, and bicycles. If you'd like to start a food rescue group in your town, shoot
       an email to info at boulder food rescue dot org and we can set you up with an account on here. If you're a super-diy
-      sort and want to hack on the source <a href="http://code.google.com/p/bfr-webapp/">you can do that too</a>.
+      sort and want to hack on the source <a href="https://github.com/somerandomsequence/food-rescue-robot">you can do that too</a>.
       </p>
 
       <h2 class="section_title">Facts</h2>
@@ -189,11 +189,12 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
           <h3>Volunteers Working Today</h3>
           <% 
           pickups_today.each do |pickup|
-            next if pickup.volunteer.nil? or pickup.donor.nil?
+            next if pickup.no_volunteers? or pickup.donor.nil?
               if pickup.donor.website != nil%>
                 <div>
                   <p>
-                    <%= pickup.volunteer.name %> - <a href="<%= pickup.donor.website %>"><%= pickup.donor.name %></a>
+                    <%= pickup.volunteers.collect{|v|v.name}.join ',' %>
+                     - <a href="<%= pickup.donor.website %>"><%= pickup.donor.name %></a>
                   </p>
                 </div>
             <% else %>

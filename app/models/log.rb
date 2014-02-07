@@ -5,10 +5,12 @@ class Log < ActiveRecord::Base
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
   belongs_to :food_type
+  belongs_to :scale_type
   belongs_to :transport_type
   belongs_to :region
   has_many :log_parts
   has_many :food_types, :through => :log_parts
+  has_many :scale_types, :through => :log_parts
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
@@ -21,7 +23,8 @@ class Log < ActiveRecord::Base
 
   attr_accessible :schedule_id, :region_id, :volunteer_id, :donor_id, :recipient_id, 
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
-                  :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :when
+                  :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :when,
+		  :scale_type_id
 
   after_save { |record| tweet(record) }
 

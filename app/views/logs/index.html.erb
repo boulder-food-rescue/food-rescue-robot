@@ -66,6 +66,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <td> <%= shift.complete ? shift.summed_weight : "?" %> </td>
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types.collect{ |ft| ft.name }.join(", ") unless shift.food_types.length == 0 %>
+    <td> <%= shift.scale_types.collect{ |st| st.name }.join(", ") unless shift.scale_types.length == 0 %>
     <% end %>
     <td> <%= link_to shift.orig_volunteer.name, shift.orig_volunteer unless shift.orig_volunteer.nil? %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>

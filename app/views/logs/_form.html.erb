@@ -57,7 +57,7 @@ EOF
     link_to_function "+ Add Another", func_str
    %>
 </td></tr>
-<tr><td>Weighed With<td><%= f.select(:weighed_by, [["Bathroom Scale","Bathroom Scale"],["Floor Scale","Floor Scale"],["Guesstimate","Guesstimate"]],{:include_blank => true}) %>
+<tr><td>Weighed With<td><%= f.select(:weighed_by, @scale_types, {:include_blank => true}) %>
 <tr><td>Transported With<td><%= f.select(:transport_type_id, @transport_types,{:include_blank => true}) %>
 <tr><td>Notes<br>
 <span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.<td><%= f.text_area(:notes, :size => "30x6") %>

@@ -7,11 +7,12 @@ class Schedule < ActiveRecord::Base
   belongs_to :region
   has_many :schedule_parts
   has_many :food_types, :through => :schedule_parts
+  has_many :scale_types, :through => :schedule_parts
 
   attr_accessible :region_id, :volunteer_id, :irregular, :backup, :transport_type_id, :food_type_ids, 
                   :weekdays, :admin_notes, :day_of_week, :donor_id, :prior_volunteer_id, :public_notes, 
-                  :recipient_id, :detailed_start_time, :detailed_stop_time, :frequency, :detailed_date, :temporary,
-                  :difficulty_rating, :expected_weight, :hilliness
+                  :recipient_id, :detailed_start_time, :detailed_stop_time, :frequency, :detailed_date,
+		  :temporary, :difficulty_rating, :expected_weight, :hilliness, :scale_type_ids
 
   Hilliness = ["Flat","Mostly Flat","Some Small Hills","Hilly for Reals","Mountaineering"]
   Difficulty = ["Easiest","Typical","Challenging","Most Difficult"]

@@ -5,10 +5,4 @@ class CreateScaleTypes < ActiveRecord::Migration
       t.string :weight_unit
       t.timestamps
     end
-  end
-  def up
-  end
-
-  def down
-  end
 end

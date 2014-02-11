@@ -1,0 +1,8 @@
+<%= form_for @scale_type, :url => {:action => @action } do |s| %>
+<table>
+<%= hidden_field_tag "scale_type[region_id]", @scale_type.region_id %>
+<tr><td>Name<td><%= f.text_field(:name) %>
+<tr><td>Units<td><%= f.text_field(:weight_unit) %>
+</table>
+<%= submit_tag %>
+<% end %>

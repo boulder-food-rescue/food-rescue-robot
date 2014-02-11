@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140211194316) do
+ActiveRecord::Schema.define(:version => 20140211202305) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -143,11 +143,13 @@ ActiveRecord::Schema.define(:version => 20140211194316) do
     t.integer  "schedule_id"
     t.integer  "food_type_id"
     t.boolean  "required"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "scale_type_id"
   end
 
   add_index "schedule_parts", ["food_type_id"], :name => "index_schedule_parts_on_food_type_id"
+  add_index "schedule_parts", ["scale_type_id"], :name => "index_schedule_parts_on_scale_type_id"
   add_index "schedule_parts", ["schedule_id"], :name => "index_schedule_parts_on_schedule_id"
 
   create_table "schedules", :force => true do |t|

@@ -268,7 +268,7 @@ class LogsController < ApplicationController
         lo.recipient = p.recipient
         lo.when = from
         lo.food_types = p.food_types
-        lo.scale_types = p.food_types
+        lo.scale_types = p.scale_types
         lo.region = p.region
         lo.save
         n += 1

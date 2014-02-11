@@ -1,74 +1,74 @@
 class ScaleTypesController < ApplicationController
-	before_filer :authenticate_volunteer!
+  before_filer :authenticate_volunteer!
 
-	def index
-		@scale_types = ScaleType.where("region_id IN (#{Region.all_admin(current_volunteer).collect{ |r| r.id }.join(",")})")
-		render :index
-	end
+  def index
+    @scale_types = ScaleType.where("region_id IN (#{Region.all_admin(current_volunteer).collect{ |r| r.id }.join(",")})")
+    render :index
+  end
 
-	def destroy
-		@l = ScaleType.find(params[:id])
-		return unless check_permissions(@l)
-		@l.destroy
-		redirect_to(request.referrer)
-	end
+  def destroy
+    @l = ScaleType.find(params[:id])
+    return unless check_permissions(@l)
+    @l.destroy
+    redirect_to(request.referrer)
+  end
 
-	def new
-		@scale_type = ScaleType.new
-		@scale_type.region_id = params[:region_id]
-		@scale_type.weight_unit = "lb"
-		@action = "create"
-		return unless check_permissions(@scale_type)
-		session[:my_return_to] = request.referrer
-		render :new
-	end
+  def new
+    @scale_type = ScaleType.new
+    @scale_type.region_id = params[:region_id]
+    @scale_type.weight_unit = "lb"
+    @action = "create"
+    return unless check_permissions(@scale_type)
+    session[:my_return_to] = request.referrer
+    render :new
+  end
 
-	def create
-		@scale_type = ScaleType.new(params[:scale_type])
-		return unless check_permissions(@scale_type)
-		if @scale_type.save
-			flash[:notice] = "Created successfully."
-			unless session[:my_return_to].nil?
-				redirect_to(session[:my_return_to])
-			else
-				index
-			end
-		else
-			flash[:notice] = "New scale didn't save."
-			render :new
-		end
-	end
+  def create
+    @scale_type = ScaleType.new(params[:scale_type])
+    return unless check_permissions(@scale_type)
+    if @scale_type.save
+      flash[:notice] = "Created successfully."
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+        index
+      end
+    else
+      flash[:notice] = "New scale didn't save."
+      render :new
+    end
+  end
 
-	def edit
-		@scale_type = ScaleType.find(params[:id])
-		return unless check_permissions(@scale_type)
-		@action = "update"
-		session[:my_return_to] = request.referrer
-		render :edit
-	end
+  def edit
+    @scale_type = ScaleType.find(params[:id])
+    return unless check_permissions(@scale_type)
+    @action = "update"
+    session[:my_return_to] = request.referrer
+    render :edit
+  end
 
-	def update
-		@scale_type = ScaleType.find(params[:id])
-		return unless check_permissions(@scale_type)
-		if @scale_type.update_attributes(params[:scale_type])
-			flash[:notice] = "Updated successfully."
-			unless session[:my_return_to].nil?
-				redirect_to(session[:my_return_to])
-			else
-				index
-			end
-		else
-			flash[:notice] = "Scale update didn't go through."
-			render :edit
-		end
-	end
+  def update
+    @scale_type = ScaleType.find(params[:id])
+    return unless check_permissions(@scale_type)
+    if @scale_type.update_attributes(params[:scale_type])
+      flash[:notice] = "Updated successfully."
+      unless session[:my_return_to].nil?
+        redirect_to(session[:my_return_to])
+      else
+      index
+  end
+  else
+    flash[:notice] = "Scale update didn't go through."
+    render :edit
+    end
+  end
 
-	def check_permissions(l)
-		unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids.include? l.region_id) 
-			flash[:notice] = "Unauthorized to edit scales in that way."
-			redirect_to(root_path)
-			return false
-		end
-		return true
-	end
+  def check_permissions(l)
+    unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids.include? l.region_id) 
+      flash[:notice] = "Unauthorized to edit scales in that way."
+      redirect_to(root_path)
+      return false
+    end
+    return true
+  end
 end

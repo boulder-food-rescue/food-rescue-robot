@@ -63,6 +63,8 @@
       <%= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <%= ft.name %>
     <% } %></td>
     </tr>
+    <tr><td>Scale Type<br /><span class="subtext">The scale you used to weigh the delivery</span></td>
+	<td><%= f.select(:scale_type, ScaleType.regional(@schedule.region), {:include_blank => true},{:cass => "select2"})%></td>
     <tr><td>Prior Volunteer<br /><span class="subtext">The volunteer who had this shift last</span></td>
         <td><%= f.select(:prior_volunteer_id, @volunteers, {:include_blank => true},{:class => "select2"}) %></td>  
     </tr>

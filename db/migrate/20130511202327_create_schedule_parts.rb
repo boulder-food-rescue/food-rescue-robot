@@ -9,7 +9,6 @@ class CreateScheduleParts < ActiveRecord::Migration
     end
     add_index :schedule_parts, :schedule_id
     add_index :schedule_parts, :food_type_id
-    add_index :schedule_parts, :scale_type_id
 
     execute "INSERT INTO schedule_parts (food_type_id,schedule_id,created_at,updated_at) 
              SELECT food_type_id,schedule_id,'now','now' FROM food_types_schedules;"

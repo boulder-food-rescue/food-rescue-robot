@@ -96,7 +96,7 @@
       <td><%= link_to schedule.prior_volunteer.name, schedule.prior_volunteer unless schedule.prior_volunteer.nil? %> </td>
       <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
       <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
-      <td> <%= schedule.scale_types.first.name #yes this is terrible =%> 
+      <td> <%= schedule.scale_types.first.name =%> 
       <td>
         <% if current_volunteer.any_admin? %>
           <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %><br>

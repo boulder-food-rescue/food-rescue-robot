@@ -1,5 +1,5 @@
 class ScaleTypesController < ApplicationController
-  before_filer :authenticate_volunteer!
+  before_filter :authenticate_volunteer!
 
   def index
     @scale_types = ScaleType.where("region_id IN (#{Region.all_admin(current_volunteer).collect{ |r| r.id }.join(",")})")
@@ -16,7 +16,7 @@ class ScaleTypesController < ApplicationController
   def new
     @scale_type = ScaleType.new
     @scale_type.region_id = params[:region_id]
-    @scale_type.weight_unit = "lb"
+    @scale_type.weight_unit = 1
     @action = "create"
     return unless check_permissions(@scale_type)
     session[:my_return_to] = request.referrer

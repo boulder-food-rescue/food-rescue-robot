@@ -18,6 +18,7 @@ No scales. All entered weights will be flagged as estimates.
   <thead>
   <tr>
     <th> Name </th>
+    <th> Unit </th>
     <th> Region </th>
     <th> Link </th>
   </tr>
@@ -28,9 +29,10 @@ No scales. All entered weights will be flagged as estimates.
   %>
   <tr>
     <td> <%= st.name %>
+    <td> <%= st.weight_unit %>
     <td> <%= st.region.name %>
-    <td><%= link_to 'edit', :controller => "scale_types", :action => "edit", :id => ft %><br>
-         <%= link_to "delete", ft, :confirm => "Are you sure?", :method => :delete %> </td>
+    <td><%= link_to 'edit', :controller => "scale_types", :action => "edit", :id => st %><br>
+         <%= link_to "delete", st, :confirm => "Are you sure?", :method => :delete %> </td>
   </tr>
   <% end %>
   </tbody>

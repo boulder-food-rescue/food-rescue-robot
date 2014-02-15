@@ -133,6 +133,9 @@ class LogsController < ApplicationController
         lp.description = lpdata["description"]
         lp.food_type_id = lpdata["food_type_id"].to_i
 	lp.scale_type_id = lpdata["scale_type_id"].to_i
+	weight_unit = lpdata["weight_unit"]
+	lp.weight = (lp.weight.to_f * (1/2.2).to_f) if weight_unit == "kg"
+	lp.weight = (lp.weight.to_f * (1/14).to_f) if weight_unit == "st"
         lp.log_id = @log.id
         lp.save
       } unless params["log_parts"].nil?
@@ -183,11 +186,21 @@ class LogsController < ApplicationController
       lpdata["count"] = nil if lpdata["count"].strip == ""
       next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
       lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
-      lp.weight = lpdata["weight"]
+      unc_weight = lpdata["weight"]
       lp.count = lpdata["count"]
       lp.description = lpdata["description"]
       lp.food_type_id = lpdata["food_type_id"].to_i
       lp.scale_type_id = lpdata["scale_type_id"].to_i
+      @scale = ScaleType.find(0)
+      weight_unit = @scale.weight_unit
+      fweight = 0
+      fweight = (unc_weight * 0.4545) if weight_unit == "kg"
+      fweight = (unc_weight * (1/14)) if weight_unit == "st"
+      fweight = (unc_weight) if weight_unit == "lb"
+      unless fweight == 0
+        lp.weight=fweight
+      else
+        lp.weight=unc_weight
       lp.log_id = @log.id
       lp.save
     } unless params["log_parts"].nil?

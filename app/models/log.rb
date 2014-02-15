@@ -24,7 +24,7 @@ class Log < ActiveRecord::Base
   attr_accessible :schedule_id, :region_id, :volunteer_id, :donor_id, :recipient_id, 
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :when,
-		  :scale_type_id
+		  :scale_type_id, :weight_unit, :scale_type_ids
 
   after_save { |record| tweet(record) }
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140211202305) do
+ActiveRecord::Schema.define(:version => 20140214204259) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -69,10 +69,12 @@ ActiveRecord::Schema.define(:version => 20140211202305) do
     t.integer  "food_type_id"
     t.boolean  "required"
     t.decimal  "weight"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
     t.integer  "count"
     t.text     "description"
+    t.integer  "scale_type_id"
+    t.integer  "weight_unit_id"
   end
 
   add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"
@@ -137,6 +139,11 @@ ActiveRecord::Schema.define(:version => 20140211202305) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
     t.integer  "region_id"
+  end
+
+  create_table "scale_types_schedules", :force => true do |t|
+    t.integer "scale_type_id"
+    t.integer "schedule_id"
   end
 
   create_table "schedule_parts", :force => true do |t|

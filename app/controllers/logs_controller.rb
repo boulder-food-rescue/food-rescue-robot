@@ -127,15 +127,17 @@ class LogsController < ApplicationController
       unfilled_count = 0
       params["log_parts"].each{ |dc,lpdata|
         lp = LogPart.new
-        lp.weight = lpdata["weight"]
+        base_weight = lpdata["weight"]
         lp.count = lpdata["count"]
         unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
         lp.description = lpdata["description"]
         lp.food_type_id = lpdata["food_type_id"].to_i
-	lp.scale_type_id = lpdata["scale_type_id"].to_i
-	weight_unit = lpdata["weight_unit"]
-	lp.weight = (lp.weight.to_f * (1/2.2).to_f) if weight_unit == "kg"
-	lp.weight = (lp.weight.to_f * (1/14).to_f) if weight_unit == "st"
+	scale = ScaleType.where('id = ?',@log.scale_type_ids.first)
+	weight_unit = scale.first.weight_unit
+	conv_weight = base_weight.to_f
+	conv_weight = (conv_weight * (1/2.2).to_f) if weight_unit == "kg"
+	conv_weight = (conv_weight * (1/14).to_f) if weight_unit == "st"
+	lp.weight = conv_weight.to_f
         lp.log_id = @log.id
         lp.save
       } unless params["log_parts"].nil?
@@ -190,17 +192,15 @@ class LogsController < ApplicationController
       lp.count = lpdata["count"]
       lp.description = lpdata["description"]
       lp.food_type_id = lpdata["food_type_id"].to_i
-      lp.scale_type_id = lpdata["scale_type_id"].to_i
-      @scale = ScaleType.find(0)
-      weight_unit = @scale.weight_unit
+      #@scale = ScaleType.find(lp.scale_type_id)
+      #flash[:notice] = "scale id: #{lp.scale_type_id} scale: #{@scale}."
+      scale = ScaleType.where('id = ?',@log.scale_type_ids.first)
+      weight_unit = scale.first.weight_unit
       fweight = 0
       fweight = (unc_weight * 0.4545) if weight_unit == "kg"
       fweight = (unc_weight * (1/14)) if weight_unit == "st"
       fweight = (unc_weight) if weight_unit == "lb"
-      unless fweight == 0
-        lp.weight=fweight
-      else
-        lp.weight=unc_weight
+      lp.weight = fweight.to_f
       lp.log_id = @log.id
       lp.save
     } unless params["log_parts"].nil?
@@ -214,7 +214,7 @@ class LogsController < ApplicationController
       }
       @log.complete = filled_count > 0 and required_unfilled == 0
       if @log.save
-        flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
+       flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
         # could be nil if they clicked on the link in an email
         unless session[:my_return_to].nil?
           redirect_to(session[:my_return_to])

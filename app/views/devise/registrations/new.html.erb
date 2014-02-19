@@ -22,6 +22,10 @@
   <%= f.select(:requested_region_id,Region.all.collect{ |r| [r.name,r.id] }) %></div>
   <br>
 
+  <div>Thanks for signing up! You will receive a welcome email (and be able to log in) after your account has been
+    approved by an area coordinator..</div>
+  <br />
+
   <div><%= f.submit "Sign up" %></div>
 <% end %>
 

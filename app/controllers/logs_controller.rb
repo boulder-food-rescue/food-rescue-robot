@@ -48,11 +48,11 @@ class LogsController < ApplicationController
     case params[:what]
     when 'poundage'
       if params[:region_id].nil?
-        t = LogPart.sum(:weight) + Region.where("prior_lbs_rescued IS NOT NULL").sum("prior_lbs_rescued")
+        t = LogPart.sum(:weight).to_i + Region.where("prior_lbs_rescued IS NOT NULL").sum("prior_lbs_rescued")
       else
         r = params[:region_id]
         @region = Region.find(r)
-        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight").to_f
+        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight").to_i
         t += @region.prior_lbs_rescued unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
       render :text => t.to_s
@@ -63,7 +63,7 @@ class LogsController < ApplicationController
           w = w.strip.downcase.tr(',','')
           next if w =~ /(nothing|no |none)/ or w =~ /etc/ or w =~ /n\/a/ or w =~ /misc/
           # people cannot seem to spell the most delicious fruit correctly
-          w = "avocados" if w == "avacados" or w == "avocadoes" or w == "avocado"
+          w = "avocados" if w == "avacados" or w == "avocadoes" or w == "avocado" or w == "proto-guacamole"
           words[w] = 0 if words[w].nil?
           words[w] += 1
         }
@@ -125,19 +125,38 @@ class LogsController < ApplicationController
 
       # mark as complete if deserving
       unfilled_count = 0
-      params["log_parts"].each{ |dc,lpdata|
-        lp = LogPart.new
-        lp.weight = lpdata["weight"]
-        lp.count = lpdata["count"]
-        unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
-        lp.description = lpdata["description"]
-        lp.food_type_id = lpdata["food_type_id"].to_i
-        lp.log_id = @log.id
-        lp.save
+      params["log_parts"].each{ |dc,lpdata|	
+        unless lpdata["food_type_id"].nil?
+	  lp = LogPart.new
+          base_weight = lpdata["weight"]
+          lp.count = lpdata["count"]
+          unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
+          lp.description = lpdata["description"]
+          lp.food_type_id = lpdata["food_type_id"].to_i
+	  scale = ScaleType.where('id = ?',@log.scale_type_ids.first)
+	  weight_unit = scale.first.weight_unit
+	  conv_weight = base_weight.to_f
+	  conv_weight = (conv_weight * (1/2.2).to_f) if weight_unit == "kg"
+  	  conv_weight = (conv_weight * (1/14).to_f) if weight_unit == "st"
+	  lp.weight = conv_weight.to_i
+	  lp.log_id = @log.id
+	  lp.save
+	end
       } unless params["log_parts"].nil?
       if unfilled_count == 0
         @log.complete = true
         @log.save
+      else
+	@log.log_parts.each{ |part|
+	  if part.food_type_id.nil? and part.weight.nil? and part.count.nil?
+	    part.destroy
+	    unfilled_count-=1;
+	  end
+	}
+	if unfilled_count == 0
+	  @log.complete = true
+	  @log.save
+	end
       end
 
       flash[:notice] = "Created successfully."
@@ -182,10 +201,10 @@ class LogsController < ApplicationController
       lpdata["count"] = nil if lpdata["count"].strip == ""
       next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
       lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
-      lp.weight = lpdata["weight"]
       lp.count = lpdata["count"]
       lp.description = lpdata["description"]
       lp.food_type_id = lpdata["food_type_id"].to_i
+      lp.weight = lpdata["weight"]
       lp.log_id = @log.id
       lp.save
     } unless params["log_parts"].nil?
@@ -199,7 +218,7 @@ class LogsController < ApplicationController
       }
       @log.complete = filled_count > 0 and required_unfilled == 0
       if @log.save
-        flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
+       flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
         # could be nil if they clicked on the link in an email
         unless session[:my_return_to].nil?
           redirect_to(session[:my_return_to])
@@ -266,6 +285,7 @@ class LogsController < ApplicationController
         lo.recipient = p.recipient
         lo.when = from
         lo.food_types = p.food_types
+        lo.scale_types = p.scale_types
         lo.region = p.region
         lo.save
         n += 1

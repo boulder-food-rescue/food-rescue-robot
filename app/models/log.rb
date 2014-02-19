@@ -14,7 +14,6 @@ class Log < ActiveRecord::Base
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
-  validates :weighed_by, presence: { if: :complete }
   validates :transport_type_id, presence: { if: :complete }
   validates :donor_id, presence: { if: :complete }
   validates :recipient_id, presence: { if: :complete }
@@ -23,7 +22,7 @@ class Log < ActiveRecord::Base
 
   attr_accessible :schedule_id, :region_id, :volunteer_id, :donor_id, :recipient_id, 
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
-                  :num_reminders, :orig_volunteer_id, :transport, :weighed_by, :when,
+                  :num_reminders, :orig_volunteer_id, :transport, :when,
 		  :scale_type_id, :weight_unit, :scale_type_ids
 
   after_save { |record| tweet(record) }
@@ -33,7 +32,7 @@ class Log < ActiveRecord::Base
   TweetGainOrTime = :gain
 
   def summed_weight
-    self.log_parts.collect{ |lp| lp.weight }.compact.sum
+    self.log_parts.collect{ |lp| lp.weight.to_i }.compact.sum
   end
 
   def summed_count

@@ -125,25 +125,38 @@ class LogsController < ApplicationController
 
       # mark as complete if deserving
       unfilled_count = 0
-      params["log_parts"].each{ |dc,lpdata|
-        lp = LogPart.new
-        base_weight = lpdata["weight"]
-        lp.count = lpdata["count"]
-        unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
-        lp.description = lpdata["description"]
-        lp.food_type_id = lpdata["food_type_id"].to_i
-	scale = ScaleType.where('id = ?',@log.scale_type_ids.first)
-	weight_unit = scale.first.weight_unit
-	conv_weight = base_weight.to_f
-	conv_weight = (conv_weight * (1/2.2).to_f) if weight_unit == "kg"
-	conv_weight = (conv_weight * (1/14).to_f) if weight_unit == "st"
-	lp.weight = conv_weight.to_f
-        lp.log_id = @log.id
-        lp.save
+      params["log_parts"].each{ |dc,lpdata|	
+        unless lpdata["food_type_id"].nil?
+	  lp = LogPart.new
+          base_weight = lpdata["weight"]
+          lp.count = lpdata["count"]
+          unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
+          lp.description = lpdata["description"]
+          lp.food_type_id = lpdata["food_type_id"].to_i
+	  scale = ScaleType.where('id = ?',@log.scale_type_ids.first)
+	  weight_unit = scale.first.weight_unit
+	  conv_weight = base_weight.to_f
+	  conv_weight = (conv_weight * (1/2.2).to_f) if weight_unit == "kg"
+  	  conv_weight = (conv_weight * (1/14).to_f) if weight_unit == "st"
+	  lp.weight = conv_weight.to_i
+	  lp.log_id = @log.id
+	  lp.save
+	end
       } unless params["log_parts"].nil?
       if unfilled_count == 0
         @log.complete = true
         @log.save
+      else
+	@log.log_parts.each{ |part|
+	  if part.food_type_id.nil? and part.weight.nil? and part.count.nil?
+	    part.destroy
+	    unfilled_count-=1;
+	  end
+	}
+	if unfilled_count == 0
+	  @log.complete = true
+	  @log.save
+	end
       end
 
       flash[:notice] = "Created successfully."
@@ -188,19 +201,10 @@ class LogsController < ApplicationController
       lpdata["count"] = nil if lpdata["count"].strip == ""
       next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
       lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
-      unc_weight = lpdata["weight"]
       lp.count = lpdata["count"]
       lp.description = lpdata["description"]
       lp.food_type_id = lpdata["food_type_id"].to_i
-      #@scale = ScaleType.find(lp.scale_type_id)
-      #flash[:notice] = "scale id: #{lp.scale_type_id} scale: #{@scale}."
-      scale = ScaleType.where('id = ?',@log.scale_type_ids.first)
-      weight_unit = scale.first.weight_unit
-      fweight = 0
-      fweight = (unc_weight * 0.4545) if weight_unit == "kg"
-      fweight = (unc_weight * (1/14)) if weight_unit == "st"
-      fweight = (unc_weight) if weight_unit == "lb"
-      lp.weight = fweight.to_f
+      lp.weight = lpdata["weight"]
       lp.log_id = @log.id
       lp.save
     } unless params["log_parts"].nil?

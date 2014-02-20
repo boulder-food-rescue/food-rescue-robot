@@ -127,8 +127,8 @@ ActiveRecord::Schema.define(:version => 20131226160442) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
-    t.text     "time_zone"
     t.string   "weight_unit",            :default => "pound", :null => false
+    t.text     "time_zone"
   end
 
   create_table "schedule_parts", :force => true do |t|

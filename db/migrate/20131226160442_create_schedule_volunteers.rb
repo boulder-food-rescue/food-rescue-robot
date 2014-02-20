@@ -14,14 +14,14 @@ class CreateScheduleVolunteers < ActiveRecord::Migration
     # now migrate data (do it with raw data cause the model class is changing)
     schedule_info = ActiveRecord::Base.connection.execute("SELECT id, volunteer_id, prior_volunteer_id FROM schedules")
     schedule_info.each do |schedule|
-      if not schedule['volunteer_id'].nil? and not schedule['volunteer_id'].zero?
+      if not schedule['volunteer_id'].nil? and not schedule['volunteer_id'].blank?
         scheduleVolunteer = ScheduleVolunteer.new
         scheduleVolunteer.volunteer_id = schedule['volunteer_id']
         scheduleVolunteer.schedule_id = schedule['id']
         scheduleVolunteer.active = true
         scheduleVolunteer.save
       end
-      if not schedule['prior_volunteer_id'].nil? and not schedule['prior_volunteer_id'].zero?
+      if not schedule['prior_volunteer_id'].nil? and not schedule['prior_volunteer_id'].blank?
         scheduleVolunteer = ScheduleVolunteer.new
         scheduleVolunteer.volunteer_id = schedule['volunteer_id']
         scheduleVolunteer.schedule_id = schedule['id']

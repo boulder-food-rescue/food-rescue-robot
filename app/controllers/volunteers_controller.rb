@@ -186,9 +186,9 @@ class VolunteersController < ApplicationController
     @per_volunteer = {}
     @per_volunteer2 = {}
       
-    Log.select("sum(weight) as weight_sum, `logs`.`id`, `logs`.`when`, logs.transport_type_id, logs.orig_volunteer_id, logs.volunteer_id").
+    Log.select('sum(weight) as weight_sum, logs.id, "when", transport_type_id, orig_volunteer_id, volunteer_id').
         joins(:log_parts).where("complete and region_id IN (#{current_volunteer.admin_region_ids.join(",")})").
-        group("`logs`.`id`, `logs`.`when`, logs.transport_type_id, logs.orig_volunteer_id, logs.volunteer_id").
+        group('logs.id, "when", transport_type_id, orig_volunteer_id, volunteer_id').
         each{ |l|
       @pounds_per_year[l.when.year] = 0 if @pounds_per_year[l.when.year].nil?
       @pounds_per_year[l.when.year] += l.weight_sum.to_f
@@ -224,7 +224,7 @@ class VolunteersController < ApplicationController
       @pounds_per_year_data << @pounds_per_year[i]
     }
 
-    @lazy_volunteers = Volunteer.select("volunteers.id, name, email, count(*) as count, max(`logs`.`when`) as last_date").
+    @lazy_volunteers = Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
             joins(', logs').where("volunteers.id=logs.volunteer_id").group("volunteers.id, name, email")
 
     @region_locations = Location.where(:region_id=>current_volunteer.admin_region_ids)

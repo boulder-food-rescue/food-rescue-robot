@@ -4,7 +4,8 @@ source 'https://rubygems.org'
 gem 'rails', '~> 3.2.16'
 
 # for talking to the sqlite3 on-disk database
-gem 'sqlite3'
+gem 'pg'
+#gem 'sqlite3'
 
 # for handling json objects with ruby
 gem 'json'

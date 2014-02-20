@@ -38,7 +38,7 @@ class Log < ActiveRecord::Base
   end
 
   def self.upcoming_for volunteer_id
-    self.where(:volunteer_id=>volunteer_id).where("\"when\" >= "+Time.zone.today.to_s)
+    self.where(:volunteer_id=>volunteer_id).where("\"when\" >= ?",Time.zone.today)
   end
 
   def self.needing_coverage region_id_list=nil

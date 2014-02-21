@@ -128,17 +128,11 @@ class LogsController < ApplicationController
       params["log_parts"].each{ |dc,lpdata|	
         unless lpdata["food_type_id"].nil?
 	  lp = LogPart.new
-          base_weight = lpdata["weight"]
+          lp.weight = lpdata["weight"]
           lp.count = lpdata["count"]
           unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
           lp.description = lpdata["description"]
           lp.food_type_id = lpdata["food_type_id"].to_i
-	  scale = ScaleType.where('id = ?',@log.scale_type_ids.first)
-	  weight_unit = scale.first.weight_unit
-	  conv_weight = base_weight.to_f
-	  conv_weight = (conv_weight * (1/2.2).to_f) if weight_unit == "kg"
-  	  conv_weight = (conv_weight * (1/14).to_f) if weight_unit == "st"
-	  lp.weight = conv_weight.to_i
 	  lp.log_id = @log.id
 	  lp.save
 	end

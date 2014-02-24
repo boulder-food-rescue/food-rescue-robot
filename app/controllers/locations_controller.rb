@@ -109,7 +109,7 @@ class LocationsController < ApplicationController
     if @location.update_attributes(params[:location])
       flash[:notice] = "Updated Successfully."
       unless session[:my_return_to].nil?
-        redirect_to(session[:my_return_to])
+        redirect_to session[:my_return_to]
       else
         index
       end

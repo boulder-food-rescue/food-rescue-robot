@@ -16,15 +16,6 @@ class Location < ActiveRecord::Base
                   :email, :phone, :equipment_storage_info, :food_storage_info, :entry_info, :exit_info,
                   :onsite_contact_info
 
-  # fake attributes, actually encoded as json into one field
-  attr_accessor :day0_status,:day0_start,:day0_end,
-                  :day1_status,:day1_start,:day1_end,
-                  :day2_status,:day2_start,:day2_end,
-                  :day3_status,:day3_start,:day3_end,
-                  :day4_status,:day4_start,:day4_end,
-                  :day5_status,:day5_start,:day5_end,
-                  :day6_status,:day6_start,:day6_end
-
   scope :donors, where(:is_donor=>true)
   scope :recipients, where(:is_donor=>false)
 
@@ -73,30 +64,40 @@ class Location < ActiveRecord::Base
   end
 
   def hours_on_day index
-    [ read_attribute("day"+index.to_s+"_start") , read_attribute("day"+index.to_s+"_end") ]
+    [ read_day_info("day"+index.to_s+"_start") , read_day_info("day"+index.to_s+"_end") ]
   end
 
   def open_on_day? index
-    read_attribute('day'+index.to_s+'_status') == 1
+    read_day_info('day'+index.to_s+'_status') == 1
   end
 
   def populate_detailed_hours_from_form params
     return unless using_detailed_hours?
     (0..6).each do |index|
       prefix = "day"+index.to_s
-      write_attribute(prefix+"_status", params[prefix]["status"].to_i)
-      write_attribute(prefix+"_start", 
+      write_day_info(prefix+"_status", params[prefix]["status"].to_i)
+      write_day_info(prefix+"_start", 
         Time.find_zone(self.time_zone).parse( params[prefix]['start']['hour']+":"+params[prefix]['start']['minute'] )
       )
-      write_attribute(prefix+"_end", 
+      write_day_info(prefix+"_end", 
         Time.find_zone(self.time_zone).parse( params[prefix]['end']['hour']+":"+params[prefix]['end']['minute'] )
       )
     end
+    populate_detailed_hours_json_before_save
   end
 
   def time_zone
     return 'UTC' if region.time_zone.nil? or Time.find_zone(region.time_zone).nil?
     region.time_zone
+  end
+
+  def read_day_info key
+    self.day_info[key]
+  end
+
+  def day_info
+    @day_info = {} if @day_info.nil?
+    @day_info
   end
 
   private 
@@ -109,7 +110,7 @@ class Location < ActiveRecord::Base
       (0..6).each do |index|
         if open_on_day? index
           prefix = "day"+index.to_s
-          if read_attribute(prefix+"_start") > read_attribute(prefix+"_start")
+          if read_day_info(prefix+"_start") > read_day_info(prefix+"_start")
             errors.add(prefix+"_status","must have an end time AFTER the start time")
           end
         end
@@ -122,12 +123,13 @@ class Location < ActiveRecord::Base
       (0..6).each do |index|
         prefix = "day"+index.to_s+"_"
         hours_info[index] = {
-          :status => read_attribute(prefix+"status").to_s,
-          :start => read_attribute(prefix+"start").to_formatted_s(:rfc822),
-          :end => read_attribute(prefix+"end").to_formatted_s(:rfc822)
+          :status => read_day_info(prefix+"status").to_s,
+          # save these with the timezone on them!
+          :start => read_day_info(prefix+"start").to_formatted_s(:rfc822),
+          :end => read_day_info(prefix+"end").to_formatted_s(:rfc822)
         }
       end
-      write_attribute(:detailed_hours_json, hours_info.to_json)
+      self.detailed_hours_json = hours_info.to_json
     end
 
     def init_detailed_hours
@@ -135,18 +137,23 @@ class Location < ActiveRecord::Base
       return if detailed_hours_json.nil?
       detailed_hours = JSON.parse(detailed_hours_json)
       now = Time.new
+      @day_info = {}
       (0..6).each do |index|
         prefix = "day"+index.to_s+"_"
-        write_attribute( prefix+"status", detailed_hours[index.to_s]['status'].to_i )
+        write_day_info( prefix+"status", detailed_hours[index.to_s]['status'].to_i )
         # carefully set start time
         t = Time.find_zone(self.time_zone).parse( detailed_hours[index.to_s]['start'] )
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
-        write_attribute( prefix+"start", t )
+        write_day_info( prefix+"start", t )
         # carefully set end time
         t = Time.find_zone(self.time_zone).parse( detailed_hours[index.to_s]['end'] )
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
-        write_attribute( prefix+"end", t )
+        write_day_info( prefix+"end", t )
       end
+    end
+
+    def write_day_info key, value
+      self.day_info[key] = value
     end
 
 end

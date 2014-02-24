@@ -27,6 +27,7 @@ class ApplicationController < ActionController::Base
       @food_types = FoodType.regional(region.id).collect{ |ft| [ft.name,ft.id] }
       @transport_types = TransportType.all.collect{ |tt| [tt.name,tt.id] }
       @scale_types = ScaleType.regional(region.id).collect{ |st| [st.name,st.weight_unit,st.id] }
+      @regions = Region.all
     end
 
 end

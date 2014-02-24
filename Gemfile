@@ -1,10 +1,11 @@
 source 'https://rubygems.org'
 
 # the base rails libraries
-gem 'rails', '~> 3.2.14'
+gem 'rails', '~> 3.2.16'
 
 # for talking to the sqlite3 on-disk database
-gem 'sqlite3'
+gem 'pg'
+#gem 'sqlite3'
 
 # for handling json objects with ruby
 gem 'json'
@@ -20,6 +21,7 @@ end
 
 group :test, :development do
   gem 'better_errors'
+  gem 'binding_of_caller'
 end
 
 # mobile-friendly template
@@ -40,9 +42,6 @@ gem 'devise', '3.0.3'
 
 # alternative webserver (>thin start)
 gem 'thin'
-
-# talk to the postgres database engine
-gem 'pg'
 
 # lets us post things to twitter programatically
 gem 'twitter'
@@ -66,6 +65,10 @@ gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-ra
 
 # pretty select form elements
 gem 'select2-rails'
+
+# nested selecitons of volunteers on schedules
+gem 'cocoon'
+gem 'simple_form'
 
 # set timezone to browser timezone
 gem 'browser-timezone-rails'

@@ -12,7 +12,6 @@
 # It's strongly recommended to check this file into your version control system.
 
 ActiveRecord::Schema.define(:version => 20140214204259) do
-
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
     t.integer  "region_id"
@@ -159,11 +158,20 @@ ActiveRecord::Schema.define(:version => 20140214204259) do
   add_index "schedule_parts", ["scale_type_id"], :name => "index_schedule_parts_on_scale_type_id"
   add_index "schedule_parts", ["schedule_id"], :name => "index_schedule_parts_on_schedule_id"
 
+  create_table "schedule_volunteers", :force => true do |t|
+    t.integer  "schedule_id"
+    t.integer  "volunteer_id"
+    t.boolean  "active",       :default => true
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+  end
+
+  add_index "schedule_volunteers", ["schedule_id"], :name => "index_schedule_volunteers_on_schedule_id"
+  add_index "schedule_volunteers", ["volunteer_id"], :name => "index_schedule_volunteers_on_volunteer_id"
+
   create_table "schedules", :force => true do |t|
     t.integer  "recipient_id"
     t.integer  "donor_id"
-    t.integer  "volunteer_id"
-    t.integer  "prior_volunteer_id"
     t.integer  "day_of_week"
     t.text     "admin_notes"
     t.text     "public_notes"
@@ -182,8 +190,6 @@ ActiveRecord::Schema.define(:version => 20140214204259) do
     t.integer  "expected_weight"
     t.integer  "hilliness"
   end
-
-  add_index "schedules", ["volunteer_id"], :name => "index_schedules_on_volunteer_id"
 
   create_table "transport_types", :force => true do |t|
     t.string   "name"

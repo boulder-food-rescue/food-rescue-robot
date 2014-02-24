@@ -1,5 +1,5 @@
-<%= form_for @schedule, :url => {:action => @action } do |f| %>
-
+<%= simple_form_for @schedule, :url => {:action => @action }, :class=>'form-horizontal' do |f| %>
+  
   <%= hidden_field_tag "schedule[region_id]", @region.id %>
 
   <table>
@@ -22,8 +22,16 @@
   <tr><td>Day</td>
       <td><%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %></td>
   </tr>
-    <tr><td>Volunteer</td>
-        <td><%= f.select(:volunteer_id, @volunteers, {:include_blank => true},{:class => "select2"}) %></td>
+    <tr>
+      <td>Volunteers</td>
+      <td>
+        <div>
+        <%= f.simple_fields_for :schedule_volunteers do |schedule_volunteer| %>
+          <%= render 'schedule_volunteer_fields', :f => schedule_volunteer %>
+        <% end %>
+        <%= link_to_add_association 'add another volunteer', f, :schedule_volunteers, :class=>'btn' %>
+        </div>
+      </td>
     </tr>
     <tr><td>Donor</td>
         <td><%= f.select(:donor_id, @donors, {:include_blank => true},{:class => "select2"}) %></td>
@@ -67,7 +75,6 @@
 	<td><%= f.select(:scale_type_ids, @scale_types, {:include_blank => true},{:cass => "select2"})%>
     </td>
     <tr><td>Prior Volunteer<br /><span class="subtext">The volunteer who had this shift last</span></td>
-        <td><%= f.select(:prior_volunteer_id, @volunteers, {:include_blank => true},{:class => "select2"}) %></td>  
     </tr>
   </table>
 
@@ -76,16 +83,18 @@
 <% end %>
 
 <% if use_detailed_hours? %>
-<script type="text/javascript">
-$(function(){
-  $('#schedule_frequency').bind('change',function(){
-    $('.frequency-option').hide();
-    var selectedOption = $('#schedule_frequency').find(':selected').val();
-    $('#frequency-option-'+selectedOption).show();
-  });
-  $('#schedule_frequency').change();
-})
-</script>
+  <% content_for :scripts do %>
+    <script type="text/javascript">
+    $(function(){
+      $('#schedule_frequency').bind('change',function(){
+        $('.frequency-option').hide();
+        var selectedOption = $('#schedule_frequency').find(':selected').val();
+        $('#frequency-option-'+selectedOption).show();
+      });
+      $('#schedule_frequency').change();
+    })
+    </script>
+  <% end %>
 <% end %>
 
 <% content_for :scripts do %>

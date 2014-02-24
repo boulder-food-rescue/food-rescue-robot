@@ -8,7 +8,7 @@ class VolunteersController < ApplicationController
     unrequested = Volunteer.where(:requested_region_id=>nil)
     requested_my_region = Volunteer.where(:requested_region_id=>current_volunteer.admin_region_ids)
     @volunteers = unassigned | (no_assingments & (unrequested | requested_my_region))
-    @header = "Unassigned"
+    @header = "Unassigned Volunteers"
   end
 
   def assign
@@ -33,26 +33,32 @@ class VolunteersController < ApplicationController
   end
 
   def shiftless
-    index(Volunteer.where(:is_disabled=>false).where("(SELECT COUNT(*) FROM schedules s WHERE s.volunteer_id=volunteers.id)=0 AND 
-           (gone_until IS NULL or gone_until < current_date)"),
-      "Shiftless") 
-  end
-  def need_training
-    index(Volunteer.where(:is_disabled=>false, :needs_training=>true).where("gone_until IS NULL or gone_until < current_date"),
-      "Needs Training")
+    # TODO: make this more efficient
+    @volunteers = Volunteer.all.keep_if do |volunteer|
+      volunteer.schedules.length ==0 && (volunteer.gone_until.nil? || volunteer.gone_until < Date.today)
+    end
+    @header = "Shiftless Volunteers"
+    render :index
   end
 
-  def index(base=nil,header="All Volunteers")
-    base = Volunteer.all if base.nil?
-    @volunteers = base.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
-    @header = header
+  def need_training
+    @volunteers = Volunteer.where(:is_disabled=>false, :needs_training=>true).keep_if do |volunteer|
+      (volunteer.gone_until.nil? || volunteer.gone_until < Date.today)
+    end
+    @header = "Volunteers Needing Training"
+    render :index
+  end
+
+  def index
+    @volunteers = Volunteer.all.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+    @header = "All Volunteers"
     render :index
   end
 
   def show
     @v = Volunteer.find(params[:id])
     unless current_volunteer.super_admin? or (current_volunteer.region_ids & @v.region_ids).length > 0
-      flash[:notice] = "Can't view volunteer for a region you're not assigned to..."
+      flash[:error] = "Can't view volunteer for a region you're not assigned to..."
       redirect_to(root_path)
       return
     end
@@ -81,7 +87,7 @@ class VolunteersController < ApplicationController
   def check_permissions(v)
     unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 or
            current_volunteer == v
-      flash[:notice] = "Not authorized to create/edit volunteers for that region"
+      flash[:error] = "Not authorized to create/edit volunteers for that region"
       redirect_to(root_path)
       return false
     end
@@ -102,7 +108,7 @@ class VolunteersController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Didn't save successfully :("
+      flash[:error] = "Didn't save successfully :("
       render :new
     end
   end
@@ -135,7 +141,7 @@ class VolunteersController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Update failed :("
+      flash[:error] = "Update failed :("
       render :edit
     end
   end
@@ -146,7 +152,7 @@ class VolunteersController < ApplicationController
     vrids = v.regions.collect{ |r| r.id }
     adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
     unless current_volunteer.super_admin? or (vrids & adminrids).length > 0
-      flash[:notice] = "You're not authorized to switch to that user!"
+      flash[:error] = "You're not authorized to switch to that user!"
       redirect_to(root_path)
       return
     end
@@ -174,6 +180,54 @@ class VolunteersController < ApplicationController
   end
 
   def region_stats
+    @pounds_per_year = {}
+    @pounds_per_month = {}
+    @first_recorded_pickup = nil
+    @per_volunteer = {}
+    @per_volunteer2 = {}
+      
+    Log.select('sum(weight) as weight_sum, logs.id, "when", transport_type_id, orig_volunteer_id, volunteer_id').
+        joins(:log_parts).where("complete and region_id IN (#{current_volunteer.admin_region_ids.join(",")})").
+        group('logs.id, "when", transport_type_id, orig_volunteer_id, volunteer_id').
+        each{ |l|
+      @pounds_per_year[l.when.year] = 0 if @pounds_per_year[l.when.year].nil?
+      @pounds_per_year[l.when.year] += l.weight_sum.to_f
+      mokey = l.when.strftime("%Y-%m")
+      @pounds_per_month[mokey] = 0 if @pounds_per_month[mokey].nil?
+      @pounds_per_month[mokey] += l.weight_sum.to_f
+      @first_recorded_pickup = l.when if @first_recorded_pickup.nil? or l.when < @first_recorded_pickup
+      next if l.volunteer.nil?
+      @per_volunteer[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if @per_volunteer[l.volunteer.id].nil?
+      @per_volunteer2[l.volunteer.id] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if @per_volunteer2[l.volunteer.id].nil?
+      if l.when >= (Date.today << 12)
+        @per_volunteer[l.volunteer.id][:weight] += l.weight_sum.to_f
+        @per_volunteer[l.volunteer.id][:count] += 1
+        @per_volunteer[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+        @per_volunteer[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+      end
+      if l.when >= (Date.today << 1)
+        @per_volunteer2[l.volunteer.id][:weight] += l.weight_sum.to_f
+        @per_volunteer2[l.volunteer.id][:count] += 1
+        @per_volunteer2[l.volunteer.id][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
+        @per_volunteer2[l.volunteer.id][:covered] += 1 if l.orig_volunteer != nil and l.orig_volunteer != l.volunteer
+      end
+    }
+
+    @pounds_per_month_data = []
+    @pounds_per_month_labels = @pounds_per_month.keys.sort
+    @pounds_per_month_labels.each{ |i|
+      @pounds_per_month_data << @pounds_per_month[i]
+    }
+    @pounds_per_year_data = []
+    @pounds_per_year_labels = @pounds_per_year.keys.sort
+    @pounds_per_year_labels.each{ |i|
+      @pounds_per_year_data << @pounds_per_year[i]
+    }
+
+    @lazy_volunteers = Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
+            joins(', logs').where("volunteers.id=logs.volunteer_id").group("volunteers.id, name, email")
+
+    @region_locations = Location.where(:region_id=>current_volunteer.admin_region_ids)
   end
 
   def waiver
@@ -192,7 +246,7 @@ class VolunteersController < ApplicationController
 
   def knight
     unless current_volunteer.super_admin?
-      flash[:notice] = "You're not permitted to do that!"
+      flash[:error] = "You're not permitted to do that!"
       redirect_to(root_path)
       return
     end
@@ -213,8 +267,7 @@ class VolunteersController < ApplicationController
     end
     today = Time.zone.today
     
-    @open_shift_count = Schedule.where("NOT irregular AND volunteer_id IS NULL 
-                                        AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})").count
+    @open_shift_count = Schedule.open_in_regions(current_volunteer.region_ids).length
 
     #Upcoming pickup list
     @upcoming_pickups = Log.where(:when => today...(today + 7)).where(:volunteer_id => current_volunteer)
@@ -249,16 +302,10 @@ class VolunteersController < ApplicationController
       end
     end
 
-    if current_volunteer.assignments.length == 0
-      @unassigned = true
-      @base_conditions = nil
-    else
-      @unassigned = false
-      @base_conditions = " AND region_id IN (#{current_volunteer.assignments.collect{ |a| a.region_id }.join(",")})"
-    end
+    @unassigned = current_volunteer.unassigned?
 
     # FIXME: the below is Sean's code. It's quite nonDRY and should be cleaned up substantially
-    @pickups = Log.where("volunteer_id = ? AND complete",current_volunteer.id)
+    @pickups = Log.picked_up_by current_volunteer.id
     @lbs = 0.0
     @human_pct = 0.0
     @num_pickups = {}
@@ -280,10 +327,10 @@ class VolunteersController < ApplicationController
       @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
-    @num_shifts = Schedule.where("volunteer_id = ?",current_volunteer.id).count
-    @num_to_cover = Log.where("volunteer_id IS NULL#{@base_conditions}").count
-    @num_upcoming = Log.where('volunteer_id = ? AND "when" >= ?',current_volunteer.id,Time.zone.today.to_s).count
-    @num_unassigned = Schedule.where("volunteer_id IS NULL AND donor_id IS NOT NULL and recipient_id IS NOT NULL#{@base_conditions}").count
+    @num_shifts = current_volunteer.schedules.count
+    @num_to_cover = Log.needing_coverage.count
+    @num_upcoming = Log.upcoming_for(current_volunteer.id).count
+    @num_unassigned = Schedule.unassigned_in_regions(current_volunteer.assignments).count
     render :home
   end
 end

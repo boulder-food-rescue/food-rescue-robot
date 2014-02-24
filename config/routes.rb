@@ -61,6 +61,7 @@ Webapp::Application.routes.draw do
       get :mine
       get :mine_old
       get :take
+      get :leave
       get :index
       get :edit
       get :update

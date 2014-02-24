@@ -58,11 +58,12 @@
         <td><small><%= word_wrap(loc.public_notes,:line_width => 30).gsub("\n","<br>").html_safe unless loc.public_notes.nil? %></small></td>
         <% if current_volunteer.any_admin? %>
           <td><small><%= word_wrap(loc.admin_notes,:line_width => 30).gsub("\n","<br>").html_safe unless loc.admin_notes.nil? or !(current_volunteer.any_admin?) %></small></td>
-          <td> <% unless loc.receipt_key.nil?%>
-                 <%= link_to 'hud', "/locations/hud?id=#{loc.id}&key=#{loc.receipt_key}" %><br>
-               <% end %>
-               <%= link_to 'edit', :controller => "locations", :action => "edit", :id => loc %><br>
-               <%= link_to "delete", loc, :confirm => "Are you sure?", :method => :delete %> </td>
+          <td><% unless loc.receipt_key.nil?%>
+              <%= link_to 'hud', "/locations/hud?id=#{loc.id}&key=#{loc.receipt_key}" %><br>
+            <% end %>
+            <%= link_to 'edit', :controller => "locations", :action => "edit", :id => loc %><br>
+            <%= link_to "delete", loc, :confirm => "Are you sure?", :method => :delete %>
+          </td>
         <% end %>
       </tr>
     <% end %>

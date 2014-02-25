@@ -48,11 +48,11 @@ class LogsController < ApplicationController
     case params[:what]
     when 'poundage'
       if params[:region_id].nil?
-        t = LogPart.sum(:weight).to_i + Region.where("prior_lbs_rescued IS NOT NULL").sum("prior_lbs_rescued")
+        t = LogPart.sum(:weight) + Region.where("prior_lbs_rescued IS NOT NULL").sum("prior_lbs_rescued")
       else
         r = params[:region_id]
         @region = Region.find(r)
-        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight").to_i
+        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight")
         t += @region.prior_lbs_rescued unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
       render :text => t.to_s
@@ -63,7 +63,7 @@ class LogsController < ApplicationController
           w = w.strip.downcase.tr(',','')
           next if w =~ /(nothing|no |none)/ or w =~ /etc/ or w =~ /n\/a/ or w =~ /misc/
           # people cannot seem to spell the most delicious fruit correctly
-          w = "avocados" if w == "avacados" or w == "avocadoes" or w == "avocado" or w == "proto-guacamole"
+          w = "avocados" if w == "avacados" or w == "avocadoes" or w == "avocado"
           words[w] = 0 if words[w].nil?
           words[w] += 1
         }

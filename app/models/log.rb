@@ -52,7 +52,7 @@ class Log < ActiveRecord::Base
   end
 
   def summed_weight
-    self.log_parts.collect{ |lp| lp.weight.to_i }.compact.sum
+    self.log_parts.collect{ |lp| lp.weight }.compact.sum
   end
 
   def summed_count

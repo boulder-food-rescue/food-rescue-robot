@@ -10,9 +10,8 @@ class Schedule < ActiveRecord::Base
   belongs_to :transport_type
   belongs_to :region
 
-  has_many :schedule_parts
-  has_many :food_types, :through => :schedule_parts
-  has_many :scale_types, :through => :schedule_parts
+  has_many :food_types
+  has_many :scale_types
 
   attr_accessible :region_id, :irregular, :backup, :transport_type_id, :food_type_ids, 
                   :weekdays, :admin_notes, :day_of_week, :donor_id, :public_notes, 

@@ -65,8 +65,8 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
     <% unless current_page? :controller => "logs", :action => "open" %>
     <td> <%= shift.complete ? shift.summed_weight : "?" %> lbs.</td>
-    <td> <%= shift.scale_types.collect{ |st| st.name }.join(", ") unless shift.scale_types.length == 0 %>
-	(<%= shift.scale_types.collect{ |st| st.weight_unit}.join(", ") unless shift.scale_types.length==0            %>)
+    <td> <%= shift.scale_type.name unless shift.scale_type.nil? %>
+	(<%= shift.scale_type.weight_unit unless shift.scale_type.nil? %>)
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types.collect{ |ft| ft.name }.join(", ") unless shift.food_types.length == 0 %>
     <% end %>

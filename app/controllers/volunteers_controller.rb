@@ -81,6 +81,7 @@ class VolunteersController < ApplicationController
       @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
     end
     session[:my_return_to] = request.referer
+    flash[:notice] = "Thanks for signing up! You will recieve an email shortly when a regional admin approves your registration."
     render :new
   end
 

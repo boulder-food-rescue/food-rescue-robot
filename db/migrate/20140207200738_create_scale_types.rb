@@ -31,3 +31,4 @@ class CreateScaleTypes < ActiveRecord::Migration
     end
     drop_table :scale_types
   end
+end

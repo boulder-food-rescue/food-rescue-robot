@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140214204259) do
+ActiveRecord::Schema.define(:version => 20140207200738) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -69,12 +69,10 @@ ActiveRecord::Schema.define(:version => 20140214204259) do
     t.integer  "food_type_id"
     t.boolean  "required"
     t.decimal  "weight"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.integer  "count"
     t.text     "description"
-    t.integer  "scale_type_id"
-    t.integer  "weight_unit_id"
   end
 
   add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"
@@ -96,6 +94,7 @@ ActiveRecord::Schema.define(:version => 20140214204259) do
     t.integer  "transport_type_id"
     t.integer  "region_id"
     t.boolean  "complete",          :default => false
+    t.integer  "scale_type_id"
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"
@@ -141,22 +140,15 @@ ActiveRecord::Schema.define(:version => 20140214204259) do
     t.integer  "region_id"
   end
 
-  create_table "scale_types_schedules", :force => true do |t|
-    t.integer "scale_type_id"
-    t.integer "schedule_id"
-  end
-
   create_table "schedule_parts", :force => true do |t|
     t.integer  "schedule_id"
     t.integer  "food_type_id"
     t.boolean  "required"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.integer  "scale_type_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   add_index "schedule_parts", ["food_type_id"], :name => "index_schedule_parts_on_food_type_id"
-  add_index "schedule_parts", ["scale_type_id"], :name => "index_schedule_parts_on_scale_type_id"
   add_index "schedule_parts", ["schedule_id"], :name => "index_schedule_parts_on_schedule_id"
 
   create_table "schedule_volunteers", :force => true do |t|

@@ -10,7 +10,7 @@ class CreateScaleTypes < ActiveRecord::Migration
       t.references :scale_type
     end
     Region.all.each{ |r|
-      defaultName = "Bathroom Scale (default)"
+      defaultName = "Bathroom Scale [default]"
       check = ScaleType.where('name = ?',defaultName)
       check2 = ScaleType.where('region_id = ?',r.id)
       unless check.length >= 1

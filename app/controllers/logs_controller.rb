@@ -116,6 +116,9 @@ class LogsController < ApplicationController
 
   def create
     @log = Log.new(params[:log])
+    if @log.region.scale_types.length<2 and @log.scale_type_id.nil?
+      @log.scale_type_id = @log.region.scale_types.first.id
+    end
     unless current_volunteer.any_admin? @log.region
       flash[:notice] = "Not authorized to create schedule items for that region"
       redirect_to(root_path)
@@ -133,8 +136,8 @@ class LogsController < ApplicationController
           unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
           lp.description = lpdata["description"]
           lp.food_type_id = lpdata["food_type_id"].to_i
-	  lp.log_id = @log.id
-	  lp.save
+	      lp.log_id = @log.id
+	      lp.save
 	end
       } unless params["log_parts"].nil?
       if unfilled_count == 0

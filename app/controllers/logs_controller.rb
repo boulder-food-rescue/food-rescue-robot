@@ -52,7 +52,7 @@ class LogsController < ApplicationController
       else
         r = params[:region_id]
         @region = Region.find(r)
-        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight").to_f
+        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight")
         t += @region.prior_lbs_rescued unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
       render :text => t.to_s
@@ -116,6 +116,9 @@ class LogsController < ApplicationController
 
   def create
     @log = Log.new(params[:log])
+    if @log.region.scale_types.length<2 and @log.scale_type_id.nil?
+      @log.scale_type_id = @log.region.scale_types.first.id
+    end
     unless current_volunteer.any_admin? @log.region
       flash[:notice] = "Not authorized to create schedule items for that region"
       redirect_to(root_path)
@@ -125,19 +128,32 @@ class LogsController < ApplicationController
 
       # mark as complete if deserving
       unfilled_count = 0
-      params["log_parts"].each{ |dc,lpdata|
-        lp = LogPart.new
-        lp.weight = lpdata["weight"]
-        lp.count = lpdata["count"]
-        unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
-        lp.description = lpdata["description"]
-        lp.food_type_id = lpdata["food_type_id"].to_i
-        lp.log_id = @log.id
-        lp.save
+      params["log_parts"].each{ |dc,lpdata|	
+        unless lpdata["food_type_id"].nil?
+	  lp = LogPart.new
+          lp.weight = lpdata["weight"]
+          lp.count = lpdata["count"]
+          unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
+          lp.description = lpdata["description"]
+          lp.food_type_id = lpdata["food_type_id"].to_i
+	      lp.log_id = @log.id
+	      lp.save
+	end
       } unless params["log_parts"].nil?
       if unfilled_count == 0
         @log.complete = true
         @log.save
+      else
+	@log.log_parts.each{ |part|
+	  if part.food_type_id.nil? and part.weight.nil? and part.count.nil?
+	    part.destroy
+	    unfilled_count-=1;
+	  end
+	}
+	if unfilled_count == 0
+	  @log.complete = true
+	  @log.save
+	end
       end
 
       flash[:notice] = "Created successfully."
@@ -182,10 +198,10 @@ class LogsController < ApplicationController
       lpdata["count"] = nil if lpdata["count"].strip == ""
       next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
       lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
-      lp.weight = lpdata["weight"]
       lp.count = lpdata["count"]
       lp.description = lpdata["description"]
       lp.food_type_id = lpdata["food_type_id"].to_i
+      lp.weight = lpdata["weight"]
       lp.log_id = @log.id
       lp.save
     } unless params["log_parts"].nil?
@@ -199,7 +215,7 @@ class LogsController < ApplicationController
       }
       @log.complete = filled_count > 0 and required_unfilled == 0
       if @log.save
-        flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
+       flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
         # could be nil if they clicked on the link in an email
         unless session[:my_return_to].nil?
           redirect_to(session[:my_return_to])
@@ -268,6 +284,7 @@ class LogsController < ApplicationController
         lo.recipient = p.recipient
         lo.when = from
         lo.food_types = p.food_types
+        lo.scale_types = p.scale_types
         lo.region = p.region
         lo.save
         n += 1

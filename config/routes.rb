@@ -23,6 +23,7 @@ Webapp::Application.routes.draw do
   resources :transport_types do as_routes end
 
   resources :food_types
+  resources :scale_types
 
   resources :logs do 
     collection do

@@ -71,6 +71,9 @@
       <%= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <%= ft.name %>
     <% } %></td>
     </tr>
+    <tr><td>Scale Type<br /><span class="subtext">The scale you used to weigh the delivery</span></td>
+	<td><%= f.select(:scale_type_ids, @scale_types, {:include_blank => true},{:cass => "select2"})%>
+    </td>
     <tr><td>Prior Volunteer<br /><span class="subtext">The volunteer who had this shift last</span></td>
     </tr>
   </table>

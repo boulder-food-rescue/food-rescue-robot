@@ -93,7 +93,8 @@
             <%= drop_down "Region Admin" do %>
               <%= menu_item "Recipients", recipients_locations_path %>
               <%= menu_item "Donors", donors_locations_path %>
-              <%= menu_item "Food Types", food_types_path %>
+              <%= menu_item "Food Types", '/food_types' %>
+	      <%= menu_item "Scale Types", '/scale_types' %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
               <%= menu_item "Statistics", '/volunteers/region_stats' %>
             <% end %>

@@ -10,6 +10,7 @@ class CreateLogParts < ActiveRecord::Migration
     end
     add_index :log_parts, :log_id
     add_index :log_parts, :food_type_id
+ 
     change_table :logs do |t|
       t.boolean :complete, :default => 'f'
     end

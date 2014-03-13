@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131226160442) do
+ActiveRecord::Schema.define(:version => 20140207200738) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(:version => 20131226160442) do
     t.integer  "transport_type_id"
     t.integer  "region_id"
     t.boolean  "complete",          :default => false
+    t.integer  "scale_type_id"
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"
@@ -127,8 +128,16 @@ ActiveRecord::Schema.define(:version => 20131226160442) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
-    t.string   "weight_unit",            :default => "pound", :null => false
     t.text     "time_zone"
+    t.string   "weight_unit",            :default => "pound", :null => false
+  end
+
+  create_table "scale_types", :force => true do |t|
+    t.string   "name"
+    t.string   "weight_unit"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.integer  "region_id"
   end
 
   create_table "schedule_parts", :force => true do |t|

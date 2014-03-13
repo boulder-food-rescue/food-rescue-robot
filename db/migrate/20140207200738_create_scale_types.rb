@@ -12,7 +12,7 @@ class CreateScaleTypes < ActiveRecord::Migration
     Region.all.each{ |r|
       defaultName = "Bathroom Scale [default]"
       check = ScaleType.where('name = ?',defaultName)
-      check2 = ScaleType.where('region_id = ?',r.id)
+      check = check.where('region_id = ?',r.id)
       unless check.length >= 1
         t = ScaleType.new
         t.name = defaultName
@@ -22,7 +22,7 @@ class CreateScaleTypes < ActiveRecord::Migration
       end
       defaultName = "Guesstimate [default]"
       check = ScaleType.where('name = ?',defaultName)
-      check2 = ScaleType.where('region_id = ?',r.id)
+      check = check.where('region_id = ?',r.id)
       unless check.length >= 1
         t = ScaleType.new
         t.name = defaultName

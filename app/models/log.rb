@@ -30,13 +30,15 @@ class Log < ActiveRecord::Base
 
   before_save { |record|
     record.scale_type = record.region.scale_types.first if record.scale_type.nil?
-    if record.scale_type.changed?
-      weight_unit = record.scale_type.weight_unit
-      record.log_parts.each{ |lp|
-        lp.weight = (lp.weight * (1/2.2).to_f) if weight_unit == "kg"
-        lp.weight = (conv_weight * (1/14).to_f) if weight_unit == "st"
-      }
-    end
+    record.weight_unit = record.scale_type.weight_unit if record.weight_unit.nil?
+    record.log_parts.each{ |lp|
+      if record.weight_unit == "kg"
+        lp.weight = (lp.weight * (1.0/2.2).to_f)
+      elsif record.weight_unit == "st"
+        lp.weight = (conv_weight * (1.0/14.0).to_f)
+      end
+    }
+    record.weight_unit = "lb"
   }
 
   TweetGainThreshold = 25000

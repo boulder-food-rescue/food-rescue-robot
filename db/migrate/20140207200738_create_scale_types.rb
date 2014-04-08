@@ -8,24 +8,26 @@ class CreateScaleTypes < ActiveRecord::Migration
     end
     change_table :logs do |t|
       t.references :scale_type
+      t.string :weight_unit
     end
     Region.all.each{ |r|
-      defaultName = "Bathroom Scale [default]"
-      check = ScaleType.where('name = ?',defaultName)
-      check = check.where('region_id = ?',r.id)
-      unless check.length >= 1
+      old_scales = Log.select("scale_type").where("region_id = ?",r).collect{ |l| l.scale_type }.uniq
+      old_scales.each{ |s|
+        sn = ScaleType.new
+        sn.region_id = r.id
+        sn.name = Log::ScaleTypes[s]
+        sn.unit = "lb"
+        sn.save
+      }
+      unless ScaleType.where('region_id = ?',r.id).length >= 1
         t = ScaleType.new
-        t.name = defaultName
+        t.name = "Bathroom Scale"
         t.weight_unit = "lb"
         t.region_id=r.id
         t.save
-      end
-      defaultName = "Guesstimate [default]"
-      check = ScaleType.where('name = ?',defaultName)
-      check = check.where('region_id = ?',r.id)
-      unless check.length >= 1
+
         t = ScaleType.new
-        t.name = defaultName
+        t.name = "Guesstimate"
         t.weight_unit = "lb"
         t.region_id=r.id
         t.save
@@ -34,10 +36,8 @@ class CreateScaleTypes < ActiveRecord::Migration
   end
 
   def down
-    execute "DELETE FROM scale_types WHERE region_id IS NOT NULL"
-    remove_column :scale_types, :region_id
     change_table :logs do |t|
-      t.remove :scale_type
+      t.remove :scale_type_id
     end
     drop_table :scale_types
   end

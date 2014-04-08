@@ -127,35 +127,34 @@ class LogsController < ApplicationController
       return
     end
     if @log.save
-
       # mark as complete if deserving
       unfilled_count = 0
       params["log_parts"].each{ |dc,lpdata|	
         unless lpdata["food_type_id"].nil?
-	  lp = LogPart.new
+      	  lp = LogPart.new
           lp.weight = lpdata["weight"]
           lp.count = lpdata["count"]
           unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
           lp.description = lpdata["description"]
           lp.food_type_id = lpdata["food_type_id"].to_i
-	      lp.log_id = @log.id
-	      lp.save
-	end
+	        lp.log_id = @log.id
+	        lp.save
+	      end
       } unless params["log_parts"].nil?
       if unfilled_count == 0
         @log.complete = true
         @log.save
       else
-	@log.log_parts.each{ |part|
-	  if part.food_type_id.nil? and part.weight.nil? and part.count.nil?
-	    part.destroy
-	    unfilled_count-=1;
-	  end
-	}
-	if unfilled_count == 0
-	  @log.complete = true
-	  @log.save
-	end
+	      @log.log_parts.each{ |part|
+	        if part.food_type_id.nil? and part.weight.nil? and part.count.nil?
+	          part.destroy
+	          unfilled_count-=1;
+	        end
+	      }
+	      if unfilled_count == 0
+	        @log.complete = true
+	        @log.save
+	      end
       end
 
       flash[:notice] = "Created successfully."
@@ -172,7 +171,7 @@ class LogsController < ApplicationController
 
   def edit
     @log = Log.find(params[:id])
-    unless current_volunteer.any_admin? @log.region or @log.volunteer == current_volunteer
+    unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
       redirect_to(root_path)
       return
@@ -190,7 +189,7 @@ class LogsController < ApplicationController
     @action = "update"
     set_vars_for_form @region
 
-    unless current_volunteer.any_admin? @log.region or @log.volunteer == current_volunteer
+    unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
       redirect_to(root_path)
       return

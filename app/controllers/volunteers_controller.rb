@@ -282,7 +282,7 @@ class VolunteersController < ApplicationController
 
     #Pickup Stats
     @completed_pickup_count = Log.picked_up_by(current_volunteer.id).count
-    @total_food_rescued = Log.picked_up_weight(current_volunteer.id)
+    @total_food_rescued = Log.picked_up_weight(nil,current_volunteer.id)
     @dis_traveled = 0.0
     Log.picked_up_by(current_volunteer.id).each do |pickup|
       if pickup.schedule != nil

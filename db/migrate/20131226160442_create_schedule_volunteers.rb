@@ -41,8 +41,8 @@ class CreateScheduleVolunteers < ActiveRecord::Migration
   def down
     drop_table :schedule_volunteers
     # doesn't actually return data to what it was, but at least sets the columns back
-    add_column(:schedule, :volunteer_id)
-    add_column(:schedule, :prior_volunteer_id)
+    add_column(:schedules, :volunteer_id, :integer)
+    add_column(:schedules, :prior_volunteer_id, :integer)
   end
 
 end

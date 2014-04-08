@@ -26,7 +26,7 @@
 <tr><td>Recipient<td><%= f.select(:recipient_id, @recipients,{:include_blank => true},{:class => "select2"}) %>
 <tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br><br>
                                       If the pick-up was dropped, put zeroes for the weights, and please explain why using the notes field below.</span></td><td>
-<table style="width: 0;"><tr><th>What<th>Weight<br>(in scale's units,<br>or pounds if editing)<th> Count<th>Description
+<table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.weight_unit.nil? ? "in scale's units" : @log.weight_unit %>)<th> Count<th>Description
 <% @log.log_parts.each{ |lp| %>
   <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
     <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
@@ -65,10 +65,8 @@ EOF
 </td></tr>
 <% if @scale_types.length != 1 %>
 <tr><td>Weighed With<td>
+<%= f.select(:scale_type_id, @scale_types, {:include_blank => true}) %>
 <% end %>
-<%=if @scale_types.length != 1
-  f.select(:scale_type_id, @scale_types, {:include_blank => true})
-end%>
 <tr><td>Transported With<td><%= f.select(:transport_type_id, @transport_types,{:include_blank => true}) %>
 <tr><td>Notes<br>
 <span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.</span><td><%= f.text_area(:notes, :size => "30x6") %>

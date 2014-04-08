@@ -10,13 +10,14 @@ class CreateScaleTypes < ActiveRecord::Migration
       t.references :scale_type
       t.string :weight_unit
     end
+    execute "UPDATE logs SET weight_unit='lb'"
     Region.all.each{ |r|
-      old_scales = Log.select("scale_type").where("region_id = ?",r).collect{ |l| l.scale_type }.uniq
-      old_scales.each{ |s|
+      Log.select("weighed_by").where("region_id = ?",r).collect{ |l| l.weighed_by }.uniq.each{ |s|
+        next if s.squish.blank?
         sn = ScaleType.new
         sn.region_id = r.id
-        sn.name = Log::ScaleTypes[s]
-        sn.unit = "lb"
+        sn.name = s
+        sn.weight_unit = "lb"
         sn.save
       }
       unless ScaleType.where('region_id = ?',r.id).length >= 1
@@ -33,12 +34,15 @@ class CreateScaleTypes < ActiveRecord::Migration
         t.save
       end
     }
+    remove_column :logs, :weighed_by
   end
 
   def down
+    # doesn't restore data
     change_table :logs do |t|
       t.remove :scale_type_id
     end
     drop_table :scale_types
+    add_column :logs, :weighed_by, :string
   end
 end

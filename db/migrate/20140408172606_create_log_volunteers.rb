@@ -41,8 +41,8 @@ class CreateLogVolunteers < ActiveRecord::Migration
   def down
     drop_table :log_volunteers
     # doesn't actually return data to what it was, but at least sets the columns back
-    add_column(:log, :volunteer_id)
-    add_column(:log, :orig_volunteer_id)
+    add_column(:logs, :volunteer_id, :integer)
+    add_column(:logs, :orig_volunteer_id, :integer)
   end
 
 end

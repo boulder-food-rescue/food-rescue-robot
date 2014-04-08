@@ -19,31 +19,31 @@ class Log < ActiveRecord::Base
   validates :transport_type_id, presence: { if: :complete }
   validates :donor_id, presence: { if: :complete }
   validates :recipient_id, presence: { if: :complete }
-  validates :volunteer_id, presence: { if: :complete }
+  validates :scale_type_id, presence: { if: :complete }
   validates :when, presence: true
 
-  attr_accessible :schedule_id, :region_id, :volunteer_id, :donor_id, :recipient_id, 
+  attr_accessible :schedule_id, :region_id, :donor_id, :recipient_id,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
-                  :num_reminders, :orig_volunteer_id, :transport, :when, :scale_type_id, :log_volunteers_attributes
+                  :num_reminders, :transport, :when, :scale_type_id,
+                  :log_volunteers_attributes, :weight_unit
 
-  after_save { |record| tweet(record) }
+  after_save { |record| record.tweet }
 
   before_save { |record|
-    record.scale_type = record.region.scale_types.first if record.scale_type.nil?
-    record.weight_unit = record.scale_type.weight_unit if record.weight_unit.nil?
-    record.log_parts.each{ |lp|
-      if record.weight_unit == "kg"
-        lp.weight = (lp.weight * (1.0/2.2).to_f)
-      elsif record.weight_unit == "st"
-        lp.weight = (conv_weight * (1.0/14.0).to_f)
-      end
-    }
-    record.weight_unit = "lb"
+    record.scale_type = record.region.scale_types.first if record.scale_type.nil? and record.region.scale_types.length == 1
+    unless record.scale_type.nil?
+      record.weight_unit = record.scale_type.weight_unit if record.weight_unit.nil?
+      record.log_parts.each{ |lp|
+        if record.weight_unit == "kg"
+          lp.weight = (lp.weight * (1.0/2.2).to_f).round(2)
+        elsif record.weight_unit == "st"
+          lp.weight = (conv_weight * (1.0/14.0).to_f).round(2)
+        end
+        lp.save
+      }
+      record.weight_unit = "lb"
+    end
   }
-
-  TweetGainThreshold = 25000
-  TweetTimeThreshold = 3600*24
-  TweetGainOrTime = :gain
 
   def has_volunteers?
     self.volunteers.count > 0
@@ -70,9 +70,12 @@ class Log < ActiveRecord::Base
     end
   end
 
-  def self.picked_up_weight(volunteer_id)
-    complete = true
-    self.joins(:log_volunteers,:log_parts).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).sum(:weight)
+  def self.picked_up_weight(region_id=nil,volunteer_id=nil)
+    cq = "logs.complete"
+    vq = volunteer_id.nil? ? nil : "log_volunteers.volunteer_id=#{volunteer_id}"
+    rq = region_id.nil? ? nil : "logs.region_id=#{region_id}"
+    aq = "log_volunteers.active"
+    self.joins(:log_volunteers,:log_parts).where([cq,vq,rq,aq].compact.join(" AND ")).sum(:weight).to_f
   end
 
   def self.upcoming_for(volunteer_id)
@@ -120,17 +123,21 @@ class Log < ActiveRecord::Base
     self.log_volunteers.collect{ |sv| (not sv.active) ? sv.volunteer : nil }.compact
   end
 
-  def tweet(record)
-    return true if record.region.nil? or record.region.twitter_key.nil? or record.region.twitter_secret.nil? or record.region.twitter_token.nil? or 
-                   record.region.twitter_token_secret.nil?
-    return true unless record.complete
+  TweetGainThreshold = 25000
+  TweetTimeThreshold = 3600*24
+  TweetGainOrTime = :gain
 
-    poundage = Log.where("complete AND region_id = ?",region.id).collect{ |l| l.summed_weight }.sum
-    poundage += record.region.prior_lbs_rescued unless record.region.prior_lbs_rescued.nil?
+  def tweet
+    return true if self.region.nil? or self.region.twitter_key.nil? or self.region.twitter_secret.nil? or self.region.twitter_token.nil? or 
+                   self.region.twitter_token_secret.nil?
+    return true unless self.complete
+
+    poundage = Log.picked_up_weight(region.id)
+    poundage += self.region.prior_lbs_rescued unless self.region.prior_lbs_rescued.nil?
     last_poundage = region.twitter_last_poundage.nil? ? 0.0 : region.twitter_last_poundage
 
     if TweetGainOrTime == :time
-      return true unless record.region.twitter_last_timestamp.nil? or (Time.zone.now - record.region.twitter_last_timestamp) > TweetTimeThreshold
+      return true unless self.region.twitter_last_timestamp.nil? or (Time.zone.now - self.region.twitter_last_timestamp) > TweetTimeThreshold
       # flip a coin about whether we'll post this one so we don't always post at the same time of day
       return true if rand > 0.5
     else
@@ -139,28 +146,28 @@ class Log < ActiveRecord::Base
 
     begin
       Twitter.configure do |config|
-        config.consumer_key = record.region.twitter_key
-        config.consumer_secret = record.region.twitter_secret
-        config.oauth_token = record.region.twitter_token
-        config.oauth_token_secret = record.region.twitter_token_secret
+        config.consumer_key = self.region.twitter_key
+        config.consumer_secret = self.region.twitter_secret
+        config.oauth_token = self.region.twitter_token
+        config.oauth_token_secret = self.region.twitter_token_secret
       end
       if poundage <= last_poundage
         region.twitter_last_poundage = poundage
         region.save
         return true
       end
-      t = "#{record.volunteer.name} picked up #{record.summed_weight.round} lbs of food, bringing 
-           us to #{poundage.round} lbs of food rescued to date in #{record.region.name}."
-      if record.donor.twitter_handle.nil?
-        t += "Thanks to #{record.donor.name} for the donation!"
+      t = "#{self.volunteers.collect{ |v| v.name }.join(" and ")} picked up #{self.summed_weight.round} lbs of food, bringing
+           us to #{poundage.round} lbs of food rescued to date in #{self.region.name}."
+      if self.donor.twitter_handle.nil?
+        t += "Thanks to #{self.donor.name} for the donation!"
       else
-        t += " Thanks to @#{record.donor.twitter_handle} for the donation!"
+        t += " Thanks to @#{self.donor.twitter_handle} for the donation!"
       end
       return true if t.length > 140
       Twitter.update(t)
-      record.region.twitter_last_poundage = poundage
-      record.region.twitter_last_timestamp = Time.zone.now
-      record.region.save
+      self.region.twitter_last_poundage = poundage
+      self.region.twitter_last_timestamp = Time.zone.now
+      self.region.save
       flash[:notice] = "Tweeted: #{t}"
     rescue
       # Twitter update didn't work for some reason, but everything else seems to have...

@@ -95,7 +95,6 @@ ActiveRecord::Schema.define(:version => 20140408172606) do
     t.text     "notes"
     t.integer  "num_reminders"
     t.boolean  "flag_for_admin"
-    t.string   "weighed_by"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.integer  "donor_id"
@@ -104,6 +103,7 @@ ActiveRecord::Schema.define(:version => 20140408172606) do
     t.integer  "region_id"
     t.boolean  "complete",          :default => false
     t.integer  "scale_type_id"
+    t.string   "weight_unit"
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"

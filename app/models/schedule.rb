@@ -4,14 +4,12 @@ class Schedule < ActiveRecord::Base
   has_many :volunteers, :through => :schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>true}
   has_many :logs
-
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
   belongs_to :transport_type
   belongs_to :region
-
-  has_many :food_types
-  has_many :scale_types
+  has_many :schedule_parts
+  has_many :food_types, :through => :schedule_parts
 
   attr_accessible :region_id, :irregular, :backup, :transport_type_id, :food_type_ids, 
                   :weekdays, :admin_notes, :day_of_week, :donor_id, :public_notes, 
@@ -61,7 +59,7 @@ class Schedule < ActiveRecord::Base
   def prior_volunteers
     self.schedule_volunteers.collect{ |sv| (not sv.active) ? sv.volunteer : nil }.compact
   end
-  
+
   def has_volunteer? volunteer
     return false if volunteer.nil?
     self.volunteers.collect { |v| v.id }.include? volunteer.id

@@ -10,7 +10,10 @@ from <%= @biggest.donor.name %> to <%= @biggest.recipient.name %> on <%= @bigges
 ******** These logs were flagged for us ********
 
 <% @flagged_logs.each{ |l| %>
-<%= l.volunteer.name %> (<%= [l.volunteer.email,l.volunteer.phone].compact.join(",") %>)
+<% l.volunteers.each{ |v| %>
+<%= v.name %> (<%= [v.email,v.phone].compact.join(",") %>)
+<% } %>
+
 <%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %> for <%= l.summed_weight %> lbs
 Description: <%= word_wrap(l.log_parts.collect{ |lp| lp.description }.join("\n\n"),70) %>
 Note: <%= word_wrap(l.notes,:line_width => 70) %>
@@ -22,8 +25,10 @@ Note: <%= word_wrap(l.notes,:line_width => 70) %>
 ******** These logs were completed with zero pounds (problems!?) *********
 
 <% @zero_logs.each{ |l| %>
-<% unless l.volunteer.nil? %>
-<%= l.volunteer.name %> (<%= [l.volunteer.email,l.volunteer.phone].compact.join(",") %>)
+<% unless l.volunteers.empty? %>
+<% l.volunteers.each{ |v| %>
+ <%= v.name %> (<%= [v.email,v.phone].compact.join(",") %>)
+<% } %>
 <% end %>
 <%= l.donor.nil? ? "?" : l.donor.name %> -> <%= l.recipient.nil? ? "?" : l.recipient.name%> on <%= l.when %>
 Description: <%= word_wrap(l.log_parts.collect{ |lp| lp.description }.join("\n\n"),70) %>
@@ -31,4 +36,3 @@ Note: <%= word_wrap(l.notes,:line_width => 70) %>
 
   <% } %>
 <% end %>
-

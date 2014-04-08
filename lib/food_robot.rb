@@ -19,7 +19,7 @@ module FoodRobot
       # create each scheduled log entry for the given day
       log = Log.new{ |l|
         l.schedule = s
-        l.volunteer = s.volunteers.first # TODO: verify this assumption makes sense
+        l.volunteers = s.volunteers
         l.donor = s.donor
         l.recipient = s.recipient
         l.region = s.region
@@ -44,17 +44,19 @@ module FoodRobot
 
       # FUTURE reminders...
       days_future = (l.when - Time.zone.today).to_i
-      if days_future == 1 and !l.volunteer.nil? and l.volunteer.pre_reminders_too
-        pre_reminder_list[l.volunteer] = [] if pre_reminder_list[l.volunteer].nil?
-        pre_reminder_list[l.volunteer].push(l)
+      if days_future == 1 and !l.volunteers.empty?
+        l.volunteers.reject{ |v| not v.pre_reminders_too }.each{ |v|
+          pre_reminder_list[v] = [] if pre_reminder_list[v].nil?
+          pre_reminder_list[v].push(l)
+        }
         next
-      elsif (days_future == 1 or days_future == 2) and l.volunteer.nil?
+      elsif (days_future == 1 or days_future == 2) and l.volunteers.empty?
         short_term_cover_list[l.region] = [] if short_term_cover_list[l.region].nil?
         short_term_cover_list[l.region].push(l)
       end
 
       # PAST reminders...
-      next if l.volunteer.nil?
+      next if l.volunteers.empty?
       days_past = (Time.zone.today - l.when).to_i
       next unless days_past >= n
 
@@ -62,14 +64,17 @@ module FoodRobot
       l.num_reminders += 1
       l.save
 
-      reminder_list[l.volunteer] = [] if reminder_list[l.volunteer].nil?
-      reminder_list[l.volunteer].push(l)
+      l.volunteers.each{ |v|
+        reminder_list[v] = [] if reminder_list[v].nil?
+        reminder_list[v].push(l)
 
-      if l.num_reminders >= r
-        naughty_list[l.region] = [] if naughty_list[l.region].nil?
-        naughty_list[l.region].push(l)
-      end
+        if l.num_reminders >= r
+          naughty_list[l.region] = [] if naughty_list[l.region].nil?
+          naughty_list[l.region].push(l)
+        end
+      }
     }
+
     # Send reminders to enter data for PAST pickups
     reminder_list.each{ |v,logs|
       m = Notifier.volunteer_log_reminder(v,logs)
@@ -158,7 +163,6 @@ module FoodRobot
       else
         m.deliver
       end
-
     }
   end  
 

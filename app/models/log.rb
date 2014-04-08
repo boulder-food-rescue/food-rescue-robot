@@ -1,7 +1,8 @@
 class Log < ActiveRecord::Base
   belongs_to :schedule
-  belongs_to :volunteer
-  belongs_to :orig_volunteer, :foreign_key => "orig_volunteer_id", :class_name => "Volunteer"
+  has_many :log_volunteers
+  has_many :volunteers, :through => :log_volunteers,
+           :conditions=>{"log_volunteers.active"=>true}
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
   belongs_to :food_type
@@ -10,6 +11,8 @@ class Log < ActiveRecord::Base
   belongs_to :region
   has_many :log_parts
   has_many :food_types, :through => :log_parts
+
+  accepts_nested_attributes_for :log_volunteers
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
@@ -21,33 +24,87 @@ class Log < ActiveRecord::Base
 
   attr_accessible :schedule_id, :region_id, :volunteer_id, :donor_id, :recipient_id, 
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
-                  :num_reminders, :orig_volunteer_id, :transport, :when, :scale_type_id
+                  :num_reminders, :orig_volunteer_id, :transport, :when, :scale_type_id, :log_volunteers_attributes
 
   after_save { |record| tweet(record) }
+
+  before_save { |record|
+    record.scale_type = record.region.scale_types.first if record.scale_type.nil?
+    if record.scale_type.changed?
+      weight_unit = record.scale_type.weight_unit
+      record.log_parts.each{ |lp|
+        lp.weight = (lp.weight * (1/2.2).to_f) if weight_unit == "kg"
+        lp.weight = (conv_weight * (1/14).to_f) if weight_unit == "st"
+      }
+    end
+  }
 
   TweetGainThreshold = 25000
   TweetTimeThreshold = 3600*24
   TweetGainOrTime = :gain
 
+  def has_volunteers?
+    self.volunteers.count > 0
+  end
+
+  def no_volunteers?
+    self.volunteers.count == 0
+  end
+
+  def has_volunteer? volunteer
+    return false if volunteer.nil?
+    self.volunteers.collect { |v| v.id }.include? volunteer.id
+  end
+
   def self.pickup_count region_id
     self.where(:region_id=>region_id, :complete=>true).count
   end
 
-  def self.picked_up_by volunteer_id
-    self.where(:volunteer_id=>volunteer_id, :complete=>true)
+  def self.picked_up_by(volunteer_id,complete=true,limit=nil)
+    if limit.nil?
+      self.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC')
+    else
+      self.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC').limit(limit.to_i)
+    end
   end
 
-  def self.upcoming_for volunteer_id
-    self.where(:volunteer_id=>volunteer_id).where("\"when\" >= ?",Time.zone.today)
+  def self.picked_up_weight(volunteer_id)
+    complete = true
+    self.joins(:log_volunteers,:log_parts).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).sum(:weight)
+  end
+
+  def self.upcoming_for(volunteer_id)
+    self.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND log_volunteers.active",volunteer_id).
+      where("\"when\" >= ?",Time.zone.today)
+  end
+
+  def self.past_for(volunteer_id)
+    self.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND log_volunteers.active",volunteer_id).
+      where("\"when\" < ?",Time.zone.today)
   end
 
   def self.needing_coverage region_id_list=nil
-    if not region_id_list.nil?
-      return self.where("volunteer_id IS NULL").where(:region_id=>region_id_list)
+    unless region_id_list.nil?
+      return self.joins("LEFT OUTER JOIN log_volunteers ON log_volunteers.log_id=logs.id").where("volunteer_id IS NULL").where(:region_id=>region_id_list).where("\"when\" >= ?",Time.zone.today)
     else
-      return self.where("volunteer_id IS NULL")
+      return self.joins("LEFT OUTER JOIN log_volunteers ON log_volunteers.log_id=logs.id").where("volunteer_id IS NULL").where("\"when\" >= ?",Time.zone.today)
     end
   end
+
+  def self.being_covered region_id_list=nil
+    unless region_id_list.nil?
+      return self.select("logs.*, count(log_volunteers.volunteer_id) as prior_count").joins(:log_volunteers).
+        where("NOT log_volunteers.active").
+        where(:region_id=>region_id_list).
+        where("\"when\" >= ?",Time.zone.today).
+        group("logs.id")
+    else
+      return self.select("logs.*, count(log_volunteers.volunteer_id) as prior_count").joins(:log_volunteers).
+        where("NOT log_volunteers.active").
+        where("\"when\" >= ?",Time.zone.today).group("logs.id")
+    end
+  end
+
 
   def summed_weight
     self.log_parts.collect{ |lp| lp.weight }.compact.sum
@@ -55,6 +112,10 @@ class Log < ActiveRecord::Base
 
   def summed_count
     self.log_parts.collect{ |lp| lp.count }.compact.sum
+  end
+
+  def prior_volunteers
+    self.log_volunteers.collect{ |sv| (not sv.active) ? sv.volunteer : nil }.compact
   end
 
   def tweet(record)

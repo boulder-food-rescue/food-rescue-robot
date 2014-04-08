@@ -20,6 +20,12 @@ class Volunteer < ActiveRecord::Base
   has_many :prior_schedules, :through=>:schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>false}, :class_name=>"Schedule"
 
+  has_many :log_volunteers
+  has_many :logs, :through=>:log_volunteers,
+           :conditions=>{"log_volunteers.active"=>true}
+  has_many :prior_logs, :through=>:log_volunteers,
+           :conditions=>{"log_volunteers.active"=>false}, :class_name=>"Log"
+
   after_save :auto_assign_region
 
   # more trustworthy and self.assigned? attribute?

@@ -28,6 +28,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Recipient </th>
     <% unless current_page? :controller => "logs", :action => "open" %>
     <th> Weight </th>
+    <th> Scale Used (original units) </th>
     <th> Transport Type </th>
     <th> Food Type </th>
     <% end %>
@@ -40,9 +41,9 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
   <%
   @shifts.each do |shift|
     row_bgcolor = nil
-    if shift.volunteer.nil? and not current_page?(:controller => "logs", :action => "open")
+    if shift.volunteers.empty? and not current_page?(:controller => "logs", :action => "open")
       row_bgcolor = "pink"
-    elsif !shift.volunteer.nil? and shift.volunteer.needs_training
+    elsif !shift.volunteers.empty? and shift.volunteers.any?{ |v| v.needs_training }
       row_bgcolor = "lightgreen"
     elsif shift.recipient.nil? or shift.donor.nil?
       row_bgcolor = "yellow"
@@ -54,20 +55,26 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
          <button class="info" onclick="window.location='/schedules/<%= shift.schedule.id %>';">Info</button>
          <% end %>
     <td> <%= readable_time_until shift %></td>
-    <td <% if shift.volunteer.nil? %>style="background: yellow;text-align: center;"<% end %>> 
-         <% if shift.volunteer.nil? %>
-         <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => shift.id %>
+    <td <% if shift.volunteers.empty? %>style="background: yellow;text-align: center;"<% end %>>
+         <% if shift.volunteers.empty? %>
+          <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => shift.id %>
          <% else %>
-         <%= link_to shift.volunteer.name, shift.volunteer unless shift.volunteer.nil? %>
-         <% end %></td>
+          <% shift.volunteers.each do |volunteer| %>
+            <%= link_to volunteer.name, volunteer %><br />
+           <% end %>
+           <%= render 'take_or_leave', :log=>shift %>
+         <% end %>
+    </td>
     <td> <%= shift.donor != nil ? (link_to shift.donor.name, shift.donor) : ""%> </td>
     <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
     <% unless current_page? :controller => "logs", :action => "open" %>
-    <td> <%= shift.complete ? shift.summed_weight : "?" %> </td>
+    <td> <%= shift.complete ? shift.summed_weight : "?" %> lbs.</td>
+    <td> <%= shift.scale_type.name unless shift.scale_type.nil? %>
+	(<%= shift.scale_type.weight_unit unless shift.scale_type.nil? %>)
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types.collect{ |ft| ft.name }.join(", ") unless shift.food_types.length == 0 %>
     <% end %>
-    <td> <%= link_to shift.orig_volunteer.name, shift.orig_volunteer unless shift.orig_volunteer.nil? %>
+    <td><%= shift.prior_volunteers.compact.map{ |v| link_to(v.name, v) }.join(" and ").html_safe %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
     <td><% if current_volunteer.any_admin?(shift.region) %>
         <%= link_to "edit", edit_log_path(shift) %><br>

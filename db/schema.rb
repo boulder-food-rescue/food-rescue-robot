@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131226160442) do
+ActiveRecord::Schema.define(:version => 20140408172606) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -78,15 +78,23 @@ ActiveRecord::Schema.define(:version => 20131226160442) do
   add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"
   add_index "log_parts", ["log_id"], :name => "index_log_parts_on_log_id"
 
+  create_table "log_volunteers", :force => true do |t|
+    t.integer  "log_id"
+    t.integer  "volunteer_id"
+    t.boolean  "active",       :default => true
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+  end
+
+  add_index "log_volunteers", ["log_id"], :name => "index_log_volunteers_on_log_id"
+  add_index "log_volunteers", ["volunteer_id"], :name => "index_log_volunteers_on_volunteer_id"
+
   create_table "logs", :force => true do |t|
     t.integer  "schedule_id"
     t.date     "when"
-    t.integer  "volunteer_id"
-    t.integer  "orig_volunteer_id"
     t.text     "notes"
     t.integer  "num_reminders"
     t.boolean  "flag_for_admin"
-    t.string   "weighed_by"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.integer  "donor_id"
@@ -94,10 +102,11 @@ ActiveRecord::Schema.define(:version => 20131226160442) do
     t.integer  "transport_type_id"
     t.integer  "region_id"
     t.boolean  "complete",          :default => false
+    t.integer  "scale_type_id"
+    t.string   "weight_unit"
   end
 
   add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"
-  add_index "logs", ["volunteer_id"], :name => "index_logs_on_volunteer_id"
 
   create_table "regions", :force => true do |t|
     t.decimal  "lat"
@@ -129,6 +138,14 @@ ActiveRecord::Schema.define(:version => 20131226160442) do
     t.text     "splash_html"
     t.string   "weight_unit",            :default => "pound", :null => false
     t.text     "time_zone"
+  end
+
+  create_table "scale_types", :force => true do |t|
+    t.string   "name"
+    t.string   "weight_unit"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.integer  "region_id"
   end
 
   create_table "schedule_parts", :force => true do |t|

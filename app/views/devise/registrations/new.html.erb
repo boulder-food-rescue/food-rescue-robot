@@ -21,8 +21,12 @@
   <div><%= f.label :region %><br />
   <%= f.select(:requested_region_id,Region.all.collect{ |r| [r.name,r.id] }) %></div>
   <br>
+  <br />
 
   <div><%= f.submit "Sign up" %></div>
 <% end %>
+
+<% flash[:notice] = "Thanks for signing up! You will recieve an email once a regional
+			administrator has approved you for access." %>
 
 <%= render "devise/shared/links" %>

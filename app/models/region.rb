@@ -2,6 +2,7 @@ class Region < ActiveRecord::Base
   has_many :assignments
   has_many :volunteers, :through => :assignments
   has_many :food_types
+  has_many :scale_types
   has_many :schedules
   geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
   after_validation :geocode

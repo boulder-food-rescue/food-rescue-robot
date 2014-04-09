@@ -164,7 +164,7 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
         <p>Number of Volunteers: <%= number_of_volunteers %> volunteers</p>
         <p class="volunteer_facts text_link"> fun facts </p>
         <div class="fact_info">
-          <% if (largest_pickup != nil) && (largest_pickup.volunteer != nil) %>
+          <% if (largest_pickup != nil) && (not largest_pickup.volunteers.empty?) %>
             <div class="fun_fact">
               <h3>Largest Pickup</h3>
               <%
@@ -172,14 +172,14 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
               if donor.website != nil %>
                 <div>
                   <p>
-                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.summed_weight %> lbs of food from 
+                    <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food from
                     <a href="<% donor.website %>"><%= donor.name %></a>
                   </p>
                 </div>
               <% else %>
                 <div>
                   <p>
-                    <%= largest_pickup.volunteer.name %> with <%= largest_pickup.summed_weight %> lbs of food from <%= donor.name %>
+                    <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food from <%= donor.name %>
                   </p>
                 </div>
               <%end%>
@@ -200,7 +200,7 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
             <% else %>
                 <div>
                   <p>
-                    <%= pickup.volunteer.name %> - <%= pickup.donor.name %>
+                    <%= pickup.volunteers.collect{ |v| v.name }.join(" and ") %> - <%= pickup.donor.name %>
                   </p>
                 </div>
             <% end %>

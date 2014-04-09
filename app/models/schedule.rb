@@ -14,8 +14,15 @@ class Schedule < ActiveRecord::Base
   attr_accessible :region_id, :irregular, :backup, :transport_type_id, :food_type_ids, 
                   :weekdays, :admin_notes, :day_of_week, :donor_id, :public_notes, 
                   :recipient_id, :detailed_start_time, :detailed_stop_time, :frequency, :detailed_date, :temporary,
-                  :difficulty_rating, :expected_weight, :hilliness, :schedule_volunteers, :schedule_volunteers_attributes,
-		  :scale_type_ids
+                  :difficulty_rating, :expected_weight, :hilliness, :schedule_volunteers,
+                  :schedule_volunteers_attributes, :scale_type_ids
+
+  after_save{ |record|
+    record.schedule_volunteers.each{ |sv|
+      sv.destroy if sv.volunteer_id.blank?
+    }
+  }
+
   accepts_nested_attributes_for :schedule_volunteers
 
   Hilliness = ["Flat","Mostly Flat","Some Small Hills","Hilly for Reals","Mountaineering"]

@@ -3,6 +3,7 @@ class Log < ActiveRecord::Base
   has_many :log_volunteers
   has_many :volunteers, :through => :log_volunteers,
            :conditions=>{"log_volunteers.active"=>true}
+  has_many :active_log_volunteers, :conditions=>{"active" => true}, :class_name => "LogVolunteer"
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
   belongs_to :food_type
@@ -13,6 +14,7 @@ class Log < ActiveRecord::Base
   has_many :food_types, :through => :log_parts
 
   accepts_nested_attributes_for :log_volunteers
+  accepts_nested_attributes_for :active_log_volunteers
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
@@ -25,7 +27,7 @@ class Log < ActiveRecord::Base
   attr_accessible :schedule_id, :region_id, :donor_id, :recipient_id,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :transport, :when, :scale_type_id,
-                  :log_volunteers_attributes, :weight_unit
+                  :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes
 
   after_save { |record| record.tweet }
 
@@ -43,6 +45,12 @@ class Log < ActiveRecord::Base
       }
       record.weight_unit = "lb"
     end
+  }
+
+  after_save{ |record|
+    record.log_volunteers.each{ |lv|
+      lv.destroy if lv.volunteer_id.blank?
+    }
   }
 
   def has_volunteers?
@@ -90,9 +98,9 @@ class Log < ActiveRecord::Base
 
   def self.needing_coverage region_id_list=nil
     unless region_id_list.nil?
-      return self.joins("LEFT OUTER JOIN log_volunteers ON log_volunteers.log_id=logs.id").where("volunteer_id IS NULL").where(:region_id=>region_id_list).where("\"when\" >= ?",Time.zone.today)
+      Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).reject{ |l| l.has_volunteers? }
     else
-      return self.joins("LEFT OUTER JOIN log_volunteers ON log_volunteers.log_id=logs.id").where("volunteer_id IS NULL").where("\"when\" >= ?",Time.zone.today)
+      Log.where("\"when\" >= ?",Time.zone.today).reject{ |l| l.has_volunteers? }
     end
   end
 

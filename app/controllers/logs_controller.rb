@@ -194,6 +194,7 @@ class LogsController < ApplicationController
       redirect_to(root_path)
       return
     end
+
     params["log_parts"].each{ |dc,lpdata|
       lpdata["weight"] = nil if lpdata["weight"].strip == ""
       lpdata["count"] = nil if lpdata["count"].strip == ""
@@ -272,16 +273,18 @@ class LogsController < ApplicationController
           next
         end
 
+        lv = LogVolunteer.new
+        lv.active = false
+        lv.volunteer = volunteer
+
         # create the null record
         lo = Log.new
-        lo.orig_volunteer = volunteer
-        lo.volunteers << volunteer
+        lo.log_volunteers << lv
         lo.schedule = p
         lo.donor = p.donor
         lo.recipient = p.recipient
         lo.when = from
         lo.food_types = p.food_types
-        lo.scale_types = p.scale_types
         lo.region = p.region
         lo.save
         n += 1

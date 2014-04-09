@@ -17,7 +17,7 @@
 <tr><td>Date<td><%= f.date_select :when %>
 <tr><td>Volunteer<td>
   <div>
-    <%= f.simple_fields_for :log_volunteers do |log_volunteer| %>
+    <%= f.simple_fields_for :active_log_volunteers do |log_volunteer| %>
       <%= render 'log_volunteer_fields', :f => log_volunteer %>
     <% end %>
     <%= link_to_add_association 'add another volunteer', f, :log_volunteers, :class=>'btn' %>

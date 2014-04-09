@@ -87,6 +87,7 @@
         </tr>
         <% n = 0
            @sncs_pickups.each do |pickup| 
+             next if pickup.recipient.nil? or pickup.donor.nil?
              n += 1
              break if n > 5
          %>

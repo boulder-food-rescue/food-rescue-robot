@@ -13,7 +13,7 @@ class CreateScaleTypes < ActiveRecord::Migration
     execute "UPDATE logs SET weight_unit='lb'"
     Region.all.each{ |r|
       Log.select("weighed_by").where("region_id = ?",r).collect{ |l| l.weighed_by }.uniq.each{ |s|
-        next if s.squish.blank?
+        next if s.nil? or s.squish.blank?
         sn = ScaleType.new
         sn.region_id = r.id
         sn.name = s

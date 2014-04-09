@@ -11,16 +11,15 @@ class AssignmentsController < ApplicationController
       return
     end
     a = Assignment.where("volunteer_id = ? and region_id = ?",v.id,r.id)
-    bit = (params[:unassign]) ? false : true
     if a.length == 0
       a = Assignment.new
       a.volunteer = v   
       a.region = r
-      a.admin = bit
+      a.admin = true
       a.save
     else
       a.each{ |a| 
-        a.admin = bit
+        a.admin = (not a.admin)
         a.save
       }
     end

@@ -54,8 +54,8 @@ class LogsController < ApplicationController
       else
         r = params[:region_id]
         @region = Region.find(r)
-        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight")
-        t += @region.prior_lbs_rescued unless @region.nil? or @region.prior_lbs_rescued.nil?
+        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight").to_f
+        t += @region.prior_lbs_rescued.to_f unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
       render :text => t.to_s
     when 'wordcloud'

@@ -51,7 +51,7 @@
     <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count<th>By Car<th>Covered</tr></thead><tbody>
     <% @per_volunteer.each{ |v,s| %>
        <% next if s[:weight] == 0 %>
-       <tr><td><%= Volunteer.find(v).name %><td><%= s[:weight] %><td><%= s[:count] %><td><%= s[:bycar] %><td><%= s[:covered] %>
+       <tr><td><%= Volunteer.find(v).collect{ |v| v.name }.join(", ") %><td><%= s[:weight] %><td><%= s[:count] %><td><%= s[:bycar] %><td><%= s[:covered] %>
     <% } %>
     </tbody></table>
     
@@ -61,7 +61,7 @@
     <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count<th>By Car<th>Covered</tr></thead><tbody>
     <% @per_volunteer2.each{ |v,s| %>
     <% next if s[:weight] == 0 %>
-    <tr><td><%= Volunteer.find(v).name %><td><%= s[:weight] %><td><%= s[:count] %><td><%= s[:bycar] %><td><%= s[:covered] %>
+    <tr><td><%= Volunteer.find(v).collect{ |v| v.name }.join(", ") %><td><%= s[:weight] %><td><%= s[:count] %><td><%= s[:bycar] %><td><%= s[:covered] %>
     <% } %>
     </tbody></table>
 
@@ -72,10 +72,12 @@
     <table class="datatable"><thead><th>Volunteer<th>Email<th>Last Pickup<th>Num Pickups</thead><tbody>
     <% 
       @lazy_volunteers.each{ |v|
-      next if Date.parse(v.last_date) > (Date.today - 90)
+        next if Date.parse(v.last_date) > (Date.today - 90)
     %> 
-    <tr><td><%= [v.name,v.email,v.last_date,v.count].join("<td>").html_safe %>
-    <% } %>
+    <tr>
+      <td>
+      <%= [v.name,v.email,v.last_date,v.count].join("<td>").html_safe %>
+    <% }%>
     </tbody>
     </table>
   </div>

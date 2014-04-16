@@ -3,37 +3,39 @@ class LogsController < ApplicationController
   before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create]
 
   def mine_past
-    index("volunteer_id = #{current_volunteer.id} AND \"when\" < current_date","My Past Shifts")
+    index(Log.past_for(current_volunteer.id),"My Past Shifts")
   end
   def mine_upcoming
-    index("volunteer_id = #{current_volunteer.id} AND \"when\" >= current_date","My Upcoming Shifts")
+    index(Log.upcoming_for(current_volunteer.id),"My Upcoming Shifts")
   end
   def open
-    index("volunteer_id IS NULL AND \"when\" >= current_date","Open Shifts")
+    index(Log.needing_coverage(current_volunteer.region_ids),"Open Shifts")
   end
   def today
-    index("\"when\" = '#{Time.zone.today.to_s}'","Today's Shifts")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{Time.zone.today.to_s}'"),"Today's Shifts")
   end
   def tomorrow
-    index("\"when\" = '#{(Time.zone.today+1).to_s}'","Tomorrow's Shifts")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{(Time.zone.today+1).to_s}'"),"Tomorrow's Shifts")
   end
   def yesterday
-    index("\"when\" = '#{(Time.zone.today-1).to_s}'","Yesterday's Shifts")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{(Time.zone.today-1).to_s}'"),"Yesterday's Shifts")
   end
   def last_ten
-    index("\"when\" >= '#{(Time.zone.today-10).to_s}'","Last 10 Days of Shifts")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'"),"Last 10 Days of Shifts")
   end
   def being_covered
-    index("\"when\" >= current_date AND orig_volunteer_id IS NOT NULL AND orig_volunteer_id != volunteer_id","Shifts Being Covered")
+    index(Log.being_covered(current_volunteer.region_ids),"Being Covered")
   end
   def tardy
-    index("\"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)"),"Missing Data (>= 3 Reminders)")
   end
 
-  def index(filter=nil,header="Entire Log")
+  def index(shifts=nil,header="Entire Log")
     filter = filter.nil? ? "" : " AND #{filter}"
     @shifts = []
-    @shifts = Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})#{filter}") if current_volunteer.region_ids.length > 0
+    if current_volunteer.region_ids.length > 0
+      @shifts = shifts.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})") : shifts
+    end
     @header = header
     @regions = Region.all
     if current_volunteer.super_admin?
@@ -52,8 +54,8 @@ class LogsController < ApplicationController
       else
         r = params[:region_id]
         @region = Region.find(r)
-        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight")
-        t += @region.prior_lbs_rescued unless @region.nil? or @region.prior_lbs_rescued.nil?
+        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight").to_f
+        t += @region.prior_lbs_rescued.to_f unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
       render :text => t.to_s
     when 'wordcloud'
@@ -125,35 +127,34 @@ class LogsController < ApplicationController
       return
     end
     if @log.save
-
       # mark as complete if deserving
       unfilled_count = 0
       params["log_parts"].each{ |dc,lpdata|	
         unless lpdata["food_type_id"].nil?
-	  lp = LogPart.new
+      	  lp = LogPart.new
           lp.weight = lpdata["weight"]
           lp.count = lpdata["count"]
           unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
           lp.description = lpdata["description"]
           lp.food_type_id = lpdata["food_type_id"].to_i
-	      lp.log_id = @log.id
-	      lp.save
-	end
+	        lp.log_id = @log.id
+	        lp.save
+	      end
       } unless params["log_parts"].nil?
       if unfilled_count == 0
         @log.complete = true
         @log.save
       else
-	@log.log_parts.each{ |part|
-	  if part.food_type_id.nil? and part.weight.nil? and part.count.nil?
-	    part.destroy
-	    unfilled_count-=1;
-	  end
-	}
-	if unfilled_count == 0
-	  @log.complete = true
-	  @log.save
-	end
+	      @log.log_parts.each{ |part|
+	        if part.food_type_id.nil? and part.weight.nil? and part.count.nil?
+	          part.destroy
+	          unfilled_count-=1;
+	        end
+	      }
+	      if unfilled_count == 0
+	        @log.complete = true
+	        @log.save
+	      end
       end
 
       flash[:notice] = "Created successfully."
@@ -170,7 +171,7 @@ class LogsController < ApplicationController
 
   def edit
     @log = Log.find(params[:id])
-    unless current_volunteer.any_admin? @log.region or @log.volunteer == current_volunteer
+    unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
       redirect_to(root_path)
       return
@@ -188,11 +189,12 @@ class LogsController < ApplicationController
     @action = "update"
     set_vars_for_form @region
 
-    unless current_volunteer.any_admin? @log.region or @log.volunteer == current_volunteer
+    unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
       redirect_to(root_path)
       return
     end
+
     params["log_parts"].each{ |dc,lpdata|
       lpdata["weight"] = nil if lpdata["weight"].strip == ""
       lpdata["count"] = nil if lpdata["count"].strip == ""
@@ -271,20 +273,18 @@ class LogsController < ApplicationController
           next
         end
 
+        lv = LogVolunteer.new
+        lv.active = false
+        lv.volunteer = volunteer
+
         # create the null record
         lo = Log.new
-        if current_volunteer.admin and !params[:volunteer_id].nil?
-          lo.orig_volunteer = Volunteer.find(params[:volunteer_id].to_i)
-        else
-          lo.orig_volunteer = current_volunteer
-        end
-        lo.volunteer = nil
+        lo.log_volunteers << lv
         lo.schedule = p
         lo.donor = p.donor
         lo.recipient = p.recipient
         lo.when = from
         lo.food_types = p.food_types
-        lo.scale_types = p.scale_types
         lo.region = p.region
         lo.save
         n += 1
@@ -299,13 +299,28 @@ class LogsController < ApplicationController
   def take
     l = Log.find(params[:id])
     if current_volunteer.regions.collect{ |r| r.id }.include? l.region_id
-      l.volunteer = current_volunteer
+      l.volunteers << current_volunteer
       l.save
       flash[:notice] = "Successfully took one shift."
     else
       flash[:notice] = "Cannot take shifts for regions that you aren't assigned to!"
     end
-    open
+    redirect_to :back
+  end
+
+  def leave
+    log = Log.find(params[:id])
+    if current_volunteer.in_region? log.region_id
+      if log.has_volunteer? current_volunteer
+        LogVolunteer.where(:volunteer_id=>current_volunteer.id, :log_id=>log.id).delete_all
+        flash[:notice] = "You are no longer on the pickup from "+log.donor.name+" to "+log.recipient.name+"."
+      else
+        flash[:error] = "Cannot leave pickup since you're not part of it!"
+      end
+    else
+      flash[:error] = "Cannot leave that pickup since you are not a member of that region!"
+    end
+    redirect_to :back
   end
 
   def receipt

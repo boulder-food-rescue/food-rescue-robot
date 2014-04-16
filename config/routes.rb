@@ -48,6 +48,7 @@ Webapp::Application.routes.draw do
     end
     member do
       get :take
+      get :leave
     end
   end
 

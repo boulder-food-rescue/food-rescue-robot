@@ -4,10 +4,12 @@ class Schedule < ActiveRecord::Base
   has_many :volunteers, :through => :schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>true}
   has_many :logs
-  belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
-  belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
-  belongs_to :transport_type
+  #belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
+	#belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
+	belongs_to :location
+	belongs_to :transport_type
   belongs_to :region
+	belongs_to :schedule_chain
   has_many :schedule_parts
   has_many :food_types, :through => :schedule_parts
 
@@ -48,6 +50,10 @@ class Schedule < ActiveRecord::Base
     end
     schedules
   end
+
+	def is_pickup_stop?
+		return self.location.donor?
+	end
 
   def has_volunteers?
     self.volunteers.count > 0

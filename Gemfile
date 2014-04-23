@@ -72,3 +72,6 @@ gem 'simple_form'
 
 # set timezone to browser timezone
 gem 'browser-timezone-rails'
+
+# list functionality for schedules
+gem 'ranked-model'

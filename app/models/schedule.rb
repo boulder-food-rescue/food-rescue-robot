@@ -1,36 +1,18 @@
 class Schedule < ActiveRecord::Base
 
+	include RankedModel
+	
   has_many :schedule_volunteers
-  has_many :volunteers, :through => :schedule_volunteers, 
-           :conditions=>{"schedule_volunteers.active"=>true}
   has_many :logs
-  #belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
-	#belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
 	belongs_to :location
-	belongs_to :transport_type
-  belongs_to :region
 	belongs_to :schedule_chain
+	ranks :position, :with_same => :schedule_chain_id
   has_many :schedule_parts
   has_many :food_types, :through => :schedule_parts
 
-  attr_accessible :region_id, :irregular, :backup, :transport_type_id, :food_type_ids, 
-                  :weekdays, :admin_notes, :day_of_week, :donor_id, :public_notes, 
-                  :recipient_id, :detailed_start_time, :detailed_stop_time, :frequency, :detailed_date, :temporary,
-                  :difficulty_rating, :expected_weight, :hilliness, :schedule_volunteers,
-                  :schedule_volunteers_attributes, :scale_type_ids
+  attr_accessible :food_type_ids, :location_id, :public_notes, :admin_notes, :expected_weight 
 
-  after_save{ |record|
-    record.schedule_volunteers.each{ |sv|
-      sv.destroy if sv.volunteer_id.blank?
-    }
-  }
-
-  accepts_nested_attributes_for :schedule_volunteers
-
-  Hilliness = ["Flat","Mostly Flat","Some Small Hills","Hilly for Reals","Mountaineering"]
-  Difficulty = ["Easiest","Typical","Challenging","Most Difficult"]
-
-  # list all the schedules that have donors and recipients, but don't have any volunteer
+    # list all the schedules that have donors and recipients, but don't have any volunteer
   def self.unassigned_in_regions region_id_list
     conditions = {}
     conditions[:region_id] = region_id_list if region_id_list.length > 0
@@ -114,5 +96,4 @@ class Schedule < ActiveRecord::Base
     end 
     next_pickup_times
   end
-
 end

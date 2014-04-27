@@ -1,27 +1,40 @@
 class CreateScheduleChains < ActiveRecord::Migration
   def up
 		create_table :schedule_chains do |c|
-			c.references :volunteer
+			c.references :schedule_volunteer
 			c.references :schedule
-			c.time :start_time
-			c.time :stop_time
-			c.date :chain_date
+			c.time :detailed_start_time
+			c.time :detailed_stop_time
+			c.date :detailed_date
+			c.boolean :backup
+			c.boolean :temporary
+			c.boolean :irregular
+			c.integer :difficulty_rating
+			c.integer :hilliness
+			c.references :scale_type
 		end
 		change_table :schedules do |s|
 			s.references :schedule_chain
 			s.references :location
+			s.boolean :new	:null=>false
 		end
-		Schedule.all.each{ |donor|
-			sc = ScheduleChain.new
-			recip = donor
-			recip.schedule_chain_id = sc.id
-			donor.schedule_chain_id = sc.id
-			recip.location_id = donor.recipient_id
-			donor.location_id = donor.donor_id
-			sc.save
-			recip.save
-			donor.save
+		Schedule.all.each{ |original|
+			unless original.new?
+				@sc = ScheduleChain.create(schedule_volunteer_ids: original.schedule_volunteer_ids, region_id: original.region_id, irregular: original.irregular,
+																   backup: original.backup, transport_type_id: original.transport_type_id,
+																   weekdays: original.weekdays, day_of_week: original.day_of_week, detailed_start_time: original.detailed_start_time,
+																   detailed_stop_time: original.detailed_stop_time, detailed_date: original.detailed_date, hilliness: original.hilliness,
+																   difficulty_rating: original.difficulty_rating, scale_type_id: original.scale_type_id)
+				@donor = @sc.schedules.create(food_type_ids: original.food_type_ids, location_id: original.donor_id, public_notes: original.public_notes,
+																		  admin_notes: original.admin_notes, expected_weight: original.expected_weight, position: 0, new: true)
+				@recip = @sc.schedules.create(food_type_ids: original.food_type_ids, location_id: original.recipient_id, public_notes: original.public_notes,
+																		  admin_notes: original.admin_notes, expected_weight: original.expected_weight, position: 1, new: true)
+				original.delete
+			end
 		}
+		change_table :schedules do |s|
+			s.remove :new
+		end
   end
 
   def down

@@ -16,8 +16,11 @@ class CreateScheduleChains < ActiveRecord::Migration
 		change_table :schedules do |s|
 			s.references :schedule_chain
 			s.references :location
-			s.boolean :new	:null=>false
+			s.boolean :new
 		end
+		Schedule.all.each{ |old|
+			old.new=false
+		}
 		Schedule.all.each{ |original|
 			unless original.new?
 				@sc = ScheduleChain.create(schedule_volunteer_ids: original.schedule_volunteer_ids, region_id: original.region_id, irregular: original.irregular,
@@ -34,6 +37,16 @@ class CreateScheduleChains < ActiveRecord::Migration
 		}
 		change_table :schedules do |s|
 			s.remove :new
+			#s.remove :schedule_volunteer
+			s.remove :detailed_start_time
+			s.remove :detailed_stop_time
+			s.remove :detailed_date
+			s.remove :backup
+			s.remove :temporary
+			s.remove :irregular
+			s.remove :difficulty_rating
+			s.remove :hilliness
+			#s.remove :scale_type
 		end
   end
 

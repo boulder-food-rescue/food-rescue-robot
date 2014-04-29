@@ -152,7 +152,7 @@ class ScheduleChainsController < ApplicationController
             m.deliver
           end
           flash[:notice] = "You have joined the pickup from "+schedule.donor.name+" to "+schedule.recipient.name+"!"
-        else
+       else
           flash[:error] = "Hrmph. That didn't work..."
         end
       end

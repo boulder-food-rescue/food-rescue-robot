@@ -3,7 +3,7 @@
 <% if current_volunteer.any_admin? %>
   <div style="text-align: right;">
     <%= form_tag("/schedules/new", :method => "get") do %>
-      New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
+      New Schedule Chain For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
       <%= submit_tag("Go") %>
     <% end %>
   </div>
@@ -13,7 +13,7 @@
   <p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
 <% elsif @schedules.length == 0 %>
   <p> 
-  Schedule is empty.
+  Local schedule list is empty.
   </p>
 <% elsif current_volunteer.regions.length == 0 %>
   <p>
@@ -28,8 +28,7 @@
     <tr>
       <th> Info </th>
       <th> Day</th>
-      <th> Donor </th>
-      <th> Recipient </th>
+      <th> Stops </th>
       <th> Volunteers </th>
       <th> Start Time </th>
       <th> End Time </th>
@@ -69,10 +68,11 @@
         <% end %>
       </td>
       <td> 
-        <% unless schedule.donor.nil? %>
-          <%= schedule.donor.name %>
-          <br />
-          ( <%= link_to "click for details", schedule.donor %> )
+        <% unless schedule.schedules.nil? %>
+          <% schedule.schedules.each do |stop| stop.name %>
+    			<% if stop.is_donor? %>
+          ( <%= link_to "click for details", stop.location %> )
+					<br />
         <% end %>
       </td>
       <td> <%= link_to schedule.recipient.name, schedule.recipient unless schedule.recipient.nil? %> </td>

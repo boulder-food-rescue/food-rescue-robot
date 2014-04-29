@@ -1,0 +1,1 @@
+rake db:drop && echo "Dropped old database" && rake db:create && echo "Created new database" && rake db:migrate && echo "Migrated new database"

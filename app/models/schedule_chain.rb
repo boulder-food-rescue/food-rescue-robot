@@ -28,11 +28,16 @@ class ScheduleChain < ActiveRecord::Base
   def self.unassigned_in_regions region_id_list
     conditions = {}
     conditions[:region_id] = region_id_list if region_id_list.length > 0
-    self.includes(:schedule_volunteers).where(["schedule_count >= ?",2]).keep_if { |schedule| 
-        schedule.volunteers.count == 0
+    self.includes(:schedule_volunteers).keep_if { |schedule| 
+        schedule.volunteers.count == 0 and schedule.functional?
     }
 		conditions
   end
+	
+		# does the schedule chain start with a pickup and end with a dropoff?
+	def functional?
+		self.schedules.rank(:position).first.is_pickup_stop? and not self.schedules.rank(:position).last.is_pickup_stop?
+	end
 
   # list all the schedules that don't have active volunteers
   # clarification: (in my regions) and (temporary or (no volunteers and last stop is dropoff))

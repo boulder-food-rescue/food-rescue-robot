@@ -268,7 +268,7 @@ class VolunteersController < ApplicationController
     end
     today = Time.zone.today
     
-    @open_shift_count = Schedule.open_in_regions(current_volunteer.region_ids).length
+    @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length
 
     #Upcoming pickup list
     @upcoming_pickups = Log.upcoming_for(current_volunteer.id)
@@ -327,10 +327,10 @@ class VolunteersController < ApplicationController
       @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
-    @num_shifts = current_volunteer.schedules.count
+    @num_shifts = current_volunteer.schedule_chains.count
     @num_to_cover = Log.needing_coverage.count
     @num_upcoming = Log.upcoming_for(current_volunteer.id).count
-    @num_unassigned = Schedule.unassigned_in_regions(current_volunteer.assignments).count
+    @num_unassigned = ScheduleChain.unassigned_in_regions(current_volunteer.assignments).count
     render :home
   end
 end

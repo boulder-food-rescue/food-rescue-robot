@@ -15,10 +15,10 @@ class Volunteer < ActiveRecord::Base
   default_scope order('volunteers.name ASC')
 
   has_many :schedule_volunteers
-  has_many :schedules, :through=>:schedule_volunteers, 
+  has_many :schedule_chains, :through=>:schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>true}
   has_many :prior_schedules, :through=>:schedule_volunteers, 
-           :conditions=>{"schedule_volunteers.active"=>false}, :class_name=>"Schedule"
+           :conditions=>{"schedule_volunteers.active"=>false}, :class_name=>"ScheduleChain"
 
   has_many :log_volunteers
   has_many :logs, :through=>:log_volunteers,

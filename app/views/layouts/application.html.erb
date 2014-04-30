@@ -48,9 +48,9 @@
         <% if volunteer_signed_in? %>
 
           <%= drop_down "Shifts" do %>
-            <%= menu_item "Open Shifts", open_schedules_path %>
+            <%= menu_item "Open Shifts", open_schedule_chains_path %>
             <%= menu_item "Cover Shifts", open_logs_path %>
-            <%= menu_item "Your Regular Shifts", mine_schedules_path %>
+            <%= menu_item "Your Regular Shifts", mine_schedule_chains_path %>
             <%= menu_item "Your Upcoming Shifts", mine_upcoming_logs_path %>
             <%= menu_item "Your Past Shifts", mine_past_logs_path %>
             <%= menu_item "Schedule An Absence", new_absence_logs_path %>
@@ -67,10 +67,10 @@
           <% if current_volunteer.any_admin? %>
 
             <%= drop_down "Schedule" do %>
-              <%= menu_item "Full Schedule", schedules_path %>
-              <%= menu_item "Yesterday", yesterday_schedules_path %>
-              <%= menu_item "Today", today_schedules_path %>
-              <%= menu_item "Tomorrow", tomorrow_schedules_path %>
+              <%= menu_item "Full Schedule", schedule_chains_path %>
+              <%= menu_item "Yesterday", yesterday_schedule_chains_path %>
+              <%= menu_item "Today", today_schedule_chains_path %>
+              <%= menu_item "Tomorrow", tomorrow_schedule_chains_path %>
             <% end %>
 
             <%= drop_down "Volunteers" do %>
@@ -94,7 +94,7 @@
               <%= menu_item "Recipients", recipients_locations_path %>
               <%= menu_item "Donors", donors_locations_path %>
               <%= menu_item "Food Types", '/food_types' %>
-	      <%= menu_item "Scale Types", '/scale_types' %>
+	      			<%= menu_item "Scale Types", '/scale_types' %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
               <%= menu_item "Statistics", '/volunteers/region_stats' %>
             <% end %>

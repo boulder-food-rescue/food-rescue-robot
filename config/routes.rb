@@ -52,7 +52,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  resources :schedules do 
+  resources :schedule_chains do 
     collection do
       get :today
       get :tomorrow

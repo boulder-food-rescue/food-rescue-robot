@@ -1,6 +1,6 @@
 <h2><%=@page_title%></h2>
 
-<% if current_volunteer.any_admin? %>
+<% if current_volunteer.any_admin? and not @my_admin_regions.nil? %>
   <div style="text-align: right;">
     <%= form_tag("/schedules/new", :method => "get") do %>
       New Schedule Chain For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
@@ -70,9 +70,11 @@
       <td> 
         <% unless schedule.schedules.nil? %>
           <% schedule.schedules.each do |stop| stop.name %>
-    			<% if stop.is_donor? %>
-          ( <%= link_to "click for details", stop.location %> )
+    				<% if stop.is_donor? %>
+          		( <%= link_to "click for details", stop.location %> )
+						<% end %>
 					<br />
+					<% end %>
         <% end %>
       </td>
       <td> <%= link_to schedule.recipient.name, schedule.recipient unless schedule.recipient.nil? %> </td>

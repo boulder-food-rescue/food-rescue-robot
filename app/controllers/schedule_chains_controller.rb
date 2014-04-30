@@ -13,19 +13,24 @@ class ScheduleChainsController < ApplicationController
 		@schedules = current_volunteer.schedules
 		@my_admin_regions = current_volunteer.admin_regions
 		@page_title = "My Regular Shifts"
-		@render :index
+		render :index
 	end
 
 	def index(title='Full Schedule', day_of_week=nil)
-		dowq = day_of_week.nil ? "" : "day_of_week = #{day_of_week.to_i}"
-		@schedules = ScheduleChains.where(:region_id => current_volunteer.region_ids).where(dowq)
+		#trinary operator was causing syntax errors
+		if day_of_week.nil?
+			dowq=""
+		else
+			dowq="day_of_week = #{day_of_week.to_i}"
+		end
+		@schedules = ScheduleChain.where(:region_id => current_volunteer.region_ids).where(dowq)
 		@my_admin_regions = current_volunteer.admin_regions
 		@page_title = title
 		render :index
 	end
 
 	def show
-		@schedule = ScheduleChains.find(params[:id])
+		@schedule = ScheduleChain.find(params[:id])
 		if params[:nolayout].present? and params[:nolayout].to_i == 1
 			render(:show,:layout => false)
 		else

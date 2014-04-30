@@ -2,7 +2,7 @@
 
 <% if current_volunteer.any_admin? and not @my_admin_regions.nil? %>
   <div style="text-align: right;">
-    <%= form_tag("/schedules/new", :method => "get") do %>
+    <%= form_tag("/schedule_chains/new", :method => "get") do %>
       New Schedule Chain For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
       <%= submit_tag("Go") %>
     <% end %>

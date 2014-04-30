@@ -33,20 +33,23 @@
         </div>
       </td>
     </tr>
-    <tr><td>Donor</td>
-        <td><%= f.select(:donor_id, @donors, {:include_blank => true},{:class => "select2"}) %></td>
+		<tr><td>Locations</td>
+        <td>Yeah, this isn't done.</td>
+    </tr>
+    <!-- <tr><td>Donor</td>
+        <td>%= f.select(:donor_id, @donors, {:include_blank => true},{:class => "select2"}) %></td>
     </tr>
     <tr><td>Recipient</td>
-        <td><%= f.select(:recipient_id, @recipients, {:include_blank => true},{:class => "select2"}) %></td>
-    </tr>
+				<td>%= f.select(:recipient_id, @recipients, {:include_blank => true},{:class => "select2"}) %></td>
+    </tr> -->
     <tr><td>Hilliness</td>
-        <td><%= f.select(:hilliness, Schedule::Hilliness.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{:class => "select2"}) %></td>
+        <td><%= f.select(:hilliness, ScheduleChain::Hilliness.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{:class => "select2"}) %></td>
     </tr>
     <tr><td>Expected Weight<br /><span class="subtext">Typical weight observed on pickup. Current mean = <%= @schedule.mean_weight %>, max = <%= @schedule.max_weight %>.</span></td>
         <td><%= f.text_field(:expected_weight, :size => "30x6") %></td>
     </tr>
    <tr><td>Overall Difficulty</td>
-        <td><%= f.select(:difficulty_rating, Schedule::Difficulty.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{:class => "select2"}) %></td>
+        <td><%= f.select(:difficulty_rating, ScheduleChain::Difficulty.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{:class => "select2"}) %></td>
     </tr>
     <tr><td>Public Notes<br /><span class="subtext">Notes visible to everyone</span></td>
         <td><%= f.text_area(:public_notes, :size => "30x6") %></td>

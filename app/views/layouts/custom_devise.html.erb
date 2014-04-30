@@ -64,7 +64,7 @@ Log.joins(:log_parts).select("logs.id, sum(weight) as weight_sum").where("comple
   largest_pickup = l if largest_pickup.nil? or largest_pickup.weight_sum.to_f < l.weight_sum.to_f
 }
 largest_pickup = Log.find(largest_pickup.id) unless largest_pickup.nil?
-pickups_today = Schedule.where(:day_of_week => date.wday)
+pickups_today = ScheduleChain.where(:day_of_week => date.wday)
   
 #Recipient Stats
 recipient_count = Location.count(:conditions => {:is_donor => false})

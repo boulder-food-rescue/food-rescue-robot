@@ -10,8 +10,8 @@ class ScheduleChain < ActiveRecord::Base
 	attr_accessible :region_id, :irregular, :backup, :transport_type_id, :weekdays,
 									:day_of_week, :detailed_start_time, :detailed_stop_time, 
 									:detailed_date, :frequency, :temporary, :difficulty_rating, :expected_weight,
-									:hilliness, :schedule_volunteers, :schedule_volunteer_attributes, :scale_type_ids,
-									:schedule_ids
+									:hilliness, :schedule_volunteers, :schedule_volunteers_attributes, :scale_type_ids,
+									:schedule_ids, :admin_notes, :public_notes
 	
 	accepts_nested_attributes_for :schedule_volunteers
 
@@ -36,7 +36,11 @@ class ScheduleChain < ActiveRecord::Base
 	
 		# does the schedule chain start with a pickup and end with a dropoff?
 	def functional?
-		self.schedules.rank(:position).first.is_pickup_stop? and not self.schedules.rank(:position).last.is_pickup_stop?
+		if not self.schedules.first.nil?
+			self.schedules.rank(:position).first.is_pickup_stop? and not self.schedules.rank(:position).last.is_pickup_stop?
+		else
+			false
+		end
 	end
 
   # list all the schedules that don't have active volunteers

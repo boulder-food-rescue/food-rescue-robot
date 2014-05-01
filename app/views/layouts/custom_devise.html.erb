@@ -189,12 +189,17 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
           <h3>Volunteers Working Today</h3>
           <% 
           pickups_today.each do |pickup|
-            next if pickup.no_volunteers? or pickup.donor.nil?
-              if pickup.donor.website != nil%>
+            next if pickup.no_volunteers? or not pickup.functional?
+              if pickup.functional?%>
                 <div>
                   <p>
-                    <%= pickup.volunteers.collect{|v|v.name}.join ',' %>
-                     - <a href="<%= pickup.donor.website %>"><%= pickup.donor.name %></a>
+                    <%= pickup.volunteers.collect{|v|v.name}.join ',' %> - 
+										<% 
+										pickup.schedules.each do |stop| 
+											if stop.is_pickup_stop? %>
+												<a href="<%= stop.location.name %>"><%= stop.location.name %></a>, 
+											<% end 
+										end %>
                   </p>
                 </div>
             <% else %>

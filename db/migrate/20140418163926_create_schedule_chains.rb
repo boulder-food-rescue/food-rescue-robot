@@ -22,6 +22,7 @@ class CreateScheduleChains < ActiveRecord::Migration
 			s.references :schedule_chain
 			s.references :location
 			s.boolean :new
+			s.integer :position
 		end
 		change_table :schedule_volunteers do |sv|
 			sv.references :schedule_chain
@@ -38,8 +39,10 @@ class CreateScheduleChains < ActiveRecord::Migration
 																   difficulty_rating: original.difficulty_rating, scale_type_id: original.scale_type_id, region_id: original.region,
 																	 day_of_week: original.day_of_week, expected_weight: original.expected_weight, public_notes: original.public_notes,
 																	 admin_notes: original.admin_notes, transport_type_id: original.transport_type_id)
-				@donor = @sc.schedules.create(food_type_ids: original.food_type_ids, location_id: original.donor_id, position: 0, new: true)
-				@recip = @sc.schedules.create(food_type_ids: original.food_type_ids, location_id: original.recipient_id, position: 1, new: true)
+				@donor = @sc.schedules.create(food_type_ids: original.food_type_ids, location_id: original.donor_id, new: true)
+				@recip = @sc.schedules.create(food_type_ids: original.food_type_ids, location_id: original.recipient_id, new: true)
+				@donor.update_attribute :position_position, :first
+				@recip.update_attribute :position_position, :last
 				ScheduleVolunteer.all.where(["schedule_id = ?",original.id]).each { |sv|
 					sv.schedule_chain_id=@sc.id
 					sv.save

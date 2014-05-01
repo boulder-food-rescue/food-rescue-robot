@@ -54,12 +54,12 @@
         row_bgcolor = "#9999FF"
       elsif schedule.volunteers_needing_training?
         row_bgcolor = "lightgreen"
-      elsif schedule.recipient.nil? or schedule.donor.nil?
+      elsif not schedule.functional?
         row_bgcolor = "yellow"
       end
     %>
     <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-      <td> <button class="info" onclick="window.location='/schedules/<%= schedule.id %>';">Info</button>
+      <td> <button class="info" onclick="window.location='/schedule_chains/<%= schedule.id %>';">Info</button>
       <td> 
         <% if schedule.one_time? %>
           <%= schedule.detailed_date %>
@@ -77,7 +77,11 @@
 					<% end %>
         <% end %>
       </td>
-      <td> <%= link_to schedule.recipient.name, schedule.recipient unless schedule.recipient.nil? %> </td>
+      <td> <% schedule.schedules.each do |stop| 
+				if not (stop.location.nil? or stop.is_pickup_stop?)
+					link_to stop.location.name, stop.location %>, 
+				<%end
+			end%> </td>
       <td <% if schedule.no_volunteers? or schedule.temporary %>style="background: yellow;text-align: center;"<% end %>> 
         <% if schedule.no_volunteers? or schedule.temporary %>
           <b><%=  link_to "Take it!", :controller => "schedules", :action => "take", :id => schedule %></b>
@@ -104,10 +108,11 @@
         <% end %>
       </td>
       <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
-      <td> <%= schedule.food_types.collect{ |ft| ft.name }.join(", ") %>
+      <td> <% schedule.schedules.each do |stops| stops.food_types.collect{ |ft| ft.name }.join(", ") %>
+			<% end %>
       <td>
         <% if current_volunteer.any_admin? %>
-          <%= link_to 'edit', :controller => "schedules", :action => "edit", :id => schedule %><br>
+          <%= link_to 'edit', :controller => "schedule_chains", :action => "edit", :id => schedule %><br>
           <%= link_to "delete", schedule, :confirm => "Are you sure?", :method => :delete %>
         <% end %>
       </td>

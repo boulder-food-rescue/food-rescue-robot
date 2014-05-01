@@ -18,6 +18,14 @@ class CreateScheduleChains < ActiveRecord::Migration
 			c.text :public_notes
 			c.text :admin_notes
 		end
+		change_table :regions do |r|
+			r.references :location
+		end
+		Region.all.each { |reg|
+			Location.where(["region_id = ?",reg.id]).each do |loc|
+				reg.location_ids.add(loc.id)
+			end
+		}
 		change_table :schedules do |s|
 			s.references :schedule_chain
 			s.references :location

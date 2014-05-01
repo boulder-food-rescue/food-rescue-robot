@@ -11,7 +11,7 @@ class ScheduleChain < ActiveRecord::Base
 									:day_of_week, :detailed_start_time, :detailed_stop_time, 
 									:detailed_date, :frequency, :temporary, :difficulty_rating, :expected_weight,
 									:hilliness, :schedule_volunteers, :schedule_volunteers_attributes, :scale_type_ids,
-									:schedule_ids, :admin_notes, :public_notes
+									:schedule_ids, :admin_notes, :public_notes, :schedules, :schedule
 	
 	accepts_nested_attributes_for :schedule_volunteers
 
@@ -20,8 +20,8 @@ class ScheduleChain < ActiveRecord::Base
 
 	after_save{ |record|
     record.schedule_volunteers.each{ |sv|
-      sv.destroy if sv.volunteer_id.blank?
-    }
+			sv.destroy if sv.volunteer_id.blank?
+		}
   }
 
     # list all the schedules chains that have at least two stops, but don't have any volunteer
@@ -48,8 +48,12 @@ class ScheduleChain < ActiveRecord::Base
   def self.open_in_regions region_id_list
     schedules = ScheduleChain.where(:irregular=>false).where(:region_id=>region_id_list) if region_id_list.length > 0
     schedules.keep_if do |schedule|
-      schedule.temporary or ((schedule.volunteers.size == 0) and (not schedules.last.is_pickup_stop?))
-    end
+			unless not schedule.functional?
+      	schedule.temporary or ((schedule.volunteers.size == 0) and (not schedule.schedules.last.is_pickup_stop?))
+    	else
+				false
+			end
+		end
     schedules
   end
 

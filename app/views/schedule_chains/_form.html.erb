@@ -34,7 +34,41 @@
       </td>
     </tr>
 		<tr><td>Locations</td>
-        <td>Yeah, this isn't done.</td>
+			<td>
+<table style="width: 0;"><tr><th>Location<th>Foods<th>Dropoff/Pickup?
+<% @schedule.schedules.each{ |s| %>
+  <%= fields_for :schedules, s, :index => "update_#{s.id}" do |f2| %>
+    <tr class="schedule" style="background: <%= s.is_pickup_stop ? "green" : "blue" %>;">
+    <td><%= f2.select(:location, @region.locations,{:include_blank => true}) %></td>
+    <td><%= f2.select(:food_types, @region.food_types,{:include_blank => true}) %></td>
+    <td><%= s.is_pickup_stop ? "Pickup" : "Dropoff" %></td>
+        <%= f2.hidden_field(:id) %>
+    </tr>
+  <% end %>
+<% } %>
+<% sched = Schedule.create
+<%= fields_for :schedule, sched, :index => "new_0" do |f2| %>
+  <tr class="schedule">
+ 	<td><%= f2.select(:location, @region.locations,{:include_blank => true}) %></td>
+  <td><%= f2.select(:food_types, @region.food_types,{:include_blank => true}) %></td>
+	<% sched.schedule_chain_id %>
+  </tr>
+</table>
+<% end %>
+  <%=
+    task = "<tr class=\"schedule\">"
+    fields_for :schedule, Schedule.create, :index => "new_42" do |f2|
+      task += "<td>" + f2.select(:location, @region.locations,{:include_blank => true})
+      task += "<td>" + f2.select(:food_types,@region.food_types)
+    end
+    task += "</tr>"
+    func_str = <<EOF
+      var new_id = "new_" + new Date().getTime();
+      $('#{ escape_javascript task }'.replace(/new_\\d+/g, new_id)).insertAfter($('.schedule').last());
+EOF
+    link_to_function "+ Add Another", func_str
+   %>
+		</td>	
     </tr>
     <!-- <tr><td>Donor</td>
         <td>%= f.select(:donor_id, @donors, {:include_blank => true},{:class => "select2"}) %></td>

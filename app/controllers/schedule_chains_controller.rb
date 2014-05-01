@@ -141,7 +141,7 @@ class ScheduleChainsController < ApplicationController
       if schedule.has_volunteer? current_volunteer
         flash[:error] = "You are already on this shift"
       else
-        schedule_volunteer = ScheduleVolunteer.new(:volunteer_id=>current_volunteer.id, :schedule_id=>schedule.id)
+        schedule_volunteer = ScheduleVolunteer.new(:volunteer_id=>current_volunteer.id, :schedule_chain_id=>schedule.id)
         if schedule_volunteer.save
           collided_shifts = []
           Log.where('schedule_id = ? AND "when" >= current_date AND NOT complete',schedule.id).each{ |l|
@@ -156,7 +156,7 @@ class ScheduleChainsController < ApplicationController
             m = Notifier.schedule_collision_warning(schedule,collided_shifts)
             m.deliver
           end
-          flash[:notice] = "You have joined the pickup from "+schedule.donor.name+" to "+schedule.recipient.name+"!"
+          flash[:notice] = "You have joined the pickup from "+schedule.schedules.first.location.name+" to "+schedule.schedules.last.location.name+"!"
        else
           flash[:error] = "Hrmph. That didn't work..."
         end

@@ -84,7 +84,7 @@
 			end%> </td>
       <td <% if schedule.no_volunteers? or schedule.temporary %>style="background: yellow;text-align: center;"<% end %>> 
         <% if schedule.no_volunteers? or schedule.temporary %>
-          <b><%=  link_to "Take it!", :controller => "schedules", :action => "take", :id => schedule %></b>
+          <b><%=  link_to "Take it!", :controller => "schedule_chains", :action => "take", :id => schedule %></b>
         <% else %>
           <% schedule.volunteers.each do |volunteer| %>
             <%= link_to volunteer.name, volunteer %><br />

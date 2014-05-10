@@ -69,19 +69,17 @@
       </td>
       <td> 
         <% unless schedule.schedules.nil? %>
-          <% schedule.schedules.each do |stop| stop.location.name %>
+          <% schedule.schedules.each do |stop| %>
+						<%= link_to stop.location.name, stop.location %>
     				<% if stop.location.is_donor? %>
-          		( <%= link_to "click for details", stop.location %> )
+          		(Donor)
+						<% else %>
+							(Recipient)
 						<% end %>
 					<br />
 					<% end %>
         <% end %>
       </td>
-      <td> <% schedule.schedules.each do |stop| 
-				if not (stop.location.nil? or stop.is_pickup_stop?)
-					link_to stop.location.name, stop.location %>, 
-				<%end
-			end%> </td>
       <td <% if schedule.no_volunteers? or schedule.temporary %>style="background: yellow;text-align: center;"<% end %>> 
         <% if schedule.no_volunteers? or schedule.temporary %>
           <b><%=  link_to "Take it!", :controller => "schedule_chains", :action => "take", :id => schedule %></b>

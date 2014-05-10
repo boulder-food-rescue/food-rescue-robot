@@ -122,7 +122,7 @@ class LogsController < ApplicationController
       @log.scale_type_id = @log.region.scale_types.first.id
     end
     unless current_volunteer.any_admin? @log.region
-      flash[:notice] = "Not authorized to create schedule items for that region"
+      flash[:error] = "Not authorized to create logs for that region"
       redirect_to(root_path)
       return
     end

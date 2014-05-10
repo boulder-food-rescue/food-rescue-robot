@@ -1,1 +1,1 @@
-rake db:drop && echo "Dropped old database" && rake db:create && echo "Created new database" && rake db:migrate && echo "Migrated new database"
+echo "Dropping old database..." && rake db:drop && echo "Creating new database..." && rake db:create && echo "Migrating new database..." && rake db:migrate && echo "DONE"

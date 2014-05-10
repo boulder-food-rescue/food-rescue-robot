@@ -69,8 +69,8 @@
       </td>
       <td> 
         <% unless schedule.schedules.nil? %>
-          <% schedule.schedules.each do |stop| stop.name %>
-    				<% if stop.is_donor? %>
+          <% schedule.schedules.each do |stop| stop.location.name %>
+    				<% if stop.location.is_donor? %>
           		( <%= link_to "click for details", stop.location %> )
 						<% end %>
 					<br />

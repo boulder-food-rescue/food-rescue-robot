@@ -1,6 +1,6 @@
 <%= simple_form_for @schedule, :url => {:action => @action }, :class=>'form-horizontal' do |f| %>
   
-  <%= hidden_field_tag "schedule[region_id]", @region.id %>
+  <%= hidden_field_tag "region_id", @region.id %>
 
   <table>
    <tr><td>Frequency</td>
@@ -37,29 +37,53 @@
 			<td>
 <table style="width: 0;"><tr><th>Location<th>Foods<th>Dropoff/Pickup?
 <% @schedule.schedules.each{ |s| %>
-  <%= fields_for :schedules, s, :index => "update_#{s.id}" do |f2| %>
+  <% fields_for :schedule, s, :index => "update_#{s.id}" do |f2| %>
     <tr class="schedule" style="background: <%= s.is_pickup_stop ? "green" : "blue" %>;">
-    <td><%= f2.select(:location, @region.locations,{:include_blank => true}) %></td>
-    <td><%= f2.select(:food_types, @region.food_types,{:include_blank => true}) %></td>
+    <td><% f2.select(:location_id, @region.locations.all.collect{ |l| [l.name, l.id] }, {:include_blank => true}) %></td>
+		<td>
+			<table style="width: 0;"><% FoodType.regional(@schedule.region).each{ |ft| %>
+					<tr>
+						<td>
+							<% (check_box_tag :food_type_ids, ft.id) %>
+						</td>
+						<td>
+							<%= ft.name %>
+						</td>
+					</tr>
+				<%}%>
+			</table>
+		</td>
     <td><%= s.is_pickup_stop ? "Pickup" : "Dropoff" %></td>
         <%= f2.hidden_field(:id) %>
     </tr>
   <% end %>
 <% } %>
-<% sched = Schedule.create
-<%= fields_for :schedule, sched, :index => "new_0" do |f2| %>
+<%= fields_for :schedule, Schedule.new, :index => "new_0" do |f2| %>
   <tr class="schedule">
- 	<td><%= f2.select(:location, @region.locations,{:include_blank => true}) %></td>
-  <td><%= f2.select(:food_types, @region.food_types,{:include_blank => true}) %></td>
-	<% sched.schedule_chain_id %>
+ 	<td><%= f2.select(:location_id, @region.locations.all.collect{ |l| [l.name, l.id] },{:include_blank => true}) %></td>
+  <td>
+		<table style="width: 0;"><% FoodType.regional(@schedule.region).each{ |ft| %>
+			<tr>
+				<td>
+					<%= (check_box_tag "schedule[new_0[food_type_ids]]", ft.id) %>
+				</td>
+				<td>
+					<%= ft.name %>
+				</td>
+			</tr><%}%>
+		</table>
+	</td>
   </tr>
 </table>
 <% end %>
   <%=
     task = "<tr class=\"schedule\">"
     fields_for :schedule, Schedule.create, :index => "new_42" do |f2|
-      task += "<td>" + f2.select(:location, @region.locations,{:include_blank => true})
-      task += "<td>" + f2.select(:food_types,@region.food_types)
+      task += "<td>" + f2.select(:location_id, @region.locations.all.collect{ |l| [l.name, l.id] },{:include_blank => true})
+			task += "<td><table style=\"width: 0;\">"
+			FoodType.regional(@schedule.region).each{ |ft|
+				task += "<tr><td>" + (check_box_tag "schedule[new_42[food_type_ids]]", ft.id) + "</td><td>" + ft.name
+			}
     end
     task += "</tr>"
     func_str = <<EOF
@@ -101,13 +125,12 @@ EOF
         <td><%= f.check_box(:temporary) %></td>
     </tr>
     <tr><td>Scheduled Transport</td>
-        <td><%= f.select(:transport_type_id, @transport_types) %>
-    <%= hidden_field_tag "schedule[food_type_ids][]","" %></td>
+        <td><%= f.select(:transport_type_id, @transport_types) %></td>
     </tr>
-    <tr><td>Food Type(s)</td><td><% FoodType.regional(@schedule.region).each{ |ft| %>
-      <%= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <%= ft.name %>
-    <% } %></td>
-    </tr>
+    <!--<tr><td>Food Type(s)</td><td>< FoodType.regional(@schedule.region).each{ |ft| %>
+      <= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <= ft.name %>
+    < } %></td>
+    </tr>-->
   </table>
 
   <%= submit_tag %>

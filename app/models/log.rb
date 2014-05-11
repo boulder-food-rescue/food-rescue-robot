@@ -4,7 +4,7 @@ class Log < ActiveRecord::Base
   has_many :volunteers, :through => :log_volunteers,
            :conditions=>{"log_volunteers.active"=>true}
   has_many :active_log_volunteers, :conditions=>{"active" => true}, :class_name => "LogVolunteer"
-  belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
+  has_many :donors, :class_name => "Location", :foreign_key => "donor_ids"
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
   belongs_to :food_type
   belongs_to :scale_type

@@ -10,7 +10,7 @@ class ScheduleChainsController < ApplicationController
 	end
 
 	def mine
-		@schedules = current_volunteer.schedules
+		@schedules = current_volunteer.schedule_chains
 		@my_admin_regions = current_volunteer.admin_regions
 		@page_title = "My Regular Shifts"
 		render :index
@@ -84,14 +84,23 @@ class ScheduleChainsController < ApplicationController
       return
     end
     if @schedule.save
-			params["schedule"].each{ |dc,stpdata|
-				stp = Schedule.new
-				stp.schedule_chain_id=@schedule.id
-				stp.location_id=stpdata["location_id"]
-				stp.food_type_ids=stpdata["food_type_ids"]
-				stp.save
-				@schedule.schedule_ids << stp.id
-			}
+      #load schedule items into chain
+			params["schedule"].each do |temp, stpdata|
+        stp = Schedule.new
+        stp.schedule_chain_id=@schedule.id
+        stp.location_id=stpdata["location_id"]
+        stp.food_type_ids=stpdata["food_type_ids"]
+        stp.update_attribute :position_position, :last
+        stp.save
+        @schedule.schedule_ids << stp.id
+      end
+      #make logs for each stop, as appropriate
+      donor_stops = @schedule.schedules.select { |stop| stop.is_pickup_stop? }
+      recipient_stops = @schedule.schedules.select { |stop| not stop.is_pickup_stop? }
+			recipient_stops.each do |recipient|
+        log = Log.new
+        log.volunteers=recipient.schedule_chain.volunteers
+      end
       flash[:notice] = "Created successfully"
       index
     else

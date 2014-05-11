@@ -12,12 +12,17 @@ class CreateScheduleChains < ActiveRecord::Migration
 			c.integer :hilliness
 			c.references :scale_type
 			c.references :region
+      c.references :schedules
 			c.text :frequency
 			c.integer :day_of_week
 			c.integer :expected_weight
 			c.text :public_notes
 			c.text :admin_notes
-		end
+    end
+    change_table :logs do |l|
+      l.remove :donor_id
+      l.references :donors
+    end
 		change_table :regions do |r|
 			r.references :location
 		end
@@ -74,6 +79,9 @@ class CreateScheduleChains < ActiveRecord::Migration
 			s.remove :public_notes
 			s.remove :admin_notes
 			s.remove :transport_type_id
+      s.remove :region_id
+      s.remove :donor_id
+      s.remove :recipient_id
 		end
 		change_table :schedule_volunteers do |sv|
 			sv.remove :schedule_id

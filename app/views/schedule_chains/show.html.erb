@@ -43,7 +43,7 @@
     <p>
       <% if @schedule.volunteers.count == 0 %>
       No volunteers yet...
-      <b><%=link_to "take this scheduled pickup now!", :controller => "schedules", :action => "take", :id => @schedule %></b>
+      <b><%=link_to "take this scheduled pickup now!", :controller => "schedule_chains", :action => "take", :id => @schedule %></b>
     <% else %>
       <ul>
         <% @schedule.volunteers.each do |volunteer| %>

@@ -21,7 +21,13 @@ class CreateScheduleChains < ActiveRecord::Migration
     end
     change_table :logs do |l|
       l.remove :donor_id
-      l.references :donors
+      l.references :donor
+    end
+    Log.all.each do |log|
+      log.donor_ids << log.donor_id
+    end
+    change_table :logs do |l|
+      l.remove :donor_id
     end
 		change_table :regions do |r|
 			r.references :location

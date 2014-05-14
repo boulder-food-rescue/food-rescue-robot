@@ -10,23 +10,35 @@ module FoodRobot
   # date based on the /current/ schedule
   def self.generate_log_entries(d=Time.zone.today)
     n = 0
-    Schedule.where("day_of_week = ?",d.wday).each{ |s|
-      next if s.recipient.nil? or s.donor.nil? 
+    ScheduleChain.where("day_of_week = ?",d.wday).each{ |s|
+      next unless s.functional?
       next if s.irregular
       # don't insert a duplicate log entry if one already exists
-      check = Log.where('"when" = ? AND schedule_id = ?',d,s.id)
+      check = Log.where('"when" = ? AND schedule_chain_id = ?',d,s.id)
       next if check.length > 0
-      # create each scheduled log entry for the given day
-      log = Log.new{ |l|
-        l.schedule = s
-        l.volunteers = s.volunteers
-        l.donor = s.donor
-        l.recipient = s.recipient
-        l.region = s.region
-        l.when = d
-        l.food_types = s.food_types
-      }
-      n += 1 if log.save
+      s.schedules.each_with_index do |rcpt, r_i|
+        unless rcpt.is_pickup_stop?
+          log = Log.new
+          log.schedule = rcpt
+          log.volunteers = rcpt.schedule_chain.volunteers
+          log.recipient_id = rcpt.location.id
+          log.when = d
+          s.schedules.each_with_index do |dnr, d_i|
+            if dnr.is_pickup_stop?
+              if d_i < r_i
+                #don't make log show donors after recipient stop
+                log.donor_ids << dnr.location.id
+                dnr.food_type_ids.each do |food|
+                  unless log.food_type_ids.include?(food)
+                    log.food_type_ids << food
+                  end
+                end
+              end
+            end
+          end
+          n += 1 if log.save
+        end
+      end
     }
     return n
   end

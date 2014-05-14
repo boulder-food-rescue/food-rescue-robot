@@ -4,6 +4,7 @@ class ScheduleChain < ActiveRecord::Base
 	has_many :volunteers, :through => :schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>true}
 	has_many :schedules
+  has_many :logs
 	belongs_to :transport_type
 	belongs_to :region
 	
@@ -115,6 +116,14 @@ class ScheduleChain < ActiveRecord::Base
       next_pickup_times = {:start=>next_pickup_start, :stop=>next_pickup_stop}
     end 
     next_pickup_times
+  end
+
+  def donor_stops
+    self.schedules.select{ |stop| stop.is_pickup_stop? }
+  end
+
+  def recipient_stops
+    self.schedules.select{ |stop| not stop.is_pickup_stop? }
   end
 
 end

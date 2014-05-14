@@ -97,28 +97,6 @@ class ScheduleChainsController < ApplicationController
         stp.save
         @schedule.schedule_ids << stp.id
       end
-      #make logs for each stop, as appropriate
-      donor_stops = @schedule.schedules.select { |stop| stop.is_pickup_stop? }
-      recipient_stops = @schedule.schedules.select { |stop| not stop.is_pickup_stop? }
-			@schedule.schedules.each_with_index do |recipient, r_index|
-        unless recipient.is_pickup_stop?
-          log = Log.new
-          log.volunteers=recipient.schedule_chain.volunteers
-				  log.recipient_id = recipient.location.id
-          @schedule.schedules
-          .each_with_index do |donor, d_index|
-            if donor.is_pickup_stop?
-					    #if d_index < r_index
-						    log.donor_ids << donor.location.id
-						    donor.food_type_ids.each do |foodid|
-							    log.food_type_ids << foodid
-						    end
-              #end
-            end
-				  end
-				  log.save
-        end
-      end
       flash[:notice] = "Created successfully"
       index
     else
@@ -191,7 +169,25 @@ class ScheduleChainsController < ApplicationController
             m = Notifier.schedule_collision_warning(schedule,collided_shifts)
             m.deliver
           end
-          flash[:notice] = "You have joined the pickup from "+schedule.schedules.first.location.name+" to "+schedule.schedules.last.location.name+"!"
+          notice = "You have "
+          if ScheduleChain.volunteers.length == 1
+            notice += "taken"
+          else
+            notice += "joined"
+          end
+          notice += " the route to "
+          if schedule.donor_stops.length == 1
+            notice += (schedule.donor_stops.first.location.name + ".")
+          else
+            schedule.donor_stops.each_with_index do |stop, index|
+              if index == (schedule.donor_stops.length-1)
+                notice += ("and " + stop.location.name + ".")
+              else
+                notice += (stop + ", ") #oxford comma
+              end
+            end
+          end
+          flash[:notice] = notice
        else
           flash[:error] = "Hrmph. That didn't work..."
         end

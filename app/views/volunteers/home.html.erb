@@ -37,7 +37,7 @@
         </tr>
         <% @upcoming_pickups.each do |pickup| %>
         <tr>
-          <td> <%= link_to pickup.donor.name, pickup.donor %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %><br>
+          <td> <%= pickup.donors.each do |donor| link_to pickup.donor.name, pickup.donor end%> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %><br>
                <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
           </td>
           <td> <%= readable_time_until pickup %> </td>
@@ -92,13 +92,13 @@
              break if n > 5
          %>
         <tr>
-          <td> <% pickup.donors.each do |donor| %>
-                 <%= link_to donor.name, donor %>
-               <% end %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %> <br>
+          <td> <!--% pickup.donors.last do |d| %>
+                 %= link_to d.name, d %>
+               % end %>--> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %> <br>
                <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
           <td> <%= readable_time_until pickup %> </td>
           <td> <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => pickup.id %>
-          <td> <%= link_to "Info", pickup.schedule %></td>
+          <td> <%= link_to "Info", pickup.schedule.schedule_chain %></td>
         </tr>
         <% end %>
       </table>

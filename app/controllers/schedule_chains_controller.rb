@@ -97,6 +97,24 @@ class ScheduleChainsController < ApplicationController
         stp.save
         @schedule.schedule_ids << stp.id
       end
+			@schedule.schedules.each_with_index do |recipient, r_index|
+        unless recipient.is_pickup_stop?
+          log = Log.new
+          log.volunteers=recipient.schedule_chain.volunteers
+				  log.recipient_id = recipient.location.id
+          @schedule.schedules.each_with_index do |donor, d_index|
+            if donor.is_pickup_stop?
+					    if d_index < r_index
+						    log.donor_ids << donor.location.id
+						    donor.food_type_ids.each do |foodid|
+							    log.food_type_ids << foodid
+						    end
+              end
+            end
+				  end
+				  log.save
+        end
+      end
       flash[:notice] = "Created successfully"
       index
     else
@@ -170,7 +188,7 @@ class ScheduleChainsController < ApplicationController
             m.deliver
           end
           notice = "You have "
-          if ScheduleChain.volunteers.length == 1
+          if schedule.volunteers.length == 1
             notice += "taken"
           else
             notice += "joined"

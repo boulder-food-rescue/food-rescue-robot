@@ -84,15 +84,14 @@
       <h2>Bicycling Directions</h2>
       <br/>
       <div style="width: 465px;">
-				<% @schedule.schedules.each do |stop|
+				<%= @schedule.schedules.each do |stop|
 					unless stop.id == @schedule.schedules.last.id
           		gmaps("direction" => {"data" =>
                     {"from" => stop.location.address.tr("\n\r",","), 
                       "to" => stop.location.address.tr("\n\r",",") }, 
                     "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}
-              }) %>
-					<% end %>
-        <% end %>
+              }) end
+         end %>
           <div id="instructions"></div>
       </div>
     <% end %>

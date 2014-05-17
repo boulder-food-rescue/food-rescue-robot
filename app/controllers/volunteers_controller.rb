@@ -284,21 +284,27 @@ class VolunteersController < ApplicationController
     @completed_pickup_count = Log.picked_up_by(current_volunteer.id).count
     @total_food_rescued = Log.picked_up_weight(nil,current_volunteer.id)
     @dis_traveled = 0.0
-    my_chains = ScheduleChain.all.where(|chain| chain.volunteer_ids)
-    Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC')
-    route_logs = Log.picked_up_by(current_volunteer.id).where("schedule.schedule_chain_id = ?", )
-    Log.picked_up_by(current_volunteer.id).each do |pickup|
-      if pickup.schedule != nil
-        pickup.donors.each do |don|
-          recipient = pickup.recipient
-          unless don.nil? or recipient.nil? or don.lng.nil? or don.lat.nil? or recipient.lat.nil? or recipient.lng.nil?
+    #sfnodsjnfdsljnflsdjnfsldjfdslfnsldfn
+    finished_logs = Log.picked_up_by(current_volunteer.id, true)
+    finished_logs.each do |first_log|
+      chain_id = first_log.schedule.schedule_chain_id
+      gathered_places = []
+      finished_logs.where('schedule.schedule_chain_id = ?', chain_id).each do |matching_log|
+        unless gathered_places.includes?matching_log
+          gathered_places << matching_log.location
+        end
+        finished_logs.delete(matching_log)
+      end
+      gathered_places.each_with_index do |loc_b, i|
+        gathered_places.each_with_index do |loc_a, j|
+          if i == (j+1)
             radius = 6371.0
-            dLat = (don.lat - recipient.lat) * Math::PI / 180.0
-            dLon = (don.lng - recipient.lng) * Math::PI / 180.0
-            lat1 = recipient.lat * Math::PI / 180.0
-            lat2 = don.lat * Math::PI / 180.0
+            d_lat = (loc_a.lat - loc_b.lat) * Math::PI / 180.0
+            d_lon = (loc_a.lng - loc_b.lng) * Math::PI / 180.0
+            lat1 = loc_b.lat * Math::PI / 180.0
+            lat2 = lob_a.lat * Math::PI / 180.0
 
-            a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
+            a = Math.sin(d_lat/2) * Math.sin(d_lat/2) + Math.sin(d_lon/2) * Math.sin(d_lon/2) * Math.cos(lat1) * Math.cos(lat2)
             c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
             @dis_traveled += radius * c
           end

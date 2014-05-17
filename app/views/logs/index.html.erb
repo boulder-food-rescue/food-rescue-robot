@@ -45,7 +45,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
       row_bgcolor = "pink"
     elsif !shift.volunteers.empty? and shift.volunteers.any?{ |v| v.needs_training }
       row_bgcolor = "lightgreen"
-    elsif shift.recipient.nil? or shift.donor.nil?
+    elsif shift.recipient.nil? or shift.donors.nil?
       row_bgcolor = "yellow"
     end
   %>
@@ -65,7 +65,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
            <%= render 'take_or_leave', :log=>shift %>
          <% end %>
     </td>
-    <td> <%= shift.donor != nil ? (link_to shift.donor.name, shift.donor) : ""%> </td>
+    <td> <%= shift.donors.each do |donor| donor != nil ? (link_to shift.donor.name, shift.donor) : "" end%> </td>
     <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
     <% unless current_page? :controller => "logs", :action => "open" %>
     <td> <%= shift.complete ? shift.summed_weight : "?" %> lbs.</td>

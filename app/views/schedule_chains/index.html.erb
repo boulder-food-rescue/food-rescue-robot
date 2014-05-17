@@ -106,8 +106,13 @@
         <% end %>
       </td>
       <td> <%= schedule.transport_type.nil? ? "?" : schedule.transport_type.name %>
-      <td> <% schedule.schedules.each do |stops| stops.food_types.collect{ |ft| ft.name }.join(", ") %>
-			<% end %>
+      <td> <% foods = ""
+              schedule.schedules.each do |stops|
+                if stops.is_pickup_stop?
+                  foods += (stops.location.name + ": " + stops.food_types.collect{ |ft| ft.name }.join(", ") + "\n")
+                end
+		      end %>
+           <%= foods %>
       <td>
         <% if current_volunteer.any_admin? %>
           <%= link_to 'edit', :controller => "schedule_chains", :action => "edit", :id => schedule %><br>

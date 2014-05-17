@@ -87,12 +87,14 @@
         </tr>
         <% n = 0
            @sncs_pickups.each do |pickup| 
-             next if pickup.recipient.nil? or pickup.donor.nil?
+             next if pickup.recipient.nil? or pickup.donors.nil?
              n += 1
              break if n > 5
          %>
         <tr>
-          <td> <%= link_to pickup.donor.name, pickup.donor %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %> <br>
+          <td> <% pickup.donors.each do |donor| %>
+                 <%= link_to donor.name, donor %>
+               <% end %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %> <br>
                <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
           <td> <%= readable_time_until pickup %> </td>
           <td> <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => pickup.id %>

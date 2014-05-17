@@ -272,7 +272,7 @@ class VolunteersController < ApplicationController
 
     #Upcoming pickup list
     @upcoming_pickups = Log.upcoming_for(current_volunteer.id)
-    @sncs_pickups =Log.needing_coverage(current_volunteer.region_ids)
+    @sncs_pickups = Log.needing_coverage(current_volunteer.region_ids)
     
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id,false)
@@ -284,20 +284,24 @@ class VolunteersController < ApplicationController
     @completed_pickup_count = Log.picked_up_by(current_volunteer.id).count
     @total_food_rescued = Log.picked_up_weight(nil,current_volunteer.id)
     @dis_traveled = 0.0
+    my_chains = ScheduleChain.all.where(|chain| chain.volunteer_ids)
+    Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC')
+    route_logs = Log.picked_up_by(current_volunteer.id).where("schedule.schedule_chain_id = ?", )
     Log.picked_up_by(current_volunteer.id).each do |pickup|
       if pickup.schedule != nil
-        donor = pickup.donor
-        recipient = pickup.recipient
-        unless donor.nil? or recipient.nil? or donor.lng.nil? or donor.lat.nil? or recipient.lat.nil? or recipient.lng.nil?
-          radius = 6371.0
-          dLat = (donor.lat - recipient.lat) * Math::PI / 180.0
-          dLon = (donor.lng - recipient.lng) * Math::PI / 180.0
-          lat1 = recipient.lat * Math::PI / 180.0
-          lat2 = donor.lat * Math::PI / 180.0
-          
-          a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
-          c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-          @dis_traveled += radius * c
+        pickup.donors.each do |don|
+          recipient = pickup.recipient
+          unless don.nil? or recipient.nil? or don.lng.nil? or don.lat.nil? or recipient.lat.nil? or recipient.lng.nil?
+            radius = 6371.0
+            dLat = (don.lat - recipient.lat) * Math::PI / 180.0
+            dLon = (don.lng - recipient.lng) * Math::PI / 180.0
+            lat1 = recipient.lat * Math::PI / 180.0
+            lat2 = don.lat * Math::PI / 180.0
+
+            a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
+            c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+            @dis_traveled += radius * c
+          end
         end
       end
     end

@@ -8,30 +8,31 @@ module FoodRobot
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule
-  def self.generate_log_entries(d=Time.zone.today)
+  def self.generate_log_entries(d = Time.zone.today)
     n = 0
-    ScheduleChain.where("day_of_week = ?",d.wday).each{ |s|
+    ScheduleChain.where("day_of_week = ?", d.wday).each do |s|
+      #don't generate logs for malformed schedules
       next unless s.functional?
+      #don't generate logs for irregular schedules
       next if s.irregular
-      # don't insert a duplicate log entry if one already exists
-      check = Log.where('"when" = ? AND schedule_chain_id = ?',d,s.id)
-      next if check.length > 0
       s.schedules.each_with_index do |rcpt, r_i|
+        # don't insert a duplicate log entry if one already exists
+        check = Log.where('"when" = ? AND schedule_id = ?', d, rcpt.id)
+        next if check.length > 0
         unless rcpt.is_pickup_stop?
           log = Log.new
           log.schedule = rcpt
-          log.volunteers = rcpt.schedule_chain.volunteers
+          log.volunteers = s.volunteers
           log.recipient_id = rcpt.location.id
           log.when = d
+          log.region_id = s.region_id
           s.schedules.each_with_index do |dnr, d_i|
-            if dnr.is_pickup_stop?
-              if d_i < r_i
-                #don't make log show donors after recipient stop
-                log.donor_ids << dnr.location.id
-                dnr.food_type_ids.each do |food|
-                  unless log.food_type_ids.include?(food)
-                    log.food_type_ids << food
-                  end
+            if dnr.is_pickup_stop? and d_i < r_i
+              #don't make log associate with donors after recipient stop
+              log.donor_ids << dnr.location.id
+              dnr.food_type_ids.each do |food|
+                unless log.food_type_ids.include?(food)
+                  log.food_type_ids << food
                 end
               end
             end
@@ -39,7 +40,7 @@ module FoodRobot
           n += 1 if log.save
         end
       end
-    }
+    end
     return n
   end
 

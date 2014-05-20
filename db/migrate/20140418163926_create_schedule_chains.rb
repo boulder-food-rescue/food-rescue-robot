@@ -1,7 +1,7 @@
 class CreateScheduleChains < ActiveRecord::Migration
   def up
     change_table :locations do |l|
-      l.references :logs
+      l.integer :donor_order
     end
 		create_table :schedule_chains do |c|
 			c.time :detailed_start_time

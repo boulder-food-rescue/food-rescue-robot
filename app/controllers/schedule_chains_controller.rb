@@ -188,20 +188,20 @@ class ScheduleChainsController < ApplicationController
             m.deliver
           end
           notice = "You have "
-          if schedule.volunteers.length == 1
+          if schedule.volunteers.length == 0
             notice += "taken"
           else
             notice += "joined"
           end
           notice += " the route to "
-          if schedule.donor_stops.length == 1
-            notice += (schedule.donor_stops.first.location.name + ".")
+          if schedule.recipient_stops.length == 1
+            notice += (schedule.recipient_stops.first.location.name + ".")
           else
-            schedule.donor_stops.each_with_index do |stop, index|
-              if index == (schedule.donor_stops.length-1)
+            schedule.recipient_stops.each_with_index do |stop, index|
+              if index == (schedule.recipient_stops.length-1)
                 notice += ("and " + stop.location.name + ".")
               else
-                notice += (stop + ", ") #oxford comma
+                notice += (stop.location.name + ", ") #oxford comma
               end
             end
           end

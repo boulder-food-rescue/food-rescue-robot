@@ -4,7 +4,7 @@ class Log < ActiveRecord::Base
   has_many :volunteers, :through => :log_volunteers,
            :conditions=>{"log_volunteers.active"=>true}
   has_many :active_log_volunteers, :conditions=>{"active" => true}, :class_name => "LogVolunteer"
-  has_many :donors, :class_name => "Location"
+  has_many :donors, :class_name => "Location", :foreign_key => "donor_order"
   belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
   belongs_to :food_type
   belongs_to :scale_type
@@ -19,7 +19,7 @@ class Log < ActiveRecord::Base
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
   validates :transport_type_id, presence: { if: :complete }
-  validates :donor_ids, presence: { if: :complete }
+  validates :donor_order, presence: { if: :complete }
   validates :recipient_id, presence: { if: :complete }
   validates :scale_type_id, presence: { if: :complete }
   validates :when, presence: true

@@ -29,11 +29,10 @@ module FoodRobot
           s.schedules.each_with_index do |dnr, d_i|
             if dnr.is_pickup_stop? and d_i < r_i
               #don't make log associate with donors after recipient stop
-              log.donor_ids << dnr.location.id
-              dnr.food_type_ids.each do |food|
-                unless log.food_type_ids.include?(food)
-                  log.food_type_ids << food
-                end
+              log.donors.push dnr.location
+              dnr.food_types.each do |food|
+                log.food_types.push food
+                log.food_types.uniq!
               end
             end
           end

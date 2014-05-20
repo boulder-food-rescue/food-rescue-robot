@@ -37,11 +37,11 @@
         </tr>
         <% @upcoming_pickups.each do |pickup| %>
         <tr>
-          <td> <%= pickup.donors.each do |donor| link_to pickup.donor.name, pickup.donor end%> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %><br>
+          <td> <% pickup.donors.each do |donor| %> <%=link_to donor.name, donor %> <br> <% end %> -&gt; <%= link_to pickup.recipient.name, pickup.recipient %><br>
                <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
           </td>
           <td> <%= readable_time_until pickup %> </td>
-          <td> <%= link_to 'Info', pickup.schedule %> </td>
+          <td> <%= link_to 'Info', pickup %> </td>
         </tr>
         <% end %>
       </table>
@@ -59,10 +59,10 @@
           <th></th>
         </tr>
         <% @to_do_reports.each do |report| 
-            next if report.donor.nil?
+            next if report.donors.nil?
           %>
         <tr>
-          <td> <%= link_to report.donor.name, report.donor %> -&gt; <%= link_to report.recipient.name, report.recipient %><br>
+          <td> <% report.donors.each do |donor| %> <%=link_to donor.name, donor %> <br> <% end %> -&gt; <%= link_to report.recipient.name, report.recipient %><br>
                <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
           <td> <%= readable_time_until report %></td>
           <td> <%= link_to "Fill In", edit_log_path(report) %></td>

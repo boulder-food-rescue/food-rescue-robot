@@ -18,26 +18,31 @@ module FoodRobot
       s.schedules.each_with_index do |rcpt, r_i|
         # don't insert a duplicate log entry if one already exists
         check = Log.where('"when" = ? AND schedule_id = ?', d, rcpt.id)
-        next if check.length > 0
-        unless rcpt.is_pickup_stop?
-          log = Log.new
-          log.schedule = rcpt
-          log.volunteers = s.volunteers
-          log.recipient_id = rcpt.location.id
-          log.when = d
-          log.region_id = s.region_id
-          s.schedules.each_with_index do |dnr, d_i|
-            if dnr.is_pickup_stop? and d_i < r_i
-              #don't make log associate with donors after recipient stop
-              log.donors.push dnr.location
-              dnr.food_types.each do |food|
-                log.food_types.push food
-                log.food_types.uniq!
-              end
-            end
+        next if check.length > 0 or rcpt.is_pickup_stop?
+        stop_list = []
+        log = Log.new
+        log.schedule = rcpt
+        log.volunteers = s.volunteers
+        log.recipient_id = rcpt.location.id
+        log.when = d
+        log.region_id = s.region_id
+        s.schedules.each_with_index do |dnr, d_i|
+          next unless dnr.is_pickup_stop? and d_i < r_i
+          #don't make log associate with donors after recipient stop
+          stop_list << dnr.location
+          dnr.food_types.each do |food|
+            log.food_types.push food
+            log.food_types.uniq!
           end
-          n += 1 if log.save
         end
+        puts "DATA FROM CHAIN:"
+        puts stop_list.collect{ |stop| stop.name }
+        puts ("-> "+rcpt.location.name)
+        log.donors = stop_list
+        n += 1 if log.save
+        puts "DATA IN SAVED LOGS:"
+        puts log.donors.collect{ |stop| stop.name }
+        puts ("-> "+log.recipient.name)
       end
     end
     return n

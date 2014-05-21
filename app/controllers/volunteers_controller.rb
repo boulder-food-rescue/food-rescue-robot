@@ -284,16 +284,17 @@ class VolunteersController < ApplicationController
     @completed_pickup_count = Log.picked_up_by(current_volunteer.id).count
     @total_food_rescued = Log.picked_up_weight(nil,current_volunteer.id)
     @dis_traveled = 0.0
-    #sfnodsjnfdsljnflsdjnfsldjfdslfnsldfn
+
+    #Distance travelled (attempts to be clever about assembling routes from logs)
     finished_logs = Log.picked_up_by(current_volunteer.id, true)
     finished_logs.each do |first_log|
       chain_id = first_log.schedule.schedule_chain_id
       gathered_places = []
-      finished_logs.where('schedule.schedule_chain_id = ?', chain_id).each do |matching_log|
-        unless gathered_places.includes?matching_log
-          gathered_places << matching_log.location
+      finished_logs.select{ |log| log.owner_chain_id == chain_id }.each do |matching_log|
+        unless gathered_places.include? matching_log
+          gathered_places << matching_log.schedule.location
         end
-        finished_logs.delete(matching_log)
+        matching_log.from(finished_logs).delete
       end
       gathered_places.each_with_index do |loc_b, i|
         gathered_places.each_with_index do |loc_a, j|

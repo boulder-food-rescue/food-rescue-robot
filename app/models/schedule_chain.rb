@@ -34,14 +34,10 @@ class ScheduleChain < ActiveRecord::Base
     }
 		conditions
   end
-	
+
 		# does the schedule chain start with a pickup and end with a dropoff?
 	def functional?
-		if not self.schedules.first.nil?
-			self.schedules.rank(:position).first.is_pickup_stop? and not self.schedules.rank(:position).last.is_pickup_stop?
-		else
-			false
-		end
+		self.schedules.first.is_pickup_stop? and not self.schedules.last.is_pickup_stop?
 	end
 
   # list all the schedules that don't have active volunteers

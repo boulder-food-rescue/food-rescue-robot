@@ -22,8 +22,8 @@
     <% end %>
     <%= link_to_add_association 'add another volunteer', f, :log_volunteers, :class=>'btn' %>
   </div>
-  <tr><td>Donor<td><%= f.select(:donor_id, @donors,{:include_blank => true},{:class => "select2"}) %>
-<tr><td>Recipient<td><%= f.select(:recipient_id, @recipients,{:include_blank => true},{:class => "select2"}) %>
+  <tr><td>Donors<td><% @log.donors.each do |d| %> <%= (d.name+"\n") %>  <% end %>
+<tr><td>Recipient<td><%= @log.recipient.name %>
 <tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br><br>
                                       If the pick-up was dropped, put zeroes for the weights, and please explain why using the notes field below.</span></td><td>
 <table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.weight_unit.nil? ? "in scale's units" : @log.weight_unit %>)<th> Count<th>Description

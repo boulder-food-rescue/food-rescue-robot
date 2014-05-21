@@ -24,7 +24,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Info </th>
     <th> When </th>
     <th> Volunteer </th>
-    <th> Donor </th>
+    <th> Donors </th>
     <th> Recipient </th>
     <% unless current_page? :controller => "logs", :action => "open" %>
     <th> Weight </th>
@@ -65,7 +65,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
            <%= render 'take_or_leave', :log=>shift %>
          <% end %>
     </td>
-    <td> <%= shift.donors.each do |donor| donor != nil ? (link_to shift.donor.name, shift.donor) : "" end%> </td>
+    <td> <% shift.donors.each do |donor| %> <%= link_to donor.name, donor %> <br> <% end %> </td>
     <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
     <% unless current_page? :controller => "logs", :action => "open" %>
     <td> <%= shift.complete ? shift.summed_weight : "?" %> lbs.</td>

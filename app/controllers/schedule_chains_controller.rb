@@ -30,6 +30,25 @@ class ScheduleChainsController < ApplicationController
 	end
 
 	def show
+    #prep the google maps embed request
+    api_key = 'AIzaSyD8c6OCF67BCrCMbgBNrcdEEuDnCNqWlk4'
+    embed_parameters = ""
+    trimmed_stops = @schedule.schedules.select{ |stop| not stop == @schedule.schedules.first and not stop == @schedule.schedules.last}
+    embed_parameters += ('&origin=' + @schedule.schedules.first.location.address)
+    embed_parameters += ('&destination=' + @schedule.schedules.last.location.address)
+    unless trimmed_stops.length == 0
+      embed_parameters += ('&waypoints=')
+      trimmed_stops.each do |stop|
+        embed_parameters += stop.location.address
+        unless stop == trimmed_stops.last
+          embed_parameters += '|'
+        end
+      end
+    end
+    embed_parameters += '&mode=bicycling'
+    @embed_request_url = ('https://www.google.com/maps/embed/v1/directions'
+                          + ('?key=' + api_key)
+                          + embed_parameters)
 		@schedule = ScheduleChain.find(params[:id])
 		if params[:nolayout].present? and params[:nolayout].to_i == 1
 			render(:show,:layout => false)
@@ -93,27 +112,8 @@ class ScheduleChainsController < ApplicationController
         stp.schedule_chain_id=@schedule.id
         stp.location_id=stpdata["location_id"]
         stp.food_type_ids=stpdata["food_type_ids"]
-        stp.update_attribute :position_position, :last
         stp.save
         @schedule.schedule_ids << stp.id
-      end
-			@schedule.schedules.each_with_index do |recipient, r_index|
-        unless recipient.is_pickup_stop?
-          log = Log.new
-          log.volunteers=recipient.schedule_chain.volunteers
-				  log.recipient_id = recipient.location.id
-          @schedule.schedules.each_with_index do |donor, d_index|
-            if donor.is_pickup_stop?
-					    if d_index < r_index
-						    log.donor_ids << donor.location.id
-						    donor.food_type_ids.each do |foodid|
-							    log.food_type_ids << foodid
-						    end
-              end
-            end
-				  end
-				  log.save
-        end
       end
       flash[:notice] = "Created successfully"
       index

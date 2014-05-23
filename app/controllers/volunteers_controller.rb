@@ -294,7 +294,10 @@ class VolunteersController < ApplicationController
         unless gathered_places.include? matching_log
           gathered_places << matching_log.schedule.location
         end
-        matching_log.from(finished_logs).delete
+        #nooo don't look at the ugly array manipulation
+        matching_log_array = []
+        matching_log_array << matching_log
+        finished_logs = (finished_logs - matching_log_array)
       end
       gathered_places.each_with_index do |loc_b, i|
         gathered_places.each_with_index do |loc_a, j|

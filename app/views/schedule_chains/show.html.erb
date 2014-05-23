@@ -84,15 +84,12 @@
       <h2>Bicycling Directions</h2>
       <br/>
       <div style="width: 465px;">
-				<%= @schedule.schedules.each do |stop|
-					unless stop.id == @schedule.schedules.last.id
-          		gmaps("direction" => {"data" =>
-                    {"from" => stop.location.address.tr("\n\r",","), 
-                      "to" => stop.location.address.tr("\n\r",",") }, 
-                    "options" => {"travelMode" => "BICYCLING","display_panel" => true, "panel_id" => "instructions"}
-              }) end
-         end %>
-          <div id="instructions"></div>
+        <iframe
+        width="600"
+        height="450"
+        frameborder="0" style="border:0"
+        src=<%= @embed_request_url %>>
+        </iframe>
       </div>
     <% end %>
 

@@ -167,24 +167,20 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
           <% if (largest_pickup != nil) && (not largest_pickup.volunteers.empty?) %>
             <div class="fun_fact">
               <h3>Largest Pickup</h3>
-              <%
-              donor = Location.find(largest_pickup.donor_id)
-              if donor.website != nil %>
-                <div>
-                  <p>
-                    <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food from
-                    <a href="<% donor.website %>"><%= donor.name %></a>
-                  </p>
-                </div>
-              <% else %>
-                <div>
-                  <p>
-                    <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food from <%= donor.name %>
-                  </p>
-                </div>
-              <%end%>
-          </div>
-        <% end %>
+              <% donors = Location.find(largest_pickup.donor_ids) %>
+              <div>
+                <p>
+                  <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food from
+                  <% if donors.length == 1 then donor = donors.first %>
+                    <% if donor.website.nil? %> <%= donor.name %> <% else %> <a href="<%= donor.website %>"><%= donor.name %></a><% end %>
+                  <% else %>
+                  <% donors.each do |donor| if donor.website.nil? %> <%= donor.name %> <% else %> <a href="<%= donor.website %>"><%= donor.name %></a><% end %>
+                  <% if donor != donors.last %> , <% end %>
+                  <% end end %>
+                </p>
+              </div>
+            </div>
+          <% end %>
         <div class="fun_fact">
           <h3>Volunteers Working Today</h3>
           <% 

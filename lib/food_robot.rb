@@ -4,7 +4,7 @@ require 'csv'
 module FoodRobot 
   
   # Set to true to disable emailing and just print the emails to STDOUT
-  @@DontDeliverEmails = false
+  @@DontDeliverEmails = true
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule
@@ -17,6 +17,10 @@ module FoodRobot
       next if s.irregular
       s.schedules.each_with_index do |rcpt, r_i|
         # don't insert a duplicate log entry if one already exists
+        # e.g. generating logs from a chain (D1->D2->R1->D3->R2)
+        # results in two logs
+        # {D1,D2}->R1
+        # {D1,D2,D3}->R2
         check = Log.where('"when" = ? AND schedule_id = ?', d, rcpt.id)
         next if check.length > 0 or rcpt.is_pickup_stop?
         stop_list = []

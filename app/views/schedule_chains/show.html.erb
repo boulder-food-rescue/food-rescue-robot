@@ -2,12 +2,22 @@
 
   <div class="span6">
 
-    <h2><%= if @schedule.functional? 
-			@schedule.schedules.first.location.name
-			@schedule.schedules.last.location.name
-		else 
-			"?"
-		end%></h2>
+    <h2><%= if @schedule.functional?
+              if @schedule.recipient_stops.length == 1
+			    "Delivery to " + @schedule.schedules.last.location.name
+              else
+                routename = "Deliveries to "
+                @schedule.recipient_stops.each do |stop|
+                  routename += stop.location.name
+                  if stop != @schedule.recipient_stops.last
+                    routename += ", "
+                  end
+                end
+                routename
+              end
+		    else
+			  "?"
+		    end%></h2>
 
     <% unless @schedule.next_pickup_time.nil? or not @schedule.functional? %>
       <div class="pull-right">
@@ -54,27 +64,29 @@
     <% end %>
     </p>
 		
-    <% if  @schedule.functional? %>
+    <% if @schedule.functional? %>
       <h3>Stops:</h3>
       <p>
-			<% @schedule.schedules.rank(:position).each do |stop| %>
-				<% stop.is_pickup_stop? ? "(DONOR)" : "(RECIPIENT)" %>
-      		<% unless stop.location.entry_info.blank? %>
-        		<p><strong>Entry:</strong> <%= stop.location.entry_info.gsub("\n","<br>").html_safe %></p>
-      		<% end %>
-      		<% unless stop.location.equipment_storage_info.blank? %>
-       			<p><strong>Equipment:</strong> <%= stop.location.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
-      		<% end %>
-      		<% unless stop.location.food_storage_info.blank? %>
-        		<p><strong>Food:</strong> <%= stop.location.food_storage_info.gsub("\n","<br>").html_safe %></p>
-      		<% end %>
-      		<% unless stop.location.onsite_contact_info.blank? %>
-        		<p><strong>Contact:</strong> <%= stop.location.donor.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
-      		<% end %>
-      		<% unless stop.location.exit_info.blank? %>
-        		<p><strong>Exit:</strong> <%= stop.location.donor.exit_info.gsub("\n","<br>").html_safe %></p>
-      		<% end %>
-			<% end %>
+		<% @schedule.schedules.each do |stop| %>
+			        <%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %> <br>
+                    <% 3.times do %>&nbsp;<%end%> <!-- zealous DRY -->
+                    <%= stop.location.address %> <br>
+                    <% unless stop.location.entry_info.blank? %>
+                        <p><strong>Entry:</strong> <%= stop.location.entry_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+                    <% unless stop.location.equipment_storage_info.blank? %>
+                        <p><strong>Equipment:</strong> <%= stop.location.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+                    <% unless stop.location.food_storage_info.blank? %>
+                        <p><strong>Food:</strong> <%= stop.location.food_storage_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+                    <% unless stop.location.onsite_contact_info.blank? %>
+                        <p><strong>Contact:</strong> <%= stop.location.donor.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+                    <% unless stop.location.exit_info.blank? %>
+                        <p><strong>Exit:</strong> <%= stop.location.donor.exit_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+        <% end %>
     <% end %>
 
   </div>

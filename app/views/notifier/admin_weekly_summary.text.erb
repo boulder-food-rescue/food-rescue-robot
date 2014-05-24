@@ -3,8 +3,8 @@ We have data entered for <%= @num_entered %> of those.
 
 We picked up /at least/ <%= @lbs %> pounds of food. 
 
-The biggest pickup was <%= @biggest.summed_weight %> lbs, done by <%= @biggest.volunteer.name %>
-from <%= @biggest.donor.name %> to <%= @biggest.recipient.name %> on <%= @biggest.when.strftime('%A') %>.
+The biggest pickup was <%= @biggest.summed_weight %> lbs, done by <% if @biggest.volunteers.length != 1 %> <% @biggest.volunteers.each do |vol| %> <%= vol == @biggest.volunteers.last ? ('and ' + vol.name) : (vol.name + ', ') %> <% end else %> <%= @biggest.volunteers.first.name %> <% end %>
+from <% if @biggest.donors.length != 1 %> <% @biggest.donors.each do |don| %> <%= don == @biggest.donors.last ? ('and ' + don.name) : (don.name + ', ') %> <% end else %> <%= @biggest.donors.first.name %> <% end %> to <%= @biggest.recipient.name %> on <%= @biggest.when.strftime('%A') %>.
 
 <% if @flagged_logs.length > 0 %>
 ******** These logs were flagged for us ********

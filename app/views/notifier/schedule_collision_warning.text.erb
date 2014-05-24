@@ -1,6 +1,6 @@
 Hi there,
 
-<%= @schedule.volunteers.last.name %> just picked up a regular shift (#<%= @schedule.id %>), from <%= @schedule.donor.name %> to <%= @schedule.recipient.name %> on <%= @schedule.day_of_week.nil? ? "(any day)" : Date::DAYNAMES[@schedule.day_of_week] %> at <%= readable_start_time(@schedule) %>-<%= readable_stop_time(@schedule) %>.
+<%= @schedule.volunteers.last.name %> just picked up a regular shift (#<%= @schedule.id %>), from <%= @schedule.schedules.first.location.name %> to <%= @schedule.schedules.first.location.name %> on <%= @schedule.day_of_week.nil? ? "(any day)" : Date::DAYNAMES[@schedule.day_of_week] %> at <%= readable_start_time(@schedule) %>-<%= readable_stop_time(@schedule) %>.
 
 The issue is that the following volunteers are already scheduled to cover this shift in the coming days/weeks:
 

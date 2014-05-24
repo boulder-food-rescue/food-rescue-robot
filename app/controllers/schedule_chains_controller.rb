@@ -30,26 +30,24 @@ class ScheduleChainsController < ApplicationController
 	end
 
 	def show
+    @schedule = ScheduleChain.find(params[:id])
     #prep the google maps embed request
     api_key = 'AIzaSyD8c6OCF67BCrCMbgBNrcdEEuDnCNqWlk4'
     embed_parameters = ""
     trimmed_stops = @schedule.schedules.select{ |stop| not stop == @schedule.schedules.first and not stop == @schedule.schedules.last}
-    embed_parameters += ('&origin=' + @schedule.schedules.first.location.address)
-    embed_parameters += ('&destination=' + @schedule.schedules.last.location.address)
+    embed_parameters += ('&origin=' + @schedule.schedules.first.location.address.gsub(' ','+'))
+    embed_parameters += ('&destination=' + @schedule.schedules.last.location.address.gsub(' ','+'))
     unless trimmed_stops.length == 0
       embed_parameters += ('&waypoints=')
       trimmed_stops.each do |stop|
-        embed_parameters += stop.location.address
+        embed_parameters += stop.location.address.gsub(' ','+')
         unless stop == trimmed_stops.last
           embed_parameters += '|'
         end
       end
     end
     embed_parameters += '&mode=bicycling'
-    @embed_request_url = ('https://www.google.com/maps/embed/v1/directions'
-                          + ('?key=' + api_key)
-                          + embed_parameters)
-		@schedule = ScheduleChain.find(params[:id])
+    @embed_request_url = ('https://www.google.com/maps/embed/v1/directions' + '?key=' + api_key + embed_parameters)
 		if params[:nolayout].present? and params[:nolayout].to_i == 1
 			render(:show,:layout => false)
 		else

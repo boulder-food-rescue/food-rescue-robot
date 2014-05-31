@@ -94,5 +94,37 @@ class CreateScheduleChains < ActiveRecord::Migration
   end
 
   def down
+		#doesn't reverse changes to schedules, but undoes table changes
+		change_table :schedules do |s|
+			s.time :detailed_start_time
+			s.time :detailed_stop_time
+			s.date :detailed_date
+			s.references :transport_type
+			s.boolean :backup
+			s.boolean :temporary
+			s.boolean :irregular
+			s.integer :difficulty_rating
+			s.integer :hilliness
+			s.references :scale_type
+			s.references :region
+			s.text :frequency
+			s.integer :day_of_week
+			s.integer :expected_weight
+			s.text :public_notes
+			s.text :admin_notes
+			s.references :donor
+			s.references :recipient
+			s.remove :schedule_chain_id
+		end
+		change_table :logs do |l|
+			s.integer :donor_id
+			s.remove :donor_ids
+		end
+		drop_table :schedule_chains
+		drop_table :log_donors
+		change_table :schedule_volunteers do |sv|
+			sv.remove :schedule_chain_id
+			sv.integer :schedule_id
+		end
   end
 end

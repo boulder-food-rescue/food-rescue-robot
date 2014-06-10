@@ -24,16 +24,8 @@ class CreateScheduleChains < ActiveRecord::Migration
       ld.belongs_to :donor
     end
     Log.all.each do |log|
-      log.log_donors << log.donor
+      log.donors << log.donor unless log.donor.nil?
     end
-		change_table :regions do |r|
-			r.references :location
-		end
-		Region.all.each { |reg|
-			Location.where(["region_id = ?",reg.id]).each do |loc|
-				reg.location_ids.add(loc.id)
-			end
-		}
 		change_table :schedules do |s|
 			s.references :schedule_chain
 			s.references :location
@@ -48,20 +40,20 @@ class CreateScheduleChains < ActiveRecord::Migration
 		}
 		Schedule.all.each{ |original|
 			unless original.new?
-				sc = ScheduleChain.create(schedule_volunteer_ids: original.schedule_volunteer_ids, irregular: original.irregular,
-																   backup: original.backup,	frequency: original.frequency, weekdays: original.weekdays,
+				sc = ScheduleChain.create(schedule_volunteers: original.schedule_volunteers, irregular: original.irregular,
+																   backup: original.backup,	frequency: original.frequency,
                                    detailed_start_time: original.detailed_start_time, detailed_stop_time: original.detailed_stop_time,
                                    detailed_date: original.detailed_date, hilliness: original.hilliness,
-																   difficulty_rating: original.difficulty_rating, scale_type_id: original.scale_type_id,
-                                   region_id: original.region, day_of_week: original.day_of_week, expected_weight: original.expected_weight,
+																   difficulty_rating: original.difficulty_rating,
+                                   region_id: original.region_id, day_of_week: original.day_of_week, expected_weight: original.expected_weight,
                                    public_notes: original.public_notes, admin_notes: original.admin_notes, transport_type_id: original.transport_type_id)
 				donor = sc.schedules.create(food_type_ids: original.food_type_ids, location_id: original.donor_id, new: true)
 				recip = sc.schedules.create(food_type_ids: original.food_type_ids, location_id: original.recipient_id, new: true)
         sc.schedules << donor
-        sc.schedules << recipient
+        sc.schedules << recip
         donor.schedule_chain_id = sc.id
         recip.schedule_chain_id = sc.id
-				ScheduleVolunteer.all.where(["schedule_id = ?",original.id]).each { |sv|
+				ScheduleVolunteer.where(["schedule_id = ?",original.id]).each { |sv|
 					sv.schedule_chain_id=sc.id
 					sv.save
 				}
@@ -75,6 +67,7 @@ class CreateScheduleChains < ActiveRecord::Migration
 			s.remove :detailed_date
 			s.remove :backup
 			s.remove :temporary
+      s.remove :location_id
 			s.remove :irregular
 			s.remove :difficulty_rating
 			s.remove :hilliness
@@ -116,10 +109,10 @@ class CreateScheduleChains < ActiveRecord::Migration
 			s.references :recipient
 			s.remove :schedule_chain_id
 		end
-		change_table :logs do |l|
-			s.integer :donor_id
-			s.remove :donor_ids
-		end
+		#change_table :logs do |l|
+		#	l.integer :donor_id
+		#	l.remove :donor_ids
+		#end
 		drop_table :schedule_chains
 		drop_table :log_donors
 		change_table :schedule_volunteers do |sv|

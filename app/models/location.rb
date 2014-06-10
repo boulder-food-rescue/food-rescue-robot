@@ -124,11 +124,14 @@ class Location < ActiveRecord::Base
       hours_info = {}
       (0..6).each do |index|
         prefix = "day"+index.to_s+"_"
+        start = read_day_info(prefix+"start")
+        stop = read_day_info(prefix+"end")
+        next if start.nil? or stop.nil?
         hours_info[index] = {
           :status => read_day_info(prefix+"status").to_s,
           # save these with the timezone on them!
-          :start => read_day_info(prefix+"start").to_formatted_s(:rfc822),
-          :end => read_day_info(prefix+"end").to_formatted_s(:rfc822)
+          :start => start.to_formatted_s(:rfc822),
+          :end => stop.to_formatted_s(:rfc822)
         }
       end
       self.detailed_hours_json = hours_info.to_json
@@ -138,17 +141,22 @@ class Location < ActiveRecord::Base
       return unless using_detailed_hours?
       return if detailed_hours_json.nil?
       detailed_hours = JSON.parse(detailed_hours_json)
+      return if detailed_hours.empty?
       now = Time.new
       @day_info = {}
       (0..6).each do |index|
         prefix = "day"+index.to_s+"_"
+        next if detailed_hours[index.to_s].nil?
+        start = detailed_hours[index.to_s]['start']
+        stop = detailed_hours[index.to_s]['end']
+        next if start.nil? or stop.nil?
         write_day_info( prefix+"status", detailed_hours[index.to_s]['status'].to_i )
         # carefully set start time
-        t = Time.find_zone(self.time_zone).parse( detailed_hours[index.to_s]['start'] )
+        t = Time.find_zone(self.time_zone).parse( start )
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
         write_day_info( prefix+"start", t )
         # carefully set end time
-        t = Time.find_zone(self.time_zone).parse( detailed_hours[index.to_s]['end'] )
+        t = Time.find_zone(self.time_zone).parse( stop )
         t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
         write_day_info( prefix+"end", t )
       end

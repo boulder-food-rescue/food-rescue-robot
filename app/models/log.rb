@@ -11,6 +11,7 @@ class Log < ActiveRecord::Base
   belongs_to :scale_type
   belongs_to :transport_type
   belongs_to :region
+  belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id" # FIXME: remove after migration
   has_many :log_parts
   has_many :food_types, :through => :log_parts
 
@@ -19,7 +20,6 @@ class Log < ActiveRecord::Base
   accepts_nested_attributes_for :log_volunteers
   accepts_nested_attributes_for :active_log_volunteers
   accepts_nested_attributes_for :schedule
-
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
             message: "can't be blank if weights/counts are all zero: let us know what happened!" }

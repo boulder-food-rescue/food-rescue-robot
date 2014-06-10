@@ -26,6 +26,9 @@ class LogsController < ApplicationController
   def being_covered
     index(Log.being_covered(current_volunteer.region_ids),"Being Covered")
   end
+  def todo
+    index(Log.past_for(current_volunteer.id).where("\"when\" < current_date AND NOT complete"),"My To Do Shift Reports")
+  end
   def tardy
     index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)"),"Missing Data (>= 3 Reminders)")
   end
@@ -43,7 +46,10 @@ class LogsController < ApplicationController
     else
       @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
     end
-    render :index
+    respond_to do |format|
+      format.json { render json: @shifts }
+      format.html { render :index }
+    end
   end
 
   def stats_service

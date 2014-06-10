@@ -19,9 +19,16 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-group :test, :development do
+group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
+end
+
+group :test do
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+  gem 'capybara'
+  gem 'rack-test'
 end
 
 # mobile-friendly template
@@ -72,3 +79,5 @@ gem 'simple_form'
 
 # set timezone to browser timezone
 gem 'browser-timezone-rails'
+
+gem 'ranked-model'

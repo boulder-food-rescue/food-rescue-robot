@@ -26,6 +26,7 @@ class Volunteer < ActiveRecord::Base
   has_many :prior_logs, :through=>:log_volunteers,
            :conditions=>{"log_volunteers.active"=>false}, :class_name=>"Log"
 
+  before_save :ensure_authentication_token
   after_save :auto_assign_region
 
   # more trustworthy and self.assigned? attribute?
@@ -117,6 +118,27 @@ class Volunteer < ActiveRecord::Base
 
   def in_region? region_id
     self.region_ids.include? region_id
+  end
+
+  def ensure_authentication_token
+    if auth_token.blank?
+      self.auth_token = generate_authentication_token
+      self.save
+    end
+  end
+
+  def reset_authentication_token
+    self.auth_token = generate_authentication_token
+    self.save
+  end
+
+  private
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless User.where(auth_token: token).first
+    end
   end
 
 end

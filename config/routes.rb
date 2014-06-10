@@ -33,6 +33,7 @@ Webapp::Application.routes.draw do
       get :tardy
       get :last_ten
       get :open
+      get :todo
       get :mine_past
       get :mine_upcoming
       get :being_covered
@@ -87,7 +88,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  devise_for :volunteers
+  devise_for :volunteers, :controllers => { :sessions => 'sessions' }
   resources :volunteers do 
     collection do
       get :home

@@ -15,39 +15,42 @@ module FoodRobot
       next unless s.functional?
       #don't generate logs for irregular schedules
       next if s.irregular
-      s.schedules.each_with_index do |rcpt, r_i|
+      puts ss.schedules.collect{ |ss| (ss.is_pickup_stop? ? "D" : "R") + ss.location.id.to_s }.join(" -> ")
+      s.schedules.each_with_index do |ss, ssi|
         # don't insert a duplicate log entry if one already exists
         # e.g. generating logs from a chain (D1->D2->R1->D3->R2)
         # results in two logs
-        # {D1,D2}->R1
-        # {D1,D2,D3}->R2
-        check = Log.where('"when" = ? AND schedule_id = ?', d, rcpt.id)
-        next if check.length > 0 or rcpt.is_pickup_stop?
+        #
+        # D1 -> {R1,R2}
+        # D2 -> {R1,R2}
+        # D3 -> {R2}
+        #
+        # and (D1->D2->D3->D4->R1) will be four logs:
+        #
+        # D1 -> {R1}
+        # D2 -> {R1}
+        # D3 -> {R1}
+        # D4 -> {R1}
+        next if not ss.is_pickup_stop?
+        check = Log.where('"when" = ? AND schedule_chain_id = ? AND donor_id = ?', d, s.id,ss.id)
+        next if check.length > 0
         stop_list = []
         log = Log.new
-        log.schedule = rcpt
+        log.schedule_chain = s
         log.volunteers = s.volunteers
-        log.recipient_id = rcpt.location.id
+        log.donor = ss.location
         log.when = d
         log.region_id = s.region_id
-        s.schedules.each_with_index do |dnr, d_i|
-          next unless dnr.is_pickup_stop? and d_i < r_i
-          #don't make log associate with donors after recipient stop
-          stop_list << dnr.location
-          dnr.food_types.each do |food|
-            log.food_types.push food
-            log.food_types.uniq!
-          end
-        end
-        puts "DATA FROM CHAIN:"
-        puts stop_list.collect{ |stop| stop.name }
-        puts ("-> "+rcpt.location.name)
-        log.donors = stop_list
-        n += 1 if log.save
-        puts "DATA IN SAVED LOGS:"
-        puts log.donors.collect{ |stop| stop.name }
-        puts ("-> "+log.recipient.name)
+        log.recipients
+        s.schedules.each_with_index{ |ss2,ss2i|
+          log.recipients << ss2.location if ss2i > ssi and not ss2.is_pickup_stop?
+        }
+        ss.schedule_parts.each{ |ssp|
+          log.log_parts << LogPart.new(food_type:ssp.food_type,required:ssp.required)
+        }
+        puts "D#{log.donor.id} -> {#{log.recipients.collect{ |x| "R#{x.id}" }.join(",")}}"
       end
+
     end
     return n
   end

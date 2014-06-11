@@ -1,7 +1,8 @@
 class Location < ActiveRecord::Base
   belongs_to :region
-  has_many :log_donors
-  has_many :logs, :through => :log_donors
+  has_many :log_recipients
+  #has_many :dez, :through => :log_recipients
+
   geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
   acts_as_gmappable :process_geocoding => false, :lat => "lat", :lng => "lng", :address => "address"
 

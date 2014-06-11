@@ -137,7 +137,7 @@ class Volunteer < ActiveRecord::Base
   def generate_authentication_token
     loop do
       token = Devise.friendly_token
-      break token unless User.where(auth_token: token).first
+      break token unless Volunteer.where(auth_token: token).first
     end
   end
 

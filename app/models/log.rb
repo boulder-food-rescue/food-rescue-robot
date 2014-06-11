@@ -1,17 +1,19 @@
 class Log < ActiveRecord::Base
-  belongs_to :schedule
+  belongs_to :schedule # FIXME: remove after migrate
+  belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id" # FIXME: remove after migration
+  belongs_to :food_type # FIXME: remove after migration
+
+  belongs_to :schedule_chain
   has_many :log_volunteers
   has_many :volunteers, :through => :log_volunteers,
            :conditions=>{"log_volunteers.active"=>true}
   has_many :active_log_volunteers, :conditions=>{"active" => true}, :class_name => "LogVolunteer"
-  has_many :log_donors
-  has_many :donors, :through => :log_donors
-  belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
-  belongs_to :food_type
+  has_many :log_recipients
+  has_many :recipients, :through => :log_recipients
+  belongs_to :donor, :class_name => "Location", :foreign_key => "recipient_id"
   belongs_to :scale_type
   belongs_to :transport_type
   belongs_to :region
-  belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id" # FIXME: remove after migration
   has_many :log_parts
   has_many :food_types, :through => :log_parts
 
@@ -34,6 +36,7 @@ class Log < ActiveRecord::Base
                   :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes
 
   before_save { |record|
+    return if record.region.nil?
     record.scale_type = record.region.scale_types.first if record.scale_type.nil? and record.region.scale_types.length == 1
     unless record.scale_type.nil?
       record.weight_unit = record.scale_type.weight_unit if record.weight_unit.nil?

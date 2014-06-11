@@ -223,20 +223,31 @@ class LogsController < ApplicationController
       }
       @log.complete = filled_count > 0 and required_unfilled == 0
       if @log.save
-       flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
+        flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
         # could be nil if they clicked on the link in an email
-        unless session[:my_return_to].nil?
-          redirect_to(session[:my_return_to])
-        else
-          mine_past
+        respond_to do |format|
+          format.json { render json: {:error => 0, :message => flash[:notice] } }
+          format.html {
+            unless session[:my_return_to].nil?
+              redirect_to(session[:my_return_to])
+            else
+              mine_past
+            end
+          }
         end
       else
         flash[:notice] = "Failed to mark as complete."
-        render :edit
+        respond_to do |format|
+          format.json { render json: {:error => 2, :message => flash[:notice] } }
+          format.html { render :edit }
+        end
       end
     else
       flash[:notice] = "Update failed :("
-      render :edit
+      respond_to do |format|
+        format.json { render json: {:error => 1, :message => flash[:notice] } }
+        format.html { render :edit }
+      end
     end
   end
 

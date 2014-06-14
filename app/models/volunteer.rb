@@ -8,7 +8,8 @@ class Volunteer < ActiveRecord::Base
     :remember_me, :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, 
     :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, 
     :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id, :photo, :get_sncs_email, 
-    :needs_training, :assigned, :requested_region_id
+    :needs_training, :assigned, :requested_region_id, :auth_token
+  acts_as_token_authenticatable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
@@ -118,27 +119,6 @@ class Volunteer < ActiveRecord::Base
 
   def in_region? region_id
     self.region_ids.include? region_id
-  end
-
-  def ensure_authentication_token
-    if auth_token.blank?
-      self.auth_token = generate_authentication_token
-      self.save
-    end
-  end
-
-  def reset_authentication_token
-    self.auth_token = generate_authentication_token
-    self.save
-  end
-
-  private
-
-  def generate_authentication_token
-    loop do
-      token = Devise.friendly_token
-      break token unless Volunteer.where(auth_token: token).first
-    end
   end
 
 end

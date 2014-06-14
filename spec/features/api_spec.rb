@@ -12,7 +12,7 @@ describe 'api' do
   end
 
   def json_headers
-    {format: :json, 'CONTENT_TYPE' => 'application/json', 'HTTPS' => 'off' }
+    {format: :json, 'CONTENT_TYPE' => 'application/json' }
   end
 
   it 'can sign in' do
@@ -29,9 +29,24 @@ describe 'api' do
     delete "/volunteers/sign_out.json", auth_params.to_json, json_headers
     last_response.status.should eq(204)
 
-    auth_params2 = get_auth_params(u)
+    auth_params2 = get_auth_params(v)
     auth_params2["auth_token"].should_not be_nil
     auth_params2["auth_token"].should_not eq(auth_params["auth_token"])
   end
+
+  it "can get a list of logs" do
+    5.times do
+      create(:log)
+    end
+    v = create(:volunteer_with_assignment)
+    auth_params = get_auth_params(v)
+    get "/logs.json", auth_params, json_headers
+    expect(last_response.status).to eq(200)
+    json = JSON.parse(last_response.body)
+    json.should be_an(Array)
+    json.length.should eq(5)
+  end
+
+  it "can update an existing log"
 
 end

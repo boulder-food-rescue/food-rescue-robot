@@ -1,0 +1,3 @@
+<div class="nested_fields">
+  <%= f.association :recipient, :collection => @region.locations.recipients, :as=>:select, :label=>false, :input_html => {:class => 'select2', :tabindex => '-1'} %>
+</div>

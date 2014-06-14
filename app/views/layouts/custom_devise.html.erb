@@ -167,16 +167,12 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
           <% if (largest_pickup != nil) && (not largest_pickup.volunteers.empty?) %>
             <div class="fun_fact">
               <h3>Largest Pickup</h3>
-              <% donors = Location.find(largest_pickup.donor_ids) %>
               <div>
                 <p>
-                  <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food from
-                  <% if donors.length == 1 then donor = donors.first %>
-                    <% if donor.website.nil? %> <%= donor.name %> <% else %> <a href="<%= donor.website %>"><%= donor.name %></a><% end %>
-                  <% else %>
-                  <% donors.each do |donor| if donor.website.nil? %> <%= donor.name %> <% else %> <a href="<%= donor.website %>"><%= donor.name %></a><% end %>
-                  <% if donor != donors.last %> , <% end %>
-                  <% end end %>
+                  <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food
+                  <% unless largest_pickup.donor.nil? %>
+                    from <%= largest_pickup.donor.name %>
+                  <% end %>
                 </p>
               </div>
             </div>
@@ -218,11 +214,12 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
                                   <%
                                   recips = Location.where(:is_donor => false)
                                   recips.each do |recip|
-                                    next if recip.name =~ /Individuals/i
-                                    if recip.website != nil%>
+                                    next if recip.name =~ /Individuals/i or recip.name.nil?
+                                    w = recip.website_url
+                                    unless w.nil? %>
                                       <div>
                                         <p class>
-                                          <a href="<%= recip.website %>"><%= recip.name %></a>
+                                          <a href="<%= w %>"><%= recip.name %></a>
                                         </p>
                                       </div>
                                     <% else %>
@@ -244,10 +241,11 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
           <% 
           donors = Location.where(:is_donor => true)
           donors.each do |donor|
-            if donor.website != nil%>
+            w = donor.website_url
+            if w != nil%>
               <div>
                 <p class> 
-                  <a href="<%= donor.website %>"><%= donor.name %></a>
+                  <a href="<%= w %>"><%= donor.name %></a>
                 </p>
               </div>
             <% else %>

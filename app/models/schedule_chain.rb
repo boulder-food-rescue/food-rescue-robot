@@ -12,9 +12,11 @@ class ScheduleChain < ActiveRecord::Base
 									:day_of_week, :detailed_start_time, :detailed_stop_time, 
 									:detailed_date, :frequency, :temporary, :difficulty_rating, :expected_weight,
 									:hilliness, :schedule_volunteers, :schedule_volunteers_attributes, :scale_type_ids,
-									:schedule_ids, :admin_notes, :public_notes, :schedules, :schedule, :schedule_volunteers, :new
+									:schedule_ids, :admin_notes, :public_notes, :schedules, :schedule, :schedule_volunteers,
+                  :schedules_attributes
 	
 	accepts_nested_attributes_for :schedule_volunteers
+  accepts_nested_attributes_for :schedules
 
   Hilliness = ["Flat","Mostly Flat","Some Small Hills","Hilly for Reals","Mountaineering"]
   Difficulty = ["Easiest","Typical","Challenging","Most Difficult"]
@@ -44,6 +46,7 @@ class ScheduleChain < ActiveRecord::Base
   # clarification: (in my regions) and (temporary or (no volunteers and last stop is dropoff))
   def self.open_in_regions region_id_list
     schedules = ScheduleChain.where(:irregular=>false).where(:region_id=>region_id_list) if region_id_list.length > 0
+    return [] if schedules.nil?
     schedules.keep_if do |schedule|
 			unless not schedule.functional?
       	schedule.temporary or ((schedule.volunteers.size == 0) and (not schedule.schedules.last.is_pickup_stop?))
@@ -86,11 +89,11 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def max_weight
-    Log.where("schedule_id = ?",self.id).collect{ |l| l.summed_weight }.compact.max
+    Log.where("schedule_chain_id = ?",self.id).collect{ |l| l.summed_weight }.compact.max
   end
 
   def mean_weight
-    ls = Log.where("schedule_id = ?",self.id).collect{ |l| l.summed_weight }
+    ls = Log.where("schedule_chain_id = ?",self.id).collect{ |l| l.summed_weight }
     ls.length == 0 ? nil : ls.sum/ls.length
   end
 

@@ -1,0 +1,11 @@
+<div class="nested_fields">
+  <tr>
+  <td><%= f.association :location, :collection => @region.locations, :as=>:select, :label=>false, :input_html => {:class => 'select2' } %>
+  <% unless f.object.location.nil? %>
+    (<%= f.object.is_pickup_stop? ? "Donor" : "Recipient" %>)
+  <% end %>
+  </td>
+  <td><%= f.text_field :position %></td>
+  <td><%= f.select :food_type_ids, @region.food_types.collect {|x| [x.name, x.id]}, {}, :multiple => true %></td>
+  </tr>
+</div>

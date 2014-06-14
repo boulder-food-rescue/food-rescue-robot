@@ -5,6 +5,10 @@ class Region < ActiveRecord::Base
   has_many :scale_types
   has_many :schedules
 	has_many :locations
+
+  has_many :donors
+  has_many :recipients
+
   geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
   after_validation :geocode
   attr_accessible :address, :lat, :lng, :name, :notes, :website, :handbook_url, :welcome_email_text, :splash_html, :title, :tagline, 

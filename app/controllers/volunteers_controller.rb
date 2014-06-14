@@ -288,11 +288,11 @@ class VolunteersController < ApplicationController
     #Distance travelled (attempts to be clever about assembling routes from logs)
     finished_logs = Log.picked_up_by(current_volunteer.id, true)
     finished_logs.each do |first_log|
-      chain_id = first_log.schedule.schedule_chain_id
+      chain_id = first_log.schedule.nil? ? nil : first_log.schedule.schedule_chain_id
       gathered_places = []
       finished_logs.select{ |log| log.owner_chain_id == chain_id }.each do |matching_log|
         unless gathered_places.include? matching_log
-          gathered_places << matching_log.schedule.location
+          gathered_places << matching_log.schedule.location unless matching_log.schedule.nil?
         end
         #nooo don't look at the ugly array manipulation
         matching_log_array = []

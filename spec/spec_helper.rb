@@ -48,6 +48,7 @@ RSpec.configure do |config|
 
   # Mix in Rack Test
   config.include Rack::Test::Methods
+
   def app
     Rails.application
   end

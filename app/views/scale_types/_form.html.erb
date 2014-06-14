@@ -1,4 +1,4 @@
-<%= form_for @scale_type, :url => {:action => @action } do |s| %>
+  <%= form_for @scale_type, :url => {:action => @action } do |s| %>
 <table>
 <%= hidden_field_tag "scale_type[region_id]", @scale_type.region_id %>
 <tr><td>Name<td><%= s.text_field(:name) %>

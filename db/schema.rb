@@ -138,8 +138,8 @@ ActiveRecord::Schema.define(:version => 20140611042411) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
-    t.text     "time_zone"
     t.string   "weight_unit",            :default => "pound", :null => false
+    t.text     "time_zone"
   end
 
   create_table "scale_types", :force => true do |t|
@@ -195,6 +195,7 @@ ActiveRecord::Schema.define(:version => 20140611042411) do
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
     t.integer  "schedule_chain_id"
+    t.integer  "location_id"
     t.integer  "position"
   end
 
@@ -241,7 +242,7 @@ ActiveRecord::Schema.define(:version => 20140611042411) do
     t.boolean  "needs_training",         :default => true
     t.boolean  "assigned",               :default => false, :null => false
     t.integer  "requested_region_id"
-    t.string   "auth_token"
+    t.string   "authentication_token"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

@@ -45,7 +45,7 @@ gem 'active_scaffold'
 gem 'geocoder'
 
 # handles authentication
-gem 'devise', '3.0.3'
+gem 'devise', '~> 3.2.0'
 
 # alternative webserver (>thin start)
 gem 'thin'
@@ -62,7 +62,7 @@ gem 'paperclip', '~> 3.1'
 gem 'prawn'
 
 # render google maps
-gem 'gmaps4rails'
+gem 'gmaps4rails', "1.5.6"
 
 # lets us render charts in-browser
 gem "highcharts-rails", "~> 3.0.0"
@@ -81,3 +81,7 @@ gem 'simple_form'
 gem 'browser-timezone-rails'
 
 gem 'ranked-model'
+
+gem 'simple_token_authentication'
+
+gem 'addressable'

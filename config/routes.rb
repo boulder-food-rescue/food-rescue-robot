@@ -89,6 +89,7 @@ Webapp::Application.routes.draw do
   end
 
   devise_for :volunteers, :controllers => { :sessions => 'sessions' }
+
   resources :volunteers do 
     collection do
       get :home

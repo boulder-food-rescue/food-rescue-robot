@@ -10,30 +10,30 @@ class Log < ActiveRecord::Base
   has_many :active_log_volunteers, :conditions=>{"active" => true}, :class_name => "LogVolunteer"
   has_many :log_recipients
   has_many :recipients, :through => :log_recipients
-  belongs_to :donor, :class_name => "Location", :foreign_key => "recipient_id"
+  belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
   belongs_to :scale_type
   belongs_to :transport_type
   belongs_to :region
   has_many :log_parts
   has_many :food_types, :through => :log_parts
 
-  attr_accessible :schedule_chain_id
-
   accepts_nested_attributes_for :log_volunteers
+  accepts_nested_attributes_for :log_recipients
   accepts_nested_attributes_for :active_log_volunteers
   accepts_nested_attributes_for :schedule
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
   validates :transport_type_id, presence: { if: :complete }
-  validates :recipient_id, presence: { if: :complete }
+  validates :donor_id, presence: { if: :complete }
   validates :scale_type_id, presence: { if: :complete }
   validates :when, presence: true
 
-  attr_accessible :schedule_id, :region_id, :donor_id, :recipient_id,
+  attr_accessible :schedule_id, :region_id, :donor_id,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :transport, :when, :scale_type_id,
-                  :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes
+                  :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes,
+                  :schedule_chain_id, :log_recipients_attributes
 
   before_save { |record|
     return if record.region.nil?
@@ -138,7 +138,7 @@ class Log < ActiveRecord::Base
   end
 
   def owner_chain_id
-    self.schedule.schedule_chain_id
+    self.schedule.nil? ? nil: self.schedule.schedule_chain_id
   end
 
   TweetGainThreshold = 25000

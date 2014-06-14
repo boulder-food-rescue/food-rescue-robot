@@ -1,9 +1,18 @@
-    class ApplicationController < ActionController::Base
-  protect_from_forgery
+class ApplicationController < ActionController::Base
 
-  before_filter :authenticate_user_from_token!
+  protect_from_forgery with: :null_session
+  after_filter :setup_headers
 
   respond_to :html, :json
+
+  def setup_headers
+    unless Rails.env.production?
+      headers['Access-Control-Allow-Origin'] = '*'
+      headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
+      headers['Access-Control-Request-Method'] = '*'
+      headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    end
+  end
 
   ActiveScaffold.set_defaults do |config|
     config.security.current_user_method = :current_volunteer
@@ -22,19 +31,6 @@
     end
 
   private
-
-  # Token Authentication:
-  # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
-  def authenticate_user_from_token!
-    vol_email = params["auth_id"]
-    return if vol_email.nil?
-    vol = Volunteer.find_by_email(vol_email)
-    token = params["auth_token"]
-    return if token.nil?
-    if vol and Devise.secure_compare(vol.auth_token,token)
-      sign_in vol, store: false
-    end
-  end
 
   # add in the variables needed by the form partial for schedules and logs
   def set_vars_for_form region

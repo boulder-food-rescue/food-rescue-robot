@@ -59,7 +59,7 @@ class CreateScheduleChains < ActiveRecord::Migration
         l.save
       }
       original.delete
-      n += 1
+        n += 1
 		}
 		change_table :schedules do |s|
 			s.remove :detailed_start_time
@@ -67,8 +67,7 @@ class CreateScheduleChains < ActiveRecord::Migration
 			s.remove :detailed_date
 			s.remove :backup
 			s.remove :temporary
-      s.remove :location_id
-			s.remove :irregular
+      s.remove :irregular
 			s.remove :difficulty_rating
 			s.remove :hilliness
 			s.remove :day_of_week

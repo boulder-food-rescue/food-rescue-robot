@@ -13,7 +13,7 @@
 
 <table>
 <%= hidden_field_tag "log[region_id]", @region.id %>
-<%= hidden_field_tag "log[schedule_id]", @log.schedule.nil? ? nil : @log.schedule.id  %>
+<%= hidden_field_tag "log[schedule_chain_id]", @log.schedule_chain.nil? ? nil : @log.schedule_chain.id  %>
 <tr><td>Date<td><%= f.date_select :when %>
 <tr><td>Volunteer<td>
   <div>
@@ -22,8 +22,14 @@
     <% end %>
     <%= link_to_add_association 'add another volunteer', f, :log_volunteers, :class=>'btn' %>
   </div>
-  <tr><td>Donors<td><% @log.donors.each do |d| %> <%= (d.name+"\n") %>  <% end %>
-<tr><td>Recipient<td><%= @log.recipient.name %>
+  <tr><td>Recipients<td>
+    <div>
+      <%= f.simple_fields_for :log_recipients do |log_recipient| %>
+        <%= render 'log_recipient_fields', :f => log_recipient %>
+      <% end %>
+      <%= link_to_add_association 'add another recipient', f, :log_recipients, :class=>'btn' %>
+    </div>
+<tr><td>Donor<td><%= f.select :donor_id, Location.donors.collect{ |d| [d.name,d.id] }, :include_blank => true, :class => 'select2' %>
 <tr><td>Data<br><span class="subtext">Enter the weight and/or count for each food type.<br><br>
                                       If the pick-up was dropped, put zeroes for the weights, and please explain why using the notes field below.</span></td><td>
 <table style="width: 0;"><tr><th>What<th>Weight<br>(<%= @log.weight_unit.nil? ? "in scale's units" : @log.weight_unit %>)<th> Count<th>Description

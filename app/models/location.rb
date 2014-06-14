@@ -1,7 +1,10 @@
 class Location < ActiveRecord::Base
   belongs_to :region
+
   has_many :log_recipients
-  #has_many :dez, :through => :log_recipients
+
+  scope :recipients, :conditions => {:is_donor => false}
+  scope :donors, :conditions => {:is_donor => true}
 
   geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
   acts_as_gmappable :process_geocoding => false, :lat => "lat", :lng => "lng", :address => "address"
@@ -89,6 +92,15 @@ class Location < ActiveRecord::Base
     populate_detailed_hours_json_before_save
   end
 
+  # normalized website url
+  def website_url
+    return nil if self.website.blank?
+    uri = Addressable::URI.parse(self.website)
+    uri = Addressable::URI.parse("http://#{self.website.gsub(/^\/*/,"")}") if uri.scheme.nil?
+    return nil if uri.scheme.nil? or uri.host.nil?
+    uri.normalize.to_s
+  end
+
   def time_zone
     return 'UTC' if region.time_zone.nil? or Time.find_zone(region.time_zone).nil?
     region.time_zone
@@ -101,6 +113,15 @@ class Location < ActiveRecord::Base
   def day_info
     @day_info = {} if @day_info.nil?
     @day_info
+  end
+
+  # class methods
+  def self.donors
+    Location.where("is_donor")
+  end
+
+  def self.recipients
+    Location.where("NOT is_donor")
   end
 
   private 

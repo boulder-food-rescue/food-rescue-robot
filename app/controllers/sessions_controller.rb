@@ -7,11 +7,13 @@ class SessionsController < Devise::SessionsController
         super
       }
       format.json {
-        volunteer = Volunteer.find_for_database_authentication(:email => params[:email])
-        return invalid_login_attempt unless volunteer
-        volunteer.ensure_authentication_token
-        if volunteer.valid_password?(params[:password])
-          render :json => { :auth_token => volunteer.auth_token }, success: true, status: :created
+        user = Volunteer.find_for_database_authentication(:email => params[:email])
+        return invalid_login_attempt unless user
+        user.ensure_authentication_token
+        if user.valid_password?(params[:password])
+          user.reset_authentication_token
+          user.reload
+          render :json => { :authentication_token => user.authentication_token }, success: true, status: :created
         else
           invalid_login_attempt
         end
@@ -25,9 +27,9 @@ class SessionsController < Devise::SessionsController
         super
       }
       format.json {
-        volunteer = Volunteer.find_by_auth_token(params[:auth_token])
-        if volunteer
-          volunteer.reset_authentication_token
+        user = Volunteer.find_by_authentication_token(params[:authentication_token])
+        if user
+          user.reset_authentication_token
           render :json => { :message => 'Session deleted.' }, :success => true, :status => 204
         else
           render :json => { :message => 'Invalid token.' }, :status => 404

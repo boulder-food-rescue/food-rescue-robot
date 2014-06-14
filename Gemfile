@@ -82,6 +82,4 @@ gem 'browser-timezone-rails'
 
 gem 'ranked-model'
 
-gem 'simple_token_authentication'
-
 gem 'addressable'

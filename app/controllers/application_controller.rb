@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :null_session
   after_filter :setup_headers
+  before_filter :authenticate_user_from_token!
 
   respond_to :html, :json
 
@@ -42,5 +43,19 @@ class ApplicationController < ActionController::Base
     @scale_types = ScaleType.regional(region.id).collect{ |st| ["#{st.name} (#{st.weight_unit})",st.id] }
     @regions = Region.all
   end
+
+  # Token Authentication:
+  # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
+  def authenticate_user_from_token!
+    user_email = params["volunteer_email"]
+    return if user_email.nil?
+    user = Volunteer.find_by_email(user_email)
+    token = params["volunteer_token"]
+    return if token.nil?
+    if user and Devise.secure_compare(user.authentication_token,token)
+      sign_in user, store: false
+    end
+  end
+
 
 end

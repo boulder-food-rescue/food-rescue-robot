@@ -190,10 +190,6 @@ GEM
       actionpack (~> 3.0)
       activemodel (~> 3.0)
     simple_oauth (0.2.0)
-    simple_token_authentication (1.5.0)
-      actionmailer (>= 3.2.6, < 5)
-      activerecord (>= 3.2.6, < 5)
-      devise (~> 3.2.0)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -270,7 +266,6 @@ DEPENDENCIES
   sass-rails (~> 3.2.3)
   select2-rails
   simple_form
-  simple_token_authentication
   therubyracer
   thin
   twitter

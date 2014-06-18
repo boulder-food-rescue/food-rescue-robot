@@ -10,11 +10,12 @@ module FoodRobot
   # date based on the /current/ schedule
   def self.generate_log_entries(d = Time.zone.today)
     n = 0
-    ScheduleChain.where("day_of_week = ?", d.wday).each do |s|
-      #don't generate logs for malformed schedules
+    ScheduleChain.where("NOT irregular").each do |s|
+      # don't generate logs for malformed schedules
       next unless s.functional?
-      #don't generate logs for irregular schedules
-      next if s.irregular or s.one_time?
+      # things that are relevant to this day
+      next if s.one_time? and s.detailed_date != d
+      next if s.weekly? and s.day_of_week != d.wday
       puts s.schedules.collect{ |ss|
         ss.location.nil? ? nil : ((ss.is_pickup_stop? ? "D" : "R") + ss.location.id.to_s)
       }.compact.join(" -> ")

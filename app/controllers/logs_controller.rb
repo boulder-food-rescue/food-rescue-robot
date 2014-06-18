@@ -330,7 +330,7 @@ class LogsController < ApplicationController
     if current_volunteer.in_region? log.region_id
       if log.has_volunteer? current_volunteer
         LogVolunteer.where(:volunteer_id=>current_volunteer.id, :log_id=>log.id).delete_all
-        flash[:notice] = "You are no longer on the pickup from "+log.donor.name+" to "+log.recipient.name+"."
+        flash[:notice] = "You are no longer on the pickup from "+log.donor.name+" to "+log.recipients.collect{ |r| r.name }.join(" and ")+"."
       else
         flash[:error] = "Cannot leave pickup since you're not part of it!"
       end

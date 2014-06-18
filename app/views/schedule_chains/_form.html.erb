@@ -19,9 +19,6 @@
       </div>
       </td>
   </tr>
-  <tr><td>Day</td>
-      <td><%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek) %></td>
-  </tr>
     <tr>
       <td>Volunteers</td>
       <td>
@@ -84,25 +81,16 @@
 
 <% end %>
 
-<% if use_detailed_hours? %>
-  <% content_for :scripts do %>
-    <script type="text/javascript">
-    $(function(){
-      $('#schedule_frequency').bind('change',function(){
-        $('.frequency-option').hide();
-        var selectedOption = $('#schedule_frequency').find(':selected').val();
-        $('#frequency-option-'+selectedOption).show();
-      });
-      $('#schedule_frequency').change();
-    })
-    </script>
-  <% end %>
-<% end %>
-
 <% content_for :scripts do %>
 <script type="text/javascript" charset="utf-8">
 jQuery(document).ready(function(){
   jQuery('.select2').select2({width:'element',placeholder:'',allowClear:true});
+  $('#schedule_chain_frequency').bind('change',function(){
+    $('.frequency-option').hide();
+    var selectedOption = $('#schedule_chain_frequency').find(':selected').val();
+    $('#frequency-option-'+selectedOption).show();
+  });
+  $('#schedule_chain_frequency').change();
 });
 </script>
 <% end %>

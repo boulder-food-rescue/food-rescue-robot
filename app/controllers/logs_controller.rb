@@ -272,10 +272,10 @@ class LogsController < ApplicationController
 
     if current_volunteer.admin and !params[:volunteer_id].nil?
       # admin scheduling for someone else
-      pickups = Volunteer.find(params[:volunteer_id].to_i).schedules
+      pickups = Volunteer.find(params[:volunteer_id].to_i).active_schedule_chains
     else
       # scheduling for yourself
-      pickups = current_volunteer.schedules
+      pickups = current_volunteer.active_schedule_chains
     end
     
     n = 0
@@ -284,7 +284,7 @@ class LogsController < ApplicationController
       pickups.each{ |p|
         next unless from.wday.to_i == p.day_of_week.to_i
         # make sure we don't create more than one for the same absence
-        found = Log.where('"when" = ? AND schedule_id = ?',from,p.id)
+        found = Log.where('"when" = ? AND schedule_chain_id = ?',from,p.id)
         if found.length > 0
           nexisting += 1
           next
@@ -297,7 +297,7 @@ class LogsController < ApplicationController
         # create the null record
         lo = Log.new
         lo.log_volunteers << lv
-        lo.schedule = p
+        lo.schedule_chain = p
         lo.donor = p.donor
         lo.recipient = p.recipient
         lo.when = from

@@ -8,10 +8,6 @@ module ApplicationHelper
     }.compact
   end
 
-  def use_detailed_hours?
-    Webapp::Application.config.use_detailed_hours
-  end
-
   def readable_time_until shift
     ret = shift.when.strftime("%b %e") + " ("
     if shift.when == Time.zone.today

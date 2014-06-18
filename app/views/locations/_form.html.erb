@@ -48,7 +48,6 @@
         <% end %>
       </small>
     </td>
-<% if use_detailed_hours? %>
       <td>
       <% Date::DAYNAMES.each_with_index do |day_name, index| 
           day_html_prefix = "day"+index.to_s
@@ -66,9 +65,6 @@
         </div>
       <% end %>
       </td>
-<% else %>
-      <td><%= f.text_area(:hours, :size => "30x6") %></td>
-<% end %>
   </tr>
 
   <tr>
@@ -127,7 +123,6 @@
 
 <% end %>
 
-<% if use_detailed_hours? %>
 <% content_for :scripts do %>
 <script type="text/javascript">
 $(function(){
@@ -147,5 +142,4 @@ $(function(){
   });
 })
 </script>
-<% end %>
 <% end %>

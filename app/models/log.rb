@@ -178,6 +178,7 @@ class Log < ActiveRecord::Base
            us to #{poundage.round} lbs of food rescued to date in #{self.region.name}."
       if self.donor.twitter_handle.nil?
         t += "Thanks to #{self.donor.name} for the donation!"
+
       else
         t += " Thanks to @#{self.donor.twitter_handle} for the donation!"
       end

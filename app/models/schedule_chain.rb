@@ -27,7 +27,7 @@ class ScheduleChain < ActiveRecord::Base
 		}
   }
 
-    # list all the schedules chains that have at least two stops, but don't have any volunteer
+  # list all the schedules chains that have at least two stops, but don't have any volunteer
   def self.unassigned_in_regions region_id_list
     conditions = {}
     conditions[:region_id] = region_id_list if region_id_list.length > 0
@@ -37,7 +37,7 @@ class ScheduleChain < ActiveRecord::Base
 		conditions
   end
 
-		# does the schedule chain start with a pickup and end with a dropoff?
+	# does the schedule chain start with a pickup and end with a dropoff?
 	def functional?
 		self.schedules.first.is_pickup_stop? and not self.schedules.last.is_pickup_stop?
 	end

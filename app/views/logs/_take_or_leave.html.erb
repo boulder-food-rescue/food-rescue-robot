@@ -3,5 +3,5 @@
     <%= link_to "(Leave it)", :controller => "logs", :action => "leave", :id => log %>
   <% end %>
 <% else %>
-  <%=link_to (log.has_volunteers? ? 'Join it!' : 'Take it!'), :controller => "logs", :action => "take", :id => log %>
+  <%=link_to (log.has_volunteers? ? '(Join it)' : '(Take it)'), :controller => "logs", :action => "take", :id => log %>
 <% end %>

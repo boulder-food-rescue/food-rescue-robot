@@ -10,6 +10,7 @@ FactoryGirl.define do
         a = create(:assignment,volunteer:v)
         v.assignments << a
         v.assigned = true
+        v.save
       end
     end
 

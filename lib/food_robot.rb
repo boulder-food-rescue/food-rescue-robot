@@ -10,12 +10,15 @@ module FoodRobot
   # date based on the /current/ schedule
   def self.generate_log_entries(d = Time.zone.today)
     n = 0
-    ScheduleChain.where("day_of_week = ?", d.wday).each do |s|
-      #don't generate logs for malformed schedules
+    ScheduleChain.where("NOT irregular").each do |s|
+      # don't generate logs for malformed schedules
       next unless s.functional?
-      #don't generate logs for irregular schedules
-      next if s.irregular
-      puts ss.schedules.collect{ |ss| (ss.is_pickup_stop? ? "D" : "R") + ss.location.id.to_s }.join(" -> ")
+      # things that are relevant to this day
+      next if s.one_time? and s.detailed_date != d
+      next if s.weekly? and s.day_of_week != d.wday
+      puts s.schedules.collect{ |ss|
+        ss.location.nil? ? nil : ((ss.is_pickup_stop? ? "D" : "R") + ss.location.id.to_s)
+      }.compact.join(" -> ")
       s.schedules.each_with_index do |ss, ssi|
         # don't insert a duplicate log entry if one already exists
         # e.g. generating logs from a chain (D1->D2->R1->D3->R2)
@@ -31,24 +34,26 @@ module FoodRobot
         # D2 -> {R1}
         # D3 -> {R1}
         # D4 -> {R1}
+        next if ss.location.nil?
         next if not ss.is_pickup_stop?
-        check = Log.where('"when" = ? AND schedule_chain_id = ? AND donor_id = ?', d, s.id,ss.id)
+        check = Log.where('"when" = ? AND schedule_chain_id = ? AND donor_id = ?', d, s.id,ss.location.id)
         next if check.length > 0
-        stop_list = []
         log = Log.new
-        log.schedule_chain = s
+        log.schedule_chain_id = s.id
         log.volunteers = s.volunteers
-        log.donor = ss.location
+        log.donor_id = ss.location.id
         log.when = d
         log.region_id = s.region_id
         log.recipients
         s.schedules.each_with_index{ |ss2,ss2i|
+          next if ss2.location.nil?
           log.recipients << ss2.location if ss2i > ssi and not ss2.is_pickup_stop?
         }
         ss.schedule_parts.each{ |ssp|
-          log.log_parts << LogPart.new(food_type:ssp.food_type,required:ssp.required)
+          log.log_parts << LogPart.new(food_type_id:ssp.food_type.id,required:ssp.required)
         }
-        puts "D#{log.donor.id} -> {#{log.recipients.collect{ |x| "R#{x.id}" }.join(",")}}"
+        log.save
+        puts "\tD#{s.id} #{log.donor.id} -> {#{log.recipients.collect{ |x| "R#{x.id}" }.join(",")}}"
       end
 
     end

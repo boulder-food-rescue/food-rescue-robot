@@ -12,8 +12,7 @@ class CreateScheduleChains < ActiveRecord::Migration
 			c.integer :hilliness
 			c.references :scale_type
 			c.references :region
-      c.references :schedules
-			c.text :frequency
+      c.text :frequency
 			c.integer :day_of_week
 			c.integer :expected_weight
 			c.text :public_notes

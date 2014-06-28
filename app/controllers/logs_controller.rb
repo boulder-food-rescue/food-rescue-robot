@@ -175,6 +175,22 @@ class LogsController < ApplicationController
     end
   end
 
+  def show
+    @log = Log.find(params[:id])
+    respond_to do |format|
+      format.json {
+        attrs = {}
+        attrs[:log] = @log.attributes
+        attrs[:log][:recipient_ids] = @log.recipient_ids
+        attrs[:log][:volunteer_ids] = @log.volunteer_ids
+        attrs[:schedule] = @log.schedule_chain.attributes unless @log.schedule_chain.nil?
+        attrs[:log_parts] = {}
+        @log.log_parts.each{ |lp| attrs[:log_parts][lp.id] = lp.attributes }
+        render json: attrs
+      }
+    end
+  end
+
   def edit
     @log = Log.find(params[:id])
     unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
@@ -197,7 +213,10 @@ class LogsController < ApplicationController
 
     unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
-      redirect_to(root_path)
+      respond_to do |format|
+        format.json { render json: {:error => 1, :message => flash[:notice] } }
+        format.html { redirect_to(root_path) }
+      end
       return
     end
 
@@ -272,10 +291,10 @@ class LogsController < ApplicationController
 
     if current_volunteer.admin and !params[:volunteer_id].nil?
       # admin scheduling for someone else
-      pickups = Volunteer.find(params[:volunteer_id].to_i).schedules
+      pickups = Volunteer.find(params[:volunteer_id].to_i).active_schedule_chains
     else
       # scheduling for yourself
-      pickups = current_volunteer.schedules
+      pickups = current_volunteer.active_schedule_chains
     end
     
     n = 0
@@ -284,7 +303,7 @@ class LogsController < ApplicationController
       pickups.each{ |p|
         next unless from.wday.to_i == p.day_of_week.to_i
         # make sure we don't create more than one for the same absence
-        found = Log.where('"when" = ? AND schedule_id = ?',from,p.id)
+        found = Log.where('"when" = ? AND schedule_chain_id = ?',from,p.id)
         if found.length > 0
           nexisting += 1
           next
@@ -297,7 +316,7 @@ class LogsController < ApplicationController
         # create the null record
         lo = Log.new
         lo.log_volunteers << lv
-        lo.schedule = p
+        lo.schedule_chain = p
         lo.donor = p.donor
         lo.recipient = p.recipient
         lo.when = from
@@ -322,7 +341,14 @@ class LogsController < ApplicationController
     else
       flash[:notice] = "Cannot take shifts for regions that you aren't assigned to!"
     end
-    redirect_to :back
+    respond_to do |format|
+      format.json {
+        render json: {error: 0, message: flash[:notice]}
+      }
+      format.html {
+        redirect_to :back
+      }
+    end
   end
 
   def leave
@@ -330,7 +356,7 @@ class LogsController < ApplicationController
     if current_volunteer.in_region? log.region_id
       if log.has_volunteer? current_volunteer
         LogVolunteer.where(:volunteer_id=>current_volunteer.id, :log_id=>log.id).delete_all
-        flash[:notice] = "You are no longer on the pickup from "+log.donor.name+" to "+log.recipient.name+"."
+        flash[:notice] = "You are no longer on the pickup from "+log.donor.name+" to "+log.recipients.collect{ |r| r.name }.join(" and ")+"."
       else
         flash[:error] = "Cannot leave pickup since you're not part of it!"
       end

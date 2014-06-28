@@ -78,7 +78,6 @@ class Location < ActiveRecord::Base
   end
 
   def populate_detailed_hours_from_form params
-    return unless using_detailed_hours?
     (0..6).each do |index|
       prefix = "day"+index.to_s
       write_day_info(prefix+"_status", params[prefix]["status"].to_i)
@@ -126,10 +125,6 @@ class Location < ActiveRecord::Base
 
   private 
   
-    def using_detailed_hours? 
-      Webapp::Application.config.use_detailed_hours
-    end
-
     def detailed_hours_cannot_end_before_start
       (0..6).each do |index|
         if open_on_day? index
@@ -142,7 +137,6 @@ class Location < ActiveRecord::Base
     end
 
     def populate_detailed_hours_json_before_save
-      return unless using_detailed_hours?
       hours_info = {}
       (0..6).each do |index|
         prefix = "day"+index.to_s+"_"
@@ -160,7 +154,6 @@ class Location < ActiveRecord::Base
     end
 
     def init_detailed_hours
-      return unless using_detailed_hours?
       return if detailed_hours_json.nil?
       detailed_hours = JSON.parse(detailed_hours_json)
       return if detailed_hours.empty?

@@ -175,6 +175,22 @@ class LogsController < ApplicationController
     end
   end
 
+  def show
+    @log = Log.find(params[:id])
+    respond_to do |format|
+      format.json {
+        attrs = {}
+        attrs[:log] = @log.attributes
+        attrs[:log][:recipient_ids] = @log.recipient_ids
+        attrs[:log][:volunteer_ids] = @log.volunteer_ids
+        attrs[:schedule] = @log.schedule_chain.attributes unless @log.schedule_chain.nil?
+        attrs[:log_parts] = {}
+        @log.log_parts.each{ |lp| attrs[:log_parts][lp.id] = lp.attributes }
+        render json: attrs
+      }
+    end
+  end
+
   def edit
     @log = Log.find(params[:id])
     unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
@@ -197,7 +213,10 @@ class LogsController < ApplicationController
 
     unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
       flash[:notice] = "Not authorized to edit that log item."
-      redirect_to(root_path)
+      respond_to do |format|
+        format.json { render json: {:error => 1, :message => flash[:notice] } }
+        format.html { redirect_to(root_path) }
+      end
       return
     end
 
@@ -322,7 +341,14 @@ class LogsController < ApplicationController
     else
       flash[:notice] = "Cannot take shifts for regions that you aren't assigned to!"
     end
-    redirect_to :back
+    respond_to do |format|
+      format.json {
+        render json: {error: 0, message: flash[:notice]}
+      }
+      format.html {
+        redirect_to :back
+      }
+    end
   end
 
   def leave

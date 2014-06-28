@@ -33,7 +33,8 @@ class Log < ActiveRecord::Base
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :transport, :when, :scale_type_id,
                   :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes,
-                  :schedule_chain_id, :log_recipients_attributes
+                  :schedule_chain_id, :log_recipients_attributes,
+                  :id, :created_at, :updated_at, :complete, :recipient_ids, :volunteer_ids
 
   before_save { |record|
     return if record.region.nil?

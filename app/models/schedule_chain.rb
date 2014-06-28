@@ -6,6 +6,7 @@ class ScheduleChain < ActiveRecord::Base
 	has_many :schedules
   has_many :logs
 	belongs_to :transport_type
+  belongs_to :scale_type
 	belongs_to :region
 	
 	attr_accessible :region_id, :irregular, :backup, :transport_type_id,

@@ -5,6 +5,7 @@ class Region < ActiveRecord::Base
   has_many :scale_types
   has_many :schedules
 	has_many :locations
+  has_many :logs
 
   has_many :donors
   has_many :recipients

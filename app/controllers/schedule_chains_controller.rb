@@ -173,7 +173,7 @@ class ScheduleChainsController < ApplicationController
         schedule_volunteer = ScheduleVolunteer.new(:volunteer_id=>current_volunteer.id, :schedule_chain_id=>schedule.id)
         if schedule_volunteer.save
           collided_shifts = []
-          Log.where('schedule_id = ? AND "when" >= current_date AND NOT complete',schedule.id).each{ |l|
+          Log.where('schedule_chain_id = ? AND "when" >= current_date AND NOT complete',schedule.id).each{ |l|
             if l.volunteer.nil?
               l.volunteer = current_volunteer
               l.save
@@ -211,7 +211,14 @@ class ScheduleChainsController < ApplicationController
     else
       flash[:error] = "Cannot take that pickup since you are not a member of that region!"
     end
-    redirect_to :action=>'show', :id=>schedule.id
+    respond_to do |format|
+      format.json {
+        render json: {error: flash[:error].empty?, message: (flash[:notice] or flash[:error])}
+      }
+      format.html {
+        redirect_to :action=>'show', :id=>schedule.id
+      }
+    end
   end
 
   def admin_only

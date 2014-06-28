@@ -9,7 +9,7 @@ FactoryGirl.define do
     public_notes "Some public notes"
     hours "Some hours"
     region { (Region.all.count >= 5 ? Region.all.sort_by{ rand }.first : create(:region)) }
-    sequence(:name) { |n| "location#{n}@gmail.com" }
+    sequence(:email) { |n| "location#{n}@gmail.com" }
     phone "555-555-5555"
     equipment_storage_info "Or something"
     food_storage_info "Or something else"
@@ -17,12 +17,12 @@ FactoryGirl.define do
     exit_info "Blah!"
     onsite_contact_info "Some people"
 
-    factory :donor do
-      is_donor true
-    end
-
     factory :recipient do
       is_donor false
+    end
+
+    factory :donor do
+      is_donor true
     end
   end
 end

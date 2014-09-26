@@ -64,7 +64,7 @@ Log.joins(:log_parts).select("logs.id, sum(weight) as weight_sum").where("comple
   largest_pickup = l if largest_pickup.nil? or largest_pickup.weight_sum.to_f < l.weight_sum.to_f
 }
 largest_pickup = Log.find(largest_pickup.id) unless largest_pickup.nil?
-pickups_today = Schedule.where(:day_of_week => date.wday)
+pickups_today = ScheduleChain.where(:day_of_week => date.wday)
   
 #Recipient Stats
 recipient_count = Location.count(:conditions => {:is_donor => false})
@@ -167,34 +167,31 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
           <% if (largest_pickup != nil) && (not largest_pickup.volunteers.empty?) %>
             <div class="fun_fact">
               <h3>Largest Pickup</h3>
-              <%
-              donor = Location.find(largest_pickup.donor_id)
-              if donor.website != nil %>
-                <div>
-                  <p>
-                    <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food from
-                    <a href="<% donor.website %>"><%= donor.name %></a>
-                  </p>
-                </div>
-              <% else %>
-                <div>
-                  <p>
-                    <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food from <%= donor.name %>
-                  </p>
-                </div>
-              <%end%>
-          </div>
-        <% end %>
+              <div>
+                <p>
+                  <%= largest_pickup.volunteers.collect{ |v| v.name }.join(" and ") %> with <%= largest_pickup.summed_weight %> lbs of food
+                  <% unless largest_pickup.donor.nil? %>
+                    from <%= largest_pickup.donor.name %>
+                  <% end %>
+                </p>
+              </div>
+            </div>
+          <% end %>
         <div class="fun_fact">
           <h3>Volunteers Working Today</h3>
           <% 
           pickups_today.each do |pickup|
-            next if pickup.no_volunteers? or pickup.donor.nil?
-              if pickup.donor.website != nil%>
+            next if pickup.no_volunteers? or not pickup.functional?
+              if pickup.functional?%>
                 <div>
                   <p>
-                    <%= pickup.volunteers.collect{|v|v.name}.join ',' %>
-                     - <a href="<%= pickup.donor.website %>"><%= pickup.donor.name %></a>
+                    <%= pickup.volunteers.collect{|v|v.name}.join ',' %> - 
+										<% 
+										pickup.schedules.each do |stop| 
+											if stop.is_pickup_stop? %>
+												<a href="<%= stop.location.name %>"><%= stop.location.name %></a>, 
+											<% end 
+										end %>
                   </p>
                 </div>
             <% else %>
@@ -217,11 +214,12 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
                                   <%
                                   recips = Location.where(:is_donor => false)
                                   recips.each do |recip|
-                                    next if recip.name =~ /Individuals/i
-                                    if recip.website != nil%>
+                                    next if recip.name =~ /Individuals/i or recip.name.nil?
+                                    w = recip.website_url
+                                    unless w.nil? %>
                                       <div>
                                         <p class>
-                                          <a href="<%= recip.website %>"><%= recip.name %></a>
+                                          <a href="<%= w %>"><%= recip.name %></a>
                                         </p>
                                       </div>
                                     <% else %>
@@ -243,10 +241,11 @@ human_power_percent = 100.0*human_count.to_f/(total_trips-nil_values).to_f
           <% 
           donors = Location.where(:is_donor => true)
           donors.each do |donor|
-            if donor.website != nil%>
+            w = donor.website_url
+            if w != nil%>
               <div>
                 <p class> 
-                  <a href="<%= donor.website %>"><%= donor.name %></a>
+                  <a href="<%= w %>"><%= donor.name %></a>
                 </p>
               </div>
             <% else %>

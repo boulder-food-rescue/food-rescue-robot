@@ -43,10 +43,16 @@ class LocationsController < ApplicationController
     @loc = Location.find(params[:id])
     unless current_volunteer.super_admin? or (current_volunteer.region_ids.include? @loc.region_id)
       flash[:notice] = "Can't view location for a region you're not assigned to..."
-      redirect_to(root_path)
+      respond_to do |format|
+        format.json { render json: {:error => 0, :message => flash[:notice] } }
+      end
       return
     end
-    @json = @loc.to_gmaps4rails
+    respond_to do |format|
+      format.json {
+        render json: @loc.attributes
+      }
+    end
   end
 
   def destroy

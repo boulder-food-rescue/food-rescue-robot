@@ -25,7 +25,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> When </th>
     <th> Volunteer </th>
     <th> Donor </th>
-    <th> Recipient </th>
+    <th> Recipient(s) </th>
     <% unless current_page? :controller => "logs", :action => "open" %>
     <th> Weight </th>
     <th> Scale Used (original units) </th>
@@ -45,7 +45,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
       row_bgcolor = "pink"
     elsif !shift.volunteers.empty? and shift.volunteers.any?{ |v| v.needs_training }
       row_bgcolor = "lightgreen"
-    elsif shift.recipient.nil? or shift.donor.nil?
+    elsif shift.recipient.nil? or shift.donors.nil?
       row_bgcolor = "yellow"
     end
   %>
@@ -65,8 +65,8 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
            <%= render 'take_or_leave', :log=>shift %>
          <% end %>
     </td>
-    <td> <%= shift.donor != nil ? (link_to shift.donor.name, shift.donor) : ""%> </td>
-    <td> <%= shift.recipient != nil ? (link_to shift.recipient.name, shift.recipient) : "" %> </td>
+    <td> <%= shift.donor != nil ? (link_to shift.donor.name, shift.donor) : "" %> </td>
+    <td> <% shift.recipients.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %> </td>
     <% unless current_page? :controller => "logs", :action => "open" %>
     <td> <%= shift.complete ? shift.summed_weight : "?" %> lbs.</td>
     <td> <%= shift.scale_type.name unless shift.scale_type.nil? %>

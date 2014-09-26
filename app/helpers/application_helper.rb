@@ -8,10 +8,6 @@ module ApplicationHelper
     }.compact
   end
 
-  def use_detailed_hours?
-    Webapp::Application.config.use_detailed_hours
-  end
-
   def readable_time_until shift
     ret = shift.when.strftime("%b %e") + " ("
     if shift.when == Time.zone.today
@@ -29,22 +25,31 @@ module ApplicationHelper
   end
 
   def readable_start_time schedule
-    str = "unknown"
-    str = schedule.detailed_start_time.to_s(:clean_time) unless schedule.detailed_start_time.nil?
+    if schedule.is_a? ScheduleChain
+      schedule = schedule.schedules.first
+    end
+    str = 'unknown'
+    str = schedule.schedule_chain.detailed_start_time.to_s(:clean_time) unless schedule.schedule_chain.detailed_start_time.nil?
     str
   end
 
   def readable_stop_time schedule
-   str = "unknown"
-   str = schedule.detailed_stop_time.to_s(:clean_time) unless schedule.detailed_stop_time.nil?
-   str
+    if schedule.is_a? ScheduleChain
+      schedule = schedule.schedules.first
+    end
+    str = "unknown"
+    str = schedule.schedule_chain.detailed_stop_time.to_s(:clean_time) unless schedule.schedule_chain.detailed_stop_time.nil?
+    str
   end
 
   def readable_pickup_timespan schedule
+    if schedule.is_a? ScheduleChain
+      schedule = schedule.schedules.first
+    end
     str = "Pickup "
-    str+= "irregularly " if schedule.irregular
-    str+= "every "+Date::DAYNAMES[schedule.day_of_week]+" " if schedule.weekly? and !schedule.day_of_week.nil?
-    str+= "on "+schedule.detailed_date.to_s(:long_ordinal)+" " if schedule.one_time?
+    str+= "irregularly " if schedule.schedule_chain.irregular
+    str+= "every "+Date::DAYNAMES[schedule.schedule_chain.day_of_week]+" " if schedule.schedule_chain.weekly? and !schedule.schedule_chain.day_of_week.nil?
+    str+= "on "+schedule.schedule_chain.detailed_date.to_s(:long_ordinal)+" " if schedule.schedule_chain.one_time?
     str+= "between "
     str+= readable_start_time schedule
     str+= " and "

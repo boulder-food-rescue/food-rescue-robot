@@ -3,7 +3,7 @@ Hi <%= @volunteer.name %>,
 Just a quick reminder that you have <%= @logs.length == 1 ? "an" : "" %> upcoming shift<%= @logs.length > 1 ? "s" : "" %>:
 
 <% @logs.each{ |l| %>
- - <%= l.when.strftime("%A") %>: <%= l.donor.name %> to <%= l.recipient.name %> (<%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>)
+ - <%= l.when.strftime("%A") %>: <% l.donors.each do |donor| %> <%= donor.name %> &nbsp; <% end %> to <%= l.recipient.name %> (<%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>)
 <% } %>
 
 Thanks!

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140408172606) do
+ActiveRecord::Schema.define(:version => 20140611042411) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -78,6 +78,11 @@ ActiveRecord::Schema.define(:version => 20140408172606) do
   add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"
   add_index "log_parts", ["log_id"], :name => "index_log_parts_on_log_id"
 
+  create_table "log_recipients", :force => true do |t|
+    t.integer "log_id"
+    t.integer "recipient_id"
+  end
+
   create_table "log_volunteers", :force => true do |t|
     t.integer  "log_id"
     t.integer  "volunteer_id"
@@ -90,7 +95,6 @@ ActiveRecord::Schema.define(:version => 20140408172606) do
   add_index "log_volunteers", ["volunteer_id"], :name => "index_log_volunteers_on_volunteer_id"
 
   create_table "logs", :force => true do |t|
-    t.integer  "schedule_id"
     t.date     "when"
     t.text     "notes"
     t.integer  "num_reminders"
@@ -98,15 +102,13 @@ ActiveRecord::Schema.define(:version => 20140408172606) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.integer  "donor_id"
-    t.integer  "recipient_id"
     t.integer  "transport_type_id"
     t.integer  "region_id"
     t.boolean  "complete",          :default => false
     t.integer  "scale_type_id"
     t.string   "weight_unit"
+    t.integer  "schedule_chain_id"
   end
-
-  add_index "logs", ["schedule_id"], :name => "index_logs_on_schedule_id"
 
   create_table "regions", :force => true do |t|
     t.decimal  "lat"
@@ -148,6 +150,26 @@ ActiveRecord::Schema.define(:version => 20140408172606) do
     t.integer  "region_id"
   end
 
+  create_table "schedule_chains", :force => true do |t|
+    t.time    "detailed_start_time"
+    t.time    "detailed_stop_time"
+    t.date    "detailed_date"
+    t.integer "transport_type_id"
+    t.boolean "backup"
+    t.boolean "temporary"
+    t.boolean "irregular"
+    t.integer "difficulty_rating"
+    t.integer "hilliness"
+    t.integer "scale_type_id"
+    t.integer "region_id"
+    t.integer "schedules_id"
+    t.text    "frequency"
+    t.integer "day_of_week"
+    t.integer "expected_weight"
+    t.text    "public_notes"
+    t.text    "admin_notes"
+  end
+
   create_table "schedule_parts", :force => true do |t|
     t.integer  "schedule_id"
     t.integer  "food_type_id"
@@ -160,36 +182,21 @@ ActiveRecord::Schema.define(:version => 20140408172606) do
   add_index "schedule_parts", ["schedule_id"], :name => "index_schedule_parts_on_schedule_id"
 
   create_table "schedule_volunteers", :force => true do |t|
-    t.integer  "schedule_id"
     t.integer  "volunteer_id"
-    t.boolean  "active",       :default => true
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
+    t.boolean  "active",            :default => true
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+    t.integer  "schedule_chain_id"
   end
 
-  add_index "schedule_volunteers", ["schedule_id"], :name => "index_schedule_volunteers_on_schedule_id"
   add_index "schedule_volunteers", ["volunteer_id"], :name => "index_schedule_volunteers_on_volunteer_id"
 
   create_table "schedules", :force => true do |t|
-    t.integer  "recipient_id"
-    t.integer  "donor_id"
-    t.integer  "day_of_week"
-    t.text     "admin_notes"
-    t.text     "public_notes"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-    t.boolean  "irregular"
-    t.boolean  "backup"
-    t.integer  "transport_type_id"
-    t.integer  "region_id"
-    t.time     "detailed_start_time"
-    t.time     "detailed_stop_time"
-    t.date     "detailed_date"
-    t.text     "frequency"
-    t.boolean  "temporary",           :default => false
-    t.integer  "difficulty_rating"
-    t.integer  "expected_weight"
-    t.integer  "hilliness"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+    t.integer  "schedule_chain_id"
+    t.integer  "location_id"
+    t.integer  "position"
   end
 
   create_table "transport_types", :force => true do |t|
@@ -235,6 +242,7 @@ ActiveRecord::Schema.define(:version => 20140408172606) do
     t.boolean  "needs_training",         :default => true
     t.boolean  "assigned",               :default => false, :null => false
     t.integer  "requested_region_id"
+    t.string   "authentication_token"
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

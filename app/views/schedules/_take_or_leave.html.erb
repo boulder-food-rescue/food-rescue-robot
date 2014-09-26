@@ -1,7 +1,0 @@
-<% if schedule.has_volunteer? current_volunteer%>
-  <% if schedule.volunteers.length > 1 %> <!-- users wanted folks to only be able to leave shifts by contacting admin. FIXME: make this a per-region setting -->
-    <%= link_to "(Leave it)", :controller => "schedules", :action => "leave", :id => schedule %>
-  <% end %>
-<% else %>
-  <%=link_to (schedule.has_volunteers? ? 'Join it!' : 'Take it!'), :controller => "schedules", :action => "take", :id => schedule %>
-<% end %>

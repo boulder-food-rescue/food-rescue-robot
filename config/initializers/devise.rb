@@ -3,7 +3,7 @@
 Devise.setup do |config|
 
  # For devise 3.1
- #config.secret_key = '3cd770ec4e21f12a592de139fb8f40ba9eefb8fb6769b28223ab2dd8d543c3b5c34ae7cae346052d6c866fd17267786418d86a77eb2a57e426102be9559673a9'
+ config.secret_key = '3cd770ec4e21f12a592de139fb8f40ba9eefb8fb6769b28223ab2dd8d543c3b5c34ae7cae346052d6c866fd17267786418d86a77eb2a57edddd102be9559673a9'
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,

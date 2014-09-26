@@ -87,7 +87,7 @@ describe 'api' do
     l.volunteers << v
     l.save
 
-    auth_params = get_auth_params(v)
+    auth_params = get_a uth_params(v)
     get "/logs/#{l.id}.json", auth_params
     expect(last_response.status).to eq(200)
     json = JSON.parse(last_response.body)

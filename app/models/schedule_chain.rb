@@ -41,7 +41,11 @@ class ScheduleChain < ActiveRecord::Base
 	# does the schedule chain start with a pickup and end with a dropoff?
 	def functional?
 		self.schedules.first.is_pickup_stop? and not self.schedules.last.is_pickup_stop?
-	end
+  end
+
+  def mappable?
+    self.functional? and not self.schedules.any?{ |s| s.location.address.blank? }
+  end
 
   # list all the schedules that don't have active volunteers
   # clarification: (in my regions) and (temporary or (no volunteers and last stop is dropoff))

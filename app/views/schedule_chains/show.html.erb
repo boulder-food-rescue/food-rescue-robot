@@ -47,7 +47,6 @@
     <% unless @schedule.difficulty_rating.nil? %>
       <p><b>Overall Difficulty:</b> <%= ScheduleChain::Difficulty[@schedule.difficulty_rating] %></p>
     <% end %>
-    <br />
 
     <h3>Current Volunteers</h3>
     <p>
@@ -68,9 +67,8 @@
       <h3>Stops:</h3>
       <p>
 		<% @schedule.schedules.each do |stop| %>
-			        <%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %> <br>
-                    <% 3.times do %>&nbsp;<%end%> <!-- zealous DRY -->
-                    <%= stop.location.address %> <br>
+			        <h4><%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %> </h4>
+                    <blockquote><%= stop.location.address %></blockquote>
                     <% unless stop.location.entry_info.blank? %>
                         <p><strong>Entry:</strong> <%= stop.location.entry_info.gsub("\n","<br>").html_safe %></p>
                     <% end %>
@@ -81,10 +79,10 @@
                         <p><strong>Food:</strong> <%= stop.location.food_storage_info.gsub("\n","<br>").html_safe %></p>
                     <% end %>
                     <% unless stop.location.onsite_contact_info.blank? %>
-                        <p><strong>Contact:</strong> <%= stop.location.donor.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
+                        <p><strong>Contact:</strong> <%= stop.location.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
                     <% end %>
                     <% unless stop.location.exit_info.blank? %>
-                        <p><strong>Exit:</strong> <%= stop.location.donor.exit_info.gsub("\n","<br>").html_safe %></p>
+                        <p><strong>Exit:</strong> <%= stop.location.exit_info.gsub("\n","<br>").html_safe %></p>
                     <% end %>
         <% end %>
     <% end %>
@@ -92,7 +90,7 @@
   </div>
   <div class="span6">
 
-    <% if @schedule.functional? %>
+    <% if @schedule.mappable? %>
       <h2>Bicycling Directions</h2>
       <br/>
       <div style="width: 465px;">
@@ -108,4 +106,3 @@
   </div>
 
 </div>
-

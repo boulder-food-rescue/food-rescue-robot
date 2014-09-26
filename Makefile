@@ -3,6 +3,9 @@ devserver:
 prodserver:
 	bundle exec thin -e production start
 prodbounce:
+	sudo chmod -R 777 tmp public log
+	sudo chown -R www-data public tmp log
+	bundle exec rake assets:precompile
 	sudo /usr/bin/ruby1.9.1 /usr/bin/thin restart -C /etc/thin1.9.1/bfr.yml
 datasync:
 	ssh erichtho "pushd /var/www/bfr/bfr-webapp/;sudo chmod 777 log/development.log;rake db:data:dump"

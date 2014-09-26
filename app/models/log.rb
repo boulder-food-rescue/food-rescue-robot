@@ -1,12 +1,16 @@
 class Log < ActiveRecord::Base
-  belongs_to :schedule
+  belongs_to :schedule # FIXME: remove after migrate
+  belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id" # FIXME: remove after migration
+  belongs_to :food_type # FIXME: remove after migration
+
+  belongs_to :schedule_chain
   has_many :log_volunteers
   has_many :volunteers, :through => :log_volunteers,
            :conditions=>{"log_volunteers.active"=>true}
   has_many :active_log_volunteers, :conditions=>{"active" => true}, :class_name => "LogVolunteer"
+  has_many :log_recipients
+  has_many :recipients, :through => :log_recipients
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
-  belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id"
-  belongs_to :food_type
   belongs_to :scale_type
   belongs_to :transport_type
   belongs_to :region
@@ -14,24 +18,26 @@ class Log < ActiveRecord::Base
   has_many :food_types, :through => :log_parts
 
   accepts_nested_attributes_for :log_volunteers
+  accepts_nested_attributes_for :log_recipients
   accepts_nested_attributes_for :active_log_volunteers
+  accepts_nested_attributes_for :schedule
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
   validates :transport_type_id, presence: { if: :complete }
   validates :donor_id, presence: { if: :complete }
-  validates :recipient_id, presence: { if: :complete }
   validates :scale_type_id, presence: { if: :complete }
   validates :when, presence: true
 
-  attr_accessible :schedule_id, :region_id, :donor_id, :recipient_id,
+  attr_accessible :schedule_id, :region_id, :donor_id,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :transport, :when, :scale_type_id,
-                  :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes
-
-  after_save { |record| record.tweet }
+                  :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes,
+                  :schedule_chain_id, :log_recipients_attributes,
+                  :id, :created_at, :updated_at, :complete, :recipient_ids, :volunteer_ids
 
   before_save { |record|
+    return if record.region.nil?
     record.scale_type = record.region.scale_types.first if record.scale_type.nil? and record.region.scale_types.length == 1
     unless record.scale_type.nil?
       record.weight_unit = record.scale_type.weight_unit if record.weight_unit.nil?
@@ -51,6 +57,7 @@ class Log < ActiveRecord::Base
     record.log_volunteers.each{ |lv|
       lv.destroy if lv.volunteer_id.blank?
     }
+    record.tweet
   }
 
   def has_volunteers?
@@ -131,6 +138,10 @@ class Log < ActiveRecord::Base
     self.log_volunteers.collect{ |sv| (not sv.active) ? sv.volunteer : nil }.compact
   end
 
+  def owner_chain_id
+    self.schedule.nil? ? nil: self.schedule.schedule_chain_id
+  end
+
   TweetGainThreshold = 25000
   TweetTimeThreshold = 3600*24
   TweetGainOrTime = :gain
@@ -168,6 +179,7 @@ class Log < ActiveRecord::Base
            us to #{poundage.round} lbs of food rescued to date in #{self.region.name}."
       if self.donor.twitter_handle.nil?
         t += "Thanks to #{self.donor.name} for the donation!"
+
       else
         t += " Thanks to @#{self.donor.twitter_handle} for the donation!"
       end

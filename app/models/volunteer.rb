@@ -8,17 +8,17 @@ class Volunteer < ActiveRecord::Base
     :remember_me, :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, 
     :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, 
     :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id, :photo, :get_sncs_email, 
-    :needs_training, :assigned, :requested_region_id
+    :needs_training, :assigned, :requested_region_id, :authentication_token
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
   default_scope order('volunteers.name ASC')
 
   has_many :schedule_volunteers
-  has_many :schedules, :through=>:schedule_volunteers, 
+  has_many :schedule_chains, :through=>:schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>true}
   has_many :prior_schedules, :through=>:schedule_volunteers, 
-           :conditions=>{"schedule_volunteers.active"=>false}, :class_name=>"Schedule"
+           :conditions=>{"schedule_volunteers.active"=>false}, :class_name=>"ScheduleChain"
 
   has_many :log_volunteers
   has_many :logs, :through=>:log_volunteers,
@@ -26,6 +26,7 @@ class Volunteer < ActiveRecord::Base
   has_many :prior_logs, :through=>:log_volunteers,
            :conditions=>{"log_volunteers.active"=>false}, :class_name=>"Log"
 
+  before_save :ensure_authentication_token
   after_save :auto_assign_region
 
   # more trustworthy and self.assigned? attribute?
@@ -117,6 +118,27 @@ class Volunteer < ActiveRecord::Base
 
   def in_region? region_id
     self.region_ids.include? region_id
+  end
+
+  def ensure_authentication_token
+    if authentication_token.blank?
+      self.authentication_token = generate_authentication_token
+      self.save
+    end
+  end
+
+  def reset_authentication_token
+    self.authentication_token = generate_authentication_token
+    self.save
+  end
+
+  private
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless Volunteer.where(authentication_token: token).first
+    end
   end
 
 end

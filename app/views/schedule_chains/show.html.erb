@@ -1,0 +1,108 @@
+<div class="row-fluid">
+
+  <div class="span6">
+
+    <h2><%= if @schedule.functional?
+              if @schedule.recipient_stops.length == 1
+			    "Delivery to " + @schedule.schedules.last.location.name
+              else
+                routename = "Deliveries to "
+                @schedule.recipient_stops.each do |stop|
+                  routename += stop.location.name
+                  if stop != @schedule.recipient_stops.last
+                    routename += ", "
+                  end
+                end
+                routename
+              end
+		    else
+			  "?"
+		    end%></h2>
+
+    <% unless @schedule.next_pickup_time.nil? or not @schedule.functional? %>
+      <div class="pull-right">
+        <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=
+            <%=u "Food Rescue: #{@schedule.schedules.first.location.name} -> #{@schedule.schedules.last.location.name}" %>
+            &dates=<%=u @schedule.next_pickup_time[:start].gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @schedule.next_pickup_time[:stop].gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @schedule.public_notes%>&location=<%=u @schedule.schedules.first.location.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
+      </div>
+    <% end %>
+
+    <p>
+      <%= readable_pickup_timespan @schedule %>
+      <% unless @schedule.next_pickup_time.nil? %>
+        (next pickup <%= @schedule.next_pickup_time[:start].to_s(:long_ordinal) %>)
+      <% end %>
+      .
+    </p>
+
+    <% unless @schedule.public_notes.nil? or @schedule.public_notes.strip == "" %>
+      <p><b>Notes:</b> <%= word_wrap(@schedule.public_notes,:line_width => 80).gsub("\n","<br>").html_safe %></p>
+    <% end %>
+    <% unless @schedule.expected_weight.nil? %>
+      <p><b>Expected Weight:</b> <%= @schedule.expected_weight %> <em>(current mean = <%= @schedule.mean_weight %>, max = <%= @schedule.max_weight %>)</em></p>
+    <% end %>
+    <% unless @schedule.hilliness.nil? %>
+      <p><b>Hilliness:</b> <%= ScheduleChain::Hilliness[@schedule.hilliness] %></p>
+    <% end %>
+    <% unless @schedule.difficulty_rating.nil? %>
+      <p><b>Overall Difficulty:</b> <%= ScheduleChain::Difficulty[@schedule.difficulty_rating] %></p>
+    <% end %>
+
+    <h3>Current Volunteers</h3>
+    <p>
+      <% if @schedule.volunteers.count == 0 %>
+      No volunteers yet...
+      <b><%=link_to "take this scheduled pickup now!", :controller => "schedule_chains", :action => "take", :id => @schedule %></b>
+    <% else %>
+      <ul>
+        <% @schedule.volunteers.each do |volunteer| %>
+          <li><%= volunteer.name %></li>
+        <% end %>
+        <li><b><%= render 'take_or_leave', :schedule=>@schedule%></b></li>
+      </ul>
+    <% end %>
+    </p>
+		
+    <% if @schedule.functional? %>
+      <h3>Stops:</h3>
+      <p>
+		<% @schedule.schedules.each do |stop| %>
+			        <h4><%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %> </h4>
+                    <blockquote><%= stop.location.address %></blockquote>
+                    <% unless stop.location.entry_info.blank? %>
+                        <p><strong>Entry:</strong> <%= stop.location.entry_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+                    <% unless stop.location.equipment_storage_info.blank? %>
+                        <p><strong>Equipment:</strong> <%= stop.location.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+                    <% unless stop.location.food_storage_info.blank? %>
+                        <p><strong>Food:</strong> <%= stop.location.food_storage_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+                    <% unless stop.location.onsite_contact_info.blank? %>
+                        <p><strong>Contact:</strong> <%= stop.location.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+                    <% unless stop.location.exit_info.blank? %>
+                        <p><strong>Exit:</strong> <%= stop.location.exit_info.gsub("\n","<br>").html_safe %></p>
+                    <% end %>
+        <% end %>
+    <% end %>
+
+  </div>
+  <div class="span6">
+
+    <% if @schedule.mappable? %>
+      <h2>Bicycling Directions</h2>
+      <br/>
+      <div style="width: 465px;">
+        <iframe
+        width="600"
+        height="450"
+        frameborder="0" style="border:0"
+        src=<%= @embed_request_url %>>
+        </iframe>
+      </div>
+    <% end %>
+
+  </div>
+
+</div>

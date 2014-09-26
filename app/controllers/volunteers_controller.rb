@@ -268,11 +268,11 @@ class VolunteersController < ApplicationController
     end
     today = Time.zone.today
     
-    @open_shift_count = Schedule.open_in_regions(current_volunteer.region_ids).length
+    @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length
 
     #Upcoming pickup list
     @upcoming_pickups = Log.upcoming_for(current_volunteer.id)
-    @sncs_pickups =Log.needing_coverage(current_volunteer.region_ids)
+    @sncs_pickups = Log.needing_coverage(current_volunteer.region_ids)
     
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id,false)
@@ -284,20 +284,34 @@ class VolunteersController < ApplicationController
     @completed_pickup_count = Log.picked_up_by(current_volunteer.id).count
     @total_food_rescued = Log.picked_up_weight(nil,current_volunteer.id)
     @dis_traveled = 0.0
-    Log.picked_up_by(current_volunteer.id).each do |pickup|
-      if pickup.schedule != nil
-        donor = pickup.donor
-        recipient = pickup.recipient
-        unless donor.nil? or recipient.nil? or donor.lng.nil? or donor.lat.nil? or recipient.lat.nil? or recipient.lng.nil?
-          radius = 6371.0
-          dLat = (donor.lat - recipient.lat) * Math::PI / 180.0
-          dLon = (donor.lng - recipient.lng) * Math::PI / 180.0
-          lat1 = recipient.lat * Math::PI / 180.0
-          lat2 = donor.lat * Math::PI / 180.0
-          
-          a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
-          c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-          @dis_traveled += radius * c
+
+    #Distance travelled (attempts to be clever about assembling routes from logs)
+    finished_logs = Log.picked_up_by(current_volunteer.id, true)
+    finished_logs.each do |first_log|
+      chain_id = first_log.schedule.nil? ? nil : first_log.schedule.schedule_chain_id
+      gathered_places = []
+      finished_logs.select{ |log| log.owner_chain_id == chain_id }.each do |matching_log|
+        unless gathered_places.include? matching_log
+          gathered_places << matching_log.schedule.location unless matching_log.schedule.nil?
+        end
+        #nooo don't look at the ugly array manipulation
+        matching_log_array = []
+        matching_log_array << matching_log
+        finished_logs = (finished_logs - matching_log_array)
+      end
+      gathered_places.each_with_index do |loc_b, i|
+        gathered_places.each_with_index do |loc_a, j|
+          if i == (j+1)
+            radius = 6371.0
+            d_lat = (loc_a.lat - loc_b.lat) * Math::PI / 180.0
+            d_lon = (loc_a.lng - loc_b.lng) * Math::PI / 180.0
+            lat1 = loc_b.lat * Math::PI / 180.0
+            lat2 = lob_a.lat * Math::PI / 180.0
+
+            a = Math.sin(d_lat/2) * Math.sin(d_lat/2) + Math.sin(d_lon/2) * Math.sin(d_lon/2) * Math.cos(lat1) * Math.cos(lat2)
+            c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+            @dis_traveled += radius * c
+          end
         end
       end
     end
@@ -327,10 +341,10 @@ class VolunteersController < ApplicationController
       @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
     @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
-    @num_shifts = current_volunteer.schedules.count
+    @num_shifts = current_volunteer.schedule_chains.count
     @num_to_cover = Log.needing_coverage.count
     @num_upcoming = Log.upcoming_for(current_volunteer.id).count
-    @num_unassigned = Schedule.unassigned_in_regions(current_volunteer.assignments).count
+    @num_unassigned = ScheduleChain.unassigned_in_regions(current_volunteer.assignments).count
     render :home
   end
 end

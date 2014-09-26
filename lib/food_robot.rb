@@ -4,30 +4,59 @@ require 'csv'
 module FoodRobot 
   
   # Set to true to disable emailing and just print the emails to STDOUT
-  @@DontDeliverEmails = false
+  @@DontDeliverEmails = true
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule
-  def self.generate_log_entries(d=Time.zone.today)
+  def self.generate_log_entries(d = Time.zone.today)
     n = 0
-    Schedule.where("day_of_week = ?",d.wday).each{ |s|
-      next if s.recipient.nil? or s.donor.nil? 
-      next if s.irregular
-      # don't insert a duplicate log entry if one already exists
-      check = Log.where('"when" = ? AND schedule_id = ?',d,s.id)
-      next if check.length > 0
-      # create each scheduled log entry for the given day
-      log = Log.new{ |l|
-        l.schedule = s
-        l.volunteers = s.volunteers
-        l.donor = s.donor
-        l.recipient = s.recipient
-        l.region = s.region
-        l.when = d
-        l.food_types = s.food_types
-      }
-      n += 1 if log.save
-    }
+    ScheduleChain.where("NOT irregular").each do |s|
+      # don't generate logs for malformed schedules
+      next unless s.functional?
+      # things that are relevant to this day
+      next if s.one_time? and s.detailed_date != d
+      next if s.weekly? and s.day_of_week != d.wday
+      puts s.schedules.collect{ |ss|
+        ss.location.nil? ? nil : ((ss.is_pickup_stop? ? "D" : "R") + ss.location.id.to_s)
+      }.compact.join(" -> ")
+      s.schedules.each_with_index do |ss, ssi|
+        # don't insert a duplicate log entry if one already exists
+        # e.g. generating logs from a chain (D1->D2->R1->D3->R2)
+        # results in two logs
+        #
+        # D1 -> {R1,R2}
+        # D2 -> {R1,R2}
+        # D3 -> {R2}
+        #
+        # and (D1->D2->D3->D4->R1) will be four logs:
+        #
+        # D1 -> {R1}
+        # D2 -> {R1}
+        # D3 -> {R1}
+        # D4 -> {R1}
+        next if ss.location.nil?
+        next if not ss.is_pickup_stop?
+        check = Log.where('"when" = ? AND schedule_chain_id = ? AND donor_id = ?', d, s.id,ss.location.id)
+        next if check.length > 0
+        log = Log.new
+        log.schedule_chain_id = s.id
+        log.volunteers = s.volunteers
+        log.donor_id = ss.location.id
+        log.when = d
+        log.region_id = s.region_id
+        log.recipients
+        s.schedules.each_with_index{ |ss2,ss2i|
+          next if ss2.location.nil?
+          log.recipients << ss2.location if ss2i > ssi and not ss2.is_pickup_stop?
+        }
+        ss.schedule_parts.each{ |ssp|
+          log.log_parts << LogPart.new(food_type_id:ssp.food_type.id,required:ssp.required)
+        }
+        log.save
+        puts "\tD#{s.id} #{log.donor.id} -> {#{log.recipients.collect{ |x| "R#{x.id}" }.join(",")}}"
+      end
+
+    end
     return n
   end
 

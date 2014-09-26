@@ -1,7 +1,7 @@
 These shifts are coming up and need to be covered...
 
 <% @logs.each{ |l| %>
-  <%= l.when.strftime("%A") %> <%= readable_start_time(l.schedule) + " - " + readable_stop_time(l.schedule) unless l.schedule.nil? %>: <%= l.donor.nil? ? "?" : l.donor.name %> -> <%= l.recipient.nil? ? "?" : l.recipient.name %> <%= "(" + l.food_types.collect{ |ft| ft.name }.join(",") + ")" unless l.food_types.length == 0 %>
+  <%= l.when.strftime("%A") %> <%= readable_start_time(l.schedule) + " - " + readable_stop_time(l.schedule) unless l.schedule.nil? %>: <% l.donors.each do |donor| %> <%= donor.name %> &nbsp; <% end %> -> <%= l.recipient.nil? ? "?" : l.recipient.name %> <%= "(" + l.food_types.collect{ |ft| ft.name }.join(",") + ")" unless l.food_types.length == 0 %>
 <% } %> 
 
 Thanks!

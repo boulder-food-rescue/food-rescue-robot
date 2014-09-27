@@ -86,12 +86,7 @@
 <% content_for :scripts do %>
 <script type="text/javascript" charset="utf-8">
 jQuery(document).ready(function(){
-  jQuery('.select2').select2({
-    width:'element',
-    placeholder:'',
-    allowClear:true,
-    minimumResultsForSearch: -1
-  });
+  //$('.select2').select2({'width':'element'});
   $('#schedule_chain_frequency').bind('change',function(){
     $('.frequency-option').hide();
     var selectedOption = $('#schedule_chain_frequency').find(':selected').val();
@@ -99,5 +94,6 @@ jQuery(document).ready(function(){
   });
   $('#schedule_chain_frequency').change();
 });
+document.activeElement.blur();
 </script>
 <% end %>

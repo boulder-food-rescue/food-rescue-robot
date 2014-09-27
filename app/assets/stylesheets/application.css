@@ -10,6 +10,8 @@
  *
  *= require active_scaffold
  *= require dataTables/jquery.dataTables
- *= require select2
- *= require_tree .
+ *= require common
+ *= require devise
+ *= require main
+ *= require bootstrap_and_overrides
  */

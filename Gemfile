@@ -33,6 +33,7 @@ end
 
 # mobile-friendly template
 gem 'twitter-bootstrap-rails'
+#gem 'bootstrap-sass', '~> 3.2.0'
 gem 'rails_bootstrap_navbar'
 
 # lets us use the ubiquitous jquery javascript library
@@ -71,7 +72,7 @@ gem "highcharts-rails", "~> 3.0.0"
 gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-rails.git'
 
 # pretty select form elements
-gem 'select2-rails'
+#gem 'select2-rails'
 
 # nested selecitons of volunteers on schedules
 gem 'cocoon'

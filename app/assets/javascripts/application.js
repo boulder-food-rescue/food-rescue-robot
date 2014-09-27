@@ -14,9 +14,9 @@
 //= require jquery_ujs
 //= require twitter/bootstrap
 //= require dataTables/jquery.dataTables
-//= require highcharts
 //= require select2
-//= require active_scaffold
 //= require browser_timezone_rails/application.js
 //= require cocoon
-//= require_tree .
+//= require highcharts
+//= require active_scaffold
+//= require facts

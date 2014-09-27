@@ -103,11 +103,19 @@ class Log < ActiveRecord::Base
       where("\"when\" < ?",Time.zone.today)
   end
 
-  def self.needing_coverage region_id_list=nil
+  def self.needing_coverage(region_id_list=nil,days_away=nil)
     unless region_id_list.nil?
-      Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).reject{ |l| l.has_volunteers? }
+      if days_away.nil?
+        Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).reject{ |l| l.has_volunteers? }
+      else
+        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).where(:region_id=>region_id_list).reject{ |l| l.has_volunteers? }
+      end
     else
-      Log.where("\"when\" >= ?",Time.zone.today).reject{ |l| l.has_volunteers? }
+      if days_away.nil?
+        Log.where("\"when\" >= ?",Time.zone.today).reject{ |l| l.has_volunteers? }
+      else
+        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).reject{ |l| l.has_volunteers? }
+      end
     end
   end
 

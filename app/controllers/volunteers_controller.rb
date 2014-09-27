@@ -272,7 +272,7 @@ class VolunteersController < ApplicationController
 
     #Upcoming pickup list
     @upcoming_pickups = Log.upcoming_for(current_volunteer.id)
-    @sncs_pickups = Log.needing_coverage(current_volunteer.region_ids)
+    @sncs_pickups = Log.needing_coverage(current_volunteer.region_ids,7)
     
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id,false)

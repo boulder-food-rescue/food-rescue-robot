@@ -3,7 +3,7 @@
   <%= hidden_field_tag "schedule_chain[region_id]", @region.id %>
 
   <table>
-   <tr><td>Frequency</td>
+    <tr><td>Frequency</td>
       <td>
       <%= f.select(:frequency, options_for_select(
           {'Weekly'=>'weekly', 'One Time'=>'one-time'})) %>
@@ -46,14 +46,13 @@
           <div id="add_stop_button">
           <%= link_to_add_association 'add another stop', f, :schedules, {:class=>'btn','data-association-insertion-method' => 'before','data-association-insertion-node' => '#add_stop_button'} %>
           </div>
-
     <tr><td>Hilliness</td>
         <td><%= f.select(:hilliness, ScheduleChain::Hilliness.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{:class => "select2"}) %></td>
     </tr>
     <tr><td>Expected Weight<br /><span class="subtext">Typical weight observed on pickup. Current mean = <%= @schedule.mean_weight.nil? ? "Unknown" : @schedule.mean_weight.round %>, max = <%= @schedule.max_weight.nil? ? "Unknown" : @schedule.max_weight.round %>.</span></td>
         <td><%= f.text_field(:expected_weight, :size => "30x6") %></td>
     </tr>
-   <tr><td>Overall Difficulty</td>
+    <tr><td>Overall Difficulty</td>
         <td><%= f.select(:difficulty_rating, ScheduleChain::Difficulty.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{:class => "select2"}) %></td>
     </tr>
     <tr><td>Public Notes<br /><span class="subtext">Notes visible to everyone</span></td>

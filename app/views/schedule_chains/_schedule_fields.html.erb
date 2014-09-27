@@ -6,4 +6,5 @@
   </div>
   <div style="display:table-cell"><%= f.text_field :position, :size => "4" %></div>
   <div style="display:table-cell"><%= f.select :food_type_ids, @region.food_types.collect {|x| [x.name, x.id]}, {}, :multiple => true %></div>
+  <button onclick="$(this).parent().remove();">Remove</button>
 </div>

@@ -162,7 +162,6 @@ ActiveRecord::Schema.define(:version => 20140611042411) do
     t.integer "hilliness"
     t.integer "scale_type_id"
     t.integer "region_id"
-    t.integer "schedules_id"
     t.text    "frequency"
     t.integer "day_of_week"
     t.integer "expected_weight"

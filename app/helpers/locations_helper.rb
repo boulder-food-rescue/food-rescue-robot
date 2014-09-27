@@ -9,13 +9,7 @@ module LocationsHelper
   end
 
   def readable_hours location
-    str = ""
-    if Webapp::Application.config.use_detailed_hours 
-      str = readable_detailed_hours location
-    else
-      str = readable_simple_hours location
-    end
-    str
+    readable_detailed_hours location
   end
 
   private 

@@ -3,8 +3,8 @@ class Region < ActiveRecord::Base
   has_many :volunteers, :through => :assignments
   has_many :food_types
   has_many :scale_types
-  has_many :schedules
-	has_many :locations
+  has_many :schedule_chains
+  has_many :locations
   has_many :logs
 
   has_many :donors
@@ -17,7 +17,7 @@ class Region < ActiveRecord::Base
   has_attached_file :logo, :styles => { :thumb => "50x50" }
 
   def active_volunteer_count
-    volunteers = self.schedules.collect_concat {|schedule| schedule.volunteers }
+    volunteers = self.schedule_chains.collect_concat {|schedule| schedule.volunteers }
     volunteers.uniq.count
   end
 

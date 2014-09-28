@@ -47,7 +47,7 @@
         <% if volunteer_signed_in? %>
 
           <%= drop_down "Shifts" do %>
-            <%= menu_item "Open Shifts", open_schedule_chains_path %>
+            <%= menu_item "Open Regular Shifts", open_schedule_chains_path %>
             <%= menu_item "Cover Shifts", open_logs_path %>
             <%= menu_item "Your Regular Shifts", mine_schedule_chains_path %>
             <%= menu_item "Your Upcoming Shifts", mine_upcoming_logs_path %>

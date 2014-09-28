@@ -32,7 +32,6 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Transport Type </th>
     <th> Food Type </th>
     <% end %>
-    <th> Original Volunteer </th>
     <th> Notes </th>
     <th> Link </th>
   </tr>
@@ -74,7 +73,6 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types.collect{ |ft| ft.name }.join(", ") unless shift.food_types.length == 0 %>
     <% end %>
-    <td><%= shift.prior_volunteers.compact.map{ |v| link_to(v.name, v) }.join(" and ").html_safe %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
     <td><% if current_volunteer.any_admin?(shift.region) %>
         <%= link_to "edit", edit_log_path(shift) %><br>

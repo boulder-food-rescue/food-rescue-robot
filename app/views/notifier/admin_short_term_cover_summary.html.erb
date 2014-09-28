@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+
+<p>
+  Short-term Shift Coverers!
+</p>
+<p>
+  These shifts are coming up and need to be covered...
+</p>
+<ul>
+  <% @logs.each{ |l| %>
+    <li><%= l.when.strftime("%A") %>: <% l.donors.each do |donor| %> <%= donor.name %> &nbsp; <% end %> to <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ")} %>
+      <ul>
+        <li>Food Types: (<%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>
+        <li><%= link_to "Info Link", schedule_chain_url(@log.schedule_chain) %>
+        <li><%= link_to "Data Reporting Link", log_url(@log) %>
+      </ul>
+  <% } %>
+</ul>
+<p>
+  Thanks!
+</p>
+<p>
+  *chirp* *beep*
+</p>
+--<br/>
+The Food Rescue Robot<br/>
+http://robot.boulderfoodrescue.org
+</body>
+</html>

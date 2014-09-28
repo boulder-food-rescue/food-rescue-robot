@@ -1,1 +1,1 @@
-Upcoming pickups: <%= @logs.collect{ |l|  "#{l.when.strftime("%A")}: To #{l.recipient.name} #{l.food_types.length == 0 ? "Miscellany": l.food_types.collect{ |ft| ft.name }.join(",")}" }.join(" :: ") %>
+Upcoming pickups: <%= @logs.collect{ |l| "#{l.when.strftime("%A")}: To #{l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ")} #{l.food_types.length == 0 ? "Miscellany": l.food_types.collect{ |ft| ft.name }.join(",")}" }.join(" :: ") %>

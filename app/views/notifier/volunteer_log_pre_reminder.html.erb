@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+
+Hi <%= @volunteer.name %>,
+<p>
+Just a quick reminder that you have <%= @logs.length == 1 ? "an" : "" %> upcoming shift<%= @logs.length > 1 ? "s" : "" %>:
+</p>
+<ul>
+<% @logs.each{ |l| %>
+  <li><%= l.when.strftime("%A") %>: <%= l.donor.nil? ? "?" : l.donor.name %> to <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ") %>
+    <ul>
+      <li>Food Types: (<%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>
+      <li><%= link_to "Info Link", schedule_chain_url(@log.schedule_chain) %>
+      <li><%= link_to "Data Reporting Link", log_url(@log) %>
+    </ul>
+<% } %>
+</ul>
+<p>
+Thanks!
+</p>
+<p>
+*chirp* *beep*
+</p>
+--<br/>
+The Food Rescue Robot<br/>
+http://robot.boulderfoodrescue.org
+</body>
+</html>

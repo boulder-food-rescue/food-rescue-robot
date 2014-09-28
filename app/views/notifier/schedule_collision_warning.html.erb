@@ -1,14 +1,34 @@
-Hi there,
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
 
+<p>
+  Hi there,
+</p>
+
+<p>
 <%= @schedule.volunteers.last.name %> just picked up a regular shift (#<%= @schedule.id %>), from <%= @schedule.schedules.first.location.name %> to <%= @schedule.schedules.first.location.name %> on <%= @schedule.day_of_week.nil? ? "(any day)" : Date::DAYNAMES[@schedule.day_of_week] %> at <%= readable_start_time(@schedule) %>-<%= readable_stop_time(@schedule) %>.
+</p>
 
+<p>
 The issue is that the following volunteers are already scheduled to cover this shift in the coming days/weeks:
-
+</p>
+<ul>
 <% @shifts.each do |shift| %>
-  * <%= shift.when %> (<%= time_ago_in_words(shift.when) %> from now): <%= shift.volunteer.name %>
+  <li><%= shift.when %> (<%= time_ago_in_words(shift.when) %> from now): <%= shift.volunteer.name %></li>
 <% end %>
-
-So, yeah, good luck with that!
-
---
-The Food Robot
+</ul>
+<p>
+  Thanks!
+</p>
+<p>
+  *chirp* *beep*
+</p>
+--<br/>
+The Food Rescue Robot<br/>
+http://robot.boulderfoodrescue.org
+</body>
+</html>

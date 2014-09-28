@@ -3,7 +3,7 @@ Webapp::Application.configure do
   config.time_zone = 'Mountain Time (US & Canada)'
 
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { :host => 'alpha.boulderfoodrescue.org' }
+  config.action_mailer.default_url_options = { :host => 'robot.boulderfoodrescue.org' }
   config.action_mailer.delivery_method = :sendmail
 
   # Code is not reloaded between requests

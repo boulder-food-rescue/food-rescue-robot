@@ -8,7 +8,7 @@ also logs how much food is rescued, and can automatically issue receipts for don
 
 == Who uses it? (And how can I?)
 
-Currently, the "Food Rescue Robot" is live at http://alpha.boulderfoodrescue.org
+Currently, the "Food Rescue Robot" is live at http://robot.boulderfoodrescue.org
 and is used by 10 cities around the world. If you're keen to use it, shoot an email to caleb at boulder food rescue (dot) org, and I can set you up with an account. Alternatively, if you would like to fork the source and hack on it yourself you are welcome to. This code is licensed under a Beerware-style license:
 
   As long as you retain this notice you can do whatever you want with this stuff.

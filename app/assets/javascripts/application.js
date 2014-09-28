@@ -18,4 +18,4 @@
 //= require active_scaffold
 //= require browser_timezone_rails/application.js
 //= require cocoon
-//= require_tree .
+//= require facts

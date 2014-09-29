@@ -13,7 +13,7 @@ These volunteers need to enter their data:
 </p>
 <ul>
 <% @logs.each{ |l| %>
-  <li><%= l.volunteers.blank? ? "?" : l.volunteers.collect{ |v| v.name }.join(" and ") %>, <%= l.donors.nil? ? "Unknown" : l.donor.name %> -> <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ")} %> on <%= l.when %> (<%= l.num_reminders %> reminders sent)</li>
+  <li><%= l.volunteers.blank? ? "?" : l.volunteers.collect{ |v| v.name }.join(" and ") %>, <%= l.donor.nil? ? "Unknown" : l.donor.name %> -&gt; <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ") %> on <%= l.when %> (<%= l.num_reminders %> reminders sent)</li>
 <% } %>
 </ul>
 <p>

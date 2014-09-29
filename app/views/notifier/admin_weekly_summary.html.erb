@@ -4,20 +4,19 @@
   <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
 </head>
 <body>
-
 <p>
-  Robot Admins! This is your weekly summary.
+  Robot Admins! This is your weekly summary :)
 </p>
 <p>
 Last week, there were <%= @num_logs %> scheduled pick-ups.
 We have data entered for <%= @num_entered %> of those.
 </p>
 <p>
-We picked up /at least/ <%= @lbs %> pounds of food.
+We picked up <em>at least</em> <strong><%= @lbs %> pounds</strong> of food.
 </p>
 <p>
-The biggest pickup was <%= @biggest.summed_weight %> lbs, done by <% if @biggest.volunteers.length != 1 %> <% @biggest.volunteers.each do |vol| %> <%= vol == @biggest.volunteers.last ? ('and ' + vol.name) : (vol.name + ', ') %> <% end else %> <%= @biggest.volunteers.first.name %> <% end %>
-from <% if @biggest.donors.length != 1 %> <% @biggest.donors.each do |don| %> <%= don == @biggest.donors.last ? ('and ' + don.name) : (don.name + ', ') %> <% end else %> <%= @biggest.donors.first.name %> <% end %> to <%= @biggest.recipient.name %> on <%= @biggest.when.strftime('%A') %>.
+The biggest pickup was <%= @biggest.summed_weight %> lbs, done by <%= @biggest.volunteers.collect{ |v| v.nil? ? "Unknown" : v.name }.compact.join(", ") %>
+from <%= @biggest.donor.nil? ? "Unknown" : @biggest.donor.name %> to <%= @biggest.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ") %> on <%= @biggest.when.strftime('%A') %>.
 </p>
 <% if @flagged_logs.length > 0 %>
   <p style="font-weight: bold;">
@@ -25,7 +24,7 @@ from <% if @biggest.donors.length != 1 %> <% @biggest.donors.each do |don| %> <%
   </p>
   <ul>
   <% @flagged_logs.each{ |l| %>
-    <li><%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %> for <%= l.summed_weight %> lbs</li>
+    <li><%= l.donor.nil? ? "Unknown" : l.donor.name %> -&gt; <%= l.recipients.collect{ |e| e.nil? ? nil : e.name }.compact.join(", ") %> on <%= l.when %> for <%= l.summed_weight %> lbs</li>
       <ul>
         <li>Volunteers:
         <% l.volunteers.each{ |v| %>
@@ -37,15 +36,19 @@ from <% if @biggest.donors.length != 1 %> <% @biggest.donors.each do |don| %> <%
     </li>
   <% } %>
   </ul>
+<% else %>
+<p>
+There were no flagged logs this week.
+</p>
 <% end %>
 
-<% if @flagged_logs.length > 0 %>
+<% if @zero_logs.length > 0 %>
   <p style="font-weight: bold;">
     These logs were completed with zero pounds (problems!?):
   </p>
   <ul>
-    <% @zero_flagged_logs.each{ |l| %>
-      <li><%= l.donor.name %> -> <%= l.recipient.name %> on <%= l.when %> for <%= l.summed_weight %> lbs</li>
+    <% @zero_logs.each{ |l| %>
+      <li><%= l.donor.name %> -&gt; <%= l.recipients.collect{ |e| e.nil? ? nil : e.name }.compact.join(", ") %> on <%= l.when %> for <%= l.summed_weight %> lbs</li>
       <ul>
         <li>Volunteers:
           <% l.volunteers.each{ |v| %>
@@ -57,8 +60,11 @@ from <% if @biggest.donors.length != 1 %> <% @biggest.donors.each do |don| %> <%
       </li>
     <% } %>
   </ul>
+<% else %>
+<p>
+There were no zero-weight logs this week.
+</p>
 <% end %>
-
 
 <p>
   Thanks!

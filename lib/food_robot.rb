@@ -4,7 +4,7 @@ require 'csv'
 module FoodRobot 
   
   # Set to true to disable emailing and just print the emails to STDOUT
-  @@DontDeliverEmails = true
+  @@DontDeliverEmails = false
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule
@@ -176,6 +176,7 @@ module FoodRobot
       num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?',r.id,Time.zone.today-7,Time.zone.today).count
       num_entered = 0
       next unless num_logs > 0
+      puts num_logs
       zero_logs = []
       Log.joins(:log_parts).select("sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin").where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Time.zone.today-7,Time.zone.today).group("logs.id, flag_for_admin").each{ |l|
         lbs += l.weight_sum.to_f

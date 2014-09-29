@@ -13,11 +13,11 @@
 </p>
 <ul>
   <% @logs.each{ |l| %>
-    <li><%= l.when.strftime("%A") %>: <% l.donors.each do |donor| %> <%= donor.name %> &nbsp; <% end %> to <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ")} %>
+    <li><%= l.when.strftime("%A") %>: <%= l.donor.nil? ? "Unknown" : l.donor.name %> to <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ") %>
       <ul>
         <li>Food Types: (<%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>
-        <li><%= link_to "Info Link", schedule_chain_url(@log.schedule_chain) %>
-        <li><%= link_to "Data Reporting Link", log_url(@log) %>
+        <li><%= link_to "Info Link", schedule_chain_url(l.schedule_chain) %>
+        <li><%= link_to "Data Reporting Link", log_url(l) %>
       </ul>
   <% } %>
 </ul>

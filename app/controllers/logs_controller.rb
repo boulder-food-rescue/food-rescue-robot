@@ -289,42 +289,10 @@ class LogsController < ApplicationController
       return
     end
 
-    if current_volunteer.admin and !params[:volunteer_id].nil?
-      # admin scheduling for someone else
-      pickups = Volunteer.find(params[:volunteer_id].to_i).active_schedule_chains
-    else
-      # scheduling for yourself
-      pickups = current_volunteer.active_schedule_chains
-    end
-    
     n = 0
     nexisting = 0
     while from <= to
-      pickups.each{ |p|
-        next unless from.wday.to_i == p.day_of_week.to_i
-        # make sure we don't create more than one for the same absence
-        found = Log.where('"when" = ? AND schedule_chain_id = ?',from,p.id)
-        if found.length > 0
-          nexisting += 1
-          next
-        end
-
-        lv = LogVolunteer.new
-        lv.active = false
-        lv.volunteer = volunteer
-
-        # create the null record
-        lo = Log.new
-        lo.log_volunteers << lv
-        lo.schedule_chain = p
-        lo.donor = p.donor
-        lo.recipient = p.recipient
-        lo.when = from
-        lo.food_types = p.food_types
-        lo.region = p.region
-        lo.save
-        n += 1
-      }
+      n += FoodRobot::generate_log_entries(from,volunteer)
       break if n >= 12      
       from += 1
     end

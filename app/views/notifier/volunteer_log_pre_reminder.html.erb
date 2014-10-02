@@ -15,7 +15,7 @@ Just a quick reminder that you have <%= @logs.length == 1 ? "an" : "" %> upcomin
     <ul>
       <li>Food Types: <%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>
       <li><%= link_to "Info Link", schedule_chain_url(l.schedule_chain) %>
-      <li><%= link_to "Data Reporting Link", log_url(l) %>
+      <li><%= link_to "Data Reporting Link", edit_log_url(l) %>
     </ul>
 <% } %>
 </ul>

@@ -14,7 +14,7 @@ Hi <%= @volunteer.name %>,
   <% @logs.each{ |l| %>
     <li><%= l.when %>: <%= l.donor.nil? ? "?" : l.donor.name %> to <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ") %>
       <ul>
-        <li><%= link_to "Click Here!", log_url(l) %> to enter this data and stop getting these emails!
+        <li><%= link_to "Click Here!", edit_log_url(l) %> to enter this data and stop getting these emails!
         <li>Food Types: <%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>
         <li>This is your <strong><%= l.num_reminders.ordinalize %> reminder</strong>.</li>
       </ul>

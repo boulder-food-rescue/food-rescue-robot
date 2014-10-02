@@ -8,9 +8,12 @@ module FoodRobot
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule
-  def self.generate_log_entries(d = Time.zone.today)
+  def self.generate_log_entries(d = Time.zone.today,v = nil)
     n = 0
     ScheduleChain.where("NOT irregular").each do |s|
+      # if volunteer is specified, we're generating an absence so proceed with ones for
+      # whom that volunteer is the only volunteer
+      next unless v.nil? or (s.volunteers.include?(v) and s.volunteers.length == 1)
       # don't generate logs for malformed schedules
       next unless s.functional?
       # things that are relevant to this day
@@ -40,7 +43,11 @@ module FoodRobot
         next if check.length > 0
         log = Log.new
         log.schedule_chain_id = s.id
-        log.volunteers = s.volunteers
+        unless v.nil?
+          log.volunteers = []
+        else
+          log.volunteers = s.volunteers
+        end
         log.donor_id = ss.location.id
         log.when = d
         log.region_id = s.region_id
@@ -53,9 +60,9 @@ module FoodRobot
           log.log_parts << LogPart.new(food_type_id:ssp.food_type.id,required:ssp.required)
         }
         log.save
+        n += 1
         puts "\tD#{s.id} #{log.donor.id} -> {#{log.recipients.collect{ |x| "R#{x.id}" }.join(",")}}"
       end
-
     end
     return n
   end

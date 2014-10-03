@@ -44,14 +44,14 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
       row_bgcolor = "pink"
     elsif !shift.volunteers.empty? and shift.volunteers.any?{ |v| v.needs_training }
       row_bgcolor = "lightgreen"
-    elsif shift.recipient.nil? or shift.donors.nil?
+    elsif shift.donor.nil? or shift.recipients.empty?
       row_bgcolor = "yellow"
     end
   %>
   <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
     <td> <%= shift.when.strftime("%Y-%m-%d") %>
-    <td> <% unless shift.schedule.nil? %>
-         <button class="info" onclick="window.location='/schedules/<%= shift.schedule.id %>';">Info</button>
+    <td> <% unless shift.schedule_chain.nil? %>
+         <button class="info" onclick="window.location='/schedule_chains/<%= shift.schedule_chain.id %>';">Info</button>
          <% end %>
     <td> <%= readable_time_until shift %></td>
     <td <% if shift.volunteers.empty? %>style="background: yellow;text-align: center;"<% end %>>

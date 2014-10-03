@@ -6,10 +6,9 @@ class Schedule < ActiveRecord::Base
   has_many :volunteers, :through => :schedule_volunteers
   has_many :logs
 
-	belongs_to :location
-
-	belongs_to :schedule_chain
-	ranks :position, :with_same => :schedule_chain_id
+  belongs_to :location
+  belongs_to :schedule_chain
+  ranks :position, :with_same => :schedule_chain_id
   default_scope order('position ASC')
 
   has_many :schedule_parts
@@ -20,9 +19,8 @@ class Schedule < ActiveRecord::Base
   attr_accessible :food_type_ids, :location_id, :public_notes, :admin_notes, :expected_weight,
                   :schedule_chain_id, :position
 
-
-	def is_pickup_stop?
-		return self.location.nil? ? false : self.location.donor?
-	end
+  def is_pickup_stop?
+    return self.location.nil? ? false : self.location.donor?
+  end
   
 end

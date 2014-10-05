@@ -104,15 +104,6 @@ class ScheduleChainsController < ApplicationController
       return
     end
     if @schedule.save
-      #load schedule items into chain
-			params["schedule"].each do |temp, stpdata|
-        stp = Schedule.new
-        stp.schedule_chain_id=@schedule.id
-        stp.location_id=stpdata["location_id"]
-        stp.food_type_ids=stpdata["food_type_ids"]
-        stp.save
-        @schedule.schedule_ids << stp.id
-      end
       flash[:notice] = "Created successfully"
       index
     else

@@ -14,7 +14,9 @@ Just a quick reminder that you have <%= @logs.length == 1 ? "an" : "" %> upcomin
   <li><%= l.when.strftime("%A") %>: <%= l.donor.nil? ? "?" : l.donor.name %> to <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ") %>
     <ul>
       <li>Food Types: <%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>
+      <% unless l.schedule_chain.nil? %>
       <li><%= link_to "Info Link", schedule_chain_url(l.schedule_chain) %>
+      <% end %>
       <li><%= link_to "Data Reporting Link", edit_log_url(l) %>
     </ul>
 <% } %>

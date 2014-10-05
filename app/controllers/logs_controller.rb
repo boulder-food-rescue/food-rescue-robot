@@ -143,9 +143,9 @@ class LogsController < ApplicationController
           unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
           lp.description = lpdata["description"]
           lp.food_type_id = lpdata["food_type_id"].to_i
-	        lp.log_id = @log.id
-	        lp.save
-	      end
+	  lp.log_id = @log.id
+	  lp.save
+	end
       } unless params["log_parts"].nil?
       if unfilled_count == 0
         @log.complete = true

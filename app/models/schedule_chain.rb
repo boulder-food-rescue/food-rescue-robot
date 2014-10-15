@@ -40,7 +40,7 @@ class ScheduleChain < ActiveRecord::Base
 
 	# does the schedule chain start with a pickup and end with a dropoff?
 	def functional?
-		self.schedules.first.is_pickup_stop? and not self.schedules.last.is_pickup_stop?
+		not self.schedules.empty? and self.schedules.first.is_pickup_stop? and not self.schedules.last.is_pickup_stop?
   end
 
   def mappable?

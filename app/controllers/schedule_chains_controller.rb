@@ -35,8 +35,8 @@ class ScheduleChainsController < ApplicationController
     api_key = 'AIzaSyD8c6OCF67BCrCMbgBNrcdEEuDnCNqWlk4'
     embed_parameters = ""
     trimmed_stops = @schedule.schedules.select{ |stop| not stop == @schedule.schedules.first and not stop == @schedule.schedules.last}
-    embed_parameters += ('&origin=' + @schedule.schedules.first.location.address.gsub(' ','+'))
-    embed_parameters += ('&destination=' + @schedule.schedules.last.location.address.gsub(' ','+'))
+    embed_parameters += ('&origin=' + @schedule.schedules.first.location.address.gsub(' ','+')) unless @schedule.schedules.empty? or @schedule.schedules.first.location.nil?
+    embed_parameters += ('&destination=' + @schedule.schedules.last.location.address.gsub(' ','+')) unless @schedule.schedules.empty? or @schedule.schedules.last.location.nil?
     unless trimmed_stops.length == 0
       embed_parameters += ('&waypoints=')
       trimmed_stops.each do |stop|

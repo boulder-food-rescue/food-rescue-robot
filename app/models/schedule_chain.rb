@@ -1,31 +1,32 @@
 class ScheduleChain < ActiveRecord::Base
 
-	has_many :schedule_volunteers
-	has_many :volunteers, :through => :schedule_volunteers, 
+  has_many :schedule_volunteers
+  has_many :volunteers, :through => :schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>true}
-	has_many :schedules
+  has_many :schedules
+  has_many :locations, :through => :schedules
   has_many :logs
-	belongs_to :transport_type
+  belongs_to :transport_type
   belongs_to :scale_type
-	belongs_to :region
+  belongs_to :region
 	
-	attr_accessible :region_id, :irregular, :backup, :transport_type_id,
-									:day_of_week, :detailed_start_time, :detailed_stop_time, 
-									:detailed_date, :frequency, :temporary, :difficulty_rating, :expected_weight,
-									:hilliness, :schedule_volunteers, :schedule_volunteers_attributes, :scale_type_ids,
-									:schedule_ids, :admin_notes, :public_notes, :schedules, :schedule, :schedule_volunteers,
-                  :schedules_attributes
+  attr_accessible :region_id, :irregular, :backup, :transport_type_id,
+		:day_of_week, :detailed_start_time, :detailed_stop_time, 
+	 	:detailed_date, :frequency, :temporary, :difficulty_rating, :expected_weight,
+		:hilliness, :schedule_volunteers, :schedule_volunteers_attributes, :scale_type_ids,
+		:schedule_ids, :admin_notes, :public_notes, :schedules, :schedule, :schedule_volunteers,
+                :schedules_attributes
 	
-	accepts_nested_attributes_for :schedule_volunteers
+  accepts_nested_attributes_for :schedule_volunteers
   accepts_nested_attributes_for :schedules
 
   Hilliness = ["Flat","Mostly Flat","Some Small Hills","Hilly for Reals","Mountaineering"]
   Difficulty = ["Easiest","Typical","Challenging","Most Difficult"]
 
-	after_save{ |record|
+  after_save{ |record|
     record.schedule_volunteers.each{ |sv|
-			sv.destroy if sv.volunteer_id.blank?
-		}
+      sv.destroy if sv.volunteer_id.blank?
+    }
   }
 
   # list all the schedules chains that have at least two stops, but don't have any volunteer
@@ -38,13 +39,13 @@ class ScheduleChain < ActiveRecord::Base
 		conditions
   end
 
-	# does the schedule chain start with a pickup and end with a dropoff?
-	def functional?
-		not self.schedules.empty? and self.schedules.first.is_pickup_stop? and not self.schedules.last.is_pickup_stop?
+  # does the schedule chain start with a pickup and end with a dropoff?
+  def functional?
+    not self.schedules.empty? and self.schedules.first.is_pickup_stop? and not self.schedules.last.is_pickup_stop?
   end
 
   def mappable?
-    self.functional? and not self.schedules.any?{ |s| s.location.address.blank? }
+    self.functional? and not self.schedules.any?{ |s| s.location.nil? or s.location.address.blank? }
   end
 
   # list all the schedules that don't have active volunteers
@@ -53,16 +54,36 @@ class ScheduleChain < ActiveRecord::Base
     schedules = ScheduleChain.where(:irregular=>false).where(:region_id=>region_id_list) if region_id_list.length > 0
     return [] if schedules.nil?
     schedules.keep_if do |schedule|
-			unless not schedule.functional?
+      unless not schedule.functional?
       	schedule.temporary or ((schedule.volunteers.size == 0) and (not schedule.schedules.last.is_pickup_stop?))
-    	else
-				false
-			end
-		end
+      else
+	false
+      end
+    end
     schedules
   end
 
-	def has_volunteers?
+  def self.for_location(loc)
+    if loc.is_donor 
+      ScheduleChain.for_donor(loc)
+    else 
+      ScheduleChain.for_recipient(loc)
+    end
+  end
+
+  def self.for_donor(d)
+    Schedule.joins(:location).where("locations.is_donor AND locations.id = ?",d.id).collect{ |s| s.schedule_chain }.uniq
+  end
+
+  def self.for_recipient(r)
+    Schedule.joins(:location).where("NOT locations.is_donor AND locations.id = ?",d.id).collect{ |s| s.schedule_chain }.uniq
+  end
+
+  def food_types
+    self.schedules.collect{ |s| s.food_types }.flatten.uniq
+  end
+
+  def has_volunteers?
     self.volunteers.count > 0
   end
 

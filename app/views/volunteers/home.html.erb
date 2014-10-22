@@ -96,7 +96,7 @@
                <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
           <td> <%= readable_time_until pickup %> </td>
           <td> <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => pickup.id %>
-          <td> <%= link_to "Info", pickup.schedule_chain %></td>
+          <td> <button class="info" onclick="window.location='/schedule_chains/<%= pickup.schedule_chain.id %>';">Info</button></td>
         </tr>
         <% end %>
       </table>

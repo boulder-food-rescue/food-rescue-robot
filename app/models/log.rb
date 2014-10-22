@@ -8,6 +8,7 @@ class Log < ActiveRecord::Base
   has_many :volunteers, :through => :log_volunteers,
            :conditions=>{"log_volunteers.active"=>true}
   has_many :active_log_volunteers, :conditions=>{"active" => true}, :class_name => "LogVolunteer"
+  has_many :inactive_log_volunteers, :conditions=>{"active" => false}, :class_name => "LogVolunteer"
   has_many :log_recipients
   has_many :recipients, :through => :log_recipients
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"

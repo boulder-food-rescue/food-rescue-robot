@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def readable_time_until shift
-    ret = shift.when.strftime("%b %e") + " ("
+    ret = shift.when.strftime("%a %b %e") + " ("
     if shift.when == Time.zone.today
       ret += "today"
     elsif shift.when < Time.zone.today

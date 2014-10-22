@@ -31,6 +31,8 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Scale Used (original units) </th>
     <th> Transport Type </th>
     <th> Food Type </th>
+    <% else %>
+    <th> Original Volunteer(s) </th>
     <% end %>
     <th> Notes </th>
     <th> Link </th>
@@ -72,6 +74,11 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
 	(<%= shift.scale_type.weight_unit unless shift.scale_type.nil? %>)
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types.collect{ |ft| ft.name }.join(", ") unless shift.food_types.length == 0 %>
+    <% else %>
+    <td>   <% shift.inactive_log_volunteers.each do |lv| %>
+            <% next if lv.volunteer.nil? %>
+            <%= link_to lv.volunteer.name, lv.volunteer %><br />
+           <% end %>
     <% end %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
     <td><% if current_volunteer.any_admin?(shift.region) %>

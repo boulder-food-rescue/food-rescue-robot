@@ -52,7 +52,16 @@ class VolunteersController < ApplicationController
   def index
     @volunteers = Volunteer.all.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
     @header = "All Volunteers"
-    render :index
+    respond_to do |format|
+      format.json { 
+        @volunteers = Volunteer.select("email,id,name,phone").collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+        render json: @volunteers.to_json
+      }
+      format.html { 
+        @volunteers = Volunteer.all.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+        render :index 
+      }
+    end
   end
 
   def show

@@ -14,4 +14,11 @@ class TransportTypesController < ApplicationController
   def delete_authorized?(record=nil)
     current_volunteer.super_admin?
   end
+
+  def index
+    respond_to do |format|
+      format.json { render json: TransportType.all.to_json }
+    end
+  end
+
 end 

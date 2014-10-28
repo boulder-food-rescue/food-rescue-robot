@@ -183,6 +183,7 @@ class LogsController < ApplicationController
         attrs[:log] = @log.attributes
         attrs[:log][:recipient_ids] = @log.recipient_ids
         attrs[:log][:volunteer_ids] = @log.volunteer_ids
+	attrs[:log][:volunteer_names] = @log.volunteers.collect{ |v| v.name }
         attrs[:schedule] = @log.schedule_chain.attributes unless @log.schedule_chain.nil?
         attrs[:log_parts] = {}
         @log.log_parts.each{ |lp| attrs[:log_parts][lp.id] = lp.attributes }

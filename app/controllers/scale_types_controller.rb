@@ -2,8 +2,12 @@ class ScaleTypesController < ApplicationController
   before_filter :authenticate_volunteer!
 
   def index
-    @scale_types = ScaleType.where("region_id IN (#{Region.all_admin(current_volunteer).collect{ |r| r.id }.join(",")})")
-    render :index
+    region_ids = current_volunteer.region_ids
+    @scale_types = ScaleType.where("region_id IN (#{region_ids.join(",")})")
+    respond_to do |format|
+      format.json { render json: @scale_types.to_json }
+      format.html { render :index }
+    end
   end
 
   def destroy

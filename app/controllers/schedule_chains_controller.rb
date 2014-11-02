@@ -96,7 +96,7 @@ class ScheduleChainsController < ApplicationController
     render :new
   end
 
-	def create
+  def create
     @schedule = ScheduleChain.new(params[:schedule_chain])
     unless current_volunteer.any_admin? @schedule.region
       flash[:error] = "Not authorized to create schedule items for that region"
@@ -112,7 +112,7 @@ class ScheduleChainsController < ApplicationController
     end
   end
 
-	def edit
+  def edit
     @schedule = ScheduleChain.find(params[:id])
     unless current_volunteer.any_admin? @schedule.region
       flash[:error] = "Not authorized to edit schedule items for that region"
@@ -131,7 +131,14 @@ class ScheduleChainsController < ApplicationController
       redirect_to(root_path)
       return
     end
+    delete_schedules = []
+    params[:schedule_chain]["schedules_attributes"].collect{ |k,v|
+      delete_schedules << v["id"].to_i if v["food_type_ids"].nil?
+    }
     if @schedule.update_attributes(params[:schedule_chain])
+      @schedule.schedules.each{ |s|
+        s.delete if delete_schedules.include? s.id
+      }
       flash[:notice] = "Updated Successfully"
       index
     else
@@ -155,7 +162,7 @@ class ScheduleChainsController < ApplicationController
     redirect_to :action=>'show', :id=>schedule.id
   end
 
-	def take
+  def take
     schedule = ScheduleChain.find(params[:id])
     if current_volunteer.in_region? schedule.region_id
       if schedule.has_volunteer? current_volunteer

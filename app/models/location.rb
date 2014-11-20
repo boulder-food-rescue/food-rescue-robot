@@ -11,6 +11,7 @@ class Location < ActiveRecord::Base
 
   after_initialize :init_detailed_hours
   before_save :populate_detailed_hours_json_before_save
+  before_save :populate_receipt_key
   after_validation :geocode
 
   default_scope order('locations.name ASC')
@@ -76,7 +77,7 @@ class Location < ActiveRecord::Base
   def open_on_day? index
     read_day_info('day'+index.to_s+'_status') == 1
   end
-
+  
   def populate_detailed_hours_from_form params
     (0..6).each do |index|
       prefix = "day"+index.to_s
@@ -134,6 +135,10 @@ class Location < ActiveRecord::Base
           end
         end
       end
+    end
+   
+    def populate_receipt_key
+      self.receipt_key = (0...8).map { ('a'..'z').to_a[rand(26)] }.join if self.receipt_key.blank?
     end
 
     def populate_detailed_hours_json_before_save

@@ -3,12 +3,17 @@ class LocationsController < ApplicationController
 
   def hud
     @loc = Location.find(params[:id])
-    if (params[:key] == @loc.receipt_key) or current_volunteer.region_admin?(@loc.region) or current_volunteer.super_admin?
+    if (params[:key] == @loc.receipt_key) or (!current_volunteer.nil? and (current_volunteer.region_admin?(@loc.region) or current_volunteer.super_admin?))
       @schedules = ScheduleChain.for_location(@loc)
       if @loc.is_donor
         @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where("donor_id = ?",@loc.id).group("logs.id, logs.transport_type_id, logs.when").order("logs.when ASC")
       else 
-        @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.donor_id, logs.id, logs.transport_type_id, logs.when").where("recipient_id = ?",@loc.id).group("logs.donor_id, logs.id, logs.transport_type_id, logs.when").order("logs.when ASC")
+        scs = Schedule.where("location_id=?",@loc.id).collect{ |s| s.schedule_chain_id }.uniq
+        if scs.empty?
+          @logs = []
+        else 
+          @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where("schedule_chain_id IN (#{scs.join(",")})").group("logs.id, logs.transport_type_id, logs.when").order("logs.when ASC")
+        end
       end
       render :hud
     else

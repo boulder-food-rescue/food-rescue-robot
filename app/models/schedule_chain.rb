@@ -76,7 +76,7 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def self.for_recipient(r)
-    Schedule.joins(:location).where("NOT locations.is_donor AND locations.id = ?",d.id).collect{ |s| s.schedule_chain }.uniq
+    Schedule.joins(:location).where("NOT locations.is_donor AND locations.id = ?",r.id).collect{ |s| s.schedule_chain }.uniq
   end
 
   def food_types

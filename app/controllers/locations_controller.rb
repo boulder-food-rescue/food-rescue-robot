@@ -8,15 +8,10 @@ class LocationsController < ApplicationController
       if @loc.is_donor
         @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where("donor_id = ?",@loc.id).group("logs.id, logs.transport_type_id, logs.when").order("logs.when ASC")
       else 
-        scs = Schedule.where("location_id=?",@loc.id).collect{ |s| s.schedule_chain_id }.uniq
-        if scs.empty?
-          @logs = []
-        else 
-          @logs = Log.joins(:food_types,:recipients).select("sum(weight) as weight_sum,
-            string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.donor_id").
-            where("recipient_id=?",@loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.donor_id").order("logs.when ASC").
-            keep_if{ |x| x.weight_sum.to_f > 0 }
-        end
+        @logs = Log.joins(:food_types,:recipients).select("sum(weight) as weight_sum,
+          string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.donor_id").
+          where("recipient_id=?",@loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.donor_id").order("logs.when ASC").
+          keep_if{ |x| x.weight_sum.to_f > 0 }
       end
       render :hud
     else

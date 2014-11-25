@@ -6,12 +6,9 @@ class LocationsController < ApplicationController
     if (params[:key] == @loc.receipt_key) or (!current_volunteer.nil? and (current_volunteer.region_admin?(@loc.region) or current_volunteer.super_admin?))
       @schedules = ScheduleChain.for_location(@loc)
       if @loc.is_donor
-        @logs = Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where("donor_id = ?",@loc.id).group("logs.id, logs.transport_type_id, logs.when").order("logs.when ASC")
+        @logs = Log.at(@loc)
       else 
-        @logs = Log.joins(:food_types,:recipients).select("sum(weight) as weight_sum,
-          string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.donor_id").
-          where("recipient_id=?",@loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.donor_id").order("logs.when ASC").
-          keep_if{ |x| x.weight_sum.to_f > 0 }
+        @logs = Log.at(@loc).keep_if{ |x| x.weight_sum.to_f > 0 } 
       end
       render :hud
     else

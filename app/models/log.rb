@@ -86,6 +86,16 @@ class Log < ActiveRecord::Base
     end
   end
 
+  def self.at(loc)
+    if loc.is_donor
+      return Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where("donor_id = ?",loc.id).group("logs.id, logs.transport_type_id, logs.when").order("logs.when ASC")
+    else
+      return Log.joins(:food_types,:recipients).select("sum(weight) as weight_sum,
+          string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.donor_id").
+          where("recipient_id=?",loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.donor_id").order("logs.when ASC")
+    end
+  end
+
   def self.picked_up_weight(region_id=nil,volunteer_id=nil)
     cq = "logs.complete"
     vq = volunteer_id.nil? ? nil : "log_volunteers.volunteer_id=#{volunteer_id}"

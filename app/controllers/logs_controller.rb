@@ -344,7 +344,8 @@ class LogsController < ApplicationController
       redirect_to(root_path)
       return
     end
-    @logs = Log.where("#{@loc.is_donor ? "donor_id" : "recipient_id"} = ? AND \"when\" >= ? AND \"when\" <= ?",@loc.id,@start_date,@stop_date)
+
+    @logs = Log.at(@loc).where("logs.when >= ? AND logs.when <= ?",@start_date,@stop_date)
     respond_to do |format|
       format.html
       format.pdf do

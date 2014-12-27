@@ -23,7 +23,7 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Date </th>
     <th> Info </th>
     <th> When </th>
-    <th> Volunteer </th>
+    <th> Volunteers </th>
     <th> Donor </th>
     <th> Recipient(s) </th>
     <% unless current_page? :controller => "logs", :action => "open" %>
@@ -31,9 +31,8 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Scale Used (original units) </th>
     <th> Transport Type </th>
     <th> Food Type </th>
-    <% else %>
-    <th> Original Volunteer(s) </th>
     <% end %>
+    <th> Original Volunteer(s) </th>
     <th> Notes </th>
     <% if current_volunteer.any_admin? %>
       <th> Admin </th>
@@ -76,12 +75,11 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
 	(<%= shift.scale_type.weight_unit unless shift.scale_type.nil? %>)
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.food_types.collect{ |ft| ft.name }.join(", ") unless shift.food_types.length == 0 %>
-    <% else %>
+    <% end %>
     <td>   <% shift.inactive_log_volunteers.each do |lv| %>
             <% next if lv.volunteer.nil? %>
             <%= link_to lv.volunteer.name, lv.volunteer %><br />
            <% end %>
-    <% end %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
       <% if current_volunteer.any_admin?(shift.region) %>
         <td>

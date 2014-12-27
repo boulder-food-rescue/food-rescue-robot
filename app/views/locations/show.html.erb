@@ -1,4 +1,3 @@
-
 <h2><%= @loc.name %>
 <% if current_volunteer.any_admin? %>
 	<small>( <%= link_to 'edit', :controller => "locations", :action => "edit", :id => @loc.id %> )</small>
@@ -6,9 +5,6 @@
 </h2>
 
 <div class="row-fluid">
-	<div class="span6">
-		<%= gmaps("markers" => { "data" => @json },"map_options" => {"processing" => "json", "auto_zoom" => false, "zoom" => 14}) %>
-	</div>
 	<div class="span6">
 
 		<h3>Address</h3>
@@ -19,7 +15,7 @@
 		<h3>Contact Info</h3>
 		<p>
 		<%= @loc.contact.gsub("\n","<br>").html_safe unless @loc.contact.nil? %>
-		<% unless @loc.website.nil? %><a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
+		<% unless @loc.website.nil? %><br/><br/>Website: <a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
 		<br />
 		<%= @loc.phone %>
 		<br />
@@ -56,6 +52,7 @@
 		<br />
 		<%= @loc.admin_notes.gsub("\n","<br>").html_safe unless @loc.admin_notes.nil? or !(current_volunteer.region_admin? @loc.region or current_volunteer.super_admin?) %>
 		</p>
+    <br/>
 
 	</div>
 

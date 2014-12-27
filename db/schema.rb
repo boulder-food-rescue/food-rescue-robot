@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140611042411) do
+ActiveRecord::Schema.define(:version => 20141227213835) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -49,8 +49,8 @@ ActiveRecord::Schema.define(:version => 20140611042411) do
     t.text     "admin_notes"
     t.text     "public_notes"
     t.text     "hours"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
     t.integer  "region_id"
     t.string   "twitter_handle"
     t.string   "receipt_key"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(:version => 20140611042411) do
     t.text     "entry_info"
     t.text     "exit_info"
     t.text     "onsite_contact_info"
+    t.boolean  "active",                 :default => true, :null => false
   end
 
   create_table "log_parts", :force => true do |t|
@@ -162,11 +163,14 @@ ActiveRecord::Schema.define(:version => 20140611042411) do
     t.integer "hilliness"
     t.integer "scale_type_id"
     t.integer "region_id"
+    t.integer "schedules_id"
     t.text    "frequency"
     t.integer "day_of_week"
     t.integer "expected_weight"
     t.text    "public_notes"
     t.text    "admin_notes"
+    t.integer "num_volunteers",      :default => 1,    :null => false
+    t.boolean "active",              :default => true, :null => false
   end
 
   create_table "schedule_parts", :force => true do |t|

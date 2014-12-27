@@ -97,7 +97,7 @@
               <%= drop_down "Super Admin" do %>
                 <%= menu_item "Cell Carriers", cell_carriers_path %>
                 <%= menu_item "Manage Regions", regions_path %>              
-                <%= menu_item "Transport Types", transport_types_path %>
+                <!-- <%= menu_item "Transport Types", transport_types_path %> -->
                 <%= menu_item "Controls", '/volunteers/super_admin' %>
               <% end %>
             <% end %>
@@ -147,8 +147,10 @@
         </div>
       </div><!--/row-->
       
-      <footer>
-        <p>&copy; Boulder Food Rescue <%=Time.new.year %></p>
+      <footer style="text-align: center; font-size: 9pt;">
+        <hr>
+        <p>Copyleft 2014 <a href="http://boulderfoodrescue.org">Boulder Food Rescue</a> (<a href="http://github.com/somerandomsequence/food-rescue-robot">Source Code</a>)</p>
+
       </footer>
 
     </div> <!-- /container -->

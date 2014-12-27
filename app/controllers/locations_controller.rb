@@ -44,21 +44,22 @@ class LocationsController < ApplicationController
     unless current_volunteer.super_admin? or (current_volunteer.region_ids.include? @loc.region_id)
       flash[:notice] = "Can't view location for a region you're not assigned to..."
       respond_to do |format|
+        format.html
         format.json { render json: {:error => 0, :message => flash[:notice] } }
       end
       return
     end
     respond_to do |format|
-      format.json {
-        render json: @loc.attributes
-      }
+      format.html
+      format.json { render json: @loc.attributes }
     end
   end
 
   def destroy
     @l = Location.find(params[:id])
     return unless check_permissions(@l)
-    @l.destroy
+    @l.active = false
+    @l.save
     redirect_to(request.referrer)
   end
 

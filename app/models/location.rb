@@ -14,14 +14,14 @@ class Location < ActiveRecord::Base
   before_save :populate_receipt_key
   after_validation :geocode
 
-  default_scope order('locations.name ASC')
+  default_scope { order('locations.name ASC').where(active:true) }
 
   validate :detailed_hours_cannot_end_before_start
 
   attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, 
                   :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website, :receipt_key,
                   :email, :phone, :equipment_storage_info, :food_storage_info, :entry_info, :exit_info,
-                  :onsite_contact_info
+                  :onsite_contact_info, :active
 
   scope :donors, where(:is_donor=>true)
   scope :recipients, where(:is_donor=>false)

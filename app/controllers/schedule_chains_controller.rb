@@ -74,10 +74,8 @@ class ScheduleChainsController < ApplicationController
       redirect_to(root_path)
       return
     end
-    @s.schedules.each do |sch|
-      sch.destroy
-    end
-    @s.destroy
+    @s.active = false
+    @s.save
     redirect_to(request.referrer)
   end
 
@@ -158,7 +156,10 @@ class ScheduleChainsController < ApplicationController
     schedule = ScheduleChain.find(params[:id])
     if current_volunteer.in_region? schedule.region_id
       if schedule.has_volunteer? current_volunteer
-        ScheduleVolunteer.where(:volunteer_id=>current_volunteer.id, :schedule_id=>schedule.id).delete_all
+        ScheduleVolunteer.where(:volunteer_id=>current_volunteer.id, :schedule_id=>schedule.id).each{ |sv|
+          sv.active = false
+          sv.save
+        }
         flash[:notice] = "You are no longer on the route ending at "+schedule.schedules.last.name+"."
       else
         flash[:error] = "Cannot leave route since you're not part of it!"

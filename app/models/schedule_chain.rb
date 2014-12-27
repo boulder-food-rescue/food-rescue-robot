@@ -1,5 +1,7 @@
 class ScheduleChain < ActiveRecord::Base
 
+  default_scope { where(active:true) }
+
   has_many :schedule_volunteers
   has_many :volunteers, :through => :schedule_volunteers, 
            :conditions=>{"schedule_volunteers.active"=>true}
@@ -15,7 +17,7 @@ class ScheduleChain < ActiveRecord::Base
 	 	:detailed_date, :frequency, :temporary, :difficulty_rating, :expected_weight,
 		:hilliness, :schedule_volunteers, :schedule_volunteers_attributes, :scale_type_ids,
 		:schedule_ids, :admin_notes, :public_notes, :schedules, :schedule, :schedule_volunteers,
-                :schedules_attributes
+    :schedules_attributes, :num_volunteers, :active
 	
   accepts_nested_attributes_for :schedule_volunteers
   accepts_nested_attributes_for :schedules
@@ -37,6 +39,10 @@ class ScheduleChain < ActiveRecord::Base
         schedule.volunteers.count == 0 and schedule.functional?
     }
 		conditions
+  end
+
+  def covered?
+    self.volunteers.length >= self.num_volunteers
   end
 
   # does the schedule chain start with a pickup and end with a dropoff?

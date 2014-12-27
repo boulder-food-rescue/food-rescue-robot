@@ -35,7 +35,7 @@ class Log < ActiveRecord::Base
                   :num_reminders, :transport, :when, :scale_type_id,
                   :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes,
                   :schedule_chain_id, :log_recipients_attributes,
-                  :id, :created_at, :updated_at, :complete, :recipient_ids, :volunteer_ids
+                  :id, :created_at, :updated_at, :complete, :recipient_ids, :volunteer_ids, :num_volunteers
 
   before_save { |record|
     return if record.region.nil?
@@ -67,6 +67,12 @@ class Log < ActiveRecord::Base
 
   def no_volunteers?
     self.volunteers.count == 0
+  end
+
+  def covered?
+    nv = self.num_volunteers
+    nv = self.schedule_chain.num_volunteers if nv.nil? and not self.schedule_chain.nil?
+    nv.nil? ? self.has_volunteers? : self.volunteers.length >= nv
   end
 
   def has_volunteer? volunteer
@@ -117,15 +123,15 @@ class Log < ActiveRecord::Base
   def self.needing_coverage(region_id_list=nil,days_away=nil)
     unless region_id_list.nil?
       if days_away.nil?
-        Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).reject{ |l| l.has_volunteers? }
+        Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).reject{ |l| l.covered? }
       else
-        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).where(:region_id=>region_id_list).reject{ |l| l.has_volunteers? }
+        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).where(:region_id=>region_id_list).reject{ |l| l.covered? }
       end
     else
       if days_away.nil?
-        Log.where("\"when\" >= ?",Time.zone.today).reject{ |l| l.has_volunteers? }
+        Log.where("\"when\" >= ?",Time.zone.today).reject{ |l| l.covered? }
       else
-        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).reject{ |l| l.has_volunteers? }
+        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).reject{ |l| l.covered? }
       end
     end
   end

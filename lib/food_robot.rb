@@ -51,6 +51,7 @@ module FoodRobot
         log.donor_id = ss.location.id
         log.when = d
         log.region_id = s.region_id
+        log.num_volunteers = s.num_volunteers
         log.recipients
         s.schedules.each_with_index{ |ss2,ss2i|
           next if ss2.location.nil?

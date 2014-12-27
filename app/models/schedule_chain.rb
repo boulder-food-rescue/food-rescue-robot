@@ -61,9 +61,9 @@ class ScheduleChain < ActiveRecord::Base
     return [] if schedules.nil?
     schedules.keep_if do |schedule|
       unless not schedule.functional?
-      	schedule.temporary or ((schedule.volunteers.size == 0) and (not schedule.schedules.last.is_pickup_stop?))
+      	schedule.temporary or not schedule.covered?
       else
-	false
+	      false
       end
     end
     schedules

@@ -30,7 +30,12 @@
         </div>
       </td>
     </tr>
-		<tr>
+    <% if current_volunteer.any_admin?(@schedule.region) %>
+      <tr><td>Needed Volunteers
+        <br/><span class="subtext">How many volunteers does this shift need. Will be copied to all associated logs.</span>
+        <td><%= f.text_field(:num_volunteers) %>
+    <% end %>
+    <tr>
       <td>Stops</td>
 			<td>
 

@@ -22,6 +22,11 @@
     <% end %>
     <%= link_to_add_association 'add another volunteer', f, :log_volunteers, :class=>'btn' %>
   </div>
+  <% if current_volunteer.any_admin?(@log.region) %>
+    <tr><td>Needed Volunteers
+      <br/><span class="subtext">Default is the number required by the associated schedule, or at least one.</span>
+      <td><%= f.text_field(:num_volunteers) %>
+  <% end %>
   <tr><td>Recipients<td>
     <div>
       <%= f.simple_fields_for :log_recipients do |log_recipient| %>

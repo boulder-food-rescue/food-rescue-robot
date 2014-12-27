@@ -46,21 +46,16 @@
 
         <% if volunteer_signed_in? %>
 
-          <%= drop_down "Shifts" do %>
-            <%= menu_item "Open Regular Shifts", open_schedule_chains_path %>
-            <%= menu_item "Cover Shifts", open_logs_path %>
-            <%= menu_item "Your Regular Shifts", mine_schedule_chains_path %>
-            <%= menu_item "Your Upcoming Shifts", mine_upcoming_logs_path %>
-            <%= menu_item "Your Past Shifts", mine_past_logs_path %>
-            <%= menu_item "Schedule An Absence", new_absence_logs_path %>
+          <%= drop_down "Take Shifts" do %>
+            <%= menu_item "One-Time Shifts", open_logs_path %>
+            <%= menu_item "Recurring Shifts", open_schedule_chains_path %>
           <% end %>
 
-          <% if Region.has_any_handbooks? current_volunteer.regions %>
-            <%= drop_down "Handbook" do %>
-              <% current_volunteer.regions.each do |region| %>
-                <%= menu_item region.name+" Handbook", region.handbook_url if region.has_handbook? %> 
-              <% end %>
-            <% end %>
+          <%= drop_down "Your Shifts" do %>
+            <%= menu_item "Regular Shifts", mine_schedule_chains_path %>
+            <%= menu_item "Upcoming Shifts", mine_upcoming_logs_path %>
+            <%= menu_item "Past Shifts", mine_past_logs_path %>
+            <%= menu_item "Schedule An Absence", new_absence_logs_path %>
           <% end %>
 
           <% if current_volunteer.any_admin? %>
@@ -114,6 +109,9 @@
         <%= menu_group :pull => :right do %>
           <% if volunteer_signed_in? %>
             <%= drop_down current_volunteer.name  do %>
+              <% current_volunteer.regions.each do |region| %>
+                <%= menu_item region.name+" Handbook", region.handbook_url if region.has_handbook? %>
+              <% end %>
               <%= menu_item "Settings", edit_volunteer_path(current_volunteer.id) %>
               <%= menu_item "Waiver", waiver_volunteers_path %>
               <%= menu_item "Logout", destroy_volunteer_session_path, :method => :delete %>

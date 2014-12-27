@@ -3,7 +3,7 @@
 <% if current_volunteer.any_admin? and not @my_admin_regions.nil? %>
   <div style="text-align: right;">
     <%= form_tag("/schedule_chains/new", :method => "get") do %>
-      New Schedule Chain For <%= select_tag("region_id", options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
+      New Scheduled Route For <%= select_tag("region_id", options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
       <%= submit_tag("Go") %>
     <% end %>
   </div>
@@ -60,7 +60,7 @@
     %>
     <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
       <td> <button class="info" onclick="window.location='/schedule_chains/<%= schedule.id %>';">Info</button>
-      <td> 
+      <td style="font-weight: bold;">
         <% if schedule.one_time? %>
           <%= schedule.detailed_date %>
         <% else %>
@@ -81,9 +81,9 @@
 					<% end %>
         <% end %>
       </td>
-      <td <% if schedule.no_volunteers? or schedule.temporary %>style="background: yellow;text-align: center;"<% end %>> 
+      <td>
         <% if schedule.no_volunteers? or schedule.temporary %>
-          <b><%=  link_to "Take it!", :controller => "schedule_chains", :action => "take", :id => schedule %></b>
+          <button class="take" onclick="window.location='/schedule_chains/take?id=<%= schedule.id %>';">Take</button>
         <% else %>
           <% schedule.volunteers.each do |volunteer| %>
             <%= link_to volunteer.name, volunteer %><br />
@@ -97,11 +97,11 @@
       <td> 
         <%= readable_stop_time schedule %>
       </td>
-      <td><%= word_wrap(schedule.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.public_notes.nil? %></td>
+      <td style="font-size: 10pt;"><%= word_wrap(schedule.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.public_notes.nil? %></td>
       <% if current_volunteer.any_admin? %>
         <td><%= word_wrap(schedule.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.admin_notes.nil? or !current_volunteer.region_admin?(schedule.region) %></td>
       <% end %>
-      <td>
+      <td style="font-size: 10pt;">
         <% schedule.prior_volunteers.each do |prior_volunteer| %>
           <%= link_to prior_volunteer.name, prior_volunteer %><br />
         <% end %>
@@ -110,10 +110,12 @@
       <td> <% foods = ""
               schedule.schedules.each do |stops|
                 if stops.is_pickup_stop?
-                  foods += (stops.location.name + ": " + stops.food_types.collect{ |ft| ft.name }.join(", ") + "\n")
+                  foods += "<li><em>" + (stops.location.name + ":</em> " + stops.food_types.collect{ |ft| ft.name }.join(", ") + "\n")
                 end
 		      end %>
-           <%= foods %>
+           <ul>
+           <%= foods.html_safe %>
+           </ul>
       <td>
         <% if current_volunteer.any_admin? %>
           <%= link_to 'edit', :controller => "schedule_chains", :action => "edit", :id => schedule %><br>

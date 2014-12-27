@@ -35,7 +35,9 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
     <th> Original Volunteer(s) </th>
     <% end %>
     <th> Notes </th>
-    <th> Link </th>
+    <% if current_volunteer.any_admin? %>
+      <th> Admin </th>
+    <% end %>
   </tr>
   </thead>
   <tbody>
@@ -56,9 +58,9 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
          <button class="info" onclick="window.location='/schedule_chains/<%= shift.schedule_chain.id %>';">Info</button>
          <% end %>
     <td> <%= readable_time_until shift %></td>
-    <td <% if shift.volunteers.empty? %>style="background: yellow;text-align: center;"<% end %>>
+    <td>
          <% if shift.volunteers.empty? %>
-          <%= link_to 'Take It!', :controller => "logs", :action => "take", :id => shift.id %>
+          <button class="take" onclick="window.location='<%= take_log_path(shift.id) %>';">Take</button>
          <% else %>
           <% shift.volunteers.each do |volunteer| %>
             <%= link_to volunteer.name, volunteer %><br />
@@ -81,11 +83,12 @@ New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.col
            <% end %>
     <% end %>
     <td> <%= word_wrap(shift.notes,:line_width => 20).gsub("\n","<br>").html_safe unless shift.notes.nil? %>
-    <td><% if current_volunteer.any_admin?(shift.region) %>
+      <% if current_volunteer.any_admin?(shift.region) %>
+        <td>
         <%= link_to "edit", edit_log_path(shift) %><br>
         <%= link_to "delete", shift, :confirm => "Are you sure?", :method => :delete %>
-        <% end %>
-    </td>
+        </td>
+      <% end %>
   </tr>
   <% end %>
   </tbody>

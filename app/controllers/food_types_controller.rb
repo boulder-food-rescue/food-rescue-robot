@@ -12,7 +12,8 @@ class FoodTypesController < ApplicationController
   def destroy
     @l = FoodType.find(params[:id])
     return unless check_permissions(@l)
-    @l.destroy
+    @l.active = false
+    @l.save
     redirect_to(request.referrer)
   end
 

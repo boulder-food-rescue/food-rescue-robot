@@ -5,6 +5,7 @@ class FoodType < ActiveRecord::Base
   has_many :log_parts
   has_many :logs, :through => :log_parts
   belongs_to :region
+  default_scope { where(active:true) }
 
   def self.regional(region_id)
     where(:region_id=>region_id)

@@ -13,7 +13,8 @@ class ScaleTypesController < ApplicationController
   def destroy
     @l = ScaleType.find(params[:id])
     return unless check_permissions(@l)
-    @l.destroy
+    @l.active = false
+    @l.save
     redirect_to(request.referrer)
   end
 

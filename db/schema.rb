@@ -31,9 +31,10 @@ ActiveRecord::Schema.define(:version => 20141227213835) do
 
   create_table "food_types", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
     t.integer  "region_id"
+    t.boolean  "active",     :default => true, :null => false
   end
 
   create_table "locations", :force => true do |t|
@@ -146,9 +147,10 @@ ActiveRecord::Schema.define(:version => 20141227213835) do
   create_table "scale_types", :force => true do |t|
     t.string   "name"
     t.string   "weight_unit"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.integer  "region_id"
+    t.boolean  "active",      :default => true, :null => false
   end
 
   create_table "schedule_chains", :force => true do |t|
@@ -204,8 +206,9 @@ ActiveRecord::Schema.define(:version => 20141227213835) do
 
   create_table "transport_types", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+    t.boolean  "active",     :default => true, :null => false
   end
 
   create_table "volunteers", :force => true do |t|
@@ -246,6 +249,7 @@ ActiveRecord::Schema.define(:version => 20141227213835) do
     t.boolean  "assigned",               :default => false, :null => false
     t.integer  "requested_region_id"
     t.string   "authentication_token"
+    t.boolean  "active",                 :default => true,  :null => false
   end
 
   add_index "volunteers", ["email"], :name => "index_volunteers_on_email", :unique => true

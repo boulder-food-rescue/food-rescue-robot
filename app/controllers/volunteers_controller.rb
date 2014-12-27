@@ -76,7 +76,8 @@ class VolunteersController < ApplicationController
   def destroy
     @v = Volunteer.find(params[:id])
     return unless check_permissions(@v)
-    @v.destroy
+    @v.active = false
+    @v.save
     redirect_to(request.referrer)
   end
 

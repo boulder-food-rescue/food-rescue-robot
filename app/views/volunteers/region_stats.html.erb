@@ -26,13 +26,13 @@
   <div class="span12">
     <h2 class="section-head">Other Statistics</h2>
     <p>
-    Before <%= @first_recorded_pickup.to_s %>: <%= Region.all_admin(current_volunteer).collect{ |r| r.prior_lbs_rescued.nil? ? 0.0 : r.prior_lbs_rescued }.sum %>
+    Before <%= @first_recorded_pickup.to_s %>: <%= Region.all_admin(current_volunteer).collect{ |r| r.prior_lbs_rescued.nil? ? 0.0 : r.prior_lbs_rescued }.sum.round %>
     </p>
     <p>
     <% 
     n = 0
     @pounds_per_year.keys.sort.each{ |year| %>
-      <%= n == 0 ? "Remainder of " : "" %><%= year %><%= n == @pounds_per_year.length-1 ? " YTD" : "" %>: <%= @pounds_per_year[year] %><br>   
+      <%= n == 0 ? "Remainder of " : "" %><%= year %><%= n == @pounds_per_year.length-1 ? " YTD" : "" %>: <%= @pounds_per_year[year].round %><br>
     <%   n += 1
     }
     %>

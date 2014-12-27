@@ -77,7 +77,7 @@
   <% end %>
   </tr>
 
-  <tr><td>Receipt Key<br><span class="subtext">A random password donors will use to login</span></td>
+  <tr><td>Receipt/HUD Key<br><span class="subtext">A random password donors will use to login</span></td>
       <td><%= f.text_field(:receipt_key) %></td>
   </tr>
 
@@ -103,6 +103,10 @@
 
   <tr><td>Exit Info<br><span class="subtext">How to exit the location (if different from entry)</span></td>
       <td><%= f.text_area(:exit_info, :size => "30x3") %></td>
+  </tr>
+
+  <tr><td>Aggregation/Hub<br><span class="subtext">Is this location a warehouse, sorting facility, or aggregation hub? Important to avoid double counting.</span></td>
+    <td><%= f.check_box(:is_hub) %></td>
   </tr>
 
   <tr><td colspan=2 style="border-bottom: 1px solid black;">

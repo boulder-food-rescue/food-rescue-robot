@@ -179,8 +179,8 @@ class ScheduleChainsController < ApplicationController
         if schedule_volunteer.save
           collided_shifts = []
           Log.where('schedule_chain_id = ? AND "when" >= current_date AND NOT complete',schedule.id).each{ |l|
-            if l.volunteer.nil?
-              l.volunteer = current_volunteer
+            if l.volunteers.empty?
+              l.volunteers << current_volunteer
               l.save
             else
               collided_shifts.push(l)

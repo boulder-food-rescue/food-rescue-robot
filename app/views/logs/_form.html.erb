@@ -56,7 +56,8 @@
   <td><%= f2.text_field(:count,:size=>5) %>
   <td><%= f2.text_field(:description,:size=>20) %>
   </tr>
-</table>
+    <tr><td></td><td>TOTAL: <span id="total_weight">0</span></td></tr>
+    </table>
 <% end %>
   <%=
     task = "<tr class=\"log_part\">"
@@ -70,8 +71,9 @@
     func_str = <<EOF
       var new_id = "new_" + new Date().getTime();
       $('#{ escape_javascript task }'.replace(/new_\\d+/g, new_id)).insertAfter($('.log_part').last());
+      $('#'+new_id).on("change",function(){ update_total_weight(); });
 EOF
-    link_to_function "+ Add Another", func_str
+      link_to_function "+ Add Another", func_str
    %>
 </td></tr>
 <% if @scale_types.length != 1 %>
@@ -83,18 +85,47 @@ EOF
 <span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.</span><td><%= f.text_area(:notes, :size => "30x6") %>
 <tr><td>Flag For Admin<br>
 <span class="subtext">Check this if you want to make sure someone reads this.</span><td><%= f.check_box(:flag_for_admin) %>
+
+  <tr id="zero_reason"><td>Why Zero?<br>
+    <span class="subtext">You're trying to save a log with zero weight. Please tell us what happened.</span>
+    <td><%= f.radio_button(:why_zero,1) %> No Food At Donor<br><%= f.radio_button(:why_zero,2) %> Shift Didn't Happen
+
 </table>
 <%= submit_tag %>
 <% end %>
 
 <% content_for :scripts do %>
 <script type="text/javascript" charset="utf-8">
-jQuery(document).ready(function(){
-  //jQuery('.select2').select2({
-  //  width:'element',
-  //  placeholder:'',allowClear:true,
-  //  minimumResultsForSearch: -1
-  //});
-});
+  function update_total_weight(){
+    t = 0.0
+    $( "input[id$='weight']").each(function(i){
+      v = $(this).val()
+      if(v != "" && v != undefined) {
+        t = t + parseFloat(v)
+      }
+    })
+    if(isNaN(t) || t <= 0){
+      $("#zero_reason").show();
+    }else{
+      $("#zero_reason").hide();
+    }
+    $("#total_weight").text(t)
+  }
+
+  jQuery(document).ready(function() {
+
+    //jQuery('.select2').select2({
+    //  width:'element',
+    //  placeholder:'',allowClear:true,
+    //  minimumResultsForSearch: -1
+    //});
+
+    update_total_weight();
+    $( "input[id$='weight']").each(function(i){
+      $(self).on("change",function(){
+        update_total_weight();
+      });
+    });
+  });
 </script>
 <% end %>

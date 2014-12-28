@@ -23,14 +23,17 @@ class Log < ActiveRecord::Base
   accepts_nested_attributes_for :active_log_volunteers
   accepts_nested_attributes_for :schedule
 
-  validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 }, 
-            message: "can't be blank if weights/counts are all zero: let us know what happened!" }
+  WhyZero = {1 => "No Food", 2 => "Didn't Happen"}
+
+  validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 and a.why_zero == 2 },
+             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
   validates :transport_type_id, presence: { if: :complete }
   validates :donor_id, presence: { if: :complete }
   validates :scale_type_id, presence: { if: :complete }
   validates :when, presence: true
+  validates :why_zero, presence: { if: Proc.new{ |a| a.summed_weight == 0 and a.summed_count == 0 } }
 
-  attr_accessible :schedule_id, :region_id, :donor_id,
+  attr_accessible :schedule_id, :region_id, :donor_id, :why_zero,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :transport, :when, :scale_type_id,
                   :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes,

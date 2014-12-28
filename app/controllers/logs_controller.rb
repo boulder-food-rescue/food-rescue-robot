@@ -243,16 +243,17 @@ class LogsController < ApplicationController
       }
       @log.complete = filled_count > 0 and required_unfilled == 0
       if @log.save
-        flash[:notice] = "Updated Successfully. " + (@log.complete ? " (Filled)" : " (Still To Do)")
+        if @log.complete
+          flash[:notice] = "Updated Successfully. All done!"
+        else
+          flash[:warning] = "Saved, but some weights/counts still needed to complete this log. Finish it here: <a href=\"/logs/#{@log.id}/edit\">(Fill In)</a>"
+        end
+
         # could be nil if they clicked on the link in an email
         respond_to do |format|
           format.json { render json: {:error => 0, :message => flash[:notice] } }
           format.html {
-            unless session[:my_return_to].nil?
-              redirect_to(session[:my_return_to])
-            else
-              mine_past
-            end
+            redirect_to(home_volunteers_path)
           }
         end
       else

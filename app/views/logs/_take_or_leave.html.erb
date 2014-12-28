@@ -1,7 +1,8 @@
-<% if log.has_volunteer? current_volunteer%>
-  <% if log.volunteers.length > 1 %> <!-- users wanted folks to only be able to leave shifts by contacting admin. FIXME: make this a per-region setting -->
-    <%= link_to "(Leave it)", :controller => "logs", :action => "leave", :id => log %>
-  <% end %>
+<% volunteers = logs.collect{ |l| l.volunteers }.flatten.uniq
+   if volunteers.include? current_volunteer %>
+    <% if volunteers.length > 1 %>
+      <%= link_to "(Leave it)", :controller => "logs", :action => "leave", :id => logs[0], :ids => logs.collect{ |l| l.id } %>
+    <% end %>
 <% else %>
-  <%=link_to (log.has_volunteers? ? '(Join it)' : '(Take it)'), :controller => "logs", :action => "take", :id => log %>
+  <%=link_to "(Join it)", :controller => "logs", :action => "take", :id => logs, :ids => logs.collect{ |l| l.id } %>
 <% end %>

@@ -3,41 +3,41 @@ class LogsController < ApplicationController
   before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create]
 
   def mine_past
-    index(Log.past_for(current_volunteer.id),"My Past Shifts")
+    index(Log.group_by_schedule(Log.past_for(current_volunteer.id)),"My Past Shifts")
   end
   def mine_upcoming
-    index(Log.upcoming_for(current_volunteer.id),"My Upcoming Shifts")
+    index(Log.group_by_schedule(Log.upcoming_for(current_volunteer.id)),"My Upcoming Shifts")
   end
   def open
-    index(Log.needing_coverage(current_volunteer.region_ids),"Open Shifts")
+    index(Log.group_by_schedule(Log.needing_coverage(current_volunteer.region_ids)),"Open Shifts")
   end
   def today
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{Time.zone.today.to_s}'"),"Today's Shifts")
+    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{Time.zone.today.to_s}'")),"Today's Shifts")
   end
   def tomorrow
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{(Time.zone.today+1).to_s}'"),"Tomorrow's Shifts")
+    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{(Time.zone.today+1).to_s}'")),"Tomorrow's Shifts")
   end
   def yesterday
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{(Time.zone.today-1).to_s}'"),"Yesterday's Shifts")
+    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{(Time.zone.today-1).to_s}'")),"Yesterday's Shifts")
   end
   def last_ten
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'"),"Last 10 Days of Shifts")
+    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'")),"Last 10 Days of Shifts")
   end
   def being_covered
-    index(Log.being_covered(current_volunteer.region_ids),"Being Covered")
+    index(Log.group_by_schedule(Log.being_covered(current_volunteer.region_ids)),"Being Covered")
   end
   def todo
-    index(Log.past_for(current_volunteer.id).where("\"when\" < current_date AND NOT complete"),"My To Do Shift Reports")
+    index(Log.group_by_schedule(Log.past_for(current_volunteer.id).where("\"when\" < current_date AND NOT complete")),"My To Do Shift Reports")
   end
   def tardy
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)"),"Missing Data (>= 3 Reminders)")
+    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)")),"Missing Data (>= 3 Reminders)")
   end
 
   def index(shifts=nil,header="Entire Log")
     filter = filter.nil? ? "" : " AND #{filter}"
     @shifts = []
     if current_volunteer.region_ids.length > 0
-      @shifts = shifts.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})") : shifts
+      @shifts = shifts.nil? ? Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})")) : shifts
     end
     @header = header
     @regions = Region.all
@@ -301,12 +301,19 @@ class LogsController < ApplicationController
     render :new_absence
   end
 
+  # can be given a single id or a list of ids
   def take
-    l = Log.find(params[:id])
-    if current_volunteer.regions.collect{ |r| r.id }.include? l.region_id
-      l.volunteers << current_volunteer
-      l.save
-      flash[:notice] = "Successfully took one shift."
+    unless params[:ids].present?
+      l = [Log.find(params[:id])]
+    else
+      l = params[:ids].collect{ |i| Log.find(i) }
+    end
+    if l.all?{ |x| current_volunteer.regions.collect{ |r| r.id }.include? x.region_id }
+      l.each{ |x|
+        x.volunteers << current_volunteer
+        x.save
+      }
+      flash[:notice] = "Successfully took a shift with #{l.length} donor(s)."
     else
       flash[:notice] = "Cannot take shifts for regions that you aren't assigned to!"
     end
@@ -320,18 +327,23 @@ class LogsController < ApplicationController
     end
   end
 
+  # can be given a single id or a list of ids
   def leave
-    log = Log.find(params[:id])
-    if current_volunteer.in_region? log.region_id
-      if log.has_volunteer? current_volunteer
-        LogVolunteer.where(:volunteer_id=>current_volunteer.id, :log_id=>log.id).each{ |lv|
-          lv.active = false
-          lv.save
-        }
-        flash[:notice] = "You are no longer on the pickup from "+log.donor.name+" to "+log.recipients.collect{ |r| r.name }.join(" and ")+"."
-      else
-        flash[:error] = "Cannot leave pickup since you're not part of it!"
+    unless params[:ids].present?
+      l = [Log.find(params[:id])]
+    else
+      l = params[:ids].collect{ |i| Log.find(i) }
+    end
+    if l.all?{ |x| current_volunteer.in_region? x.region_id }
+      l.each do |x|
+        if x.has_volunteer? current_volunteer
+          LogVolunteer.where(:volunteer_id=>current_volunteer.id, :log_id=>x.id).each{ |lv|
+            lv.active = false
+            lv.save
+          }
+        end
       end
+      flash[:notice] = "You left a pickup with #{l.length} donor(s)."
     else
       flash[:error] = "Cannot leave that pickup since you are not a member of that region!"
     end

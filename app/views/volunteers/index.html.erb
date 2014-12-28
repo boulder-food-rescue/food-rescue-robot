@@ -37,7 +37,7 @@
         row_bgcolor = "grey"
       end
     %>
-    <tr<% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+    <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
       <td> <%= link_to v.name, v unless v.name.nil? %>
       <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
       <td> <%= v.phone %>
@@ -80,7 +80,7 @@
 <script type="text/javascript">
 $(function () { 
   $('#data_table').dataTable( {
-    'iDisplayLength' : 50,
+    'iDisplayLength' : 50
   });
 });
 </script>

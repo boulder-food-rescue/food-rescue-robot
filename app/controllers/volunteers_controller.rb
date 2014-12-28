@@ -287,8 +287,9 @@ class VolunteersController < ApplicationController
     @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length
 
     #Upcoming pickup list
-    @upcoming_pickups = Log.upcoming_for(current_volunteer.id)
-    @sncs_pickups = Log.needing_coverage(current_volunteer.region_ids,7)
+    @upcoming_pickups = Log.group_by_schedule(Log.upcoming_for(current_volunteer.id))
+    @sncs_pickups = Log.group_by_schedule(Log.needing_coverage(current_volunteer.region_ids,7,10))
+    @sncs_count = Log.needing_coverage(current_volunteer.region_ids,7).length
     
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id,false)

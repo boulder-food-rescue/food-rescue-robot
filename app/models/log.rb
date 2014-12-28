@@ -80,77 +80,6 @@ class Log < ActiveRecord::Base
     self.volunteers.collect { |v| v.id }.include? volunteer.id
   end
 
-  def self.pickup_count region_id
-    self.where(:region_id=>region_id, :complete=>true).count
-  end
-
-  def self.picked_up_by(volunteer_id,complete=true,limit=nil)
-    if limit.nil?
-      self.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC')
-    else
-      self.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC').limit(limit.to_i)
-    end
-  end
-
-  def self.at(loc)
-    if loc.is_donor
-      return Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where("donor_id = ?",loc.id).group("logs.id, logs.transport_type_id, logs.when").order("logs.when ASC")
-    else
-      return Log.joins(:food_types,:recipients).select("sum(weight) as weight_sum,
-          string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.donor_id").
-          where("recipient_id=?",loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.donor_id").order("logs.when ASC")
-    end
-  end
-
-  def self.picked_up_weight(region_id=nil,volunteer_id=nil)
-    cq = "logs.complete"
-    vq = volunteer_id.nil? ? nil : "log_volunteers.volunteer_id=#{volunteer_id}"
-    rq = region_id.nil? ? nil : "logs.region_id=#{region_id}"
-    aq = "log_volunteers.active"
-    self.joins(:log_volunteers,:log_parts).where([cq,vq,rq,aq].compact.join(" AND ")).sum(:weight).to_f
-  end
-
-  def self.upcoming_for(volunteer_id)
-    self.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND log_volunteers.active",volunteer_id).
-      where("\"when\" >= ?",Time.zone.today)
-  end
-
-  def self.past_for(volunteer_id)
-    self.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND log_volunteers.active",volunteer_id).
-      where("\"when\" < ?",Time.zone.today)
-  end
-
-  def self.needing_coverage(region_id_list=nil,days_away=nil)
-    unless region_id_list.nil?
-      if days_away.nil?
-        Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).reject{ |l| l.covered? }
-      else
-        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).where(:region_id=>region_id_list).reject{ |l| l.covered? }
-      end
-    else
-      if days_away.nil?
-        Log.where("\"when\" >= ?",Time.zone.today).reject{ |l| l.covered? }
-      else
-        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).reject{ |l| l.covered? }
-      end
-    end
-  end
-
-  def self.being_covered region_id_list=nil
-    unless region_id_list.nil?
-      return self.select("logs.*, count(log_volunteers.volunteer_id) as prior_count").joins(:log_volunteers).
-        where("NOT log_volunteers.active").
-        where(:region_id=>region_id_list).
-        where("\"when\" >= ?",Time.zone.today).
-        group("logs.id")
-    else
-      return self.select("logs.*, count(log_volunteers.volunteer_id) as prior_count").joins(:log_volunteers).
-        where("NOT log_volunteers.active").
-        where("\"when\" >= ?",Time.zone.today).group("logs.id")
-    end
-  end
-
-
   def summed_weight
     self.log_parts.collect{ |lp| lp.weight }.compact.sum
   end
@@ -167,13 +96,15 @@ class Log < ActiveRecord::Base
     self.schedule.nil? ? nil: self.schedule.schedule_chain_id
   end
 
+  #### TWITTER INTEGRATION (Currently not working?)
+
   TweetGainThreshold = 25000
   TweetTimeThreshold = 3600*24
   TweetGainOrTime = :gain
 
   def tweet
-    return true if self.region.nil? or self.region.twitter_key.nil? or self.region.twitter_secret.nil? or self.region.twitter_token.nil? or 
-                   self.region.twitter_token_secret.nil?
+    return true if self.region.nil? or self.region.twitter_key.nil? or self.region.twitter_secret.nil? or self.region.twitter_token.nil? or
+      self.region.twitter_token_secret.nil?
     return true unless self.complete
 
     poundage = Log.picked_up_weight(region.id)
@@ -218,6 +149,95 @@ class Log < ActiveRecord::Base
       # Twitter update didn't work for some reason, but everything else seems to have...
     end
     return true
+  end
+
+  #### CLASS METHODS
+
+  def self.pickup_count region_id
+    Log.where(:region_id=>region_id, :complete=>true).count
+  end
+
+  def self.picked_up_by(volunteer_id,complete=true,limit=nil)
+    if limit.nil?
+      Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC')
+    else
+      Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC').limit(limit.to_i)
+    end
+  end
+
+  def self.at(loc)
+    if loc.is_donor
+      return Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where("donor_id = ?",loc.id).group("logs.id, logs.transport_type_id, logs.when").order("logs.when ASC")
+    else
+      return Log.joins(:food_types,:recipients).select("sum(weight) as weight_sum,
+          string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.donor_id").
+          where("recipient_id=?",loc.id).group("logs.id, logs.transport_type_id, logs.when, logs.donor_id").order("logs.when ASC")
+    end
+  end
+
+  def self.picked_up_weight(region_id=nil,volunteer_id=nil)
+    cq = "logs.complete"
+    vq = volunteer_id.nil? ? nil : "log_volunteers.volunteer_id=#{volunteer_id}"
+    rq = region_id.nil? ? nil : "logs.region_id=#{region_id}"
+    aq = "log_volunteers.active"
+    Log.joins(:log_volunteers,:log_parts).where([cq,vq,rq,aq].compact.join(" AND ")).sum(:weight).to_f
+  end
+
+  def self.upcoming_for(volunteer_id)
+    Log.joins(:log_volunteers).where("active AND \"when\" >= ? AND volunteer_id = ?",Time.zone.today,volunteer_id)
+  end
+
+  def self.past_for(volunteer_id)
+    Log.joins(:log_volunteers).where("active AND \"when\" < ? AND volunteer_id = ?",Time.zone.today,volunteer_id)
+  end
+
+  def self.needing_coverage(region_id_list=nil,days_away=nil,limit=nil)
+    unless region_id_list.nil?
+      if days_away.nil?
+        Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).limit(limit).reject{ |l| l.covered? }
+      else
+        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).where(:region_id=>region_id_list).limit(limit).reject{ |l| l.covered? }
+      end
+    else
+      if days_away.nil?
+        Log.where("\"when\" >= ?",Time.zone.today).limit(limit).reject{ |l| l.covered? }
+      else
+        Log.where("\"when\" >= ? AND \"when\" <= ?",Time.zone.today,Time.zone.today+days_away).limit(limit).reject{ |l| l.covered? }
+      end
+    end
+  end
+
+  # Turns a flat array into an array of arrays
+  def self.group_by_schedule(logs)
+    ret = []
+    h = {}
+    logs.each{ |l|
+        if l.schedule_chain.nil?
+        ret << [l]
+      else
+        k = [l.when,l.schedule_chain_id].join(":")
+        if h[k].nil?
+          h[k] = ret.length
+          ret << []
+        end
+        ret[h[k]] << l
+      end
+    }
+    ret
+  end
+
+  def self.being_covered region_id_list=nil
+    unless region_id_list.nil?
+      return self.select("logs.*, count(log_volunteers.volunteer_id) as prior_count").joins(:log_volunteers).
+        where("NOT log_volunteers.active").
+        where(:region_id=>region_id_list).
+        where("\"when\" >= ?",Time.zone.today).
+        group("logs.id")
+    else
+      return self.select("logs.*, count(log_volunteers.volunteer_id) as prior_count").joins(:log_volunteers).
+        where("NOT log_volunteers.active").
+        where("\"when\" >= ?",Time.zone.today).group("logs.id")
+    end
   end
 
 end

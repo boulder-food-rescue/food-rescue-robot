@@ -41,6 +41,12 @@ class VolunteersController < ApplicationController
     render :index
   end
 
+  def active
+    @volunteers = Volunteer.active(current_volunteer.region_ids)
+    @header = "Active Volunteers"
+    render :index
+  end
+
   def need_training
     @volunteers = Volunteer.where(:is_disabled=>false, :needs_training=>true).keep_if do |volunteer|
       (volunteer.gone_until.nil? || volunteer.gone_until < Date.today)

@@ -58,6 +58,18 @@
             <%= menu_item "Schedule An Absence", new_absence_logs_path %>
           <% end %>
 
+          <%= drop_down "Volunteers" do %>
+            <% if current_volunteer.any_admin? %>
+              <%= menu_item "Active (90 days)", active_volunteers_path %>
+              <%= menu_item "Shiftless", shiftless_volunteers_path %>
+              <%= menu_item "Need Training", need_training_volunteers_path %>
+              <%= menu_item "Unassigned", unassigned_volunteers_path %>
+              <%= menu_item "Full List", volunteers_path %>
+            <% else %>
+              <%= menu_item "Contact List", active_volunteers_path %>
+            <% end %>
+          <% end %>
+
           <% if current_volunteer.any_admin? %>
 
             <%= drop_down "Schedule" do %>
@@ -65,13 +77,6 @@
               <%= menu_item "Yesterday", yesterday_schedule_chains_path %>
               <%= menu_item "Today", today_schedule_chains_path %>
               <%= menu_item "Tomorrow", tomorrow_schedule_chains_path %>
-            <% end %>
-
-            <%= drop_down "Volunteers" do %>
-              <%= menu_item "Full List", volunteers_path %>
-              <%= menu_item "Shiftless", shiftless_volunteers_path %>
-              <%= menu_item "Need Training", need_training_volunteers_path %>
-              <%= menu_item "Unassigned", unassigned_volunteers_path %>
             <% end %>
 
             <%= drop_down "Rescue Log" do %>
@@ -147,9 +152,9 @@
         </div>
       </div><!--/row-->
       
-      <footer style="text-align: center; font-size: 9pt;">
+      <footer style="text-align: center;">
         <hr>
-        <p>Copyleft 2014 <a href="http://boulderfoodrescue.org">Boulder Food Rescue</a> (<a href="http://github.com/somerandomsequence/food-rescue-robot">Source Code</a>)</p>
+        <p>Food Rescue Robot (cc) <a href="http://boulderfoodrescue.org">Boulder Food Rescue</a> | <a href="http://github.com/somerandomsequence/food-rescue-robot">Source Code</a></p>
 
       </footer>
 

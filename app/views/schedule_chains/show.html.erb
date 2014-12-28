@@ -57,7 +57,7 @@
     <% else %>
       <ul>
         <% @schedule.volunteers.each do |volunteer| %>
-          <li><%= volunteer.name %></li>
+          <li><%= link_to volunteer.name, "mailto:#{volunteer.email}" %><%= volunteer.phone.nil? ? "" : ": #{volunteer.phone}" %></li>
         <% end %>
         <li><b><%= render 'take_or_leave', :schedule=>@schedule%></b></li>
       </ul>

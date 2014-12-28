@@ -104,10 +104,6 @@ class Volunteer < ActiveRecord::Base
     !self.gone_until.nil? and self.gone_until > Time.zone.today
   end
 
-  def self.all_for_region region_id
-    self.includes(:regions).where(:regions=>{:id=>region_id}).compact
-  end
-
   # better first-time experience: if there is only one region, add the user to that one automatically when they sign up
   def auto_assign_region
     if Region.count==1 and self.regions.count==0
@@ -131,6 +127,20 @@ class Volunteer < ActiveRecord::Base
     self.authentication_token = generate_authentication_token
     self.save
   end
+
+  ### CLASS METHODS
+
+  def self.active(region_ids=nil,ndays=90)
+    Volunteer.joins(:logs).select("max(logs.when) as last_log_date,volunteers.*").
+      group("volunteers.id").keep_if{ |v|
+        (Date.parse(v.last_log_date) > Time.zone.today-ndays) and (region_ids.nil? or (v.region_ids & region_ids).length > 0)
+      }
+  end
+
+  def self.all_for_region region_id
+    self.includes(:regions).where(:regions=>{:id=>region_id}).compact
+  end
+
 
   private
 

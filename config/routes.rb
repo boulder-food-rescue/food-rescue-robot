@@ -96,6 +96,7 @@ Webapp::Application.routes.draw do
       get :unassigned
       get :shiftless
       get :shiftless_old
+      get :active
       get :need_training
       get :super_admin
       get :region_admin

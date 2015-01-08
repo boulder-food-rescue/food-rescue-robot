@@ -81,9 +81,9 @@
 
             <%= drop_down "Rescue Log" do %>
               <%= menu_item "Last 10 Days", last_ten_logs_path %>
-              <%= menu_item "Yesterday", yesterday_logs_path %>
-              <%= menu_item "Today", today_logs_path %>
-              <%= menu_item "Tomorrow", tomorrow_logs_path %>
+              <%= menu_item "Yesterday", by_day_logs_path(:n => -1) %>
+              <%= menu_item "Today", by_day_logs_path(:n => 0) %>
+              <%= menu_item "Tomorrow", by_day_logs_path(:n => 1) %>
               <%= menu_item "Entire Log", logs_path %>
               <%= menu_item "Tardy", tardy_logs_path %>
               <%= menu_item "Being Covered", being_covered_logs_path %>

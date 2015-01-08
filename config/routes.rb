@@ -27,9 +27,7 @@ Webapp::Application.routes.draw do
 
   resources :logs do 
     collection do
-      get :today
-      get :tomorrow
-      get :yesterday
+      get :by_day
       get :tardy
       get :last_ten
       get :open

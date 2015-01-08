@@ -12,8 +12,12 @@ class LogsController < ApplicationController
     index(Log.group_by_schedule(Log.needing_coverage(current_volunteer.region_ids)),"Open Shifts")
   end
   def by_day
-    n = params[:n].present? ? params[:n].to_i : 0
-    d = Time.zone.today+n
+    if params[:date].present?
+      d = Date.civil(*params[:date].sort.map(&:last).map(&:to_i))
+    else 
+      n = params[:n].present? ? params[:n].to_i : 0
+      d = Time.zone.today+n
+    end
     index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{d.to_s}'")),"Shifts on #{d.strftime("%A, %B %-d")}")
   end
   def last_ten

@@ -84,7 +84,8 @@
               <%= menu_item "Yesterday", by_day_logs_path(:n => -1) %>
               <%= menu_item "Today", by_day_logs_path(:n => 0) %>
               <%= menu_item "Tomorrow", by_day_logs_path(:n => 1) %>
-              <%= menu_item "Entire Log", logs_path %>
+              <%= menu_item (Date.today+2).strftime("%A"), by_day_logs_path(:n => 2) %>
+              <%= menu_item (Date.today+3).strftime("%A"), by_day_logs_path(:n => 3) %>
               <%= menu_item "Tardy", tardy_logs_path %>
               <%= menu_item "Being Covered", being_covered_logs_path %>
             <% end %>

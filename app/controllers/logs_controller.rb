@@ -252,9 +252,7 @@ class LogsController < ApplicationController
         # could be nil if they clicked on the link in an email
         respond_to do |format|
           format.json { render json: {:error => 0, :message => flash[:notice] } }
-          format.html {
-            redirect_to(home_volunteers_path)
-          }
+          format.html { redirect_to :back }
         end
       else
         flash[:notice] = "Failed to mark as complete."

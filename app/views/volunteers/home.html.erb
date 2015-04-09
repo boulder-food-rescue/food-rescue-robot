@@ -40,7 +40,10 @@
                <% } %>
           </td>
           <td> <%= readable_time_until first_pickup %> </td>
-          <td> <button class="info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">Info</button></td>
+          <td> <% unless first_pickup.schedule_chain.nil? %>
+               <button class="info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">Info</button>
+               <% end %>
+          </td>
         </tr>
         <% end %>
       </table>

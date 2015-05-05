@@ -18,10 +18,10 @@
   <tbody>
   <% days_of_week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ] %>
   <%
-  @schedules.each do |schedule|
+  @schedules.compact.each do |schedule|
   %>
   <tr>
-    <td> <span style="display:none;"><%= schedule.day_of_week %></span> <%= schedule.day_of_week.nil? ? "Unknown" : days_of_week[schedule.day_of_week] %> </td>
+    <td> <%= schedule.day_of_week.nil? ? "Unknown" : days_of_week[schedule.day_of_week] %> </td>
     <td> <%= schedule.volunteers.empty? ? "Unknown" : schedule.volunteers.collect{ |v| v.name }.join(", ") %>
     <td> <%= readable_start_time schedule %> </td>
     <td> <%= readable_stop_time schedule %> </td>

@@ -35,8 +35,10 @@
         %>
         <tr style="border-top: 1px solid #333333; border-bottom: 1px solid #444444;">
           <td> <% pickup_group.each{ |pickup| %>
-                 <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %><br>
-                 <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span><br>
+                 <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %>
+                 <% unless pickup.food_types.empty? %>
+                   <br><span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span><br>
+                 <% end %>
                <% } %>
           </td>
           <td> <%= readable_time_until first_pickup %> </td>
@@ -61,8 +63,10 @@
             next if report.recipients.empty?
           %>
         <tr style="border-top: 1px solid #333333; border-bottom: 1px solid #444444;">
-          <td> <%= link_to report.donor.name, report.donor %> -&gt; <% report.recipients.each do |recip| %> <%=link_to recip.name, recip %><% end %> <br> 
-               <span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
+          <td> <%= link_to report.donor.name, report.donor %> -&gt; <% report.recipients.each do |recip| %> <%=link_to recip.name, recip %><% end %>
+            <% unless report.food_types.empty? %>
+              <br><span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
+            <% end %>
           <td> <%= readable_time_until report %></td>
 
           <td> <button class="fill" onclick="window.location='<%= edit_log_path(report) %>';">Fill In</button></td>
@@ -129,10 +133,6 @@
       <tr>
         <td> Amount of Food Rescued </td>
         <td> <%= @total_food_rescued %> lbs</td>
-      </tr>
-      <tr title="Distance is calculated based on the geospacial distance between your pickups and delivaries. This underestimates your distance traveled.">
-        <td> Distance traveled (Estimate) </td>
-        <td> <%= @dis_traveled.round(2) %> km</td>
       </tr>
       <tr>
         <td> Weekly Avg </td>

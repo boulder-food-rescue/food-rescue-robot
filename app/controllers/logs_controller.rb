@@ -124,14 +124,20 @@ class LogsController < ApplicationController
 
   def create
     @log = Log.new(params[:log])
-    if @log.region.scale_types.length<2 and @log.scale_type_id.nil?
-      @log.scale_type_id = @log.region.scale_types.first.id
+    @region = @log.region
+    @food_types = @region.food_types.collect{ |e| [e.name,e.id] }
+    @scale_types = @region.scale_types.collect{ |e| [e.name,e.id] }
+    @transport_types = TransportType.all.collect{ |e| [e.name,e.id] }
+    if @scale_types.length<2 and @log.scale_type_id.nil?
+      @log.scale_type_id = @region.scale_types.first.id
     end
     unless current_volunteer.any_admin? @log.region
       flash[:error] = "Not authorized to create logs for that region"
       redirect_to(root_path)
       return
     end
+    parse_and_create_log_parts(params,@log)
+
     if @log.save
       # mark as complete if deserving
       unfilled_count = 0
@@ -221,18 +227,8 @@ class LogsController < ApplicationController
       return
     end
 
-    params["log_parts"].each{ |dc,lpdata|
-      lpdata["weight"] = nil if lpdata["weight"].strip == ""
-      lpdata["count"] = nil if lpdata["count"].strip == ""
-      next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
-      lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
-      lp.count = lpdata["count"]
-      lp.description = lpdata["description"]
-      lp.food_type_id = lpdata["food_type_id"].to_i
-      lp.weight = lpdata["weight"]
-      lp.log_id = @log.id
-      lp.save
-    } unless params["log_parts"].nil?
+    parse_and_create_log_parts(params,@log)
+
     if @log.update_attributes(params[:log])
       # mark as complete if deserving
       filled_count = 0
@@ -409,6 +405,21 @@ class LogsController < ApplicationController
   end
 
   private
+
+    def parse_and_create_log_parts(params,log)
+      params["log_parts"].each{ |dc,lpdata|
+        lpdata["weight"] = nil if lpdata["weight"].strip == ""
+        lpdata["count"] = nil if lpdata["count"].strip == ""
+        next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
+        lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
+        lp.count = lpdata["count"]
+        lp.description = lpdata["description"]
+        lp.food_type_id = lpdata["food_type_id"].to_i
+        lp.weight = lpdata["weight"]
+        lp.log_id = log.id
+        lp.save
+      } unless params["log_parts"].nil?
+    end
 
     def admin_only
       redirect_to(root_path) unless current_volunteer.any_admin?

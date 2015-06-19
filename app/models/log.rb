@@ -1,8 +1,4 @@
 class Log < ActiveRecord::Base
-  belongs_to :schedule # FIXME: remove after migrate
-  belongs_to :recipient, :class_name => "Location", :foreign_key => "recipient_id" # FIXME: remove after migration
-  belongs_to :food_type # FIXME: remove after migration
-
   belongs_to :schedule_chain
   has_many :log_volunteers
   has_many :volunteers, :through => :log_volunteers,
@@ -21,7 +17,7 @@ class Log < ActiveRecord::Base
   accepts_nested_attributes_for :log_volunteers
   accepts_nested_attributes_for :log_recipients
   accepts_nested_attributes_for :active_log_volunteers
-  accepts_nested_attributes_for :schedule
+  accepts_nested_attributes_for :schedule_chain
 
   WhyZero = {1 => "No Food", 2 => "Didn't Happen"}
 
@@ -33,7 +29,7 @@ class Log < ActiveRecord::Base
   validates :when, presence: true
   validates :why_zero, presence: { if: Proc.new{ |a| a.summed_weight == 0 and a.summed_count == 0 } }
 
-  attr_accessible :schedule_id, :region_id, :donor_id, :why_zero,
+  attr_accessible :region_id, :donor_id, :why_zero,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :transport, :when, :scale_type_id,
                   :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes,
@@ -93,10 +89,6 @@ class Log < ActiveRecord::Base
 
   def prior_volunteers
     self.log_volunteers.collect{ |sv| (not sv.active) ? sv.volunteer : nil }.compact
-  end
-
-  def owner_chain_id
-    self.schedule.nil? ? nil: self.schedule.schedule_chain_id
   end
 
   #### TWITTER INTEGRATION (Currently not working?)

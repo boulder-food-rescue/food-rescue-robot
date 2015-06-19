@@ -300,38 +300,6 @@ class VolunteersController < ApplicationController
     #Pickup Stats
     @completed_pickup_count = Log.picked_up_by(current_volunteer.id).count
     @total_food_rescued = Log.picked_up_weight(nil,current_volunteer.id)
-    @dis_traveled = 0.0
-
-    #Distance travelled (attempts to be clever about assembling routes from logs)
-    finished_logs = Log.picked_up_by(current_volunteer.id, true)
-    finished_logs.each do |first_log|
-      chain_id = first_log.schedule.nil? ? nil : first_log.schedule.schedule_chain_id
-      gathered_places = []
-      finished_logs.select{ |log| log.owner_chain_id == chain_id }.each do |matching_log|
-        unless gathered_places.include? matching_log
-          gathered_places << matching_log.schedule.location unless matching_log.schedule.nil?
-        end
-        #nooo don't look at the ugly array manipulation
-        matching_log_array = []
-        matching_log_array << matching_log
-        finished_logs = (finished_logs - matching_log_array)
-      end
-      gathered_places.each_with_index do |loc_b, i|
-        gathered_places.each_with_index do |loc_a, j|
-          if i == (j+1)
-            radius = 6371.0
-            d_lat = (loc_a.lat - loc_b.lat) * Math::PI / 180.0
-            d_lon = (loc_a.lng - loc_b.lng) * Math::PI / 180.0
-            lat1 = loc_b.lat * Math::PI / 180.0
-            lat2 = lob_a.lat * Math::PI / 180.0
-
-            a = Math.sin(d_lat/2) * Math.sin(d_lat/2) + Math.sin(d_lon/2) * Math.sin(d_lon/2) * Math.cos(lat1) * Math.cos(lat2)
-            c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-            @dis_traveled += radius * c
-          end
-        end
-      end
-    end
 
     @unassigned = current_volunteer.unassigned?
 

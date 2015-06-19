@@ -6,6 +6,11 @@
 New Item For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
 <%= submit_tag("Go") %>
 <% end %>
+<%= form_tag("/logs/by_day", :method => "get") do %>
+Jump to <%= date_select("date",:d) %>
+<%= submit_tag("Go") %>
+<% end %>
+
 </div>
 <% end %>
 

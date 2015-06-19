@@ -13,7 +13,7 @@ module FoodRobot
     ScheduleChain.where("NOT irregular").each do |s|
       # if volunteer is specified, we're generating an absence so proceed with ones for
       # whom that volunteer is the only volunteer
-      next unless v.nil? or (s.volunteers.include?(v) and s.volunteers.length == 1)
+      next unless v.nil? or s.volunteers.include?(v)
       # don't generate logs for malformed schedules
       next unless s.functional?
       # things that are relevant to this day
@@ -44,7 +44,7 @@ module FoodRobot
         log = Log.new
         log.schedule_chain_id = s.id
         unless v.nil?
-          log.volunteers = []
+          log.volunteers = s.volunteers - [v]
         else
           log.volunteers = s.volunteers
         end

@@ -11,14 +11,14 @@ class LogsController < ApplicationController
   def open
     index(Log.group_by_schedule(Log.needing_coverage(current_volunteer.region_ids)),"Open Shifts")
   end
-  def today
-    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{Time.zone.today.to_s}'")),"Today's Shifts")
-  end
-  def tomorrow
-    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{(Time.zone.today+1).to_s}'")),"Tomorrow's Shifts")
-  end
-  def yesterday
-    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{(Time.zone.today-1).to_s}'")),"Yesterday's Shifts")
+  def by_day
+    if params[:date].present?
+      d = Date.civil(*params[:date].sort.map(&:last).map(&:to_i))
+    else 
+      n = params[:n].present? ? params[:n].to_i : 0
+      d = Time.zone.today+n
+    end
+    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{d.to_s}'")),"Shifts on #{d.strftime("%A, %B %-d")}")
   end
   def last_ten
     index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'")),"Last 10 Days of Shifts")
@@ -248,9 +248,7 @@ class LogsController < ApplicationController
         # could be nil if they clicked on the link in an email
         respond_to do |format|
           format.json { render json: {:error => 0, :message => flash[:notice] } }
-          format.html {
-            redirect_to(home_volunteers_path)
-          }
+          format.html { redirect_to :back }
         end
       else
         flash[:notice] = "Failed to mark as complete."
@@ -288,13 +286,18 @@ class LogsController < ApplicationController
     end
 
     n = 0
-    nexisting = 0
     while from <= to
       n += FoodRobot::generate_log_entries(from,volunteer)
       break if n >= 12      
       from += 1
     end
-    flash[:notice] = "Thanks for scheduling an absence, if you would like to pick one up to replace it go here: <a href=\"/logs/open\">cover shifts list</a>.<br><br>#{nexisting} absences were already scheduled during this time frame, #{n} new absences were scheduled (12 is the max at one time)."
+    if n == 0
+      flash[:notice] = nil
+      flash[:warning] = "No shift of yours was found in that timeframe, so I couldn't schedule an absense. If you think this is an error, please contact the volunteer coordinator to ensure your absense is scheduled properly. Thanks!"
+    else
+      flash[:warning] = nil
+      flash[:notice] = "Thanks for scheduling an absence, if you would like to pick one up to replace it go here: <a href=\"/logs/open\">cover shifts list</a>.<br><br>#{n} new absences were scheduled (12 is the max at one time)."
+    end
     render :new_absence
   end
 

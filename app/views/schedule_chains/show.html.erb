@@ -40,7 +40,7 @@
       <p><b>Notes:</b> <%= word_wrap(@schedule.public_notes,:line_width => 80).gsub("\n","<br>").html_safe %></p>
     <% end %>
     <% unless @schedule.expected_weight.nil? %>
-      <p><b>Expected Weight:</b> <%= @schedule.expected_weight %> <em>(current mean = <%= @schedule.mean_weight %>, max = <%= @schedule.max_weight %>)</em></p>
+      <p><b>Expected Weight:</b> <%= @schedule.expected_weight %> <em>(current mean = <%= @schedule.mean_weight.round %>, max = <%= @schedule.max_weight.round %>)</em></p>
     <% end %>
     <% unless @schedule.hilliness.nil? %>
       <p><b>Hilliness:</b> <%= ScheduleChain::Hilliness[@schedule.hilliness] %></p>

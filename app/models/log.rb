@@ -27,7 +27,7 @@ class Log < ActiveRecord::Base
   validates :donor_id, presence: { if: :complete }
   validates :scale_type_id, presence: { if: :complete }
   validates :when, presence: true
-  validates :why_zero, presence: { if: Proc.new{ |a| a.summed_weight == 0 and a.summed_count == 0 } }
+  validates :why_zero, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 } }
 
   attr_accessible :region_id, :donor_id, :why_zero,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 

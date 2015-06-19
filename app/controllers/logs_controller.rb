@@ -136,39 +136,9 @@ class LogsController < ApplicationController
       redirect_to(root_path)
       return
     end
-    parse_and_create_log_parts(params,@log)
-
+    @log.log_parts = parse_and_create_log_parts(params,@log)
+    finalize_log(@log)
     if @log.save
-      # mark as complete if deserving
-      unfilled_count = 0
-      params["log_parts"].each{ |dc,lpdata|	
-        unless lpdata["food_type_id"].nil?
-      	  lp = LogPart.new
-          lp.weight = lpdata["weight"]
-          lp.count = lpdata["count"]
-          unfilled_count += 1 if lp.weight.nil? and lp.count.nil?
-          lp.description = lpdata["description"]
-          lp.food_type_id = lpdata["food_type_id"].to_i
-	  lp.log_id = @log.id
-	  lp.save
-	end
-      } unless params["log_parts"].nil?
-      if unfilled_count == 0
-        @log.complete = true
-        @log.save
-      else
-	      @log.log_parts.each{ |part|
-	        if part.food_type_id.nil? and part.weight.nil? and part.count.nil?
-	          part.destroy
-	          unfilled_count-=1;
-	        end
-	      }
-	      if unfilled_count == 0
-	        @log.complete = true
-	        @log.save
-	      end
-      end
-
       flash[:notice] = "Created successfully."
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
@@ -227,17 +197,10 @@ class LogsController < ApplicationController
       return
     end
 
-    parse_and_create_log_parts(params,@log)
+    @log.log_parts = parse_and_create_log_parts(params,@log)
 
     if @log.update_attributes(params[:log])
-      # mark as complete if deserving
-      filled_count = 0
-      required_unfilled = 0
-      @log.log_parts.each{ |lp|
-        required_unfilled += 1 if lp.required and lp.weight.nil? and lp.count.nil?
-        filled_count += 1 unless lp.weight.nil? and lp.count.nil?
-      }
-      @log.complete = filled_count > 0 and required_unfilled == 0
+      finalize_log(@log)
       if @log.save
         if @log.complete
           flash[:notice] = "Updated Successfully. All done!"
@@ -410,6 +373,7 @@ class LogsController < ApplicationController
   private
 
     def parse_and_create_log_parts(params,log)
+      ret = []
       params["log_parts"].each{ |dc,lpdata|
         lpdata["weight"] = nil if lpdata["weight"].strip == ""
         lpdata["count"] = nil if lpdata["count"].strip == ""
@@ -419,9 +383,20 @@ class LogsController < ApplicationController
         lp.description = lpdata["description"]
         lp.food_type_id = lpdata["food_type_id"].to_i
         lp.weight = lpdata["weight"]
-        lp.log_id = log.id
-        lp.save
+        ret.push lp
       } unless params["log_parts"].nil?
+      ret
+    end
+
+    def finalize_log(log)
+      # mark as complete if deserving
+      filled_count = 0
+      required_unfilled = 0
+      log.log_parts.each{ |lp|
+        required_unfilled += 1 if lp.required and lp.weight.nil? and lp.count.nil?
+        filled_count += 1 unless lp.weight.nil? and lp.count.nil?
+      }
+      log.complete = filled_count > 0 and required_unfilled == 0
     end
 
     def admin_only

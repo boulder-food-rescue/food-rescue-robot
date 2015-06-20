@@ -8,7 +8,7 @@ module FoodRobot
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule
-  def self.generate_log_entries(d = Time.zone.today,v = nil)
+  def self.generate_log_entries(d = Time.zone.today,absence = nil)
     n = 0
     is_done = {}
     Log.select("schedule_chain_id,donor_id").where('"when" = ?',d).each do |l|
@@ -18,7 +18,7 @@ module FoodRobot
     ScheduleChain.where("NOT irregular").each do |s|
       # if volunteer is specified, we're generating an absence so proceed with ones for
       # whom that volunteer is the only volunteer
-      next unless v.nil? or s.volunteers.include?(v)
+      next unless absence.nil? or s.volunteers.include?(absence.volunteer)
       # don't generate logs for malformed schedules
       next unless s.functional?
       # things that are relevant to this day
@@ -46,8 +46,9 @@ module FoodRobot
         next if not ss.is_pickup_stop?
         next unless is_done["#{s.id}:#{ss.location.id}"].nil?
         log = Log.from_donor_schedule(ss,ssi,d)
-        unless v.nil?
-          log.volunteers -= [v]
+        unless absence.nil?
+          log.volunteers -= [absence.volunteer]
+          log.absences << absence
         end
         log.save
         n += 1

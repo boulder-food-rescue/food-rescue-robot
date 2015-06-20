@@ -226,41 +226,6 @@ class LogsController < ApplicationController
     end
   end
 
-  def new_absence
-    respond_to do |format|
-      format.html # new_absence.html.erb
-    end
-  end
- 
-  def create_absence
-    from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
-    to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-    volunteer = (params[:volunteer_id].nil?) ? current_volunteer : Volunteer.find(params[:volunteer_id].to_i)
-    vrids = volunteer.regions.collect{ |r| r.id }
-    adminrids = current_volunteer.admin_region_ids
-
-    unless volunteer.id == current_volunteer.id or current_volunteer.super_admin? or (vrids & adminrids).length > 0
-      flash[:notice] = "Cannot schedule an absence for that person, mmmmk."
-      redirect_to(root_path)
-      return
-    end
-
-    n = 0
-    while from <= to
-      n += FoodRobot::generate_log_entries(from,volunteer)
-      break if n >= 12      
-      from += 1
-    end
-    if n == 0
-      flash[:notice] = nil
-      flash[:warning] = "No shift of yours was found in that timeframe, so I couldn't schedule an absense. If you think this is an error, please contact the volunteer coordinator to ensure your absense is scheduled properly. Thanks!"
-    else
-      flash[:warning] = nil
-      flash[:notice] = "Thanks for scheduling an absence, if you would like to pick one up to replace it go here: <a href=\"/logs/open\">cover shifts list</a>.<br><br>#{n} new absences were scheduled (12 is the max at one time)."
-    end
-    render :new_absence
-  end
-
   # can be given a single id or a list of ids
   def take
     unless params[:ids].present?

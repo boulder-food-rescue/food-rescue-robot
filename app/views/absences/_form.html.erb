@@ -1,0 +1,39 @@
+You can use the form below to schedule an absence. Note that any shift occuring <strong>within the next three days</strong> cannot be deferred in this way. Instead, please contact the volunteer coordinator (and/or email list if one exists in your organization) to find a cover on short notice. Thanks!
+
+<%= form_for(@absence) do |f| %>
+  <table class="absence_table">
+
+    <% if current_volunteer.any_admin? %>
+      <tr>
+        <td>Volunteer:</td>
+        <% if current_volunteer.super_admin? %>
+          <td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| [v.name,v.id] }) %></td>
+        <% else %>
+          <td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| ((v.regions.collect{ |r| r.id } & current_volunteer.admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact,{:class => "select2"}) %></td>
+        <% end %>
+      </tr>
+    <% end %>
+
+    <tr>
+      <td>Starting On: </td>
+      <td><%= date_select(:absence,:start_date) %></td>
+    </tr>
+    <tr>
+      <td>Ending On: </td>
+      <td><%= date_select(:absence,:stop_date) %></td>
+    </tr>
+    <tr>
+      <td>Comments: </td>
+      <td><%= f.text_area(:comments,:size => "30x6") %></td>
+    </tr>
+  </table>
+  <%= submit_tag %>
+<% end %>
+
+<% content_for :scripts do %>
+  <script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function(){
+      //jQuery('.select2').select2({width:'element'});
+    });
+  </script>
+<% end %>

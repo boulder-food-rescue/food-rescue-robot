@@ -11,7 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150620195845) do
+ActiveRecord::Schema.define(:version => 20150620204255) do
+
+  create_table "absences", :force => true do |t|
+    t.integer "volunteer_id"
+    t.date    "start_date"
+    t.date    "stop_date"
+    t.text    "comments"
+  end
+
+  create_table "absences_logs", :force => true do |t|
+    t.integer "absence_id"
+    t.integer "log_id"
+  end
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -92,6 +104,7 @@ ActiveRecord::Schema.define(:version => 20150620195845) do
     t.boolean  "active",       :default => true
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.boolean  "covering"
   end
 
   add_index "log_volunteers", ["log_id"], :name => "index_log_volunteers_on_log_id"

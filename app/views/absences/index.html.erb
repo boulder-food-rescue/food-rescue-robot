@@ -1,0 +1,37 @@
+<h2><%= @header %></h2>
+
+<% if @absences.length == 0 %>
+  <p>You haven't scheduled any absences yet.</p>
+<% else %>
+  <table id="data_table">
+    <thead>
+    <tr>
+      <th> Start Date </th>
+      <th> Stop Date </th>
+      <th> Comments </th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <%
+       @absences.each do |absence|
+    %>
+      <tr>
+        <td><%= absence.start_date.strftime("%Y-%m-%d") %> </td>
+        <td><%= absence.stop_date.strftime("%Y-m-%d") %> </td>
+        <td><%= absence.comments %> </td>
+        <td>(coming soon)</td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $(function () {
+      $('#data_table').dataTable({
+        'iDisplayLength' : 50
+      });
+    });
+  </script>
+<% end %>

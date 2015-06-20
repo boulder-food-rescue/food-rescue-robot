@@ -13,6 +13,7 @@ class Log < ActiveRecord::Base
   belongs_to :region
   has_many :log_parts
   has_many :food_types, :through => :log_parts
+  has_and_belongs_to_many :absences
 
   accepts_nested_attributes_for :log_recipients
   accepts_nested_attributes_for :log_volunteers

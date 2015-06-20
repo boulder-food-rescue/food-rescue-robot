@@ -81,6 +81,8 @@ EOF
 <%= f.select(:scale_type_id, @scale_types, {:include_blank => true}) %>
 <% end %>
 <tr><td>Transported With<td><%= f.select(:transport_type_id, @transport_types,{:include_blank => true}) %>
+<tr><td>Time Spent<br>
+<span class="subtext">Approximately how long did you spend doing this shift, in hours? (e.g., 0.5)</span><td><%= f.text_field(:hours_spent, :size => "3") %>
 <tr><td>Notes<br>
 <span class="subtext">Something to report? Any problems? e.g., trailer<br>in need of repair, issues with the scale, busted bin.</span><td><%= f.text_area(:notes, :size => "30x6") %>
 <tr><td>Flag For Admin<br>

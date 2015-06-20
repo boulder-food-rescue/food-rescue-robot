@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150620162548) do
+ActiveRecord::Schema.define(:version => 20150620195845) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -113,6 +113,7 @@ ActiveRecord::Schema.define(:version => 20150620162548) do
     t.integer  "schedule_chain_id"
     t.integer  "num_volunteers"
     t.integer  "why_zero"
+    t.decimal  "hours_spent"
   end
 
   create_table "regions", :force => true do |t|

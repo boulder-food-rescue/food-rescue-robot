@@ -136,7 +136,7 @@ class LogsController < ApplicationController
       redirect_to(root_path)
       return
     end
-    @log.log_parts = parse_and_create_log_parts(params,@log)
+    parse_and_create_log_parts(params,@log)
     finalize_log(@log)
     if @log.save
       flash[:notice] = "Created successfully."
@@ -197,8 +197,7 @@ class LogsController < ApplicationController
       return
     end
 
-    @log.log_parts = parse_and_create_log_parts(params,@log)
-
+    parse_and_create_log_parts(params,@log)
     if @log.update_attributes(params[:log])
       finalize_log(@log)
       if @log.save
@@ -207,11 +206,9 @@ class LogsController < ApplicationController
         else
           flash[:warning] = "Saved, but some weights/counts still needed to complete this log. Finish it here: <a href=\"/logs/#{@log.id}/edit\">(Fill In)</a>"
         end
-
-        # could be nil if they clicked on the link in an email
         respond_to do |format|
           format.json { render json: {:error => 0, :message => flash[:notice] } }
-          format.html { redirect_to :back }
+          format.html { render :edit }
         end
       else
         flash[:notice] = "Failed to mark as complete."
@@ -378,12 +375,14 @@ class LogsController < ApplicationController
         lpdata["weight"] = nil if lpdata["weight"].strip == ""
         lpdata["count"] = nil if lpdata["count"].strip == ""
         next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
-        lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata[:id].to_i)
+        lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata["id"].to_i)
         lp.count = lpdata["count"]
         lp.description = lpdata["description"]
         lp.food_type_id = lpdata["food_type_id"].to_i
-        lp.weight = lpdata["weight"]
+        lp.log_id = log.id
+        lp.weight = lpdata["weight"].to_f
         ret.push lp
+        lp.save
       } unless params["log_parts"].nil?
       ret
     end

@@ -171,6 +171,10 @@ class Log < ActiveRecord::Base
     end
   end
 
+  def self.being_covered(region_id_list=nil)
+    Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).order("logs.when").reject{ |l| l.covering_volunteers.empty? }
+  end
+
   # Turns a flat array into an array of arrays
   def self.group_by_schedule(logs)
     ret = []
@@ -188,20 +192,6 @@ class Log < ActiveRecord::Base
       end
     }
     ret
-  end
-
-  def self.being_covered region_id_list=nil
-    unless region_id_list.nil?
-      return self.select("logs.*, count(log_volunteers.volunteer_id) as prior_count").joins(:log_volunteers).
-        where("NOT log_volunteers.active").
-        where(:region_id=>region_id_list).
-        where("\"when\" >= ?",Time.zone.today).
-        group("logs.id")
-    else
-      return self.select("logs.*, count(log_volunteers.volunteer_id) as prior_count").joins(:log_volunteers).
-        where("NOT log_volunteers.active").
-        where("\"when\" >= ?",Time.zone.today).group("logs.id")
-    end
   end
 
 end

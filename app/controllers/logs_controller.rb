@@ -235,7 +235,7 @@ class LogsController < ApplicationController
     end
     if l.all?{ |x| current_volunteer.regions.collect{ |r| r.id }.include? x.region_id }
       l.each{ |x|
-        x.volunteers << current_volunteer
+        x.log_volunteers << LogVolunteer.new(volunteer:current_volunteer,covering:true,log:x)
         x.save
       }
       flash[:notice] = "Successfully took a shift with #{l.length} donor(s)."

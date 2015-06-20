@@ -35,7 +35,8 @@ class AbsencesController < ApplicationController
         skip_count += 1
       end
     }
-    @absence.destroy
+    @absence.active = false
+    @absence.save
     flash[:notice] = "The absence has been cancelled and #{take_count} shifts have been reclaimed by the original volunteer. BEWARE: #{skip_count} shifts had been already claimed by another volunteer and will be left as they are."
     redirect_to :back
   end

@@ -4,6 +4,7 @@ class CreateAbsences < ActiveRecord::Migration
       t.belongs_to :volunteer
       t.date :start_date
       t.date :stop_date
+      t.boolean :active, :default => true
       t.text :comments
     end
     create_table :absences_logs do |t|

@@ -36,7 +36,6 @@ Jump to <%= date_select("date",:d) %>
     <th> Transport Type </th>
     <th> Food Type </th>
     <% end %>
-    <th> Original Volunteer(s) </th>
     <th> Notes </th>
     <% if current_volunteer.any_admin? %>
       <th> Admin </th>
@@ -86,9 +85,6 @@ Jump to <%= date_select("date",:d) %>
       <td> <%= shift_group.collect{ |s| s.food_types.collect{ |ft| ft.name }.join(", ") }.join("<br>").html_safe %></td>
     <% end %>
 
-    <td><% shift_group.collect{ |s| s.inactive_log_volunteers.collect{ |lv| lv.volunteer } }.flatten.uniq.each do |v| %>
-        <%= link_to v.name, v %><br />
-      <% end %>
       <td style="font-size: 10pt;">
         <% shift_group.each{ |s|
           next if s.notes.nil?

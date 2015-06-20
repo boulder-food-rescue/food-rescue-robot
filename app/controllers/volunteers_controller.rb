@@ -283,8 +283,7 @@ class VolunteersController < ApplicationController
       waiver
       return
     end
-    today = Time.zone.today
-    
+
     @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length
 
     #Upcoming pickup list

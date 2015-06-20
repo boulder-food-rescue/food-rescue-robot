@@ -99,11 +99,16 @@
              first_pickup = pickup_group[0]
         %>
           <tr style="border-top: 1px solid #333333; border-bottom: 1px solid #444444;">
-            <td> <% pickup_group.each{ |pickup| %>
+            <td>
+              <% pickup_group.each{ |pickup| %>
                 <% next if pickup.donor.nil? or pickup.recipients.empty? %>
-                <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %><br>
-              <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span><br>
-                <% } %>
+                <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %>
+                <% unless pickup.food_types.empty? %>
+                  <br>
+                  <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
+                <% end %>
+                <br>
+              <% } %>
               </td>
             <td> <%= readable_time_until first_pickup %> </td>
             <td> <button class="take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => pickup_group.collect{ |p| p.id }) %>';">Take</button></td>

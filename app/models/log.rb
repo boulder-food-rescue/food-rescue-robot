@@ -14,8 +14,8 @@ class Log < ActiveRecord::Base
   has_many :log_parts
   has_many :food_types, :through => :log_parts
 
-  accepts_nested_attributes_for :recipients
-  accepts_nested_attributes_for :volunteers
+  accepts_nested_attributes_for :log_recipients
+  accepts_nested_attributes_for :log_volunteers
   accepts_nested_attributes_for :schedule_chain
 
   WhyZero = {1 => "No Food", 2 => "Didn't Happen"}
@@ -32,7 +32,7 @@ class Log < ActiveRecord::Base
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :transport, :when, :scale_type_id,
                   :log_volunteers_attributes, :weight_unit, :volunteers_attributes,
-                  :schedule_chain_id, :recipients_attributes,
+                  :schedule_chain_id, :recipients_attributes, :log_recipients_attributes, :log_volunteers_attributes,
                   :id, :created_at, :updated_at, :complete, :recipient_ids, :volunteer_ids, :num_volunteers
 
   # units conversion on scale type --- we always store in lbs in the database

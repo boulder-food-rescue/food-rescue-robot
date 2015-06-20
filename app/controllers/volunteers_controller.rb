@@ -248,6 +248,7 @@ class VolunteersController < ApplicationController
   end
 
   def waiver
+    @region = current_volunteer.main_region
     render :waiver
   end
 

@@ -1,10 +1,11 @@
 class Location < ActiveRecord::Base
+
+  LocationType = {0 => "Recipient", 1 => "Donor", 2 => "Hub", 3 => "Seller", 4 => "Buyer"}
+  PickupLocationTypes = [1,2,3]
+  DropLocationTypes = [0,4]
+
   belongs_to :region
-
   has_many :log_recipients
-
-  scope :recipients, :conditions => {:is_donor => false}
-  scope :donors, :conditions => {:is_donor => true}
 
   geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
   acts_as_gmappable :process_geocoding => false, :lat => "lat", :lng => "lng", :address => "address"
@@ -21,10 +22,11 @@ class Location < ActiveRecord::Base
   attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, 
                   :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website, :receipt_key,
                   :email, :phone, :equipment_storage_info, :food_storage_info, :entry_info, :exit_info,
-                  :onsite_contact_info, :active, :is_hub
+                  :onsite_contact_info, :active, :location_type
 
-  scope :donors, where(:is_donor=>true)
-  scope :recipients, where(:is_donor=>false)
+  def is_donor
+    self.location_type == LocationType.invert["Donor"]
+  end
 
   def weight_stats
     w = Log.where("donor_id = ? OR recipient_id = ?",self.id,self.id).collect{ |l| l.summed_weight }
@@ -117,11 +119,27 @@ class Location < ActiveRecord::Base
 
   # class methods
   def self.donors
-    Location.where("is_donor")
+    Location.where(:location_type=>LocationType.invert["Donor"])
   end
 
   def self.recipients
-    Location.where("NOT is_donor")
+    Location.where(:location_type=>LocationType.invert["Recipient"])
+  end
+
+  def self.hubs
+    Location.where(:location_type=>LocationType.invert["Hub"])
+  end
+
+  def self.sellers
+    Location.where(:location_type=>LocationType.invert["Seller"])
+  end
+
+  def self.buyers
+    Location.where(:location_type=>LocationType.invert["Buyer"])
+  end
+
+  def self.regional(rids)
+    Location.where("region_id IN (#{rids.join(",")})")
   end
 
   private 

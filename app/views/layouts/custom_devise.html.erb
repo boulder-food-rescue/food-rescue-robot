@@ -36,8 +36,8 @@
         <p>Total Food Pickups To Date: <%= number_to_human(Log.where("complete").count) %> pickups</p>
         <p>Total Food Rescued: <%= number_to_human(Log.joins(:log_parts).where("complete").sum("weight")) %> lbs</p>
         <p>Number of Volunteers: <%= number_to_human(Volunteer.count) %> volunteers</p>
-        <p>Number of Recipient Organizations: <%= number_to_human(Location.where("not is_donor").count) %></p>
-        <p>Number of Donor Organizations: <%= number_to_human(Location.where("is_donor").count) %></p>
+        <p>Number of Recipient Organizations: <%= number_to_human(Location.where("location_type = ?",Location::LocationType.invert["Recipient"]).count) %></p>
+        <p>Number of Donor Organizations: <%= number_to_human(Location.where("location_type = ?",Location::LocationType.invert["Donor"]).count) %></p>
       <% end %>
 
     </div>

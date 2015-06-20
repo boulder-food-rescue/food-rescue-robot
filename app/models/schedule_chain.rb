@@ -78,11 +78,11 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def self.for_donor(d)
-    Schedule.joins(:location).where("locations.is_donor AND locations.id = ?",d.id).collect{ |s| s.schedule_chain }.uniq
+    Schedule.joins(:location).where("locations.location_type = ? AND locations.id = ?",Location::LocationType.invert["Donor"],d.id).collect{ |s| s.schedule_chain }.uniq
   end
 
   def self.for_recipient(r)
-    Schedule.joins(:location).where("NOT locations.is_donor AND locations.id = ?",r.id).collect{ |s| s.schedule_chain }.uniq
+    Schedule.joins(:location).where("NOT locations.location_type = ? AND locations.id = ?",Location::LocationType.invert["Recipient"],r.id).collect{ |s| s.schedule_chain }.uniq
   end
 
   def food_types

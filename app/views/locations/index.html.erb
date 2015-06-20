@@ -3,21 +3,10 @@
 <% if current_volunteer.any_admin? %>
   <div style="text-align: right;">
     <%= form_tag("/locations/new", :method => "get") do %>
-      New Donor For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
-      <%= hidden_field_tag :is_donor, true %>
+      New Location For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
       <%= submit_tag("Go") %>
     <% end %>
   </div>
-<% end %>
-
-<% if current_volunteer.any_admin? %>
-  <div style="text-align: right;">
-    <%= form_tag("/locations/new", :method => "get") do %>
-      New Recipient For <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
-      <%= hidden_field_tag :is_donor, false %>
-      <%= submit_tag("Go") %>
-    <% end %>
-    </div>
 <% end %>
 
 <% if @locations.length == 0 %>

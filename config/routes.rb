@@ -77,6 +77,9 @@ Webapp::Application.routes.draw do
     collection do
       get :donors
       get :recipients
+      get :hubs
+      get :sellers
+      get :buyers
       get :index
       get :edit
       get :update

@@ -19,16 +19,31 @@ class LocationsController < ApplicationController
   end
 
   def donors
-    index({:is_donor=>true},"Donors")
+    index(Location::LocationType.invert["Donor"],"Donors")
+  end
+
+  def hubs
+    index(Location::LocationType.invert["Hub"],"Hubs")
+  end
+
+  def buyers
+    index(Location::LocationType.invert["Buyer"],"Buyers")
+  end
+
+  def sellers
+    index(Location::LocationType.invert["Seller"],"Sellers")
   end
 
   def recipients
-    index({:is_donor=>false},"Recipients")
+    index(Location::LocationType.invert["Recipient"],"Recipients")
   end
 
-  def index(filters={},header="Donors and Recipients")
-    filters['region_id'] = current_volunteer.region_ids
-    @locations = Location.where(filters)
+  def index(location_type=nil,header="Locations")
+    unless location_type.nil?
+      @locations = Location.regional(current_volunteer.region_ids).where("location_type = ?",location_type)
+    else
+      @locations = Location.regional(current_volunteer.region_ids)
+    end
     @header = header
     @regions = Region.all
     if current_volunteer.super_admin?
@@ -65,7 +80,6 @@ class LocationsController < ApplicationController
 
   def new
     @location = Location.new
-    @location.is_donor = params[:is_donor]
     @location.region_id = params[:region_id]
     return unless check_permissions(@location)
     @action = "create"

@@ -1,8 +1,7 @@
 class Schedule < ActiveRecord::Base
 
 	include RankedModel
-	
-  has_many :schedule_volunteers # FIXME: remove after migrate
+
   has_many :volunteers, :through => :schedule_volunteers
   has_many :logs
 
@@ -20,7 +19,7 @@ class Schedule < ActiveRecord::Base
                   :schedule_chain_id, :position
 
   def is_pickup_stop?
-    return self.location.nil? ? false : self.location.donor?
+    return self.location.nil? ? false : Location::PickupLocationTypes.include?(self.location.location_type)
   end
   
 end

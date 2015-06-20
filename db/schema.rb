@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150620155454) do
+ActiveRecord::Schema.define(:version => 20150620162548) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "volunteer_id"
@@ -38,7 +38,6 @@ ActiveRecord::Schema.define(:version => 20150620155454) do
   end
 
   create_table "locations", :force => true do |t|
-    t.boolean  "is_donor"
     t.string   "recip_category"
     t.string   "donor_type"
     t.text     "address"
@@ -65,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20150620155454) do
     t.text     "onsite_contact_info"
     t.boolean  "active",                 :default => true,  :null => false
     t.boolean  "is_hub",                 :default => false, :null => false
+    t.integer  "location_type",          :default => 0
   end
 
   create_table "log_parts", :force => true do |t|

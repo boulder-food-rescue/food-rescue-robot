@@ -2,16 +2,17 @@
 
 <%= hidden_field_tag "location[region_id]", @location.region_id %>
 
-<%= hidden_field_tag "location[is_donor]", @location.is_donor %>
-
 <table>
-
   <tr><td colspan=2 style="border-bottom: 1px solid black;">
     <span style="font-weight: bold; font-size: 12pt;">General Information</span>
   </td></tr>
 
   <tr><td width="300px">Name</td>
       <td><%= f.text_field(:name) %></td>
+  </tr>
+
+  <tr><td>Location Type<br><span class="subtext">What kind of location?</span></td>
+    <td><%= f.select(:location_type,Location::LocationType.invert.to_a) %></td>
   </tr>
 
   <tr><td>Address</td>
@@ -103,10 +104,6 @@
 
   <tr><td>Exit Info<br><span class="subtext">How to exit the location (if different from entry)</span></td>
       <td><%= f.text_area(:exit_info, :size => "30x3") %></td>
-  </tr>
-
-  <tr><td>Aggregation/Hub<br><span class="subtext">Is this location a warehouse, sorting facility, or aggregation hub? Important to avoid double counting.</span></td>
-    <td><%= f.check_box(:is_hub) %></td>
   </tr>
 
   <tr><td colspan=2 style="border-bottom: 1px solid black;">

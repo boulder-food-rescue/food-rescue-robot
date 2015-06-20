@@ -24,9 +24,14 @@ Webapp::Application.routes.draw do
 
   resources :food_types
   resources :scale_types
-  resources :absences
 
-  resources :logs do 
+  resources :absences do
+    collection do
+      get :mine
+    end
+  end
+
+  resources :logs do
     collection do
       get :by_day
       get :tardy

@@ -6,8 +6,7 @@
   <table id="data_table">
     <thead>
     <tr>
-      <th> Start Date </th>
-      <th> Stop Date </th>
+      <th> When </th>
       <th> Comments </th>
       <th></th>
     </tr>
@@ -17,10 +16,9 @@
        @absences.each do |absence|
     %>
       <tr>
-        <td><%= absence.start_date.strftime("%Y-%m-%d") %> </td>
-        <td><%= absence.stop_date.strftime("%Y-m-%d") %> </td>
+        <td><%= absence.start_date %> to <%= absence.stop_date %> (<%= absence.logs.length %> missed shifts)</td>
         <td><%= absence.comments %> </td>
-        <td>(coming soon)</td>
+        <td><%= button_to "Cancel", absence, :method => :delete %></td>
       </tr>
     <% end %>
     </tbody>

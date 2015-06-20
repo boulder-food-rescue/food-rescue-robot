@@ -63,6 +63,10 @@ class Log < ActiveRecord::Base
     self.volunteers.count == 0
   end
 
+  def covering_volunteers
+    self.log_volunteers.collect{ |lv| lv.covering ? lv.volunteer : nil }.compact
+  end
+
   def covered?
     nv = self.num_volunteers
     nv = self.schedule_chain.num_volunteers if nv.nil? and not self.schedule_chain.nil?

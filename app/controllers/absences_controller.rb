@@ -9,7 +9,7 @@ class AbsencesController < ApplicationController
     @absences = absences.nil? ? Absence.all : absences
     @header = header.nil? ? "Absences" : header
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { render :index } # index.html.erb
     end
   end
 
@@ -18,6 +18,26 @@ class AbsencesController < ApplicationController
     respond_to do |format|
       format.html # new.html.erb
     end
+  end
+
+  def destroy
+    @absence = Absence.find(params[:id])
+    skip_count = 0
+    take_count = 0
+    @absence.logs.each{ |l|
+      if l.covering_volunteers.empty?
+        # can take back
+        l.volunteers << @absence.volunteer
+        l.save
+        take_count += 1
+      else
+        # cannot take back
+        skip_count += 1
+      end
+    }
+    @absence.destroy
+    flash[:notice] = "The absence has been cancelled and #{take_count} shifts have been reclaimed by the original volunteer. BEWARE: #{skip_count} shifts had been already claimed by another volunteer and will be left as they are."
+    redirect_to :back
   end
 
   def create

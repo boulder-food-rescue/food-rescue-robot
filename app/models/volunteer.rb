@@ -2,6 +2,7 @@ class Volunteer < ActiveRecord::Base
   belongs_to :transport_type
   belongs_to :cell_carrier
   has_many :assignments
+  has_many :absences
   has_many :regions, :through => :assignments
   belongs_to :requested_region, :class_name => "Region"
   attr_accessible :pre_reminders_too, :region_ids, :password, :password_confirmation, 

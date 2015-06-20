@@ -69,13 +69,13 @@
   </tr>
 
   <tr>
-  <% if @location.is_donor %>
-    <td>Type</td>
+    <td>Donor Type<br><span class="subtext">If applicable (i.e., if a donor or seller)</span></td>
     <td><%= f.select(:donor_type, [["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]],{:include_blank => true}) %></td>
-  <% else %>
-    <td>Category</td>
-    <td><%= f.select(:recip_category, [["A","A"],["B","B"],["C","C"],["D","D"]],{:include_blank => true}) %></td>      
-  <% end %>
+  </tr>
+
+  <tr>
+    <td>Recipient Category<br><span class="subtext">If applicable (i.e., if a nonprofit-type recipient)</span></td>
+    <td><%= f.select(:recip_category, [["A (High)","A"],["B (Medium)","B"],["C (Low)","C"],["D (Very Low)","D"]],{:include_blank => true}) %></td>
   </tr>
 
   <tr><td>Receipt/HUD Key<br><span class="subtext">A random password donors will use to login</span></td>

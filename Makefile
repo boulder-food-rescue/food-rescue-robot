@@ -1,3 +1,5 @@
+logs:
+	rake foodrobot:generate_logs
 devserver:
 	bundle exec thin -e development start
 prodserver:

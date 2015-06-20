@@ -10,6 +10,11 @@ module FoodRobot
   # date based on the /current/ schedule
   def self.generate_log_entries(d = Time.zone.today,v = nil)
     n = 0
+    is_done = {}
+    Log.select("schedule_chain_id,donor_id").where('"when" = ?',d).each do |l|
+      k = "#{l.schedule_chain_id}:#{l.donor_id}"
+      is_done[k] = true
+    end
     ScheduleChain.where("NOT irregular").each do |s|
       # if volunteer is specified, we're generating an absence so proceed with ones for
       # whom that volunteer is the only volunteer
@@ -37,32 +42,15 @@ module FoodRobot
         # D2 -> {R1}
         # D3 -> {R1}
         # D4 -> {R1}
-        next if ss.location.nil?
+        next if ss.location_id.nil?
         next if not ss.is_pickup_stop?
-        check = Log.where('"when" = ? AND schedule_chain_id = ? AND donor_id = ?', d, s.id,ss.location.id)
-        next if check.length > 0
-        log = Log.new
-        log.schedule_chain_id = s.id
+        next unless is_done["#{s.id}:#{ss.location.id}"].nil?
+        log = Log.from_donor_schedule(ss,ssi,d)
         unless v.nil?
-          log.volunteers = s.volunteers - [v]
-        else
-          log.volunteers = s.volunteers
+          log.volunteers -= [v]
         end
-        log.donor_id = ss.location.id
-        log.when = d
-        log.region_id = s.region_id
-        log.num_volunteers = s.num_volunteers
-        log.recipients
-        s.schedules.each_with_index{ |ss2,ss2i|
-          next if ss2.location.nil?
-          log.recipients << ss2.location if ss2i > ssi and not ss2.is_pickup_stop?
-        }
-        ss.schedule_parts.each{ |ssp|
-          log.log_parts << LogPart.new(food_type_id:ssp.food_type.id,required:ssp.required)
-        }
         log.save
         n += 1
-        puts "\tD#{s.id} #{log.donor.id} -> {#{log.recipients.collect{ |x| "R#{x.id}" }.join(",")}}"
       end
     end
     return n

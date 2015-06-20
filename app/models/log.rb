@@ -3,8 +3,8 @@ class Log < ActiveRecord::Base
   has_many :log_volunteers
   has_many :volunteers, :through => :log_volunteers,
            :conditions=>{"log_volunteers.active"=>true}
-  has_many :active_log_volunteers, :conditions=>{"active" => true}, :class_name => "LogVolunteer"
-  has_many :inactive_log_volunteers, :conditions=>{"active" => false}, :class_name => "LogVolunteer"
+  has_many :inactive_volunteers, :through => :log_volunteers,
+           :conditions=>{"log_volunteers.active"=>false}
   has_many :log_recipients
   has_many :recipients, :through => :log_recipients
   belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
@@ -14,9 +14,8 @@ class Log < ActiveRecord::Base
   has_many :log_parts
   has_many :food_types, :through => :log_parts
 
-  accepts_nested_attributes_for :log_volunteers
-  accepts_nested_attributes_for :log_recipients
-  accepts_nested_attributes_for :active_log_volunteers
+  accepts_nested_attributes_for :recipients
+  accepts_nested_attributes_for :volunteers
   accepts_nested_attributes_for :schedule_chain
 
   WhyZero = {1 => "No Food", 2 => "Didn't Happen"}
@@ -32,10 +31,11 @@ class Log < ActiveRecord::Base
   attr_accessible :region_id, :donor_id, :why_zero,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
                   :num_reminders, :transport, :when, :scale_type_id,
-                  :log_volunteers_attributes, :weight_unit, :active_log_volunteers_attributes,
-                  :schedule_chain_id, :log_recipients_attributes,
+                  :log_volunteers_attributes, :weight_unit, :volunteers_attributes,
+                  :schedule_chain_id, :recipients_attributes,
                   :id, :created_at, :updated_at, :complete, :recipient_ids, :volunteer_ids, :num_volunteers
 
+  # units conversion on scale type --- we always store in lbs in the database
   before_save { |record|
     return if record.region.nil?
     record.scale_type = record.region.scale_types.first if record.scale_type.nil? and record.region.scale_types.length == 1
@@ -51,13 +51,6 @@ class Log < ActiveRecord::Base
       }
       record.weight_unit = "lb"
     end
-  }
-
-  after_save{ |record|
-    record.log_volunteers.each{ |lv|
-      lv.destroy if lv.volunteer_id.blank?
-    }
-    record.tweet
   }
 
   def has_volunteers?
@@ -91,62 +84,32 @@ class Log < ActiveRecord::Base
     self.log_volunteers.collect{ |sv| (not sv.active) ? sv.volunteer : nil }.compact
   end
 
-  #### TWITTER INTEGRATION (Currently not working?)
-
-  TweetGainThreshold = 25000
-  TweetTimeThreshold = 3600*24
-  TweetGainOrTime = :gain
-
-  def tweet
-    return true if self.region.nil? or self.region.twitter_key.nil? or self.region.twitter_secret.nil? or self.region.twitter_token.nil? or
-      self.region.twitter_token_secret.nil?
-    return true unless self.complete
-
-    poundage = Log.picked_up_weight(region.id)
-    poundage += self.region.prior_lbs_rescued unless self.region.prior_lbs_rescued.nil?
-    last_poundage = region.twitter_last_poundage.nil? ? 0.0 : region.twitter_last_poundage
-
-    if TweetGainOrTime == :time
-      return true unless self.region.twitter_last_timestamp.nil? or (Time.zone.now - self.region.twitter_last_timestamp) > TweetTimeThreshold
-      # flip a coin about whether we'll post this one so we don't always post at the same time of day
-      return true if rand > 0.5
-    else
-      return true unless (poundage - last_poundage >= TweetGainThreshold)
-    end
-
-    begin
-      Twitter.configure do |config|
-        config.consumer_key = self.region.twitter_key
-        config.consumer_secret = self.region.twitter_secret
-        config.oauth_token = self.region.twitter_token
-        config.oauth_token_secret = self.region.twitter_token_secret
-      end
-      if poundage <= last_poundage
-        region.twitter_last_poundage = poundage
-        region.save
-        return true
-      end
-      t = "#{self.volunteers.collect{ |v| v.name }.join(" and ")} picked up #{self.summed_weight.round} lbs of food, bringing
-           us to #{poundage.round} lbs of food rescued to date in #{self.region.name}."
-      if self.donor.twitter_handle.nil?
-        t += "Thanks to #{self.donor.name} for the donation!"
-
-      else
-        t += " Thanks to @#{self.donor.twitter_handle} for the donation!"
-      end
-      return true if t.length > 140
-      Twitter.update(t)
-      self.region.twitter_last_poundage = poundage
-      self.region.twitter_last_timestamp = Time.zone.now
-      self.region.save
-      flash[:notice] = "Tweeted: #{t}"
-    rescue
-      # Twitter update didn't work for some reason, but everything else seems to have...
-    end
-    return true
-  end
-
   #### CLASS METHODS
+
+  # Creates a log for a given schedule (s) and date (d)
+  # it is assumed that this is only called for donor schedule
+  # items and si is the index of this donor in the schedule chain
+  def self.from_donor_schedule(s,si,d)
+    sc = s.schedule_chain
+    log = Log.new
+    log.schedule_chain_id = sc.id
+    log.donor_id = s.location.id # assume this is a donor
+    log.when = d
+    log.region_id = sc.region_id
+    sc.volunteers.each{ |v|
+      log.log_volunteers << LogVolunteer.new(volunteer:v,log:log,active:true)
+    }
+    log.num_volunteers = sc.num_volunteers
+    # list each recipient that follows this donor in the chain
+    sc.schedules.each_with_index{ |s2,s2i|
+      next if s2.location.nil? or s2i <= si or s2.is_pickup_stop?
+      log.log_recipients << LogRecipient.new(recipient:s2.location,log:log)
+    }
+    s.schedule_parts.each{ |sp|
+      log.log_parts << LogPart.new(food_type_id:sp.food_type.id,required:sp.required)
+    }
+    log
+  end
 
   def self.pickup_count region_id
     Log.where(:region_id=>region_id, :complete=>true).count

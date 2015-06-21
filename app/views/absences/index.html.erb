@@ -1,11 +1,12 @@
 <h2><%= @header %></h2>
 
 <% if @absences.length == 0 %>
-  <p>You haven't scheduled any absences yet.</p>
+  <p>None scheduled.</p>
 <% else %>
   <table id="data_table">
     <thead>
     <tr>
+      <th> Whom </th>
       <th> When </th>
       <th> Comments </th>
       <th></th>
@@ -16,6 +17,7 @@
        @absences.each do |absence|
     %>
       <tr>
+        <td><%= absence.volunteer.name %></td>
         <td><%= absence.start_date %> to <%= absence.stop_date %> (<%= absence.logs.length %> missed shifts)</td>
         <td><%= absence.comments %> </td>
         <td><%= button_to "Cancel", absence, :method => :delete %></td>

@@ -10,15 +10,20 @@ module FoodRobot
   # date based on the /current/ schedule
   def self.generate_log_entries(d = Time.zone.today,absence = nil)
     n = 0
+    n_skipped = 0
     is_done = {}
     Log.select("schedule_chain_id,donor_id").where('"when" = ?',d).each do |l|
       k = "#{l.schedule_chain_id}:#{l.donor_id}"
       is_done[k] = true
     end
-    ScheduleChain.where("NOT irregular").each do |s|
-      # if volunteer is specified, we're generating an absence so proceed with ones for
-      # whom that volunteer is the only volunteer
-      next unless absence.nil? or s.volunteers.include?(absence.volunteer)
+    # if volunteer is specified, we're generating an absence so proceed with ones for
+    # whom that volunteer is the only volunteer
+    if absence.nil?
+      scheds = ScheduleChain.where("NOT irregular")
+    else
+      scheds = absence.volunteer.schedule_chains
+    end
+    scheds.each do |s|
       # don't generate logs for malformed schedules
       next unless s.functional?
       # things that are relevant to this day
@@ -44,7 +49,10 @@ module FoodRobot
         # D4 -> {R1}
         next if ss.location_id.nil?
         next if not ss.is_pickup_stop?
-        next unless is_done["#{s.id}:#{ss.location.id}"].nil?
+        unless is_done["#{s.id}:#{ss.location.id}"].nil?
+          n_skipped += 1
+          next
+        end
         log = Log.from_donor_schedule(ss,ssi,d)
         unless absence.nil?
           log.volunteers -= [absence.volunteer]
@@ -54,7 +62,7 @@ module FoodRobot
         n += 1
       end
     end
-    return n
+    return [n,n_skipped]
   end
 
   # Sends an email to any volunteer who has a outstanding log entry

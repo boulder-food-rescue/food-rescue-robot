@@ -56,7 +56,7 @@
             <%= menu_item "Upcoming Shifts", mine_upcoming_logs_path %>
             <%= menu_item "Past Shifts", mine_past_logs_path %>
             <%= menu_item "Schedule An Absence", new_absence_path %>
-            <%= menu_item "Your Absences", mine_absences_path %>
+            <%= menu_item "Your Absences", absences_path %>
           <% end %>
 
           <%= drop_down "Volunteers" do %>
@@ -98,6 +98,7 @@
 	      			<%= menu_item "Scale Types", '/scale_types' %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
               <%= menu_item "Statistics", '/volunteers/region_stats' %>
+              <%= menu_item "Absences", all_absences_path %>
             <% end %>
 
             <% if current_volunteer.super_admin? %>

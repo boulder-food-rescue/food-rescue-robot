@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(:version => 20150620204255) do
     t.integer "volunteer_id"
     t.date    "start_date"
     t.date    "stop_date"
+    t.boolean "active",       :default => true
     t.text    "comments"
   end
 

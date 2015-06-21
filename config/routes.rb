@@ -27,7 +27,7 @@ Webapp::Application.routes.draw do
 
   resources :absences do
     collection do
-      get :mine
+      get :all
     end
   end
 

@@ -61,9 +61,7 @@ class AbsencesController < ApplicationController
 
   def create
     @absence = Absence.new(params[:absence])
-    #from = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
-    #to = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-    #volunteer = (params[:volunteer_id].nil?) ? current_volunteer : Volunteer.find(params[:volunteer_id].to_i)
+    @absence.volunteer ||= current_volunteer
     volunteer = @absence.volunteer
     vrids = volunteer.regions.collect{ |r| r.id }
     adminrids = current_volunteer.admin_region_ids
@@ -92,7 +90,7 @@ class AbsencesController < ApplicationController
     else
       if @absence.save
         flash[:warning] = nil
-        flash[:notice] = "Thanks for scheduling an absence, if you would like to pick one up to replace it go here: <a href=\"/logs/open\">cover shifts list</a>.<br><br>#{n+ns} shifts will be skipped (12 is the max at one time, #{ns} were already present)."
+        flash[:notice] = "Thanks for scheduling an absence, if you would like to pick one up to replace it go here: <a href=\"#{open_logs_path}\">cover shifts list</a>.<br><br>#{n+ns} shifts will be skipped (12 is the max at one time, #{ns} were already present). You can see your scheduled absences <a href=\"#{absences_path}\">here</a>."
         render :new
       else
         flash[:warning] = "Didn't save successfully :("

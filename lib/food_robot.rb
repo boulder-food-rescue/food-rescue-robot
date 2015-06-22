@@ -14,7 +14,7 @@ module FoodRobot
     is_done = {}
     Log.select("schedule_chain_id,donor_id").where('"when" = ?',d).each do |l|
       k = "#{l.schedule_chain_id}:#{l.donor_id}"
-      is_done[k] = true
+      is_done[k] = l.id
     end
     # if volunteer is specified, we're generating an absence so proceed with ones for
     # whom that volunteer is the only volunteer
@@ -47,19 +47,30 @@ module FoodRobot
         # D2 -> {R1}
         # D3 -> {R1}
         # D4 -> {R1}
-        next if ss.location_id.nil?
-        next if not ss.is_pickup_stop?
+        next if not ss.is_pickup_stop? or ss.location_id.nil?
         unless is_done["#{s.id}:#{ss.location.id}"].nil?
-          n_skipped += 1
+          if absence.nil?
+            # already generated, skip it
+            n_skipped += 1
+          else
+            # deal with any already generated logs that are now covered with absences
+            l = Log.find(is_done["#{s.id}:#{ss.location.id}"])
+            l.volunteers -= [absence.volunteer]
+            l.absences << absence
+            l.save
+            n += 1
+          end
           next
+        else
+          # normal case, generate a new log
+          log = Log.from_donor_schedule(ss,ssi,d)
+          unless absence.nil?
+            log.volunteers -= [absence.volunteer]
+            log.absences << absence
+          end
+          log.save
+          n += 1
         end
-        log = Log.from_donor_schedule(ss,ssi,d)
-        unless absence.nil?
-          log.volunteers -= [absence.volunteer]
-          log.absences << absence
-        end
-        log.save
-        n += 1
       end
     end
     return [n,n_skipped]

@@ -202,9 +202,10 @@ class VolunteersController < ApplicationController
     @first_recorded_pickup = nil
     @per_volunteer = {}
     @per_volunteer2 = {}
+    
       
     Log.select('sum(weight) as weight_sum, logs.id, "when", transport_type_id, array_to_string(array_agg(volunteer_id),\':\') as volunteer_ids').
-        joins(:log_parts,:log_volunteers,:donor).where("not location_type=? and complete and logs.region_id IN (#{current_volunteer.admin_region_ids.join(",")}) and log_volunteers.active",Location::LocationType.invert["Donor"]).
+        joins(:log_parts,:log_volunteers,:donor).where("location_type=? and complete and logs.region_id IN (#{current_volunteer.admin_region_ids.join(",")}) and log_volunteers.active",Location::LocationType.invert["Donor"]).
         group('logs.id, "when", transport_type_id').
         each{ |l|
       @pounds_per_year[l.when.year] = 0 if @pounds_per_year[l.when.year].nil?

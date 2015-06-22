@@ -18,7 +18,7 @@
     %>
       <tr>
         <td><%= absence.volunteer.name %></td>
-        <td><%= absence.start_date %> to <%= absence.stop_date %>(<%= absence.logs.length %> missed shifts)<br/>
+        <td><%= absence.start_date %> to <%= absence.stop_date %> (<%= absence.logs.length %> missed shifts)<br/>
             <% if current_volunteer.any_admin? %>
               <%= absence.logs.collect{ |l| link_to l.when.to_s, log_path(l) }.join(", ").html_safe %>
             <% end %>

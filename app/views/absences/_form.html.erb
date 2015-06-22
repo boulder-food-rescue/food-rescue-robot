@@ -16,11 +16,11 @@ You can use the form below to schedule an absence. Note that any shift occuring 
 
     <tr>
       <td>Starting On: </td>
-      <td><%= date_select(:absence,:start_date) %></td>
+      <td><%= date_select(:absence,:start_date,:default => 3.days.from_now) %></td>
     </tr>
     <tr>
       <td>Ending On: </td>
-      <td><%= date_select(:absence,:stop_date) %></td>
+      <td><%= date_select(:absence,:stop_date,:default => 3.days.from_now) %></td>
     </tr>
     <tr>
       <td>Comments: </td>

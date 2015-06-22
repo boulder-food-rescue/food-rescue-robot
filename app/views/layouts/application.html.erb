@@ -99,6 +99,11 @@
               <%= menu_item "Controls", '/volunteers/region_admin' %>
               <%= menu_item "Statistics", '/volunteers/region_stats' %>
               <%= menu_item "Absences", all_absences_path %>
+              <% if not current_volunteer.super_admin? %>
+                <% current_volunteer.admin_regions(true).each do |r| %>
+                  <%= menu_item"Settings (#{r.name})", edit_region_path(r) %>
+                <% end %>
+              <% end %>
             <% end %>
 
             <% if current_volunteer.super_admin? %>

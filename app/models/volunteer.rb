@@ -40,6 +40,7 @@ class Volunteer < ActiveRecord::Base
   def active_for_authentication?
     super && assigned?
   end
+
   def inactive_message
     if not assigned
       :not_assigned
@@ -47,6 +48,7 @@ class Volunteer < ActiveRecord::Base
       super
     end
   end
+
   def self.send_reset_password_instructions(attributes={})
     recoverable = find_or_initialize_with_errors(reset_password_keys, attributes, :not_found)
     if !recoverable.assigned?
@@ -57,64 +59,16 @@ class Volunteer < ActiveRecord::Base
     recoverable
   end
 
-  # Admin info accessors
-  def super_admin?
-    self.admin
-  end
-  def region_admin?(r=nil)
-    self.assignments.each{ |a|
-      return true if (a.admin and r.nil?) or (a.admin and r == a.region)
-    }
-    return false
-  end
-  def any_admin? region=nil
-    self.super_admin? or self.region_admin? region
-  end
-
   def sms_email
     return nil if self.cell_carrier.nil? or self.phone.nil? or self.phone.strip == ""
     return nil unless self.phone.tr('^0-9','') =~ /^(\d{10})$/
     # a little scary that we're blindly assuming the format is reasonable, but only admin can edit it...
-    return sprintf(self.cell_carrier.format,$1) 
-  end 
-
-  def has_main_region?
-    !main_region.nil?
+    return sprintf(self.cell_carrier.format,$1)
   end
 
-  def main_region
-    self.regions[0]
-  end
-  def region_ids
-    self.regions.collect{ |r| r.id }
-  end
-
-  def admin_region_ids
-    admin_regions.collect { |r| r.id }
-  end
-
-  def admin_regions
-    if self.super_admin?
-      Region.all
-    else
-      self.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end    
-  end
-
+  # deprecated (by absences)
   def gone?
     !self.gone_until.nil? and self.gone_until > Time.zone.today
-  end
-
-  # better first-time experience: if there is only one region, add the user to that one automatically when they sign up
-  def auto_assign_region
-    if Region.count==1 and self.regions.count==0
-      Assignment.add_volunteer_to_region self, Region.first
-      logger.info "Automatically assigned new user to region #{self.regions.first.name}"
-    end
-  end
-
-  def in_region? region_id
-    self.region_ids.include? region_id
   end
 
   def ensure_authentication_token
@@ -127,6 +81,68 @@ class Volunteer < ActiveRecord::Base
   def reset_authentication_token
     self.authentication_token = generate_authentication_token
     self.save
+  end
+
+  ### REGION-RELATED METHODS
+
+  # Admin info accessors
+  def super_admin?
+    self.admin
+  end
+
+  # if first argument is nil, checks if they're a region admin
+  # of any kind. otherwise, tests if they're a admin for the given region
+  # if strict is false, will not return true if they're a super admin
+  def region_admin?(r=nil,strict=true)
+    return true if not strict and self.super_admin?
+    a = self.admin_region_ids(strict)
+    if r.nil?
+      return true unless a.empty?
+    else
+      return true if a.include? r.id
+    end
+    return false
+  end
+
+  # non-strict version of the above
+  def any_admin?(region=nil)
+    self.region_admin?(region,false)
+  end
+
+  def has_main_region?
+    !main_region.nil?
+  end
+
+  def main_region
+    self.regions[0]
+  end
+
+  def region_ids
+    self.regions.collect{ |r| r.id }
+  end
+
+  def admin_region_ids(strict=false)
+    admin_regions(strict).collect { |r| r.id }
+  end
+
+  def admin_regions(strict=false)
+    if self.super_admin? and not strict
+      Region.all
+    else
+      self.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+    end
+  end
+
+  def in_region? region_id
+    self.region_ids.include? region_id
+  end
+
+  # better first-time experience: if there is only one region, add the user to that one automatically when they sign up
+  def auto_assign_region
+    if Region.count==1 and self.regions.count==0
+      Assignment.add_volunteer_to_region self, Region.first
+      logger.info "Automatically assigned new user to region #{self.regions.first.name}"
+    end
   end
 
   ### CLASS METHODS

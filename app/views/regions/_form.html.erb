@@ -8,6 +8,7 @@
 <tr><td>Address<td><%= f.text_area(:address,:size=>"20x5") %>
 <tr><td>Website<td><%= f.text_field(:website) %>
 <tr><td>Phone<td><%= f.text_field(:phone) %>
+<tr><td>Volunteer Coordinator Email<td><%= f.text_field(:volunteer_coordinator_email) %>
 <tr><td>Handbook<td><%= f.text_field(:handbook_url) %>
 <tr><td>Tax ID<td><%= f.text_field(:tax_id) %>
 <tr><td>Notes<td><%= f.text_area(:notes,:size=>"20x5") %>
@@ -19,6 +20,15 @@
 <tr><td>Twitter Secret<td><%= f.text_field(:twitter_secret) %>
 <tr><td>Twitter Token<td><%= f.text_field(:twitter_token) %>
 <tr><td>Twitter Token Secret<td><%= f.text_field(:twitter_token_secret) %>-->
+<tr style="border-top:1px solid grey;"><td colspan=2>
+<tr><td>Volunteer Self-Unschedule<br>
+  <span class="subtext">When checked volunteers will be able to de-schedule themselves
+  from a shift (otherwise, only region admins can do this)</span>
+  <td><%= f.check_box(:unschedule_self) %>
+<tr><td>Post-pickup emails<br>
+  <span class="subtext">When checked, users who are having their shifts
+    covered will receive an email about whom is covering their shift.</span>
+  <td><%= f.check_box(:post_pickup_emails) %>
 <tr style="border-top:1px solid grey;"><td colspan=2>
 <tr><td>Weight Unit<td><%= f.text_field(:weight_unit) %> (currently unused)
 <tr><td>Time Zone<td><%= f.text_field(:time_zone) %> (currently unused)

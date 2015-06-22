@@ -1,9 +1,12 @@
 class RegionsController < ApplicationController
   before_filter :authenticate_volunteer!, :except => [:recipients, :request_rescue]
-  before_filter :super_admin_only, :except => [:recipients, :request_rescue]
+  before_filter :super_admin_only, :except => [:recipients, :request_rescue, :edit, :update]
 
   def super_admin_only
-    redirect_to(root_path) unless current_volunteer.super_admin?
+    unless current_volunteer.super_admin?
+      flash[:notice] = "Sorry, you can't go there"
+      redirect_to(root_path)
+    end
   end
 
   def index
@@ -14,14 +17,24 @@ class RegionsController < ApplicationController
 
   def edit
     @region = Region.find(params[:id])
+    unless current_volunteer.region_admin?(@region)
+      flash[:notice] = "Sorry, you can't go there"
+      redirect_to(root_path)
+      return
+    end
     render :edit
   end
 
   def update
     @region = Region.find(params[:id])
+    unless current_volunteer.region_admin?(@region)
+      flash[:notice] = "Sorry, you can't go there"
+      redirect_to(root_path)
+      return
+    end
     if @region.update_attributes(params[:region])
       flash[:notice] = "Updated Successfully."
-      index
+      render :edit
     else
       flash[:notice] = "Update failed :("
       render :edit

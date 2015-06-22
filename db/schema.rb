@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150620204255) do
+ActiveRecord::Schema.define(:version => 20150622231249) do
 
   create_table "absences", :force => true do |t|
     t.integer "volunteer_id"
@@ -137,8 +137,8 @@ ActiveRecord::Schema.define(:version => 20150620204255) do
     t.string   "website"
     t.text     "address"
     t.text     "notes"
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
     t.string   "handbook_url"
     t.integer  "prior_lbs_rescued"
     t.integer  "prior_num_pickups"
@@ -158,8 +158,11 @@ ActiveRecord::Schema.define(:version => 20150620204255) do
     t.string   "tax_id"
     t.text     "welcome_email_text"
     t.text     "splash_html"
-    t.string   "weight_unit",            :default => "pound", :null => false
+    t.string   "weight_unit",                 :default => "pound", :null => false
     t.text     "time_zone"
+    t.string   "volunteer_coordinator_email"
+    t.boolean  "post_pickup_emails",          :default => false
+    t.boolean  "unschedule_self",             :default => false
   end
 
   create_table "scale_types", :force => true do |t|

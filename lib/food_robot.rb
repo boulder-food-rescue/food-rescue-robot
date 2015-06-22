@@ -63,11 +63,7 @@ module FoodRobot
           next
         else
           # normal case, generate a new log
-          log = Log.from_donor_schedule(ss,ssi,d)
-          unless absence.nil?
-            log.volunteers -= [absence.volunteer]
-            log.absences << absence
-          end
+          log = Log.from_donor_schedule(ss,ssi,d,absence)
           log.save
           n += 1
         end

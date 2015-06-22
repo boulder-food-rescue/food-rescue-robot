@@ -154,6 +154,7 @@ class LogsController < ApplicationController
   def show
     @log = Log.find(params[:id])
     respond_to do |format|
+      format.html
       format.json {
         attrs = {}
         attrs[:log] = @log.attributes

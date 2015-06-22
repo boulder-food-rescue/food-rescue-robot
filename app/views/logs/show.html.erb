@@ -1,0 +1,48 @@
+<h3>Log #<%= @log.id %></h3>
+<table style="border-spacing: 1em;border-collapse: separate;">
+  <tr>
+    <th> Date </th>
+    <td> <%= @log.when.strftime("%Y-%m-%d") %></td>
+  </tr>
+  <tr>
+    <th> Info </th>
+    <td>
+      <% unless @log.schedule_chain.nil? %>
+        <button class="info" onclick="window.location='/schedule_chains/<%= @log.schedule_chain.id %>';">Info</button>
+      <% else %>
+        One-time Shift
+      <% end %>
+    </td>
+  <tr>
+    <th> When </th>
+    <td> <%= readable_time_until @log %> </td>
+  </tr>
+  <tr>
+    <th> Volunteers </th>
+    <td>
+      <% if @log.volunteers.empty? %>
+        <button class="take" onclick="window.location='<%= take_log_path(@log) %>';">Take</button>
+      <% else %>
+        <% @log.volunteers.each do |volunteer| %>
+          <%= link_to volunteer.name, volunteer %><br />
+        <% end %>
+        <%= render 'take_or_leave', :logs=>[@log] %>
+      <% end %>
+      <% unless @log.absences.empty? %>
+        <small><br>(normally <% @log.absences.each{ |a| %><%= a.volunteer.name %><% } %>)</small>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th> Donor </th>
+    <td><% link_to @log.donor.name, @log.donor %></td>
+  </tr>
+  <tr>
+    <th> Recipient(s) </th>
+    <td> <% @log.recipients.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %></td>
+  </tr>
+  <tr>
+    <th> Notes </th>
+    <td><%= @log.notes.nil? ? "" : word_wrap(@log.notes,:line_width => 20).gsub("\n","<br>").html_safe %></td>
+  </tr>
+  </table>

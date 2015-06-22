@@ -74,10 +74,9 @@ Jump to <%= date_select("date",:d) %>
         <%= link_to volunteer.name, volunteer %><br />
       <% end %>
       <%= render 'take_or_leave', :logs=>shift_group %>
-
-      <% unless first_shift.absences.empty? %>
-        <small><br>(normally <% first_shift.absences.each{ |a| %><%= a.volunteer.name %><% } %>)</small>
-      <% end %>
+    <% end %>
+    <% unless first_shift.absences.empty? %>
+      <small><br>(normally <% first_shift.absences.each{ |a| %><%= a.volunteer.name %><% } %>)</small>
     <% end %>
     </td>
     <td> <% shift_group.each do |s| %> <%= (s.donor != nil) ? (link_to s.donor.name, s.donor) : "" %> <br> <% end %></td>

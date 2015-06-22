@@ -95,14 +95,18 @@ class Log < ActiveRecord::Base
   # Creates a log for a given schedule (s) and date (d)
   # it is assumed that this is only called for donor schedule
   # items and si is the index of this donor in the schedule chain
-  def self.from_donor_schedule(s,si,d)
+  # a is an optional absence, which changes the behavior to schedule
+  # an absence shift
+  def self.from_donor_schedule(s,si,d,a=nil)
     sc = s.schedule_chain
     log = Log.new
     log.schedule_chain_id = sc.id
     log.donor_id = s.location.id # assume this is a donor
     log.when = d
     log.region_id = sc.region_id
+    log.absences << a unless a.nil?
     sc.volunteers.each{ |v|
+      next if (not a.nil?) and (v == a.volunteer)
       log.log_volunteers << LogVolunteer.new(volunteer:v,log:log,active:true)
     }
     log.num_volunteers = sc.num_volunteers

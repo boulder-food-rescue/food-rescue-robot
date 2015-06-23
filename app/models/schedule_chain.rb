@@ -157,4 +157,12 @@ class ScheduleChain < ActiveRecord::Base
     self.schedules.select{ |stop| not stop.is_pickup_stop? }
   end
 
+  def donors
+    self.donor_stops.collect{ |ds| ds.location }
+  end
+
+  def recipients
+    self.recipient_stops.collect{ |rs| rs.location }
+  end
+
 end

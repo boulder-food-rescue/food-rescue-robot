@@ -6,10 +6,10 @@ class Volunteer < ActiveRecord::Base
   has_many :regions, :through => :assignments
   belongs_to :requested_region, :class_name => "Region"
   attr_accessible :pre_reminders_too, :region_ids, :password, :password_confirmation, 
-    :remember_me, :admin_notes, :email, :gone_until, :has_car, :is_disabled, :name, 
+    :remember_me, :admin_notes, :email, :has_car, :is_disabled, :name,
     :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, 
     :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id, :photo, :get_sncs_email, 
-    :needs_training, :assigned, :requested_region_id, :authentication_token
+    :assigned, :requested_region_id, :authentication_token
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
   has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
@@ -33,6 +33,10 @@ class Volunteer < ActiveRecord::Base
   # more trustworthy and self.assigned? attribute?
   def unassigned?
     self.assignments.length == 0
+  end
+
+  def needs_training?
+    not self.logs.collect{ |l| l.complete }.any?
   end
 
   # devise overrides to deal with not approved stuff
@@ -64,11 +68,6 @@ class Volunteer < ActiveRecord::Base
     return nil unless self.phone.tr('^0-9','') =~ /^(\d{10})$/
     # a little scary that we're blindly assuming the format is reasonable, but only admin can edit it...
     return sprintf(self.cell_carrier.format,$1)
-  end
-
-  # deprecated (by absences)
-  def gone?
-    !self.gone_until.nil? and self.gone_until > Time.zone.today
   end
 
   def ensure_authentication_token
@@ -143,6 +142,10 @@ class Volunteer < ActiveRecord::Base
       Assignment.add_volunteer_to_region self, Region.first
       logger.info "Automatically assigned new user to region #{self.regions.first.name}"
     end
+  end
+
+  def current_absences
+    self.absences.keep_if{ |a| a.start_date < Date.today and a.stop_date > Date.today }
   end
 
   ### CLASS METHODS

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150622231249) do
+ActiveRecord::Schema.define(:version => 20150623180213) do
 
   create_table "absences", :force => true do |t|
     t.integer "volunteer_id"
@@ -240,7 +240,6 @@ ActiveRecord::Schema.define(:version => 20150622231249) do
     t.boolean  "has_car"
     t.text     "admin_notes"
     t.text     "pickup_prefs"
-    t.date     "gone_until"
     t.boolean  "is_disabled"
     t.boolean  "on_email_list"
     t.datetime "created_at",                                :null => false
@@ -266,7 +265,6 @@ ActiveRecord::Schema.define(:version => 20150622231249) do
     t.boolean  "get_sncs_email",         :default => false, :null => false
     t.boolean  "waiver_signed",          :default => false, :null => false
     t.datetime "waiver_signed_at"
-    t.boolean  "needs_training",         :default => true
     t.boolean  "assigned",               :default => false, :null => false
     t.integer  "requested_region_id"
     t.string   "authentication_token"

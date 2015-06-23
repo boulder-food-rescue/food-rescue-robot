@@ -33,9 +33,8 @@ class VolunteersController < ApplicationController
   end
 
   def shiftless
-    # TODO: make this more efficient
-    @volunteers = Volunteer.all.keep_if do |volunteer|
-      volunteer.schedules.length ==0 && (volunteer.gone_until.nil? || volunteer.gone_until < Date.today)
+    @volunteers = Volunteer.all.keep_if do |v|
+      ((v.region_ids & current_volunteer.region_ids).length > 0) and v.schedule_chains.length == 0
     end
     @header = "Shiftless Volunteers"
     render :index
@@ -48,9 +47,9 @@ class VolunteersController < ApplicationController
   end
 
   def need_training
-    @volunteers = Volunteer.where(:is_disabled=>false, :needs_training=>true).keep_if do |volunteer|
-      (volunteer.gone_until.nil? || volunteer.gone_until < Date.today)
-    end
+    @volunteers = Volunteer.all.keep_if{ |v|
+      ((v.region_ids & current_volunteer.region_ids).length > 0) and v.needs_training?
+    }
     @header = "Volunteers Needing Training"
     render :index
   end

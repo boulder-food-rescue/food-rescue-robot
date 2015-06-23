@@ -26,8 +26,6 @@ No unassigned volunteers...
       row_bgcolor = "red"
     elsif v.any_admin?
       row_bgcolor = "pink"
-    elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Time.zone.today)
-      row_bgcolor = "grey"
     end
   %>
   <tr<% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>

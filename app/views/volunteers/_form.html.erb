@@ -43,14 +43,6 @@
     <td><%= f.text_area(:pickup_prefs, :size => "30x6") %></td>
   </tr>
   
-  <tr><td>Vacation Until</td>
-    <td><%= f.date_select(:gone_until,{:include_blank => true}) %></td>
-  </tr>
-  
-  <tr><td>Needs Training</td>
-    <td><%= f.check_box(:needs_training) %></td>
-  </tr>
-
   <% if current_volunteer.any_admin? %>
     <tr><td>Admin Notes</td>
       <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>

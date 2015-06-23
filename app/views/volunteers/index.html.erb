@@ -33,8 +33,8 @@
         row_bgcolor = "red"
       elsif v.any_admin?
         row_bgcolor = "pink"
-      elsif v.is_disabled or (!v.gone_until.nil? and v.gone_until > Time.zone.today)
-        row_bgcolor = "grey"
+      elsif v.needs_training?
+        row_bgcolor = "lightgreen"
       end
     %>
     <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
@@ -44,12 +44,9 @@
         <% if current_volunteer.any_admin? %>
         <td> <%= v.preferred_contact %>
         <td> <%= v.transport_type.nil? ? "?" : v.transport_type.name %> <%= "(has car)" if v.has_car %>
-        <td> <%= s = v.is_disabled ? "Disabled" : ""
-                 if !v.gone_until.nil? and v.gone_until > Time.zone.today
-                   s += ", and " if s.length > 0
-                   s += "Gone until #{v}"
-                 end
-                 s %>
+        <td> <% v.current_absences.each{ |a| %>
+             Absent from <%= a.start_date %> to <%= a.stop_date %>
+             <% } %>
         <td> <%= v.regions.collect{ |r| r.name }.join(", ") %>
         <% if current_volunteer.any_admin? %>
         <td> <%= word_wrap(v.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless v.admin_notes.nil? %>
@@ -68,7 +65,7 @@
     <br><br>
     <b>Key:</b> <span class="label" style="background: red">Admin</span>
     <span class="label" style="background: pink">Region Admin</span>
-    <span class="label" style="background: gray">Disabled/Away</span>
+    <span class="label" style="background: lightgreen;">Needs Training (no completed shift)</span>
     <br><br>
     <b>Email List</b> <i class="muted">(you can copy and paste this into an email)</i>
     <blockquote><%= @volunteers.collect{ |v| v.email }.join(", ") %></blockquote>

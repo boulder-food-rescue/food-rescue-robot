@@ -12,7 +12,7 @@ module FoodRobot
     n = 0
     n_skipped = 0
     is_done = {}
-    Log.select("schedule_chain_id,donor_id").where('"when" = ?',d).each do |l|
+    Log.select("id,schedule_chain_id,donor_id").where('logs.when = ?',d).each do |l|
       k = "#{l.schedule_chain_id}:#{l.donor_id}"
       is_done[k] = l.id
     end
@@ -48,7 +48,12 @@ module FoodRobot
         # D3 -> {R1}
         # D4 -> {R1}
         next if not ss.is_pickup_stop? or ss.location_id.nil?
-        unless is_done["#{s.id}:#{ss.location.id}"].nil?
+        if is_done["#{s.id}:#{ss.location.id}"].nil?
+          # normal case, generate a new log
+          log = Log.from_donor_schedule(ss,ssi,d,absence)
+          log.save
+          n += 1
+        else
           if absence.nil?
             # already generated, skip it
             n_skipped += 1
@@ -61,11 +66,6 @@ module FoodRobot
             n += 1
           end
           next
-        else
-          # normal case, generate a new log
-          log = Log.from_donor_schedule(ss,ssi,d,absence)
-          log.save
-          n += 1
         end
       end
     end

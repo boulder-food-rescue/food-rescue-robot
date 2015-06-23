@@ -50,7 +50,7 @@ Jump to <%= date_select("date",:d) %>
 
     if shift_group.any?{ |s| s.volunteers.empty? } and not current_page?(:controller => "logs", :action => "open")
       row_bgcolor = "pink"
-    elsif shift_group.any? { |s| s.volunteers.any?{ |v| v.needs_training } }
+    elsif shift_group.any? { |s| s.volunteers.any?{ |v| v.needs_training? } }
       row_bgcolor = "lightgreen"
     elsif shift_group.any? { |s| s.donor.nil? or s.recipients.empty? }
       row_bgcolor = "yellow"

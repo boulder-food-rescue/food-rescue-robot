@@ -26,7 +26,6 @@ class VolunteersController < ApplicationController
         m = Notifier.region_welcome_email(r,v)
         m.deliver unless m.nil?
       end
-      v.needs_training = true
       v.save
     end
     redirect_to :action => "unassigned", :alert => "Assignment worked"

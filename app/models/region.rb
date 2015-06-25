@@ -26,6 +26,18 @@ class Region < ActiveRecord::Base
     Region.where(:id=>volunteer.admin_region_ids)
   end
 
+  def has_sellers?
+    Location.select("location_type").where(:region_id=>self.id).any?{ |l| l.location_type == Location::LocationType.invert["Seller"] }
+  end
+
+  def has_buyers?
+    Location.select("location_type").where(:region_id=>self.id).any?{ |l| l.location_type == Location::LocationType.invert["Buyer"] }
+  end
+
+  def has_hubs?
+    Location.select("location_type").where(:region_id=>self.id).any?{ |l| l.location_type == Location::LocationType.invert["Hub"] }
+  end
+
   def has_handbook?
     not handbook_url.nil?
   end

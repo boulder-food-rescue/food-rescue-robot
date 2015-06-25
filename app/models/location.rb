@@ -177,8 +177,12 @@ class Location < ActiveRecord::Base
     end
 
     def init_detailed_hours
-      return if detailed_hours_json.nil?
-      detailed_hours = JSON.parse(detailed_hours_json)
+      begin
+        return if self.detailed_hours_json.nil?
+      rescue ActiveModel::MissingAttributeError => e
+        return
+      end
+      detailed_hours = JSON.parse(self.detailed_hours_json)
       return if detailed_hours.empty?
       now = Time.new
       @day_info = {}

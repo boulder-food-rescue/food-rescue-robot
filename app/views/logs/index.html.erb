@@ -52,8 +52,6 @@ Jump to <%= date_select("date",:d) %>
       row_bgcolor = "pink"
     elsif shift_group.any? { |s| s.volunteers.any?{ |v| v.needs_training? } }
       row_bgcolor = "lightgreen"
-    elsif shift_group.any? { |s| s.donor.nil? or s.recipients.empty? }
-      row_bgcolor = "yellow"
     end
   %>
   <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>

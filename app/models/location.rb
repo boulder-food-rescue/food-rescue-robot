@@ -2,7 +2,7 @@ class Location < ActiveRecord::Base
 
   LocationType = {0 => "Recipient", 1 => "Donor", 2 => "Hub", 3 => "Seller", 4 => "Buyer"}
   PickupLocationTypes = [1,2,3]
-  DropLocationTypes = [0,4]
+  DropLocationTypes = [0,2,4]
 
   belongs_to :region
   has_many :log_recipients

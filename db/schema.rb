@@ -62,8 +62,8 @@ ActiveRecord::Schema.define(:version => 20150623180213) do
     t.text     "admin_notes"
     t.text     "public_notes"
     t.text     "hours"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
     t.integer  "region_id"
     t.string   "twitter_handle"
     t.string   "receipt_key"
@@ -75,8 +75,7 @@ ActiveRecord::Schema.define(:version => 20150623180213) do
     t.text     "entry_info"
     t.text     "exit_info"
     t.text     "onsite_contact_info"
-    t.boolean  "active",                 :default => true,  :null => false
-    t.boolean  "is_hub",                 :default => false, :null => false
+    t.boolean  "active",                 :default => true, :null => false
     t.integer  "location_type",          :default => 0
   end
 
@@ -186,7 +185,6 @@ ActiveRecord::Schema.define(:version => 20150623180213) do
     t.integer "hilliness"
     t.integer "scale_type_id"
     t.integer "region_id"
-    t.integer "schedules_id"
     t.text    "frequency"
     t.integer "day_of_week"
     t.integer "expected_weight"

@@ -63,13 +63,14 @@
     <% end %>
     </p>
 
-    <% @related_shifts = Schedule.where("location_id IN (#{@schedule.donors.collect{ |d| d.id }.join(",")}) AND schedule_chain_id!=?",@schedule.id) %>
+    <% @related_shifts = Schedule.where("location_id IN (#{@schedule.donors.collect{ |d| d.location_type == Location::LocationType.invert["Hub"] ? nil : d.id }.compact.join(",")}) AND schedule_chain_id!=?",@schedule.id) %>
       <% unless @related_shifts.empty? %>
       <h3>Other Shifts at this Donor</h3>
       <ul>
       <% @related_shifts = @related_shifts.reject{ |x| x.schedule_chain.nil? }
          @related_shifts.sort{ |x,y| x.schedule_chain.day_of_week <=> y.schedule_chain.day_of_week }.each{ |s|
          next if s.schedule_chain.nil?
+         next if s.schedule_chain.volunteers.empty?
       %>
       <li><%= Date::DAYNAMES[s.schedule_chain.day_of_week] %>
         <ul>

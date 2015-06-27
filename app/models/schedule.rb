@@ -21,5 +21,9 @@ class Schedule < ActiveRecord::Base
   def is_pickup_stop?
     return self.location.nil? ? false : Location::PickupLocationTypes.include?(self.location.location_type)
   end
-  
+
+  def is_drop_stop?
+    return self.location.nil? ? false : Location::DropLocationTypes.include?(self.location.location_type)
+  end
+
 end

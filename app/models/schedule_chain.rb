@@ -47,7 +47,7 @@ class ScheduleChain < ActiveRecord::Base
 
   # does the schedule chain start with a pickup and end with a dropoff?
   def functional?
-    not self.schedules.empty? and self.schedules.first.is_pickup_stop? and not self.schedules.last.is_pickup_stop?
+    not self.schedules.empty? and self.schedules.first.is_pickup_stop? and self.schedules.last.is_drop_stop?
   end
 
   def mappable?
@@ -154,7 +154,7 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def recipient_stops
-    self.schedules.select{ |stop| not stop.is_pickup_stop? }
+    self.schedules.select{ |stop| stop.is_drop_stop? }
   end
 
   def donors

@@ -32,6 +32,7 @@ module FoodRobot
       puts s.schedules.collect{ |ss|
         ss.location.nil? ? nil : ((ss.is_pickup_stop? ? "D" : "R") + ss.location.id.to_s)
       }.compact.join(" -> ")
+      ssi_last = s.schedules.length-1
       s.schedules.each_with_index do |ss, ssi|
         # don't insert a duplicate log entry if one already exists
         # e.g. generating logs from a chain (D1->D2->R1->D3->R2)
@@ -47,7 +48,10 @@ module FoodRobot
         # D2 -> {R1}
         # D3 -> {R1}
         # D4 -> {R1}
-        next if not ss.is_pickup_stop? or ss.location_id.nil?
+        #
+        # Note: Hub acts like a donor when it's not the last location, otherwise acts like
+        #       a recipient
+        next if not ss.is_pickup_stop? or ss.location_id.nil? or ((ssi==ssi_last) and ss.location.hub?)
         if is_done["#{s.id}:#{ss.location.id}"].nil?
           # normal case, generate a new log
           log = Log.from_donor_schedule(ss,ssi,d,absence)

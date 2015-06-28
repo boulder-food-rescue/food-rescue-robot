@@ -1,6 +1,6 @@
 class Schedule < ActiveRecord::Base
 
-	include RankedModel
+  include RankedModel
 
   has_many :volunteers, :through => :schedule_volunteers
   has_many :logs

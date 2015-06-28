@@ -112,7 +112,7 @@ class Log < ActiveRecord::Base
     log.num_volunteers = sc.num_volunteers
     # list each recipient that follows this donor in the chain
     sc.schedules.each_with_index{ |s2,s2i|
-      next if s2.location.nil? or s2i <= si or s2.is_pickup_stop?
+      next if s2.location.nil? or s2i <= si or not s2.is_drop_stop?
       log.log_recipients << LogRecipient.new(recipient:s2.location,log:log)
     }
     s.schedule_parts.each{ |sp|

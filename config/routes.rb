@@ -104,6 +104,7 @@ Webapp::Application.routes.draw do
       get :shiftless
       get :shiftless_old
       get :active
+      get :inactive
       get :need_training
       get :super_admin
       get :region_admin
@@ -118,6 +119,9 @@ Webapp::Application.routes.draw do
       get :waiver
       get :sign_waiver
       get :assign
+    end
+    member do
+      get :reactivate
     end
   end
 

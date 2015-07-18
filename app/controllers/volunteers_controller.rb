@@ -45,6 +45,12 @@ class VolunteersController < ApplicationController
     render :index
   end
 
+  def inactive
+    @volunteers = Volunteer.inactive(current_volunteer.region_ids)
+    @header = "Inactive (Disabled) Volunteer Accounts"
+    render :index
+  end
+
   def need_training
     @volunteers = Volunteer.all.keep_if{ |v|
       ((v.region_ids & current_volunteer.region_ids).length > 0) and v.needs_training?
@@ -272,6 +278,20 @@ class VolunteersController < ApplicationController
     v.admin = !v.admin
     v.save
     admin
+  end
+
+  def reactivate
+    v = Volunteer.send(:with_exclusive_scope){ Volunteer.find(params[:id]) }
+    if (current_volunteer.admin_region_ids & v.region_ids).length > 0
+      v.active = true
+      v.save
+      inactive
+      return
+    else
+      flash[:error] = "You're not permitted to do that!"
+      redirect_to(root_path)
+      return
+    end
   end
 
   def admin_only

@@ -157,6 +157,10 @@ class Volunteer < ActiveRecord::Base
       }
   end
 
+  def self.inactive(region_ids=nil)
+    Volunteer.find_all_by_active(false).keep_if{ |v| (region_ids.nil? or (v.region_ids & region_ids).length > 0) }
+  end
+
   def self.all_for_region region_id
     self.includes(:regions).where(:regions=>{:id=>region_id}).compact
   end

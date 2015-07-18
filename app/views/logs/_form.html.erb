@@ -35,7 +35,7 @@
       <% end %>
       <%= link_to_add_association 'add another recipient', f, :log_recipients, :class=>'btn' %>
     </div>
-<tr><td>Donor<td><%= f.select :donor_id, Location.donors.collect{ |d| [d.name,d.id] }, :include_blank => true, :class => 'select2' %>
+<tr><td>Donor<td><%= f.select :donor_id, (@region.locations.donors + @region.locations.hubs + @region.locations.sellers).collect{ |d| [d.name,d.id] }, :include_blank => true, :class => 'select2' %>
 </table>
 </details>
 <table>

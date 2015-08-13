@@ -91,6 +91,7 @@
               <%= menu_item (Date.today+3).strftime("%A"), by_day_logs_path(:n => 3) %>
               <%= menu_item "Tardy", tardy_logs_path %>
               <%= menu_item "Being Covered", being_covered_logs_path %>
+              <%= menu_item "Stats+Charts", stats_logs_path %>
             <% end %>
 
             <%= drop_down "Region Admin" do %>
@@ -108,7 +109,6 @@
               <%= menu_item "Food Types", '/food_types' %>
 	      			<%= menu_item "Scale Types", '/scale_types' %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
-              <%= menu_item "Stats+Charts", stats_logs_path %>
               <%= menu_item "Absences", all_absences_path %>
               <% if not current_volunteer.super_admin? %>
                 <% current_volunteer.admin_regions(true).each do |r| %>

@@ -1,6 +1,6 @@
 class VolunteersController < ApplicationController
   before_filter :authenticate_volunteer!
-  before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user]
+  before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user,:stats]
 
   def unassigned
     unassigned = Volunteer.where(:assigned=>false)
@@ -200,52 +200,11 @@ class VolunteersController < ApplicationController
     end
   end
 
-  def region_stats
-    @pounds_per_year = {}
-    @pounds_per_month = {}
-    @first_recorded_pickup = nil
-    @per_volunteer = {}
-    @per_volunteer2 = {}
-
-      
-    Log.select('sum(weight) as weight_sum, logs.id, "when", transport_type_id, array_to_string(array_agg(volunteer_id),\':\') as volunteer_ids').
-        joins(:log_parts,:log_volunteers,:donor).where("location_type=? and complete and logs.region_id IN (#{current_volunteer.admin_region_ids.join(",")}) and log_volunteers.active",Location::LocationType.invert["Donor"]).
-        group('logs.id, "when", transport_type_id').
-        each{ |l|
-      @pounds_per_year[l.when.year] = 0 if @pounds_per_year[l.when.year].nil?
-      @pounds_per_year[l.when.year] += l.weight_sum.to_f
-      mokey = l.when.strftime("%Y-%m")
-      @pounds_per_month[mokey] = 0 if @pounds_per_month[mokey].nil?
-      @pounds_per_month[mokey] += l.weight_sum.to_f
-      @first_recorded_pickup = l.when if @first_recorded_pickup.nil? or l.when < @first_recorded_pickup
-      l.volunteer_ids.split(/:/).each do |vid|
-        next if vid.blank?
-        @per_volunteer[vid] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if @per_volunteer[vid].nil?
-        @per_volunteer2[vid] = {:weight => 0.0, :count => 0, :bycar => 0, :covered => 0} if @per_volunteer2[vid].nil?
-        if l.when >= (Date.today << 12)
-          @per_volunteer[vid][:weight] += l.weight_sum.to_f
-          @per_volunteer[vid][:count] += 1
-          @per_volunteer[vid][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
-        end
-        if l.when >= (Date.today << 1)
-          @per_volunteer2[vid][:weight] += l.weight_sum.to_f
-          @per_volunteer2[vid][:count] += 1
-          @per_volunteer2[vid][:bycar] += 1 if !l.transport_type.nil? and l.transport_type.name == "Car"
-        end
-      end
-    }
-
-    @pounds_per_month_data = []
-    @pounds_per_month_labels = @pounds_per_month.keys.sort
-    @pounds_per_month_labels.each{ |i|
-      @pounds_per_month_data << @pounds_per_month[i]
-    }
-    @pounds_per_year_data = []
-    @pounds_per_year_labels = @pounds_per_year.keys.sort
-    @pounds_per_year_labels.each{ |i|
-      @pounds_per_year_data << @pounds_per_year[i]
-    }
-
+  def stats
+    @regions = current_volunteer.admin_regions(true)
+    @regions = Region.all if current_volunteer.admin? and @regions.empty?
+    @per_volunteer = Log.joins(:log_parts,:volunteers).select("volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)").where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(",")}) and logs.when>?",Date.today-12.months).group("volunteers.id, volunteers.name").order("sum DESC")
+    @per_volunteer2 = Log.joins(:log_parts,:volunteers).select("volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)").where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(",")}) and logs.when>?",Date.today-1.month).group("volunteers.id, volunteers.name").order("sum DESC")
     @lazy_volunteers = Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
             joins(:logs,:log_volunteers).where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(",")})").
             group("volunteers.id, name, email")

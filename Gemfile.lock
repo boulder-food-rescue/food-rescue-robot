@@ -269,3 +269,6 @@ DEPENDENCIES
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)
   yaml_db
+
+BUNDLED WITH
+   1.10.2

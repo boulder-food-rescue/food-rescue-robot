@@ -1,0 +1,87 @@
+<div class="row-fluid">
+  <div class="span12">
+    <h2 class="section-head first">Stats and Charts</h2>
+  </div>
+</div>
+<div class="row-fluid">
+  <div class="span6">
+   <div style="width: 500px;" id="highchart_year"></div>
+  </div>
+  <div class="span6">
+    <div style="width: 500px;" id="highchart_month"></div>
+  </div>
+  <div class="span6">
+    <div style="width: 500px;" id="highchart_transport"></div>
+  </div>
+
+</div>
+  
+<% content_for :scripts do %>
+  <script type="text/javascript">
+  $(function () { 
+    $('#highchart_month').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Monthly Stats'
+        },
+        xAxis: {
+            title: { text: 'Month' },
+            categories: ['<%= raw @pounds_per_month.collect{ |x| x[0] }.join("','") %>']
+        },
+        yAxis: {
+            title: { text: 'Pounds' }
+        },
+        series: [{
+            name: 'Food Rescued',
+            data: [<%= @pounds_per_month.collect{ |x| x[1] }.join(",") %>]
+        }]
+    });
+    $('#highchart_year').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Yearly Stats'
+        },
+        xAxis: {
+            title: { text: 'Year' },
+            categories: ['<%= raw @pounds_per_year.collect{ |x| x[0] }.join("','") %>']
+        },
+        yAxis: {
+            title: { text: 'Pounds' }
+        },
+        series: [{
+            name: 'Food Rescued',
+            data: [<%= @pounds_per_year.collect{ |x| x[1] }.join(",") %>]
+        }]
+    });
+    $('#highchart_transport').highcharts({
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Transport Breakdown'
+      },
+      xAxis: {
+        categories: <%= @transport_years.to_json.html_safe %>
+      },
+      yAxis: {
+        min: 0,
+        title: { text: 'Total Transport' }
+      },
+      tooltip: {
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+        shared: true
+      },
+      plotOptions: {
+        column: {
+          stacking: 'percent'
+        }
+      },
+      series: <%= @transport_per_year.collect{ |name,data| {"name" => name, "data" => data} }.to_json.html_safe %>
+    });
+  });
+  </script>
+<% end %>

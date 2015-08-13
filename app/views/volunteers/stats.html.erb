@@ -1,0 +1,47 @@
+<div class="row-fluid">
+  <div class="span12">
+    <h2 class="section-head">Volunteer Statistics</h2>
+
+    <h2>Last 12 Months</h2>
+    <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count</thead><tbody>
+    <% @per_volunteer.each{ |v| %>
+      <tr><td><%= v.name %><td><%= v.sum %><td><%= v.count %>
+    <% } %>
+    </tbody></table>
+
+    <br><br>
+
+    <h2>Last Month</h2>
+    <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count</thead><tbody>
+    <% @per_volunteer2.each{ |v| %>
+      <tr><td><%= v.name %><td><%= v.sum %><td><%= v.count %>
+    <% } %>
+    </tbody></table>
+
+    <br><br>
+
+    <h2>Attrition</h2>
+    Volunteers who have done pickups, but not for 90 days or more.
+    <table class="datatable"><thead><th>Volunteer<th>Email<th>Last Pickup<th>Num Pickups</thead><tbody>
+    <%
+       @lazy_volunteers.each{ |v|
+         next if Date.parse(v.last_date) > (Date.today - 90)
+    %>
+      <tr>
+        <td>
+          <%= [v.name,v.email,v.last_date,v.count].join("<td>").html_safe %>
+    <% }%>
+    </tbody>
+    </table>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $(function () {
+      $('.datatable').dataTable( {
+        'iDisplayLength' : 10
+      });
+    });
+  </script>
+<% end %>

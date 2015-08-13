@@ -1,6 +1,6 @@
 class LogsController < ApplicationController
   before_filter :authenticate_volunteer!, :except => :stats_service
-  before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create]
+  before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create,:stats]
 
   def mine_past
     index(Log.group_by_schedule(Log.past_for(current_volunteer.id)),"My Past Shifts")
@@ -50,6 +50,35 @@ class LogsController < ApplicationController
       format.json { render json: @shifts }
       format.html { render :index }
     end
+  end
+
+  def stats
+    @regions = current_volunteer.admin_regions(true)
+    @regions = Region.all if current_volunteer.admin? and @regions.empty?
+    @first_recorded_pickup = Log.where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(",")})").
+      order("logs.when ASC").limit(1)
+    @pounds_per_year = Log.joins(:log_parts).select("extract(YEAR from logs.when) as year, sum(weight)").
+      where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
+      group("year").order("year ASC").collect{ |l| [l.year,l.sum] }
+    @pounds_per_month = Log.joins(:log_parts).select("date_trunc('month',logs.when) as month, sum(weight)").
+      where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
+      group("month").order("month ASC").collect{ |l| [Date.parse(l.month).strftime("%Y-%m"),l.sum] }
+    @transport_per_year = {}
+    @transport_years = []
+    @transport_data = Log.joins(:transport_type).select("extract(YEAR from logs.when) as year, transport_types.name, count(*)").
+      where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
+      group("name,year").order("name,year ASC")
+    @transport_years.sort!
+    @transport_data.each{ |l|
+      @transport_years << l.year unless @transport_years.include? l.year
+      @transport_per_year[l.name] = [] if @transport_per_year[l.name].nil?
+    }
+    @transport_per_year.keys.each{ |k|
+      @transport_per_year[k] = @transport_years.collect{ |y| 0 }
+    }
+    @transport_data.each{ |l|
+      @transport_per_year[l.name][@transport_years.index(l.year)] = l.count.to_i
+    }
   end
 
   def stats_service

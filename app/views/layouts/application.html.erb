@@ -67,6 +67,7 @@
               <%= menu_item "Unassigned", unassigned_volunteers_path %>
               <%= menu_item "Inactive (Deleted)", inactive_volunteers_path %>
               <%= menu_item "Full List", volunteers_path %>
+              <%= menu_item "Stats+Charts", stats_volunteers_path %>
             <% else %>
               <%= menu_item "Contact List", active_volunteers_path %>
             <% end %>
@@ -107,7 +108,7 @@
               <%= menu_item "Food Types", '/food_types' %>
 	      			<%= menu_item "Scale Types", '/scale_types' %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
-              <%= menu_item "Statistics", '/volunteers/region_stats' %>
+              <%= menu_item "Stats+Charts", stats_logs_path %>
               <%= menu_item "Absences", all_absences_path %>
               <% if not current_volunteer.super_admin? %>
                 <% current_volunteer.admin_regions(true).each do |r| %>

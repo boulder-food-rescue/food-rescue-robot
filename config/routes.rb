@@ -50,6 +50,7 @@ Webapp::Application.routes.draw do
       get :create
       get :destroy
       get :stats_service
+      get :stats
     end
     member do
       get :take
@@ -108,7 +109,7 @@ Webapp::Application.routes.draw do
       get :need_training
       get :super_admin
       get :region_admin
-      get :region_stats
+      get :stats
       get :switch_user
       get :knight
       get :index

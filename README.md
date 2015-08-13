@@ -64,7 +64,7 @@ can see the routes with ```rake routes```;
  * A reasonable operating system (e.g., Linux)
  * Various dependencies for the above
 
-=== Database
+## Database
 
 You'll need to create a database and user:
 
@@ -98,7 +98,7 @@ $ rails console
 > v.save
 ```
 
-=== Running It
+## Running It
 
 You should be able to simply:
 

@@ -200,7 +200,7 @@ class Log < ActiveRecord::Base
 
   def self.to_csv
     CSV.generate do |csv|
-      csv << ["id","date","item types","item weights","item descriptions","total weight","donor","recipients","volunteers","scale","transport","hours spent","volunteer notes"]
+      csv << ["id","date","item types","item weights","item descriptions","total weight","donor","recipients","volunteers","scale","transport","hours spent","reminders sent","volunteer notes"]
       all.each do |log|
         lps = log.log_parts
         csv << [log.id,log.when,lps.collect{ |lp| lp.food_type.nil? ? "Unknown" : lp.food_type.name }.join(":"),
@@ -208,7 +208,7 @@ class Log < ActiveRecord::Base
                 lps.collect{ |lp| lp.description.nil? ? "None" : lp.description }.join(":"),
                 log.summed_weight,log.donor.name,log.recipients.collect{ |r| r.nil? ? "Unknown" : r.name }.join(":"),
                 log.volunteers.collect{ |r| r.nil? ? "Unknown" : r.name }.join(":"),log.scale_type.nil? ? "Uknown" : log.scale_type.name,
-                log.transport_type.nil? ? "Uknown" : log.transport_type.name,log.hours_spent,log.num_reminders,log.notes
+                log.transport_type.nil? ? "Unknown" : log.transport_type.name,log.hours_spent,log.num_reminders,log.notes
         ]
       end
     end

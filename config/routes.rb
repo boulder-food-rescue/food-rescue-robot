@@ -51,6 +51,7 @@ Webapp::Application.routes.draw do
       get :destroy
       get :stats_service
       get :stats
+      get :export
     end
     member do
       get :take

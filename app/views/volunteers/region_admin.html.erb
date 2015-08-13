@@ -33,7 +33,7 @@
     <%= form_tag("/logs/receipt.pdf", :method => "get") do %>
       <table>
         <tr>
-          <td>Donor/Recipient:</td>
+          <td>Donor:</td>
           <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
           if current_volunteer.super_admin? %>
           <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| 
@@ -72,6 +72,22 @@
         </tr>
       </table>
       <%= submit_tag 'Toggle' %>
+    <% end %>
+  </div>
+  <div class="span6">
+    <h2> Export Data </h2>
+    <%= form_tag("/logs/export.csv", :method => "get") do %>
+      <table>
+        <tr>
+          <td>Starting On: </td>
+          <td><%= select_date Time.zone.today, :prefix => :start_date %></td>
+        </tr>
+        <tr>
+          <td>Ending On: </td>
+          <td><%= select_date Time.zone.today, :prefix => :stop_date %></td>
+        </tr>
+      </table>
+      <%= submit_tag "Export" %>
     <% end %>
   </div>
 </div>

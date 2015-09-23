@@ -58,7 +58,7 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
     <% unless @loc.is_donor %><td> <%= shift.donor.nil? ? "Unknown" : shift.donor.name %><% end %>
     <td> <%= shift.weight_sum %> </td>
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
-    <td> <%= shift.food_types_combined %>
+    <td> <%= shift.log_parts.collect{ |lp| (!lp.food_type.nil? and !lp.weight.nil? and lp.weight > 0) ? "#{lp.food_type.name} (#{lp.weight} lb)" : nil }.compact.join(", ") %>
   </tr>
   <% end %>
   </tbody>

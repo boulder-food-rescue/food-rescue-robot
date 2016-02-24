@@ -52,7 +52,7 @@
       <td>
         <% @my_admin_regions.each{ |r| %>
         <%= check_box_tag "volunteer[region_ids][]", r.id, @volunteer.regions.include?(r) %> <%= r.name %>
-        <% } %>
+        <% } unless @my_admin_regions.nil? %>
       </td>
     </tr>
     <tr><td>Account Disabled</td>

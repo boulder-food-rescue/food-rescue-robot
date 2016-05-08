@@ -1,12 +1,6 @@
 /* Overall View */
-.wrap{
+.wrap {
   font-size: .92em;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-.container{
-  min-width: 980px;
 }
 
 /* Schedule Absence */
@@ -94,7 +88,7 @@ span.subtext{
   }
 #cssmenu li:hover ul{
   display:block;
-  
+
   }
 #cssmenu li li {
   background:url('../images/sub_sep.gif') bottom left no-repeat;
@@ -106,7 +100,7 @@ span.subtext{
   }
 #cssmenu li:hover li a{
   background:none;
-  
+
   }
 #cssmenu li ul a{
   display:block;
@@ -125,4 +119,4 @@ span.subtext{
   }
 #cssmenu p{
   clear:left;
-  }	
+  }

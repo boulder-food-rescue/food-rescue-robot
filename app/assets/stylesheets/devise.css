@@ -4,22 +4,21 @@ height: 100%;
 }
 
 .container{
-  min-width: 900px;
 }
 
 .wrap {
-  width: 900px;
-  margin: 10px auto 0px auto;
   font-size: .92em;
+  margin: 10px auto 0px auto;
 }
 
 /*Sign in Section*/
-.sign_in_section{
-  float: right;
-  background: #F1F1F1; 
+.sign_in_section {
+  background: #F1F1F1;
   border: 1px solid #E5E5E5;
-  width: 273px;
+  float: right;
+  margin-top: 20px;
   padding: 25px;
+  -webkit-border-radius: 10px;
   border-radius: 10px;
 }
 
@@ -29,10 +28,10 @@ height: 100%;
   margin-top: 5px;
 }
 
-.sign_in_section input[type=email], 
-.sign_in_section input[type=password], 
+.sign_in_section input[type=email],
+.sign_in_section input[type=password],
 .sign_in_section input[type=text]{
-  width: 267px;
+  width: 100%;
 }
 
 .sign_in_section form div input[type=checkbox]{
@@ -45,6 +44,7 @@ height: 100%;
 
 .sign_in_section h2 {
   font-size: 1.25em;
+  margin-top: 0;
   padding: 10px 0px;
 }
 
@@ -57,25 +57,38 @@ height: 100%;
   text-decoration: underline;
 }
 /*Info Section*/
-.info_section{
-  float: left;
-  width: 575px;
+.info_section {
   padding: 0px;
-  margin: 0px;
+  margin: 45px 0 0;
 }
 
-.info_section a{
+.info_section p {
+  padding-right: 2em;
+  text-align: justify;
+}
+
+.info_section a {
   text-decoration: none;
   color: blue;
 }
 
-.info_section a:hover{
+.info_section a:hover {
   text-decoration: underline;
 }
 
-.info_section h2{
+.info_section h2 {
   font-size: 1.25em;
+  margin-top: 0;
   padding: 10px 0px;
+}
+
+.info_section ul.unstyled li {
+  margin-bottom: 10px;
+}
+.info_section .label {
+  color: #fff;
+  font-size: 1em;
+  line-height: 1.2;
 }
 
 form div label{
@@ -108,7 +121,7 @@ form div label{
 }
 
 .fact_info{
-  background: #F1F1F1; 
+  background: #F1F1F1;
   border: 1px solid #E5E5E5;
   padding: 25px;
   border-radius: 10px;

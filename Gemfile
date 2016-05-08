@@ -32,8 +32,10 @@ group :test do
 end
 
 # mobile-friendly template
-gem 'twitter-bootstrap-rails'
-#gem 'bootstrap-sass', '~> 3.2.0'
+# Font-awesome: https://github.com/FortAwesome/font-awesome-sass
+gem 'font-awesome-sass', '~> 4.4.0'
+# Bootstrap 3: https://github.com/twbs/bootstrap-sass
+gem 'bootstrap-sass', '~> 3.2.0'
 gem 'rails_bootstrap_navbar'
 
 # lets us use the ubiquitous jquery javascript library
@@ -54,7 +56,7 @@ gem 'thin'
 # lets us post things to twitter programatically
 gem 'twitter'
 
-gem 'yaml_db' 
+gem 'yaml_db'
 
 # smart image attachment management
 gem 'paperclip', '~> 3.1'
@@ -79,7 +81,7 @@ gem 'cocoon'
 gem 'simple_form'
 
 # set timezone to browser timezone
-gem 'browser-timezone-rails'
+gem 'browser-timezone-rails'#, '~> 0.0.9'
 
 gem 'ranked-model'
 

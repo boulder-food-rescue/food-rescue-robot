@@ -206,7 +206,7 @@ class Log < ActiveRecord::Base
         csv << [log.id,log.when,lps.collect{ |lp| lp.food_type.nil? ? "Unknown" : lp.food_type.name }.join(":"),
                 lps.collect{ |lp| lp.weight }.join(":"),
                 lps.collect{ |lp| lp.description.nil? ? "None" : lp.description }.join(":"),
-                log.summed_weight,log.donor.name,log.recipients.collect{ |r| r.nil? ? "Unknown" : r.name }.join(":"),
+                log.summed_weight,log.donor.nil? ? "Unknown" : log.donor.name,log.recipients.collect{ |r| r.nil? ? "Unknown" : r.name }.join(":"),
                 log.volunteers.collect{ |r| r.nil? ? "Unknown" : r.name }.join(":"),log.scale_type.nil? ? "Uknown" : log.scale_type.name,
                 log.transport_type.nil? ? "Unknown" : log.transport_type.name,log.hours_spent,log.num_reminders,log.notes
         ]

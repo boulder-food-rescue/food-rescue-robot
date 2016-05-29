@@ -1,9 +1,0 @@
-.page-header {
-  margin-bottom: 10px;
-}
-form div fieldset label {
-  display: block;
-}
-form td div.nested_fields div {
-	display: inline-block;
-}

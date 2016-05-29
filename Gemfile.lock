@@ -24,7 +24,7 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    active_scaffold (3.4.37)
+    active_scaffold (3.4.38)
       rails (>= 3.2.22.2, < 5)
     activemodel (3.2.22.2)
       activesupport (= 3.2.22.2)
@@ -80,6 +80,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.10.0)
+    commonjs (0.2.7)
     daemons (1.2.3)
     debug_inspector (0.0.2)
     devise (3.2.4)
@@ -94,7 +95,7 @@ GEM
     equalizer (0.0.10)
     erubis (2.7.0)
     eventmachine (1.2.0.1)
-    execjs (2.6.0)
+    execjs (2.7.0)
     factory_girl (4.7.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.7.0)
@@ -105,7 +106,7 @@ GEM
     font-awesome-sass (4.4.0)
       sass (>= 3.2)
     gem_config (0.3.1)
-    geocoder (1.3.4)
+    geocoder (1.3.5)
     gmaps4rails (1.5.6)
     highcharts-rails (3.0.10)
       railties (>= 3.1)
@@ -129,6 +130,11 @@ GEM
     json (1.8.3)
     jstz-rails (1.0.4.1)
       railties (~> 3.1)
+    less (2.6.0)
+      commonjs (~> 0.2.7)
+    less-rails (2.6.0)
+      actionpack (>= 3.1)
+      less (~> 2.6.0)
     libv8 (3.16.14.15)
     mail (2.5.4)
       mime-types (~> 1.16)
@@ -137,7 +143,7 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     mime-types (1.25.1)
     mini_portile2 (2.0.0)
-    multi_json (1.11.3)
+    multi_json (1.12.1)
     multipart-post (2.0.0)
     naught (1.1.0)
     nokogiri (1.6.7.2)
@@ -219,10 +225,10 @@ GEM
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
-    thin (1.6.4)
+    thin (1.7.0)
       daemons (~> 1.0, >= 1.0.9)
       eventmachine (~> 1.0, >= 1.0.4)
-      rack (~> 1.0)
+      rack (>= 1, < 3)
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (1.4.1)
@@ -241,6 +247,11 @@ GEM
       memoizable (~> 0.4.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
+    twitter-bootstrap-rails (3.2.2)
+      actionpack (>= 3.1)
+      execjs (>= 2.2.2, >= 2.2)
+      less-rails (>= 2.5.0)
+      railties (>= 3.1)
     tzinfo (0.3.49)
     uglifier (3.0.0)
       execjs (>= 0.3.0, < 3)
@@ -269,7 +280,6 @@ DEPENDENCIES
   cocoon
   coffee-rails (~> 3.2.1)
   devise (~> 3.2.0)
-  execjs
   factory_girl_rails
   font-awesome-sass (~> 4.4.0)
   geocoder
@@ -286,11 +296,12 @@ DEPENDENCIES
   rails_bootstrap_navbar
   ranked-model
   rspec-rails
-  sass-rails (~> 3.2.3)
+  sass-rails (~> 3.2.6)
   simple_form
   therubyracer
   thin
   twitter
+  twitter-bootstrap-rails
   uglifier (>= 1.0.3)
   yaml_db
 

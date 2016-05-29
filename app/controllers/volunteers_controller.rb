@@ -63,13 +63,13 @@ class VolunteersController < ApplicationController
     @volunteers = Volunteer.all.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
     @header = "All Volunteers"
     respond_to do |format|
-      format.json { 
+      format.json {
         @volunteers = Volunteer.select("email,id,name,phone").collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
         render json: @volunteers.to_json
       }
-      format.html { 
+      format.html {
         @volunteers = Volunteer.all.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
-        render :index 
+        render :index
       }
     end
   end
@@ -152,7 +152,7 @@ class VolunteersController < ApplicationController
     @volunteer = Volunteer.find(params[:id])
     return unless check_permissions(@volunteer)
     # can't set admin bits from CRUD controls
-    params[:volunteer].delete(:admin) 
+    params[:volunteer].delete(:admin)
     params[:volunteer][:assignments].each{ |a| a.delete(:admin) } unless params[:volunteer][:assignments].nil?
     if @volunteer.update_attributes(params[:volunteer])
       flash[:notice] = "Updated Successfully."
@@ -269,10 +269,10 @@ class VolunteersController < ApplicationController
     @upcoming_pickups = Log.group_by_schedule(Log.upcoming_for(current_volunteer.id))
     @sncs_pickups = Log.group_by_schedule(Log.needing_coverage(current_volunteer.region_ids,7,10))
     @sncs_count = Log.needing_coverage(current_volunteer.region_ids,7).length
-    
+
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id,false)
-    
+
     #Last 10 pickups
     @last_ten_pickups = Log.picked_up_by(current_volunteer.id,true,10)
 
@@ -304,7 +304,7 @@ class VolunteersController < ApplicationController
       @by_month[yrmo] = 0.0 if @by_month[yrmo].nil?
       @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
-    @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum  
+    @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum
     @num_shifts = current_volunteer.schedule_chains.count
     @num_to_cover = Log.needing_coverage.count
     @num_upcoming = Log.upcoming_for(current_volunteer.id).count

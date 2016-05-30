@@ -90,7 +90,7 @@ Webapp::Application.configure do
 
   #Exception Notification
   Rails.application.config.middleware.use ExceptionNotifier,
-  :email_prefix => "[BFR ROBOT ERROR]",
+  :email_prefix => "[BFR ROBOT ERROR] ",
   :sender_address => %{"BFR" <notifier@boulder-food-rescue-robot.herokuapp.com>},
   :exception_recipients => %w{exceptions@example.com}
 end

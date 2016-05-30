@@ -77,4 +77,4 @@ gem 'ranked-model'
 gem 'addressable'
 
 #Send email when exception occurs.
-gem 'exception_notification'
+gem 'exception_notification', '~> 3.0.1'

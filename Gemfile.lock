@@ -95,6 +95,8 @@ GEM
     equalizer (0.0.10)
     erubis (2.7.0)
     eventmachine (1.2.0.1)
+    exception_notification (3.0.1)
+      actionmailer (>= 3.0.4)
     execjs (2.7.0)
     factory_girl (4.7.0)
       activesupport (>= 3.0.0)
@@ -280,6 +282,7 @@ DEPENDENCIES
   cocoon
   coffee-rails (~> 3.2.1)
   devise (~> 3.2.0)
+  exception_notification (~> 3.0.1)
   factory_girl_rails
   font-awesome-sass (~> 4.4.0)
   geocoder

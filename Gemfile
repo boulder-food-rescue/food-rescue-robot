@@ -75,3 +75,6 @@ gem 'browser-timezone-rails'#, '~> 0.0.9'
 gem 'ranked-model'
 
 gem 'addressable'
+
+#Send email when exception occurs.
+gem 'exception_notification'

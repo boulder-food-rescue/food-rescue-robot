@@ -10,3 +10,4 @@ config/database.yml.mine
 public/system
 log/*.log.*
 .idea
+.bundle/*

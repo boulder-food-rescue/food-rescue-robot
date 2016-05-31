@@ -112,7 +112,11 @@
               </td>
             <td> <%= readable_time_until first_pickup %> </td>
             <td> <button class="take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => pickup_group.collect{ |p| p.id }) %>';">Take</button></td>
+            <% if first_pickup.schedule_chain.nil? %>
+            <td></td>
+            <% else %>
             <td> <button class="info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">Info</button></td>
+            <% end %>
           </tr>
         <% end %>
       </table>

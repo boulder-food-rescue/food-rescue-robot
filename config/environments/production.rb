@@ -87,10 +87,4 @@ Webapp::Application.configure do
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
-
-  #Exception Notification
-  Rails.application.config.middleware.use ExceptionNotifier,
-  :email_prefix => "[BFR ROBOT ERROR] ",
-  :sender_address => %{"BFR" <notifier@boulder-food-rescue-robot.herokuapp.com>},
-  :exception_recipients => %w{exceptions@example.com}
 end

@@ -174,6 +174,11 @@ GEM
       activesupport (= 3.2.22.2)
       bundler (~> 1.0)
       railties (= 3.2.22.2)
+    rails_12factor (0.0.3)
+      rails_serve_static_assets
+      rails_stdout_logging
+    rails_serve_static_assets (0.0.5)
+    rails_stdout_logging (0.0.5)
     railties (3.2.22.2)
       actionpack (= 3.2.22.2)
       activesupport (= 3.2.22.2)
@@ -290,6 +295,7 @@ DEPENDENCIES
   prawn
   rack-test
   rails (~> 3.2.16)
+  rails_12factor
   ranked-model
   rspec-rails
   sass-rails (~> 3.2.6)

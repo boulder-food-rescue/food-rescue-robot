@@ -1,12 +1,12 @@
 
 <% if @sncs_count > 0 %>
-  <div class="alert fade in alert-error" onclick="window.location='<%= open_logs_path %>';" style="cursor:pointer;">
+  <div class="alert fade in alert-danger" onclick="window.location='<%= open_logs_path %>';" style="cursor:pointer;">
     <%= @sncs_count %> Shifts Need Covering Soon: <%= link_to "Pick one up here.", open_logs_path %>
   </div>
 <% end %>
 
 <% if @open_shift_count > 0 %>
-  <div class="alert fade in alert-error" onclick="window.location='<%= open_schedule_chains_path %>';" style="cursor:pointer;">
+  <div class="alert fade in alert-danger" onclick="window.location='<%= open_schedule_chains_path %>';" style="cursor:pointer;">
     <%= @open_shift_count %> Shifts Need A Regular Volunteer: <%= link_to "Sign up here.", open_schedule_chains_path %>
   </div>
 <% end %>

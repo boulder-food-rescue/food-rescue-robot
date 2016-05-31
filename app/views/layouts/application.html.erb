@@ -39,124 +39,112 @@
 
   <body>
 
-    <%= navbar container: 'fluid' do %>
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapsable">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a href="/" class="navbar-brand">
-          The Food Rescue Robot
-        </a>
-      </div>
+    <%= nav_bar brand: 'The Food Rescue Robot', responsive: true, fluid: true do %>
+      <%= menu_group do %>
+        <%= menu_item "Home", root_path %>
 
-      <%= navbar_collapse do %>
-        <%= navbar_group do %>
-          <%= navbar_item "Home", root_path %>
+        <% if volunteer_signed_in? %>
 
-          <% if volunteer_signed_in? %>
+          <%= drop_down "Take Shifts" do %>
+            <%= menu_item "One-Time Shifts", open_logs_path %>
+            <%= menu_item "Recurring Shifts", open_schedule_chains_path %>
+          <% end %>
 
-            <%= navbar_dropdown "Take Shifts" do %>
-              <%= navbar_item "One-Time Shifts", open_logs_path %>
-              <%= navbar_item "Recurring Shifts", open_schedule_chains_path %>
-            <% end %>
+          <%= drop_down "Your Shifts" do %>
+            <%= menu_item "Regular Shifts", mine_schedule_chains_path %>
+            <%= menu_item "Upcoming Shifts", mine_upcoming_logs_path %>
+            <%= menu_item "Past Shifts", mine_past_logs_path %>
+            <%= menu_item "Schedule An Absence", new_absence_path %>
+            <%= menu_item "Your Absences", absences_path %>
+          <% end %>
 
-            <%= navbar_dropdown "Your Shifts" do %>
-              <%= navbar_item "Regular Shifts", mine_schedule_chains_path %>
-              <%= navbar_item "Upcoming Shifts", mine_upcoming_logs_path %>
-              <%= navbar_item "Past Shifts", mine_past_logs_path %>
-              <%= navbar_item "Schedule An Absence", new_absence_path %>
-              <%= navbar_item "Your Absences", absences_path %>
-            <% end %>
-
-            <%= navbar_dropdown "Volunteers" do %>
-              <% if current_volunteer.any_admin? %>
-                <%= navbar_item "Active (90 days)", active_volunteers_path %>
-                <%= navbar_item "Shiftless", shiftless_volunteers_path %>
-                <%= navbar_item "Need Training", need_training_volunteers_path %>
-                <%= navbar_item "Unassigned", unassigned_volunteers_path %>
-                <%= navbar_item "Inactive (Deleted)", inactive_volunteers_path %>
-                <%= navbar_item "Full List", volunteers_path %>
-                <%= navbar_item "Stats+Charts", stats_volunteers_path %>
-              <% else %>
-                <%= navbar_item "Contact List", active_volunteers_path %>
-              <% end %>
-            <% end %>
-
+          <%= drop_down "Volunteers" do %>
             <% if current_volunteer.any_admin? %>
-
-              <%= navbar_dropdown "Schedule" do %>
-                <%= navbar_item "Full Schedule", schedule_chains_path %>
-                <%= navbar_item "Yesterday", yesterday_schedule_chains_path %>
-                <%= navbar_item "Today", today_schedule_chains_path %>
-                <%= navbar_item "Tomorrow", tomorrow_schedule_chains_path %>
-              <% end %>
-
-              <%= navbar_dropdown "Rescue Log" do %>
-                <%= navbar_item "Last 10 Days", last_ten_logs_path %>
-                <%= navbar_item "Yesterday", by_day_logs_path(:n => -1) %>
-                <%= navbar_item "Today", by_day_logs_path(:n => 0) %>
-                <%= navbar_item "Tomorrow", by_day_logs_path(:n => 1) %>
-                <%= navbar_item (Date.today+2).strftime("%A"), by_day_logs_path(:n => 2) %>
-                <%= navbar_item (Date.today+3).strftime("%A"), by_day_logs_path(:n => 3) %>
-                <%= navbar_item "Tardy", tardy_logs_path %>
-                <%= navbar_item "Being Covered", being_covered_logs_path %>
-                <%= navbar_item "Stats+Charts", stats_logs_path %>
-              <% end %>
-
-              <%= navbar_dropdown "Region Admin" do %>
-                <%= navbar_item "Donors", donors_locations_path %>
-                <%= navbar_item "Recipients", recipients_locations_path %>
-                <% if current_volunteer.main_region.has_sellers? %>
-                  <%= navbar_item "Sellers", sellers_locations_path %>
-                <% end %>
-                <% if current_volunteer.main_region.has_buyers? %>
-                  <%= navbar_item "Buyers", buyers_locations_path %>
-                <% end %>
-                <% if current_volunteer.main_region.has_hubs? %>
-                  <%= navbar_item "Hubs", hubs_locations_path %>
-                <% end %>
-                <%= navbar_item "Food Types", '/food_types' %>
-  	      			<%= navbar_item "Scale Types", '/scale_types' %>
-                <%= navbar_item "Controls", '/volunteers/region_admin' %>
-                <%= navbar_item "Absences", all_absences_path %>
-                <% if not current_volunteer.super_admin? %>
-                  <% current_volunteer.admin_regions(true).each do |r| %>
-                    <%= navbar_item"Settings (#{r.name})", edit_region_path(r) %>
-                  <% end %>
-                <% end %>
-              <% end %>
-
-              <% if current_volunteer.super_admin? %>
-                <%= navbar_dropdown "Super Admin" do %>
-                  <%= navbar_item "Cell Carriers", cell_carriers_path %>
-                  <%= navbar_item "Manage Regions", regions_path %>
-                  <!-- <%= navbar_item "Transport Types", transport_types_path %> -->
-                  <%= navbar_item "Controls", '/volunteers/super_admin' %>
-                <% end %>
-              <% end %>
-
-            <% end # if signed in %>
-
-          <% end # menu group %>
-
-          <%= navbar_group :pull => :right do %>
-            <% if volunteer_signed_in? %>
-              <%= navbar_dropdown current_volunteer.name  do %>
-                <% current_volunteer.regions.each do |region| %>
-                  <%= navbar_item region.name+" Handbook", region.handbook_url if region.has_handbook? %>
-                <% end %>
-                <%= navbar_item "Settings", edit_volunteer_path(current_volunteer.id) %>
-                <%= navbar_item "Waiver", waiver_volunteers_path %>
-                <%= navbar_item "Logout", destroy_volunteer_session_path, {}, {:"data-method" => :delete } %>
-              <% end %>
+              <%= menu_item "Active (90 days)", active_volunteers_path %>
+              <%= menu_item "Shiftless", shiftless_volunteers_path %>
+              <%= menu_item "Need Training", need_training_volunteers_path %>
+              <%= menu_item "Unassigned", unassigned_volunteers_path %>
+              <%= menu_item "Inactive (Deleted)", inactive_volunteers_path %>
+              <%= menu_item "Full List", volunteers_path %>
+              <%= menu_item "Stats+Charts", stats_volunteers_path %>
             <% else %>
-              <%= navbar_item "Login", '/volunteers/sign_in' %>
+              <%= menu_item "Contact List", active_volunteers_path %>
             <% end %>
           <% end %>
 
+          <% if current_volunteer.any_admin? %>
+
+            <%= drop_down "Schedule" do %>
+              <%= menu_item "Full Schedule", schedule_chains_path %>
+              <%= menu_item "Yesterday", yesterday_schedule_chains_path %>
+              <%= menu_item "Today", today_schedule_chains_path %>
+              <%= menu_item "Tomorrow", tomorrow_schedule_chains_path %>
+            <% end %>
+
+            <%= drop_down "Rescue Log" do %>
+              <%= menu_item "Last 10 Days", last_ten_logs_path %>
+              <%= menu_item "Yesterday", by_day_logs_path(:n => -1) %>
+              <%= menu_item "Today", by_day_logs_path(:n => 0) %>
+              <%= menu_item "Tomorrow", by_day_logs_path(:n => 1) %>
+              <%= menu_item (Date.today+2).strftime("%A"), by_day_logs_path(:n => 2) %>
+              <%= menu_item (Date.today+3).strftime("%A"), by_day_logs_path(:n => 3) %>
+              <%= menu_item "Tardy", tardy_logs_path %>
+              <%= menu_item "Being Covered", being_covered_logs_path %>
+              <%= menu_item "Stats+Charts", stats_logs_path %>
+            <% end %>
+
+            <%= drop_down "Region Admin" do %>
+              <%= menu_item "Donors", donors_locations_path %>
+              <%= menu_item "Recipients", recipients_locations_path %>
+              <% if current_volunteer.main_region.has_sellers? %>
+                <%= menu_item "Sellers", sellers_locations_path %>
+              <% end %>
+              <% if current_volunteer.main_region.has_buyers? %>
+                <%= menu_item "Buyers", buyers_locations_path %>
+              <% end %>
+              <% if current_volunteer.main_region.has_hubs? %>
+                <%= menu_item "Hubs", hubs_locations_path %>
+              <% end %>
+              <%= menu_item "Food Types", '/food_types' %>
+	      			<%= menu_item "Scale Types", '/scale_types' %>
+              <%= menu_item "Controls", '/volunteers/region_admin' %>
+              <%= menu_item "Absences", all_absences_path %>
+              <% if not current_volunteer.super_admin? %>
+                <% current_volunteer.admin_regions(true).each do |r| %>
+                  <%= menu_item"Settings (#{r.name})", edit_region_path(r) %>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <% if current_volunteer.super_admin? %>
+              <%= drop_down "Super Admin" do %>
+                <%= menu_item "Cell Carriers", cell_carriers_path %>
+                <%= menu_item "Manage Regions", regions_path %>
+                <!-- <%= menu_item "Transport Types", transport_types_path %> -->
+                <%= menu_item "Controls", '/volunteers/super_admin' %>
+              <% end %>
+            <% end %>
+
+          <% end # if signed in %>
+
+        <% end # menu group %>
+
+        <%= menu_group :pull => :right do %>
+          <% if volunteer_signed_in? %>
+            <%= drop_down current_volunteer.name  do %>
+              <% current_volunteer.regions.each do |region| %>
+                <%= menu_item region.name+" Handbook", region.handbook_url if region.has_handbook? %>
+              <% end %>
+              <%= menu_item "Settings", edit_volunteer_path(current_volunteer.id) %>
+              <%= menu_item "Waiver", waiver_volunteers_path %>
+
+              <%= menu_divider %>
+
+              <%= menu_item "Logout", destroy_volunteer_session_path, {}, {:"data-method" => :delete } %>
+            <% end %>
+          <% else %>
+            <%= menu_item "Login", '/volunteers/sign_in' %>
+          <% end %>
         <% end %>
 
       <% end %>

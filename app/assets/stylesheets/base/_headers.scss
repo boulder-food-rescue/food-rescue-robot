@@ -1,0 +1,27 @@
+h2 {
+  color: #DB5432;
+  padding: 2px 0px;
+  margin: 1em 0em 0.5em 0em;
+  font: bold 120% arial, sans-serif;
+  &.section-head {
+    color: #000000;
+    border-top: 1px solid #EEEEEE;
+    border-bottom: 1px solid #EEEEEE;
+    font-size: 150%;
+    margin: 10px 0 0;
+    padding: 10px 0 10px 0;
+    &.first {
+      border-top: 0px;
+      margin-top: 0px;
+    }
+  }
+}
+
+h3 {
+  font-weight: bold;
+  margin-top: 1em;
+  color: #DB5432;
+  padding: 2px 0px;
+  margin: 0;
+  font: 100% arial, sans-serif;
+}

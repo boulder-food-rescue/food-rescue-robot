@@ -1,0 +1,22 @@
+table, table.table {
+  margin-top: 2em;
+  th {
+  }
+
+  td {
+    vertical-align: top;
+  }
+
+  tr {
+    &.bordered {
+      border-bottom: 1px solid #444444;
+      border-top: 1px solid #333333;
+      padding: 5px 0;
+    }
+  }
+}
+
+/* Schedule Absence */
+.absence_table td {
+  padding: 5px 5px 5px 0px;
+}

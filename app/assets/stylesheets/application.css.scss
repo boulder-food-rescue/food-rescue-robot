@@ -1,13 +1,21 @@
 @import "active_scaffold";
 @import "dataTables/jquery.dataTables";
 
-@import "common";
-@import "devise";
-@import "main";
+/*** Base partials **/
+@import "base/variables";
+@import "base/layout";
+@import "base/headers";
 
-@import "bootstrap_and_overrides";
+
+/*** Bootstrap Includes ***/
+@import "base/bootstrap_and_overrides";
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+/*** Font Awesome Includes ***/
 @import "font-awesome-sprockets";
 @import "font-awesome";
+
+@import "modules/**";
+
+@import "pages/**";

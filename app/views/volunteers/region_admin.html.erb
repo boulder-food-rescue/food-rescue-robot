@@ -1,12 +1,12 @@
 <div class="row-fluid">
-  <div class="span12">
+  <div class="col-sm-12">
     <h2 class="section-head first">Region Admin Controls</h2>
   </div>
 </div>
 <div class="row-fluid">
-  <div class="span6">
+  <div class="col-sm-6">
     <h2> Switch to User </h2>
-    <p> 
+    <p>
       Select a volunteer from the list below to swtich to.
       After switching you will have logout and login to get back to your
       real user.
@@ -17,10 +17,10 @@
           <td>Volunteer:</td>
           <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
           if current_volunteer.super_admin? %>
-          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
-                    ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }),{:class => "select2"}) %></td> 
+          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+                    ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }),{:class => "select2"}) %></td>
           <% else %>
-          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v| 
+          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
                     ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact),{:class => "select2"}) %></td>
           <% end %>
         </tr>
@@ -28,7 +28,7 @@
       <%= submit_tag "Switch" %>
     <% end %>
   </div>
-  <div class="span6">
+  <div class="col-sm-6">
     <h2> Generate Receipts </h2>
     <%= form_tag("/logs/receipt.pdf", :method => "get") do %>
       <table>
@@ -36,7 +36,7 @@
           <td>Donor:</td>
           <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
           if current_volunteer.super_admin? %>
-          <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| 
+          <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r|
                    r.id }.join(",")})").collect{ |v| [v.name,v.id] }),{:class => "select2"}) %></td>
           <% else %>
           <td><%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{adminrids.join(",")})").collect{ |l|
@@ -57,7 +57,7 @@
   </div>
 </div>
 <div class="row-fluid">
-  <div class="span6">
+  <div class="col-sm-6">
     <h2> Regional Admin Appointment </h2>
     <p>Make a volunteer an admin for your region. Users that are asterisk-ed*, have admin powers already. You can remove those powers by toggling them.</p>
     <%= form_tag("/assignments/knight", :method => "get") do %>
@@ -74,7 +74,7 @@
       <%= submit_tag 'Toggle' %>
     <% end %>
   </div>
-  <div class="span6">
+  <div class="col-sm-6">
     <h2> Export Data </h2>
     <%= form_tag("/logs/export.csv", :method => "get") do %>
       <table>
@@ -92,10 +92,10 @@
   </div>
 </div>
 
-<% content_for :scripts do %>
-<script type="text/javascript" charset="utf-8">
-jQuery(document).ready(function(){
-  //jQuery('.select2').select2({width:'element'});
-});
-</script>
-<% end %>
+<%# content_for :scripts do %>
+  <!-- <script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function(){
+      //jQuery('.select2').select2({width:'element'});
+    });
+  </script> -->
+<% #end %>

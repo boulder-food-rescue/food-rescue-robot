@@ -1,6 +1,5 @@
 $(document).ready(function() {
-  $('.fact_info').hide();
-  
+
   $('.text_link').click(function(){
 	if( $(this).hasClass('selected')){
 	  $(this).removeClass('selected');

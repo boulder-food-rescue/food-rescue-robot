@@ -1,0 +1,23 @@
+/* Header */
+.header{
+  background: #F1F1F1;
+  border-bottom: 2px solid #E5E5E5;
+  padding: 10px;
+  overflow: auto;
+}
+
+.header .logo_image{
+  float: right;
+  height: 50px;
+}
+
+#bfr_title{
+  font-size: 1.5em;
+  color: #0E30B7;
+  padding: 0px;
+  font-weight: bold;
+}
+
+.header div{
+  float: left;
+}

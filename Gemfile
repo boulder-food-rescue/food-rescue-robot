@@ -1,23 +1,24 @@
 source 'https://rubygems.org'
+ruby '2.1.5'
 
 # the base rails libraries
 gem 'rails', '~> 3.2.16'
-
-# for talking to the sqlite3 on-disk database
+gem 'thin'
 gem 'pg'
-#gem 'sqlite3'
 
 # for handling json objects with ruby
 gem 'json'
 
-# Gems used only for assets and not required in production environments by default.
-group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
-  gem 'therubyracer', :platforms => :ruby
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'uglifier', '>= 1.0.3'
-end
+# lets us use the ubiquitous jquery javascript library
+gem 'jquery-rails', '2.1.4'
+gem 'sass-rails', '~> 3.2.6'
+gem 'coffee-rails', '~> 3.2.1'
+gem 'therubyracer', :platforms => :ruby
+gem 'uglifier', '>= 1.0.3'
+
+gem 'font-awesome-sass', '~> 4.4.0'
+gem 'bootstrap-sass', '~> 3.2.0'
+gem 'twitter-bootstrap-rails'
 
 group :development do
   gem 'better_errors'
@@ -31,13 +32,6 @@ group :test do
   gem 'rack-test'
 end
 
-# mobile-friendly template
-gem 'twitter-bootstrap-rails'
-#gem 'bootstrap-sass', '~> 3.2.0'
-gem 'rails_bootstrap_navbar'
-
-# lets us use the ubiquitous jquery javascript library
-gem 'jquery-rails', '2.1.4'
 
 # dynamic in-place editing for some admin tables
 gem 'active_scaffold'
@@ -48,13 +42,10 @@ gem 'geocoder'
 # handles authentication
 gem 'devise', '~> 3.2.0'
 
-# alternative webserver (>thin start)
-gem 'thin'
-
 # lets us post things to twitter programatically
 gem 'twitter'
 
-gem 'yaml_db' 
+gem 'yaml_db'
 
 # smart image attachment management
 gem 'paperclip', '~> 3.1'
@@ -79,8 +70,11 @@ gem 'cocoon'
 gem 'simple_form'
 
 # set timezone to browser timezone
-gem 'browser-timezone-rails'
+gem 'browser-timezone-rails'#, '~> 0.0.9'
 
 gem 'ranked-model'
 
 gem 'addressable'
+
+#Send email when exception occurs.
+gem 'exception_notification', '~> 3.0.1'

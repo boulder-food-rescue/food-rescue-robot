@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= content_for?(:title) ? yield(:title) : "Webapp" %></title>
+
     <%= csrf_meta_tags %>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
@@ -13,7 +14,7 @@
       <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js" type="text/javascript"></script>
     <![endif]-->
 
-    <%= stylesheet_link_tag "application", :media => "all" %>
+    <%= stylesheet_link_tag :application, media: "all" %>
 
     <!-- For third-generation iPad with high-resolution Retina display: -->
     <!-- Size should be 144 x 144 pixels -->
@@ -38,10 +39,8 @@
 
   <body>
 
-    <%= nav_bar :brand=>'The Food Rescue Robot', :responsive=>true do %>
-
+    <%= nav_bar brand: 'The Food Rescue Robot', responsive: true, fluid: true do %>
       <%= menu_group do %>
-      
         <%= menu_item "Home", root_path %>
 
         <% if volunteer_signed_in? %>
@@ -120,7 +119,7 @@
             <% if current_volunteer.super_admin? %>
               <%= drop_down "Super Admin" do %>
                 <%= menu_item "Cell Carriers", cell_carriers_path %>
-                <%= menu_item "Manage Regions", regions_path %>              
+                <%= menu_item "Manage Regions", regions_path %>
                 <!-- <%= menu_item "Transport Types", transport_types_path %> -->
                 <%= menu_item "Controls", '/volunteers/super_admin' %>
               <% end %>
@@ -134,14 +133,17 @@
           <% if volunteer_signed_in? %>
             <%= drop_down current_volunteer.name  do %>
               <% current_volunteer.regions.each do |region| %>
-                <%= menu_item region.name+" Handbook", region.handbook_url if region.has_handbook? %>
+                <%= menu_item "<i class='fa fa-external-link'></i> #{region.name} Handbook".html_safe, region.handbook_url, target: "_blank" if region.has_handbook? %>
               <% end %>
-              <%= menu_item "Settings", edit_volunteer_path(current_volunteer.id) %>
-              <%= menu_item "Waiver", waiver_volunteers_path %>
-              <%= menu_item "Logout", destroy_volunteer_session_path, :method => :delete %>
+              <%= menu_item "<i class='fa fa-cog'></i> Settings".html_safe, edit_volunteer_path(current_volunteer.id) %>
+              <%= menu_item "<i class='fa fa-file-o'></i> Waiver".html_safe, waiver_volunteers_path %>
+
+              <%= menu_divider %>
+
+              <%= menu_item "<i class='fa fa-sign-out'></i> Logout".html_safe, destroy_volunteer_session_path, {}, {:"data-method" => :delete } %>
             <% end %>
           <% else %>
-            <%= menu_item "Login", '/volunteers/sign_in' %>
+            <%= menu_item "<i class='fa fa-sign-in'></i> Login".html_safe, '/volunteers/sign_in' %>
           <% end %>
         <% end %>
 
@@ -158,24 +160,22 @@
             <h1><%= current_region.title %> <small><%= current_region.tagline %></small></h1>
           </div>
         </div>
-      <div>
+      </div>
     <% end %>
 
     <!-- content -->
     <div class="container-fluid">
-      
-      <div class="row-fluid">
-        <div class="span12">
+
+      <div class="row">
+        <div class="col-sm-12">
           <%= bootstrap_flash %>
           <%= yield %>
         </div>
       </div><!--/row-->
-      
-      <footer style="text-align: center;">
-        <hr>
-        <p>Food Rescue Robot (cc) <a href="http://boulderfoodrescue.org">Boulder Food Rescue</a> | <a href="http://github.com/somerandomsequence/food-rescue-robot">Source Code</a></p>
 
-      </footer>
+      <div class="row">
+        <%= render partial: "layouts/footer" %>
+      </div>
 
     </div> <!-- /container -->
 
@@ -184,7 +184,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <%= javascript_include_tag "application" %>
     <%= yield :scripts %>
-    </div></div>
+
   </body>
 
 </html>

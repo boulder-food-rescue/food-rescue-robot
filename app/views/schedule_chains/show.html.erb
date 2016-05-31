@@ -1,6 +1,6 @@
 <div class="row-fluid">
 
-  <div class="span6">
+  <div class="col-sm-6">
 
     <h2><%= if @schedule.functional?
               if @schedule.recipient_stops.length == 1
@@ -86,7 +86,7 @@
     <% if @schedule.functional? %>
       <h3>Stops:</h3>
       <p>
-		<% @schedule.schedules.each do |stop| 
+		<% @schedule.schedules.each do |stop|
                      next if stop.nil? or stop.location.nil?
 %>
 			        <h4><%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %> </h4>
@@ -110,7 +110,7 @@
     <% end %>
 
   </div>
-  <div class="span6">
+  <div class="col-sm-6">
 
     <% if @schedule.mappable? %>
       <h2>Bicycling Directions</h2>

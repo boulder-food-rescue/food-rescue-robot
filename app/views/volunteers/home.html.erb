@@ -135,15 +135,26 @@
                 <br />
                 <% } %>
               </td>
-            <td> <%= readable_time_until first_pickup %> </td>
-            <td> <button class="take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => pickup_group.collect{ |p| p.id }) %>';">Take</button></td>
-            <% if first_pickup.schedule_chain.nil? %>
-            <td></td>
-            <% else %>
-            <td> <button class="info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">Info</button></td>
-            <% end %>
-          </tr>
-        <% end %>
+              <td>
+                <%= readable_time_until first_pickup %>
+              </td>
+              <td>
+                <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => pickup_group.collect{ |p| p.id }) %>';">
+                  <i class="fa fa-hand-rock-o"></i>
+                  Take
+                </button>
+              </td>
+              <td>
+                <% if first_pickup.schedule_chain.present? %>
+                  <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">
+                    <i class="fa fa-info-circle"></i>
+                    Info
+                  </button>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
       </table>
     <% else %>
       <p>There are no shifts that need covering.</p>

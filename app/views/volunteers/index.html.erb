@@ -1,67 +1,63 @@
 <h2><%= @header %></h2>
 
 <% if @volunteers.length == 0 %>
-
-  <p> 
-  No volunteers matching that criteria...
-  </p>
-
+  <p>No volunteers matching that criteria...</p>
 <% else %>
 
-  <table id="data_table">
+  <table class="table" id="data_table">
     <thead>
-    <tr>
-      <th> Name </th>
-      <th> Email </th>
-      <th> Phone </th>
-      <% if current_volunteer.any_admin? %>
-        <th> Preferred Contact </th>
-        <th> Transport </th>
-        <th> Account Status </th>
-        <th> Regions </th>
-        <th> Admin Notes </th>
-        <th> Member since </th>
-        <th> Link </th>
-      <% end %>
-    </tr>
+      <tr>
+        <th> Name </th>
+        <th> Email </th>
+        <th> Phone </th>
+        <% if current_volunteer.any_admin? %>
+          <th> Preferred Contact </th>
+          <th> Transport </th>
+          <th> Account Status </th>
+          <th> Regions </th>
+          <th> Admin Notes </th>
+          <th> Member since </th>
+          <th> Link </th>
+        <% end %>
+      </tr>
     </thead>
     <tbody>
-    <%
-    @volunteers.each do |v|
-      row_bgcolor = nil
-      if v.super_admin?
-        row_bgcolor = "red"
-      elsif v.any_admin?
-        row_bgcolor = "pink"
-      elsif v.needs_training?
-        row_bgcolor = "lightgreen"
-      end
-    %>
-    <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-      <td> <%= link_to v.name, v unless v.name.nil? %>
-      <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
-      <td> <%= v.phone %>
-        <% if current_volunteer.any_admin? %>
-        <td> <%= v.preferred_contact %>
-        <td> <%= v.transport_type.nil? ? "?" : v.transport_type.name %> <%= "(has car)" if v.has_car %>
-        <td> <% v.current_absences.each{ |a| %>
-             Absent from <%= a.start_date %> to <%= a.stop_date %>
-             <% } %>
-        <td> <%= v.regions.collect{ |r| r.name }.join(", ") %>
-        <% if current_volunteer.any_admin? %>
-        <td> <%= word_wrap(v.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless v.admin_notes.nil? %>
-        <% end %>
-        <td> <%= Time.at(v.created_at).strftime('%Y-%m-%d') %>
-        <td> <% if current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 %>
-             <%= link_to 'edit', edit_volunteer_path(v) %><br>
-             <%= link_to "delete", v, :confirm => "Are you sure?", :method => :delete %>
-             <% unless v.active %>
-              <br><%= link_to 'reactivate', reactivate_volunteer_path(v) %>
-             <% end %>
-             <% end %>
-        <% end %>
-    </tr>
-    <% end %>
+      <%
+      @volunteers.each do |v|
+        row_bgcolor = nil
+        if v.super_admin?
+          row_bgcolor = "red"
+        elsif v.any_admin?
+          row_bgcolor = "pink"
+        elsif v.needs_training?
+          row_bgcolor = "lightgreen"
+        end
+      %>
+      <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+        <td> <%= link_to v.name, v unless v.name.nil? %>
+        <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
+        <td> <%= v.phone %>
+          <% if current_volunteer.any_admin? %>
+          <td> <%= v.preferred_contact %>
+          <td> <%= v.transport_type.nil? ? "?" : v.transport_type.name %> <%= "(has car)" if v.has_car %>
+          <td> <% v.current_absences.each{ |a| %>
+               Absent from <%= a.start_date %> to <%= a.stop_date %>
+               <% } %>
+          <td> <%= v.regions.collect{ |r| r.name }.join(", ") %>
+          <% if current_volunteer.any_admin? %>
+          <td> <%= word_wrap(v.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless v.admin_notes.nil? %>
+          <% end %>
+          <td> <%= Time.at(v.created_at).strftime('%Y-%m-%d') %>
+          <td> <% if current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 %>
+               <%= link_to 'edit', edit_volunteer_path(v) %><br>
+               <%= link_to "delete", v, :confirm => "Are you sure?", :method => :delete %>
+               <% unless v.active %>
+                <br><%= link_to 'reactivate', reactivate_volunteer_path(v) %>
+               <% end %>
+               <% end %>
+          <% end %>
+      </tr>
+      <% end %>
     </tbody>
   </table>
   <% if current_volunteer.any_admin? %>
@@ -78,7 +74,7 @@
 
 <% content_for :scripts do %>
 <script type="text/javascript">
-$(function () { 
+$(function () {
   $('#data_table').dataTable( {
     'iDisplayLength' : 50
   });

@@ -1,7 +1,7 @@
 <h2><%=@page_title%></h2>
 
 <% if current_volunteer.any_admin? and not @my_admin_regions.nil? %>
-  <div style="text-align: right;">
+  <div class="text-right">
     <%= form_tag("/schedule_chains/new", :method => "get") do %>
       New Scheduled Route For <%= select_tag("region_id", options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
       <%= submit_tag("Go") %>
@@ -12,7 +12,7 @@
 <% if current_volunteer.assignments.length == 0 %>
   <p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
 <% elsif @schedules.length == 0 %>
-  <p> 
+  <p>
   Local schedule list is empty.
   </p>
 <% elsif current_volunteer.regions.length == 0 %>
@@ -23,24 +23,24 @@
 
 <div id="modal"></div>
 
-<table id="data_table">
+<table class="table" id="data_table">
   <thead>
     <tr>
-      <th> Info </th>
-      <th> Day</th>
-      <th> Stops </th>
-      <th> Volunteers </th>
-      <th> Start Time </th>
-      <th> End Time </th>
-      <th> Notes </th>
+      <th>Info</th>
+      <th>Day</th>
+      <th>Stops</th>
+      <th>Volunteers</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Notes</th>
       <% if current_volunteer.any_admin? %>
-        <th> Admin Notes </th>
+        <th> Admin Notes</th>
       <% end %>
-      <th> Prior Volunteers </th>
-      <th> Transport </th>
-      <th> Food Types </th>
+      <th>Prior Volunteers</th>
+      <th>Transport</th>
+      <th>Food Types</th>
       <% if current_volunteer.any_admin? %>
-        <th> Link </th>
+        <th>Link</th>
       <% end %>
     </tr>
   </thead>
@@ -59,7 +59,12 @@
       end
     %>
     <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-      <td> <button class="info" onclick="window.location='/schedule_chains/<%= schedule.id %>';">Info</button>
+      <td>
+        <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= schedule.id %>';">
+          <i class="fa fa-info-circle"></i>
+          Info
+        </button>
+      </td>
       <td style="font-weight: bold;">
         <% if schedule.one_time? %>
           <%= schedule.detailed_date %>
@@ -67,7 +72,7 @@
           <span style="display:none;"><%= schedule.day_of_week %></span> <%= schedule.day_of_week.nil? ? "" : Date::DAYNAMES[schedule.day_of_week] %>
         <% end %>
       </td>
-      <td> 
+      <td>
         <% unless schedule.schedules.nil? %>
           <% schedule.schedules.each do |stop| %>
             <% next if stop.location.nil? %>
@@ -83,7 +88,10 @@
       </td>
       <td>
         <% if schedule.no_volunteers? or schedule.temporary %>
-          <button class="take" onclick="window.location='/schedule_chains/take?id=<%= schedule.id %>';">Take</button>
+          <button class="btn btn-primary take" onclick="window.location='/schedule_chains/take?id=<%= schedule.id %>';">
+            <i class="fa fa-hand-rock-o"></i>
+            Take
+          </button>
         <% else %>
           <% schedule.volunteers.each do |volunteer| %>
             <%= link_to volunteer.name, volunteer %><br />
@@ -94,7 +102,7 @@
       <td>
         <%= readable_start_time schedule %>
       </td>
-      <td> 
+      <td>
         <%= readable_stop_time schedule %>
       </td>
       <td style="font-size: 10pt;"><%= word_wrap(schedule.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.public_notes.nil? %></td>
@@ -138,7 +146,7 @@
 
 <% content_for :scripts do %>
 <script type="text/javascript">
-$(function () { 
+$(function () {
   $('#data_table').dataTable( {
     'iDisplayLength' : 50
   });

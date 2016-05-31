@@ -3,33 +3,41 @@
 <% if @absences.length == 0 %>
   <p>None scheduled.</p>
 <% else %>
-  <table id="data_table">
+  <table class="table table-striped" id="data_table">
     <thead>
-    <tr>
-      <th> Whom </th>
-      <th> When </th>
-      <th> Comments </th>
-      <th></th>
-    </tr>
+      <tr>
+        <th>Whom</th>
+        <th>When</th>
+        <th>Comments</th>
+        <th></th>
+      </tr>
     </thead>
     <tbody>
-    <%
-       @absences.each do |absence|
-    %>
-      <tr>
-        <td><%= absence.volunteer.name %></td>
-        <td><%= absence.start_date %> to <%= absence.stop_date %> (<%= absence.logs.length %> missed shifts)<br/>
-            <% if current_volunteer.any_admin? %>
-              <%= absence.logs.collect{ |l| link_to l.when.to_s, log_path(l) }.join(", ").html_safe %>
-            <% end %>
-        </td>
-        <td><%= absence.comments %> </td>
-        <td><%= button_to "Cancel", absence, :method => :delete %></td>
-      </tr>
-    <% end %>
+      <%
+         @absences.each do |absence|
+      %>
+        <tr>
+          <td>
+            <%= absence.volunteer.name %>
+          </td>
+          <td>
+            <%= absence.start_date %> to <%= absence.stop_date %> (<%= absence.logs.length %> missed shifts)<br/>
+              <% if current_volunteer.any_admin? %>
+                <%= absence.logs.collect{ |l| link_to l.when.to_s, log_path(l) }.join(", ").html_safe %>
+              <% end %>
+          </td>
+          <td>
+            <%= absence.comments %>
+          </td>
+          <td>
+            <%= button_to "Cancel", absence, :method => :delete %>
+          </td>
+        </tr>
+      <% end %>
     </tbody>
   </table>
 <% end %>
+
 <% content_for :scripts do %>
   <script type="text/javascript">
     $(function () {

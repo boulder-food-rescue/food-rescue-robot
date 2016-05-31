@@ -5,30 +5,37 @@ class LogsController < ApplicationController
   def mine_past
     index(Log.group_by_schedule(Log.past_for(current_volunteer.id)),"My Past Shifts")
   end
+
   def mine_upcoming
     index(Log.group_by_schedule(Log.upcoming_for(current_volunteer.id)),"My Upcoming Shifts")
   end
+
   def open
     index(Log.group_by_schedule(Log.needing_coverage(current_volunteer.region_ids)),"Open Shifts")
   end
+
   def by_day
     if params[:date].present?
       d = Date.civil(*params[:date].sort.map(&:last).map(&:to_i))
-    else 
+    else
       n = params[:n].present? ? params[:n].to_i : 0
       d = Time.zone.today+n
     end
     index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{d.to_s}'")),"Shifts on #{d.strftime("%A, %B %-d")}")
   end
+
   def last_ten
     index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'")),"Last 10 Days of Shifts")
   end
+
   def being_covered
     index(Log.group_by_schedule(Log.being_covered(current_volunteer.region_ids)),"Being Covered")
   end
+
   def todo
     index(Log.group_by_schedule(Log.past_for(current_volunteer.id).where("\"when\" < current_date AND NOT complete")),"My To Do Shift Reports")
   end
+
   def tardy
     index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)")),"Missing Data (>= 3 Reminders)")
   end
@@ -189,7 +196,7 @@ class LogsController < ApplicationController
         attrs[:log] = @log.attributes
         attrs[:log][:recipient_ids] = @log.recipient_ids
         attrs[:log][:volunteer_ids] = @log.volunteer_ids
-	attrs[:log][:volunteer_names] = @log.volunteers.collect{ |v| v.name }
+        attrs[:log][:volunteer_names] = @log.volunteers.collect{ |v| v.name }
         attrs[:schedule] = @log.schedule_chain.attributes unless @log.schedule_chain.nil?
         attrs[:log_parts] = {}
         @log.log_parts.each{ |lp| attrs[:log_parts][lp.id] = lp.attributes }
@@ -309,7 +316,7 @@ class LogsController < ApplicationController
     @start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     @stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
     @loc = Location.find(params[:location_id])
-    unless current_volunteer.any_admin?(@loc.region)  
+    unless current_volunteer.any_admin?(@loc.region)
       flash[:notice] = "Cannot generate receipt for donors/receipients in other regions than your own!"
       redirect_to(root_path)
       return
@@ -334,11 +341,11 @@ class LogsController < ApplicationController
           pdf.text "#{@loc.region.address.tr("\n",", ")}", :align => :center
         end
         unless @loc.region.website.nil?
-          pdf.move_down 5 
+          pdf.move_down 5
           pdf.text "#{@loc.region.website}", :align => :center
         end
         unless @loc.region.phone.nil?
-          pdf.move_down 5 
+          pdf.move_down 5
           pdf.text "#{@loc.region.phone}", :align => :center
         end
         pdf.move_down 10

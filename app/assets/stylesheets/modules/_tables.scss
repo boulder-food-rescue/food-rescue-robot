@@ -5,6 +5,9 @@ table, table.table {
 
   td {
     vertical-align: top;
+    &.form-fields {
+      width: 80%;
+    }
   }
 
   tr {

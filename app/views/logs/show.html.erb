@@ -5,10 +5,13 @@
     <td> <%= @log.when.strftime("%Y-%m-%d") %></td>
   </tr>
   <tr>
-    <th> Info </th>
+    <th>Info</th>
     <td>
       <% unless @log.schedule_chain.nil? %>
-        <button class="info" onclick="window.location='/schedule_chains/<%= @log.schedule_chain.id %>';">Info</button>
+        <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= @log.schedule_chain.id %>';">
+          <i class="fa fa-info-circle"></i>
+          Info
+        </button>
       <% else %>
         One-time Shift
       <% end %>
@@ -21,7 +24,10 @@
     <th> Volunteers </th>
     <td>
       <% if @log.volunteers.empty? %>
-        <button class="take" onclick="window.location='<%= take_log_path(@log) %>';">Take</button>
+        <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(@log) %>';">
+          <i class="fa fa-hand-rock-o"></i>
+          Take
+        </button>
       <% else %>
         <% @log.volunteers.each do |volunteer| %>
           <%= link_to volunteer.name, volunteer %><br />
@@ -45,4 +51,4 @@
     <th> Notes </th>
     <td><%= @log.notes.nil? ? "" : word_wrap(@log.notes,:line_width => 20).gsub("\n","<br>").html_safe %></td>
   </tr>
-  </table>
+</table>

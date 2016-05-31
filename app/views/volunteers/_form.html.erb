@@ -1,61 +1,123 @@
 <%= form_for @volunteer, :url => {:action => @action } do |f| %>
 
-<table>
-  
-  <tr><td>Name</td>
-     <td><%= f.text_field(:name) %></td>
+<table class="table table-striped">
+
+  <tr>
+    <td>
+      <label for="volunteer_name">
+        Name
+      </label>
+    </td>
+    <td><%= f.text_field(:name, class: "form-control") %></td>
   </tr>
-  
-  <tr><td>Photo</td>
-      <td><%= image_tag @volunteer.photo.url(:thumb)%>
-        <%= f.file_field(:photo) %></td>
+
+  <tr>
+    <td>
+      <label for="volunteer_photo">
+        Photo
+      </label>
+    </td>
+    <td>
+      <%= image_tag @volunteer.photo.url(:thumb) %>
+      <%= f.file_field(:photo) %>
+    </td>
   </tr>
-  
-  <tr><td>Phone</td>
-    <td><%= f.text_field(:phone) %> with <%= f.select(:cell_carrier_id,CellCarrier.all.collect{ |cc| [cc.name,cc.id] },{:include_blank => true}) %></tr>
+
+  <tr>
+    <td>
+      <label for="volunteer_phone">Phone</label>
+    </td>
+    <td><%= f.text_field(:phone, class: "form-control") %> with <%= f.select(:cell_carrier_id,CellCarrier.all.collect{ |cc| [cc.name,cc.id] },{include_blank: true}, {class: "form-control"}) %></tr>
   </tr>
-  
-  <tr><td>Email</td>
-    <td><%= f.text_field(:email) %></td>
+
+  <tr>
+    <td>
+      <label for="volunteer_email">
+        Email
+      </label>
+    </td>
+    <td><%= f.text_field(:email, class: "form-control") %></td>
   </tr>
-  
-  <tr><td>Preferred Contact</td>
-    <td><%= f.select(:preferred_contact,[["Email","Email"],["Phone","Phone"],["Text","Text"]],{:include_blank => true}) %></td>
+
+  <tr>
+    <td>
+      <label for="volunteer_preferred_contact">
+        Preferred Contact
+      </label>
+    </td>
+    <td>
+      <%= f.select(:preferred_contact,[["Email","Email"],["Phone","Phone"],["Text","Text"]], {include_blank: true}, {class: "form-control"}) %>
+    </td>
   </tr>
-  
-  <tr><td>Receive From Robot</td>
-    <td><%= f.check_box(:sms_too) %> Text Messages <%= f.check_box(:pre_reminders_too) %> Pre-Pickup-Reminders <%= f.check_box(:get_sncs_email) %> SNCS Email</td>
+
+  <tr>
+    <td>
+      <label for="">Receive From Robot</label>
+    </td>
+    <td>
+      <div>
+        <%= f.check_box(:sms_too) %>
+        <label for="volunteer_sms_too">Text Messages</label>
+      </div>
+      <div>
+        <%= f.check_box(:pre_reminders_too) %>
+        <label for="volunteer_pre_reminders_too">Pre Pickup-Reminders</label>
+      </div>
+      <div>
+        <%= f.check_box(:get_sncs_email) %>
+        <label for="volunteer_get_sncs_email">SNCS Email</label>
+      </div>
+    </td>
   </tr>
-  
-  <tr><td>On Email List</td>
-    <td><%= f.check_box(:on_email_list) %></td>
+
+  <tr>
+    <td>
+      <label for="volunteer_on_email_list">On Email List</label>
+    </td>
+    <td>
+      <%= f.check_box(:on_email_list) %>
+    </td>
   </tr>
-  
-  <tr><td>Transport</td>
-    <td><%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{:include_blank => true}) %></td>
+
+  <tr>
+    <td>
+      <label for="volunteer_transport_type_id">Transport</label>
+    </td>
+    <td>
+      <%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{include_blank: true}, {class: "form-control"}) %>
+    </td>
   </tr>
-  
-  <tr><td>Has Car</td>
+
+  <tr>
+    <td>
+      <label for="volunteer_has_car">Has Car</label>
+    </td>
     <td><%= f.check_box(:has_car) %></td>
   </tr>
-  
-  <tr><td>Pickup Preferences</td>
-    <td><%= f.text_area(:pickup_prefs, :size => "30x6") %></td>
+
+  <tr>
+    <td>
+      <label for="volunteer_pickup_prefs">Pickup Preferences</label>
+    </td>
+    <td class="form-fields"><%= f.text_area(:pickup_prefs, :size => "30x6", class: "form-control") %></td>
   </tr>
-  
+
   <% if current_volunteer.any_admin? %>
-    <tr><td>Admin Notes</td>
+    <tr>
+      <td>Admin Notes</td>
       <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>
     </tr>
     <%= hidden_field_tag "volunteer[region_ids][]","" %>
-    <tr><td>Region(s)</td>
+    <tr>
+      <td>Region(s)</td>
       <td>
         <% @my_admin_regions.each{ |r| %>
         <%= check_box_tag "volunteer[region_ids][]", r.id, @volunteer.regions.include?(r) %> <%= r.name %>
         <% } unless @my_admin_regions.nil? %>
       </td>
     </tr>
-    <tr><td>Account Disabled</td>
+    <tr>
+      <td>Account Disabled</td>
       <td><%= f.check_box(:is_disabled) %></td>
     </tr>
   <% end %>

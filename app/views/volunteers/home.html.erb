@@ -1,18 +1,19 @@
-
 <% if @sncs_count > 0 %>
   <div class="alert fade in alert-danger" onclick="window.location='<%= open_logs_path %>';" style="cursor:pointer;">
+    <i class="fa fa-exclamation-triangle"></i>
     <%= @sncs_count %> Shifts Need Covering Soon: <%= link_to "Pick one up here.", open_logs_path %>
   </div>
 <% end %>
 
 <% if @open_shift_count > 0 %>
   <div class="alert fade in alert-danger" onclick="window.location='<%= open_schedule_chains_path %>';" style="cursor:pointer;">
+    <i class="fa fa-exclamation-triangle"></i>
     <%= @open_shift_count %> Shifts Need A Regular Volunteer: <%= link_to "Sign up here.", open_schedule_chains_path %>
   </div>
 <% end %>
 
 <% unless current_volunteer.main_region.nil? or current_volunteer.main_region.splash_html.blank? %>
-  <div class="row-fluid">
+  <div class="row bordered-bottom">
     <div class="col-sm-12">
       <h1> Welcome </h1>
       <%= raw current_volunteer.main_region.splash_html %>
@@ -20,101 +21,138 @@
   </div>
 <% end %>
 
-<div class="row-fluid">
+<div class="row bordered-bottom">
   <div class="col-sm-6">
-    <h2> Upcoming Pickups </h2>
+    <h2>Upcoming Pickups</h2>
     <% if @upcoming_pickups.length > 0 %>
-      <table class="minamalist_table">
+      <table class="table table-striped">
         <tr>
           <th>Location</th>
           <th>Date</th>
           <th>Link</th>
         </tr>
         <% @upcoming_pickups.each do |pickup_group|
-           first_pickup = pickup_group[0]
-        %>
-        <tr style="border-top: 1px solid #333333; border-bottom: 1px solid #444444;">
-          <td> <% pickup_group.each{ |pickup| %>
-                 <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %>
-                 <% unless pickup.food_types.empty? %>
-                   <br><span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span><br>
-                 <% end %>
-               <% } %>
-          </td>
-          <td> <%= readable_time_until first_pickup %> </td>
-          <td> <% unless first_pickup.schedule_chain.nil? %>
-               <button class="info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">Info</button>
-               <% end %>
-          </td>
-        </tr>
+         first_pickup = pickup_group[0]
+         %>
+           <tr class="bordered">
+            <td>
+              <% pickup_group.each{ |pickup| %>
+                <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %>
+                <% unless pickup.food_types.empty? %>
+                  <br />
+                  <em>(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</em>
+                  <br />
+                <% end %>
+              <% } %>
+            </td>
+            <td>
+              <%= readable_time_until first_pickup %>
+            </td>
+            <td>
+              <% unless first_pickup.schedule_chain.nil? %>
+                <button class="info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">
+                  <i class="fa fa-info-circle"></i>
+                  Info
+                </button>
+              <% end %>
+            </td>
+          </tr>
         <% end %>
       </table>
     <% else %>
       <p>You have no upcoming pickups.</p>
     <% end %>
   </div>
+
   <div class="col-sm-6">
     <h2> To Do Pickup Reports </h2>
     <% if @to_do_reports.length > 0 %>
-      <table class="minamalist_table">
-        <tr>
-          <th>Location</th>
-          <th>Date</th>
-          <th></th>
-        </tr>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
         <% @to_do_reports.each do |report|
-            next if report.recipients.empty?
-          %>
-        <tr style="border-top: 1px solid #333333; border-bottom: 1px solid #444444;">
-          <td> <%= link_to report.donor.name, report.donor %> -&gt; <% report.recipients.each do |recip| %> <%=link_to recip.name, recip %><% end %>
-            <% unless report.food_types.empty? %>
-              <br><span style="color: #a9a9a9;font-style: italic;">(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</span></td>
-            <% end %>
-          <td> <%= readable_time_until report %></td>
-
-          <td> <button class="fill" onclick="window.location='<%= edit_log_path(report) %>';">Fill</button></td>
-        </tr>
+          next if report.recipients.empty?
+        %>
+          <tr class="bordered">
+            <td>
+              <%= link_to report.donor.name, report.donor %> -&gt; <% report.recipients.each do |recip| %> <%=link_to recip.name, recip %><% end %>
+              <% unless report.food_types.empty? %>
+                <br />
+                <em>(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</em>
+              </td>
+              <% end %>
+            <td>
+              <%= readable_time_until report %>
+            </td>
+            <td>
+              <button class="btn btn-danger fill" onclick="window.location='<%= edit_log_path(report) %>';">
+                <i class="fa fa-star-half-o"></i>
+                Fill
+              </button>
+            </td>
+          </tr>
         <% end %>
       </table>
     <% else %>
       <p>You are up to date on all your pickup reports - nice work!</p>
     <% end %>
   </div>
-</div>
+</div><!-- /row-fluid -->
 
-<div class="row-fluid">
+<div class="row bordered-bottom">
   <div class="col-sm-6">
     <h2>Shifts Needing Covering!</h2>
     <% if @sncs_pickups.length > 0 %>
-      <table class="minamalist_table">
-        <tr>
-          <th>Location</th>
-          <th>Date</th>
-          <th></th>
-          <th></th>
-        </tr>
-        <% n = 0
-           @sncs_pickups.each do |pickup_group|
-             next if pickup_group.all? {|x| x.donor.nil? or x.recipients.empty? }
-             first_pickup = pickup_group[0]
-        %>
-          <tr style="border-top: 1px solid #333333; border-bottom: 1px solid #444444;">
-            <td>
-              <% pickup_group.each{ |pickup| %>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Date</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% n = 0
+          @sncs_pickups.each do |pickup_group|
+            next if pickup_group.all? {|x| x.donor.nil? or x.recipients.empty? }
+            first_pickup = pickup_group[0]
+            %>
+            <tr class="bordered">
+              <td>
+                <% pickup_group.each{ |pickup| %>
                 <% next if pickup.donor.nil? or pickup.recipients.empty? %>
                 <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %>
                 <% unless pickup.food_types.empty? %>
-                  <br>
-                  <span style="color: #a9a9a9;font-style: italic;">(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</span>
+                <br />
+                <em>(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</em>
                 <% end %>
-                <br>
-              <% } %>
+                <br />
+                <% } %>
               </td>
-            <td> <%= readable_time_until first_pickup %> </td>
-            <td> <button class="take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => pickup_group.collect{ |p| p.id }) %>';">Take</button></td>
-            <td> <button class="info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">Info</button></td>
-          </tr>
-        <% end %>
+              <td>
+                <%= readable_time_until first_pickup %>
+              </td>
+              <td>
+                <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => pickup_group.collect{ |p| p.id }) %>';">
+                  <i class="fa fa-hand-rock-o"></i>
+                  Take
+                </button>
+              </td>
+              <td>
+                <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">
+                  <i class="fa fa-info-circle"></i>
+                  Info
+                </button>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
       </table>
     <% else %>
       <p>There are no shifts that need covering.</p>
@@ -122,139 +160,149 @@
   </div>
 </div>
 
-<div class="row-fluid">
+<div class="row bordered-bottom">
   <div class="col-sm-6">
-    <h2> Pickup Stats </h2>
-    <table class="minamalist_table">
-      <tr>
-        <th> Stat </th>
-        <th> Value </th>
-      </tr>
-      <tr>
-        <td> Stats Start Date </td>
-        <td> <%= @earliest == nil ? "No Pickups Logged" : @earliest.when %> </td>
-      </tr>
-      <tr>
-        <td> Completed Pickups </td>
-        <td> <%= @completed_pickup_count %> </td>
-      </tr>
-      <tr>
-        <td> Amount of Food Rescued </td>
-        <td> <%= @total_food_rescued %> lbs</td>
-      </tr>
-      <tr>
-        <td> Weekly Avg </td>
-        <td> <%= sprintf("%.02f", @earliest != nil ? (@lbs/((Time.zone.today-(@earliest.when))/7.0)): "0" ) %> lbs</td>
-      </tr>
-      <tr>
-        <td> Pickup Avg </td>
-        <td> <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> lbs</td>
-      </tr>
-      <tr>
-        <td> % Human Powered </td>
-        <% if @human_pct > -1 %>
-        <td> <%= @human_pct.round %>%<%= @human_pct > 90 ? " :)" : "" %> </td>
-        <% else %>
-        <td> You have no pickups logged </td>
-        <% end %>
-      </tr>
+    <h2>Pickup Stats</h2>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th> Stat </th>
+          <th> Value </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> Stats Start Date </td>
+          <td> <%= @earliest == nil ? "No Pickups Logged" : @earliest.when %> </td>
+        </tr>
+        <tr>
+          <td> Completed Pickups </td>
+          <td> <%= @completed_pickup_count %> </td>
+        </tr>
+        <tr>
+          <td> Amount of Food Rescued </td>
+          <td> <%= @total_food_rescued %> lbs</td>
+        </tr>
+        <tr>
+          <td> Weekly Avg </td>
+          <td> <%= sprintf("%.02f", @earliest != nil ? (@lbs/((Time.zone.today-(@earliest.when))/7.0)): "0" ) %> lbs</td>
+        </tr>
+        <tr>
+          <td> Pickup Avg </td>
+          <td> <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> lbs</td>
+        </tr>
+        <tr>
+          <td> % Human Powered </td>
+          <% if @human_pct > -1 %>
+          <td> <%= @human_pct.round %>%<%= @human_pct > 90 ? " :)" : "" %> </td>
+          <% else %>
+          <td> You have no pickups logged </td>
+          <% end %>
+        </tr>
+      </tbody>
     </table>
   </div>
+
   <div class="col-sm-6">
     <h2> Food Collected by Month </h2>
-    <div id="highchart" style="width:500px;"></div>
+    <div id="highchart"></div>
   </div>
 
   <div class="col-sm-6">
     <h2> Your Info </h2>
-    <table class="minamalist_table">
-      <tr>
-        <td> Local time: </td>
-        <td> <%= Time.zone.now %> </td>
-      </tr>
-      <% if current_volunteer.region_admin? %>
-      <tr>
-        <td> Admin For: </td>
-        <td> <%= current_volunteer.assignments.collect{ |a| a.admin ? a.region.name : nil }.compact.join(", ") %> </td>
-      </tr>
-      <% end %>
-      <% if current_volunteer.super_admin? %>
-      <tr>
-        <td> Superpowers: </td>
-        <td> You are omnipotent. Your power is without parallel. </td>
-      </tr>
-      <% end %>
-      <tr>
-        <td> Region(s): </td>
-        <td> <%= current_volunteer.regions.collect{ |r| r.name }.join(", ") %> </td>
-      </tr>
-      <tr>
-        <td> Preferred Transporation </td>
-        <td> <%= current_volunteer.transport_type.nil? ? "unknown" : "a #{current_volunteer.transport_type.name}" %> </td>
-      </tr>
-      <tr>
-        <td> Preferred Method of Contact </td>
-        <td> <%= current_volunteer.preferred_contact.nil? ? "unknown" : current_volunteer.preferred_contact %> </td>
-      </tr>
-      <tr>
-        <td> SMS Setup </td>
-        <td> <%= current_volunteer.sms_too ? "Yes" : "No" %> </td>
-      </tr>
-      <tr>
-        <td> SMS Active </td>
-        <td>
-          <% if current_volunteer.sms_email.nil? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <td> Local time: </td>
+          <td> <%= Time.zone.now %> </td>
+        </tr>
+      </thead>
+      <tbody>
+        <% if current_volunteer.region_admin? %>
+        <tr>
+          <td> Admin For: </td>
+          <td> <%= current_volunteer.assignments.collect{ |a| a.admin ? a.region.name : nil }.compact.join(", ") %> </td>
+        </tr>
+        <% end %>
+        <% if current_volunteer.super_admin? %>
+        <tr>
+          <td> Superpowers: </td>
+          <td> You are omnipotent. Your power is without parallel. </td>
+        </tr>
+        <% end %>
+        <tr>
+          <td> Region(s): </td>
+          <td> <%= current_volunteer.regions.collect{ |r| r.name }.join(", ") %> </td>
+        </tr>
+        <tr>
+          <td> Preferred Transporation </td>
+          <td> <%= current_volunteer.transport_type.nil? ? "unknown" : "a #{current_volunteer.transport_type.name}" %> </td>
+        </tr>
+        <tr>
+          <td> Preferred Method of Contact </td>
+          <td> <%= current_volunteer.preferred_contact.nil? ? "unknown" : current_volunteer.preferred_contact %> </td>
+        </tr>
+        <tr>
+          <td> SMS Setup </td>
+          <td> <%= current_volunteer.sms_too ? "Yes" : "No" %> </td>
+        </tr>
+        <tr>
+          <td> SMS Active </td>
+          <td>
+            <% if current_volunteer.sms_email.nil? %>
             <p> No : Missing your cellphone carrier </p>
-          <% elsif current_volunteer.sms_too %>
+            <% elsif current_volunteer.sms_too %>
             <p> No : Missing your cellphone number </p>
-          <% else %>
+            <% else %>
             <p> Yes </p>
-          <% end %>
-        </td>
-      </tr>
-      <tr>
-        <td> Recieving pre-pick-up reminders </td>
-        <td> <%= current_volunteer.pre_reminders_too ? "Yes" : "No" %> </td>
-      </tr>
-      <tr>
-        <td> Recieving SNCS Emails </td>
-        <td> <%= current_volunteer.get_sncs_email ? "Yes" : "No" %> </td>
-      </tr>
-      <tr>
-        <td> Liability Waiver Signed </td>
-        <td> <%= current_volunteer.waiver_signed ? "Yes" : "No" %> </td>
-      </tr>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td> Recieving pre-pick-up reminders </td>
+          <td> <%= current_volunteer.pre_reminders_too ? "Yes" : "No" %> </td>
+        </tr>
+        <tr>
+          <td> Recieving SNCS Emails </td>
+          <td> <%= current_volunteer.get_sncs_email ? "Yes" : "No" %> </td>
+        </tr>
+        <tr>
+          <td> Liability Waiver Signed </td>
+          <td> <%= current_volunteer.waiver_signed ? "Yes" : "No" %> </td>
+        </tr>
 
-      <tr>
-        <td> Change settings </td>
-        <td> <a href="/volunteers/<%= current_volunteer.id %>/edit"> Click Here </a> </td>
-      </tr>
+        <tr>
+          <td> Change settings </td>
+          <td> <a href="/volunteers/<%= current_volunteer.id %>/edit"> Click Here </a> </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>
 
 <% content_for :scripts do %>
-<script type="text/javascript">
-$(function () {
-    $('#highchart').highcharts({
+  <script type="text/javascript">
+    $(function () {
+      $('#highchart').highcharts({
         chart: {
-            type: 'column'
+          type: 'column'
         },
         title: {
-            text: 'Monthly Stats'
+          text: 'Monthly Stats'
         },
         xAxis: {
-            title: { text: 'Month' },
-            categories: ['<%= raw @by_month.sort_by{ |k,v| k}.collect{ |pair| pair[0] }.join("','") %>']
+          title: { text: 'Month' },
+          categories: ['<%= raw @by_month.sort_by{ |k,v| k}.collect{ |pair| pair[0] }.join("','") %>']
         },
         yAxis: {
-            title: { text: 'Pounds' }
+          title: { text: 'Pounds' }
         },
         series: [{
-            name: 'Food Rescued',
-            data: [<%= @by_month.sort_by{ |k,v| k}.collect{ |pair| pair[1] }.join(",") %>]
+          name: 'Food Rescued',
+          data: [<%= @by_month.sort_by{ |k,v| k}.collect{ |pair| pair[1] }.join(",") %>]
         }]
+      });
     });
-});
-</script>
+  </script>
 <% end %>

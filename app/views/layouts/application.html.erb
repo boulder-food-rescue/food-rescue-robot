@@ -166,27 +166,16 @@
     <!-- content -->
     <div class="container-fluid">
 
-      <div class="row-fluid">
+      <div class="row">
         <div class="col-sm-12">
           <%= bootstrap_flash %>
           <%= yield %>
         </div>
       </div><!--/row-->
 
-      <footer style="text-align: center;">
-        <hr>
-        <p>
-          Food Rescue Robot (cc)
-          <a href="http://boulderfoodrescue.org" target="_blank">
-            Boulder Food Rescue
-            <i class='fa fa-external-link'></i></a>&nbsp;|
-          <a href="http://github.com/boulder-food-rescue/food-rescue-robot" target="_blank">
-            Source Code
-            <i class='fa fa-external-link'></i>
-          </a>
-        </p>
-
-      </footer>
+      <div class="row">
+        <%= render partial: "layouts/footer" %>
+      </div>
 
     </div> <!-- /container -->
 

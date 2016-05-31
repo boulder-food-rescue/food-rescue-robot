@@ -18,7 +18,6 @@ gem 'uglifier', '>= 1.0.3'
 gem 'font-awesome-sass', '~> 4.4.0'
 gem 'bootstrap-sass', '~> 3.2.0'
 gem 'twitter-bootstrap-rails'
-gem 'rails_bootstrap_navbar'
 
 group :development do
   gem 'better_errors'

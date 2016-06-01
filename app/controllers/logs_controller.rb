@@ -1,3 +1,5 @@
+require "prawn/table"
+
 class LogsController < ApplicationController
 
   before_filter :authenticate_volunteer!, :except => :stats_service

@@ -25,6 +25,11 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
 end
+group :development, :test do
+  gem 'pry-rails'
+  gem 'pry-rescue'
+  gem 'pry-remote'
+end
 
 group :test do
   gem 'rspec-rails'
@@ -52,7 +57,8 @@ gem 'yaml_db'
 gem 'paperclip', '~> 3.1'
 
 # generate pdfs
-gem 'prawn'
+gem 'prawn', '~> 2.1.0'
+gem 'prawn-table', '~> 0.2.2'
 
 # render google maps
 gem 'gmaps4rails', "1.5.6"

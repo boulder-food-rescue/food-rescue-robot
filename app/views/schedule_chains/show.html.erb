@@ -52,34 +52,36 @@
     <h3>Current Volunteers</h3>
     <p>
       <% if @schedule.volunteers.count == 0 %>
-      No volunteers yet...
-      <b><%=link_to "take this scheduled pickup now!", :controller => "schedule_chains", :action => "take", :id => @schedule %></b>
-    <% else %>
-      <ul>
-        <% @schedule.volunteers.each do |volunteer| %>
-          <li><%= link_to volunteer.name, "mailto:#{volunteer.email}" %><%= volunteer.phone.nil? ? "" : ": #{volunteer.phone}" %></li>
-        <% end %>
-      </ul>
-    <% end %>
-    </p>
-
-    <% @related_shifts = Schedule.where("location_id IN (#{@schedule.donors.collect{ |d| d.location_type == Location::LocationType.invert["Hub"] ? nil : d.id }.compact.join(",")}) AND schedule_chain_id!=?",@schedule.id) %>
-      <% unless @related_shifts.empty? %>
-      <h3>Other Shifts at this Donor</h3>
-      <ul>
-      <% @related_shifts = @related_shifts.reject{ |x| x.schedule_chain.nil? }
-         @related_shifts.sort{ |x,y| x.schedule_chain.day_of_week <=> y.schedule_chain.day_of_week }.each{ |s|
-         next if s.schedule_chain.nil?
-         next if s.schedule_chain.volunteers.empty?
-      %>
-      <li><%= Date::DAYNAMES[s.schedule_chain.day_of_week] %>
+        No volunteers yet...
+        <b><%=link_to "take this scheduled pickup now!", :controller => "schedule_chains", :action => "take", :id => @schedule %></b>
+      <% else %>
         <ul>
-          <% s.schedule_chain.volunteers.each do |volunteer| %>
+          <% @schedule.volunteers.each do |volunteer| %>
             <li><%= link_to volunteer.name, "mailto:#{volunteer.email}" %><%= volunteer.phone.nil? ? "" : ": #{volunteer.phone}" %></li>
           <% end %>
         </ul>
-      </li>
-      <% } %>
+      <% end %>
+    </p>
+
+    <% unless @sorted_related_shifts.empty? %>
+      <h3>Other Shifts at this Donor</h3>
+      <ul>
+        <% @sorted_related_shifts.each{ |shift|
+          next if(shift.schedule_chain.nil? || shift.schedule_chain.volunteers.empty?)
+        %>
+          <li>
+            <% if shift.schedule_chain.day_of_week.present? %>
+              <%= Date::DAYNAMES[shift.schedule_chain.day_of_week] %>
+            <% else %>
+              <p>Schedule Chain Day of Week is Empty. Shift:<%= shift.id %> for schedule_chain: <%= shift.schedule_chain.id %>. Please fix.</p>
+            <% end %>
+            <ul>
+              <% shift.schedule_chain.volunteers.each do |volunteer| %>
+                <li><%= link_to volunteer.name, "mailto:#{volunteer.email}" %><%= volunteer.phone.nil? ? "" : ": #{volunteer.phone}" %></li>
+              <% end %>
+            </ul>
+          </li>
+        <% } %>
       </ul>
     <% end %>
 

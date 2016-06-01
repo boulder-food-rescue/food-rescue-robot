@@ -1,75 +1,98 @@
 class ScheduleChainsController < ApplicationController
-	before_filter :authenticate_volunteer!
-	before_filter :admin_only, :only => [:fast_schedule, :today, :tomorrow, :yesterday, :edit, :update, :create, :new]
+  before_filter :authenticate_volunteer!
+  before_filter :admin_only, :only => [:fast_schedule, :today, :tomorrow, :yesterday, :edit, :update, :create, :new]
 
-	def open
-		@schedules = ScheduleChain.open_in_regions current_volunteer.region_ids
-		@my_admin_regions = current_volunteer.admin_regions
-		@page_title = "Open Shifts"
-		render :index
-	end
+  def open
+    @schedules = ScheduleChain.open_in_regions current_volunteer.region_ids
+    @my_admin_regions = current_volunteer.admin_regions
+    @page_title = "Open Shifts"
+    render :index
+  end
 
-	def mine
-		@schedules = current_volunteer.schedule_chains
-		@my_admin_regions = current_volunteer.admin_regions
-		@page_title = "My Regular Shifts"
-		render :index
-	end
+  def mine
+    @schedules = current_volunteer.schedule_chains
+    @my_admin_regions = current_volunteer.admin_regions
+    @page_title = "My Regular Shifts"
+    render :index
+  end
 
-	def index(title='Full Schedule', day_of_week=nil)
-		#trinary operator was causing syntax errors
-		if day_of_week.nil?
-			dowq=""
-		else
-			dowq="day_of_week = #{day_of_week.to_i}"
-		end
-		@schedules = ScheduleChain.where(:region_id => current_volunteer.region_ids).where(dowq)
-		@my_admin_regions = current_volunteer.admin_regions
-		@page_title = title
-		render :index
-	end
+  def index(title = 'Full Schedule', day_of_week = nil)
+    if day_of_week.nil?
+      dowq = ' '
+    else
+      dowq = "day_of_week = #{day_of_week.to_i}"
+    end
+    @schedules = ScheduleChain.where(region_id: current_volunteer.region_ids).where(dowq)
+    @my_admin_regions = current_volunteer.admin_regions
+    @page_title = title
+    render :index
+  end
 
-	def show
+  def show
     @schedule = ScheduleChain.find(params[:id])
-    #prep the google maps embed request
+    schedules = @schedule.schedules
+
+    # prep the google maps embed request
     api_key = 'AIzaSyD8c6OCF67BCrCMbgBNrcdEEuDnCNqWlk4'
-    embed_parameters = ""
-    trimmed_stops = @schedule.schedules.select{ |stop| not stop == @schedule.schedules.first and not stop == @schedule.schedules.last}
-    embed_parameters += ('&origin=' + @schedule.schedules.first.location.address.gsub(' ','+')) unless @schedule.schedules.empty? or @schedule.schedules.first.location.nil?
-    embed_parameters += ('&destination=' + @schedule.schedules.last.location.address.gsub(' ','+')) unless @schedule.schedules.empty? or @schedule.schedules.last.location.nil?
-    unless trimmed_stops.length == 0
-      embed_parameters += ('&waypoints=')
+    embed_parameters = ' '
+    f_l_scheds = [schedules.first, schedules.last]
+    trimmed_stops = schedules.select { |stop| !(f_l_scheds.include? stop) }
+
+    unless schedules.empty? || schedules.first.location.nil?
+      sched = schedules.first
+      embed_parameters += ('&origin=' + sched.location.address.tr(' ', '+'))
+    end
+
+    unless schedules.empty? || schedules.last.location.nil?
+      addr = schedules.last.location.address
+      embed_parameters += ('&destination=' + addr.tr(' ', '+'))
+    end
+
+    unless trimmed_stops.empty?
+      embed_parameters += '&waypoints='
       trimmed_stops.each do |stop|
-        embed_parameters += stop.location.address.gsub(' ','+')
-        unless stop == trimmed_stops.last
-          embed_parameters += '|'
-        end
+        embed_parameters += stop.location.address.tr(' ', '+')
+        embed_parameters += '|' unless stop == trimmed_stops.last
       end
     end
+
     embed_parameters += '&mode=bicycling'
     @embed_request_url = ('https://www.google.com/maps/embed/v1/directions' + '?key=' + api_key + embed_parameters)
-		if params[:nolayout].present? and params[:nolayout].to_i == 1
-			render(:show,:layout => false)
-		else
-			render :show
-		end
-	end
 
-	def today
-    index("Today's Schedule",Time.zone.today.wday)
+    #This needs to be a scope or meethod on the Schedule module
+    related_shifts = Schedule.where("location_id IN (#{@schedule.donors.collect{ |d| d.location_type == Location::LocationType.invert["Hub"] ? nil : d.id }.compact.join(",")}) AND schedule_chain_id!=?", @schedule.id)
+    related_shifts = related_shifts.reject{ |x| x.schedule_chain.nil? }
+
+    #This can apparently be nil, so have to do a funky sort fix
+    @sorted_related_shifts = related_shifts.sort{ |x,y|
+      x.schedule_chain.day_of_week && y.schedule_chain.day_of_week ?
+        x.schedule_chain.day_of_week <=> y.schedule_chain.day_of_week : x.schedule_chain.day_of_week ? -1 : 1
+    }
+
+    if params[:nolayout].present? && params[:nolayout].to_i == 1
+      render(:show, layout: false)
+    else
+      render :show
+    end
   end
+
+  def today
+    index("Today's Schedule", Time.zone.today.wday)
+  end
+
   def tomorrow
     day_of_week = Time.zone.today.wday + 1
     day_of_week = 0 if day_of_week > 6
-    index("Tomorrow's Schedule",day_of_week)
+    index("Tomorrow's Schedule", day_of_week)
   end
+
   def yesterday
     day_of_week = Time.zone.today.wday - 1
     day_of_week = 6 if day_of_week < 0
-    index("Yesterday's Schedule",day_of_week)
+    index("Yesterday's Schedule", day_of_week)
   end
 
-	def destroy
+  def destroy
     @s = ScheduleChain.find(params[:id])
     unless current_volunteer.any_admin? @s.region
       flash[:error] = "Not authorized to delete schedule items for that region"
@@ -81,7 +104,7 @@ class ScheduleChainsController < ApplicationController
     redirect_to(request.referrer)
   end
 
-	def new
+  def new
     @region = Region.find(params[:region_id])
     unless current_volunteer.any_admin? @region
       flash[:error] = "Not authorized to create schedule items for that region"
@@ -154,7 +177,7 @@ class ScheduleChainsController < ApplicationController
     end
   end
 
-	def leave
+  def leave
     schedule = ScheduleChain.find(params[:id])
     if current_volunteer.in_region? schedule.region_id
       if schedule.has_volunteer? current_volunteer

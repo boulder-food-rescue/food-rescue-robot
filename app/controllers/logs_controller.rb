@@ -1,4 +1,5 @@
 class LogsController < ApplicationController
+
   before_filter :authenticate_volunteer!, :except => :stats_service
   before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create,:stats,:export]
 
@@ -323,23 +324,27 @@ class LogsController < ApplicationController
     end
 
     @logs = Log.where("logs.when >= ? AND logs.when <= ? AND donor_id = ? AND complete",@start_date,@stop_date,@loc.id)
+
     respond_to do |format|
       format.html
       format.pdf do
         pdf = Prawn::Document.new
         pdf.font_size 20
         pdf.text @loc.region.title, :align => :center
+
         unless @loc.region.tagline.nil?
           pdf.move_down 10
           pdf.font_size 12
           pdf.text @loc.region.tagline, :align => :center
         end
+
         unless @loc.region.address.nil?
           pdf.font_size 10
           pdf.font "Times-Roman"
           pdf.move_down 10
           pdf.text "#{@loc.region.address.tr("\n",", ")}", :align => :center
         end
+
         unless @loc.region.website.nil?
           pdf.move_down 5
           pdf.text "#{@loc.region.website}", :align => :center

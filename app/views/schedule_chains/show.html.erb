@@ -39,12 +39,15 @@
     <% unless @schedule.public_notes.nil? or @schedule.public_notes.strip == "" %>
       <p><b>Notes:</b> <%= word_wrap(@schedule.public_notes,:line_width => 80).gsub("\n","<br>").html_safe %></p>
     <% end %>
+
     <% unless @schedule.expected_weight.nil? or @schedule.max_weight.nil? or @schedule.mean_weight.nil? %>
       <p><b>Expected Weight:</b> <%= @schedule.expected_weight %> <em>(current mean = <%= @schedule.mean_weight.round %>, max = <%= @schedule.max_weight.round %>)</em></p>
     <% end %>
+
     <% unless @schedule.hilliness.nil? %>
       <p><b>Hilliness:</b> <%= ScheduleChain::Hilliness[@schedule.hilliness] %></p>
     <% end %>
+
     <% unless @schedule.difficulty_rating.nil? %>
       <p><b>Overall Difficulty:</b> <%= ScheduleChain::Difficulty[@schedule.difficulty_rating] %></p>
     <% end %>
@@ -88,27 +91,32 @@
     <% if @schedule.functional? %>
       <h3>Stops:</h3>
       <p>
-		<% @schedule.schedules.each do |stop|
-                     next if stop.nil? or stop.location.nil?
-%>
-			        <h4><%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %> </h4>
-                    <blockquote><%= stop.location.address %></blockquote>
-                    <% unless stop.location.entry_info.blank? %>
-                        <p><strong>Entry:</strong> <%= stop.location.entry_info.gsub("\n","<br>").html_safe %></p>
-                    <% end %>
-                    <% unless stop.location.equipment_storage_info.blank? %>
-                        <p><strong>Equipment:</strong> <%= stop.location.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
-                    <% end %>
-                    <% unless stop.location.food_storage_info.blank? %>
-                        <p><strong>Food:</strong> <%= stop.location.food_storage_info.gsub("\n","<br>").html_safe %></p>
-                    <% end %>
-                    <% unless stop.location.onsite_contact_info.blank? %>
-                        <p><strong>Contact:</strong> <%= stop.location.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
-                    <% end %>
-                    <% unless stop.location.exit_info.blank? %>
-                        <p><strong>Exit:</strong> <%= stop.location.exit_info.gsub("\n","<br>").html_safe %></p>
-                    <% end %>
-        <% end %>
+		  <% @schedule.schedules.each do |stop|
+        next if stop.nil? or stop.location.nil? %>
+
+          <h4><%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %> </h4>
+          <blockquote><%= stop.location.address %></blockquote>
+
+          <% unless stop.location.entry_info.blank? %>
+              <p><strong>Entry:</strong> <%= stop.location.entry_info.gsub("\n","<br>").html_safe %></p>
+          <% end %>
+
+          <% unless stop.location.equipment_storage_info.blank? %>
+              <p><strong>Equipment:</strong> <%= stop.location.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+          <% end %>
+
+          <% unless stop.location.food_storage_info.blank? %>
+              <p><strong>Food:</strong> <%= stop.location.food_storage_info.gsub("\n","<br>").html_safe %></p>
+          <% end %>
+
+          <% unless stop.location.onsite_contact_info.blank? %>
+              <p><strong>Contact:</strong> <%= stop.location.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
+          <% end %>
+
+          <% unless stop.location.exit_info.blank? %>
+              <p><strong>Exit:</strong> <%= stop.location.exit_info.gsub("\n","<br>").html_safe %></p>
+          <% end %>
+      <% end %>
     <% end %>
 
   </div>

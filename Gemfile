@@ -54,7 +54,8 @@ gem 'twitter'
 gem 'yaml_db'
 
 # smart image attachment management
-gem 'paperclip', '~> 3.1'
+gem 'paperclip', git: 'https://github.com/thoughtbot/paperclip', ref: '523bd46c768226893f23889079a7aa9c73b57d68'
+gem 'aws-sdk', '~> 2.3'
 
 # generate pdfs
 gem 'prawn', '~> 2.1.0'

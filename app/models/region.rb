@@ -18,7 +18,10 @@ class Region < ActiveRecord::Base
                   :twitter_token_secret, :weight_unit, :time_zone, :logo, :post_pickup_emails,
                   :unschedule_self, :volunteer_coordinator_email
 
-  has_attached_file :logo, :styles => { :thumb => "50x50" }
+  has_attached_file :logo,
+                    styles: { thumb: '50x50' },
+                    s3_credentials: { bucket: 'boulder-food-rescue-robot-region-photo' }
+  validates_attachment_file_name :logo, matches: [/png\Z/, /jpe?g\Z/, /gif\Z/]
 
   def active_volunteer_count
     volunteers = self.schedule_chains.collect_concat {|schedule| schedule.volunteers }

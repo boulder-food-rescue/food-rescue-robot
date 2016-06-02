@@ -27,7 +27,12 @@
     <td>
       <label for="volunteer_phone">Phone</label>
     </td>
-    <td><%= f.text_field(:phone, class: "form-control") %> with <%= f.select(:cell_carrier_id,CellCarrier.all.collect{ |cc| [cc.name,cc.id] },{include_blank: true}, {class: "form-control"}) %></tr>
+    <td>
+      <div class="form-inline">
+        <%= f.text_field(:phone, class: "form-control") %> with <%= f.select(:cell_carrier_id, CellCarrier.all.collect{ |cc| [cc.name,cc.id] },{include_blank: true}, {class: "form-control"}) %>
+      </div>
+    </td>
+    </tr>
   </tr>
 
   <tr>
@@ -46,7 +51,9 @@
       </label>
     </td>
     <td>
-      <%= f.select(:preferred_contact,[["Email","Email"],["Phone","Phone"],["Text","Text"]], {include_blank: true}, {class: "form-control"}) %>
+      <div class="form-inline">
+        <%= f.select(:preferred_contact,[["Email","Email"],["Phone","Phone"],["Text","Text"]], {include_blank: true}, {class: "form-control"}) %>
+      </div>
     </td>
   </tr>
 
@@ -84,7 +91,9 @@
       <label for="volunteer_transport_type_id">Transport</label>
     </td>
     <td>
-      <%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{include_blank: true}, {class: "form-control"}) %>
+      <div class="form-inline">
+        <%= f.select(:transport_type_id, TransportType.all.collect{ |tt| [tt.name,tt.id] },{include_blank: true}, {class: "form-control"}) %>
+      </div>
     </td>
   </tr>
 
@@ -99,25 +108,34 @@
     <td>
       <label for="volunteer_pickup_prefs">Pickup Preferences</label>
     </td>
-    <td class="form-fields"><%= f.text_area(:pickup_prefs, :size => "30x6", class: "form-control") %></td>
+    <td class="form-fields"><%= f.text_area(:pickup_prefs, size: "30x6", class: "form-control") %></td>
   </tr>
 
   <% if current_volunteer.any_admin? %>
     <tr>
-      <td>Admin Notes</td>
-      <td><%= f.text_area(:admin_notes, :size => "30x6") %></td>
+      <td>
+        <label for="volunteer_admin_notes">Admin Notes</label>
+      </td>
+      <td><%= f.text_area(:admin_notes, size: "30x6", class: "form-control") %></td>
     </tr>
     <%= hidden_field_tag "volunteer[region_ids][]","" %>
     <tr>
-      <td>Region(s)</td>
+      <td>
+        <label for="">Region(s)</label>
+      </td>
       <td>
         <% @my_admin_regions.each{ |r| %>
-        <%= check_box_tag "volunteer[region_ids][]", r.id, @volunteer.regions.include?(r) %> <%= r.name %>
+          <div class="col-sm-3">
+            <%= check_box_tag "volunteer[region_ids][]", r.id, @volunteer.regions.include?(r) %>
+            <label for=""><%= r.name %></label>
+          </div>
         <% } unless @my_admin_regions.nil? %>
       </td>
     </tr>
     <tr>
-      <td>Account Disabled</td>
+      <td>
+        <label for="volunteer_is_disabled">Account Disabled</label>
+      </td>
       <td><%= f.check_box(:is_disabled) %></td>
     </tr>
   <% end %>

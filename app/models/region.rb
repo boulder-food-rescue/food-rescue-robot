@@ -1,6 +1,6 @@
 class Region < ActiveRecord::Base
   has_many :assignments
-  has_many :volunteers, :through => :assignments
+  has_many :volunteers, through: :assignments
   has_many :food_types
   has_many :scale_types
   has_many :schedule_chains
@@ -10,11 +10,13 @@ class Region < ActiveRecord::Base
   has_many :donors
   has_many :recipients
 
-  geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
+  geocoded_by :address, latitude:  :lat, longitude:  :lng # can also be an IP address
   after_validation :geocode
-  attr_accessible :address, :lat, :lng, :name, :notes, :website, :handbook_url, :welcome_email_text, :splash_html, :title, :tagline,
-                  :phone, :tax_id, :twitter_key, :twitter_secret, :twitter_token, :twitter_token_secret,
-                  :weight_unit, :time_zone, :logo, :post_pickup_emails, :unschedule_self, :volunteer_coordinator_email
+  attr_accessible :address, :lat, :lng, :name, :notes, :website, :handbook_url, :welcome_email_text,
+                  :splash_html, :title, :tagline,
+                  :phone, :tax_id, :twitter_key, :twitter_secret, :twitter_token,
+                  :twitter_token_secret, :weight_unit, :time_zone, :logo, :post_pickup_emails,
+                  :unschedule_self, :volunteer_coordinator_email
 
   has_attached_file :logo, :styles => { :thumb => "50x50" }
 
@@ -23,8 +25,8 @@ class Region < ActiveRecord::Base
     volunteers.uniq.count
   end
 
-  def self.all_admin volunteer
-    Region.where(:id=>volunteer.admin_region_ids)
+  def self.all_admin(volunteer)
+    Region.where(id: volunteer.admin_region_ids)
   end
 
   def has_sellers?

@@ -1,6 +1,7 @@
-span.subtext{
-  font-size: 8pt;
+span.subtext, div.subtext {
   color: grey;
+  font-size: 10px;
+  max-width: 350px;
 }
 em {
   color: #a9a9a9;

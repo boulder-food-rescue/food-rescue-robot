@@ -1,37 +1,142 @@
 <%= form_for @region do |f| %>
-<table>
-<tr><td>Logo<td><%= image_tag @region.logo.url(:thumb)%>
-        <%= f.file_field(:logo) %></td>
-<tr><td>Short Name<td><%= f.text_field(:name) %>
-<tr><td>Title<td><%= f.text_field(:title) %>
-<tr><td>Tagline<td><%= f.text_field(:tagline) %>
-<tr><td>Address<td><%= f.text_area(:address,:size=>"20x5") %>
-<tr><td>Website<td><%= f.text_field(:website) %>
-<tr><td>Phone<td><%= f.text_field(:phone) %>
-<tr><td>Volunteer Coordinator Email<td><%= f.text_field(:volunteer_coordinator_email) %>
-<tr><td>Handbook<td><%= f.text_field(:handbook_url) %>
-<tr><td>Tax ID<td><%= f.text_field(:tax_id) %>
-<tr><td>Notes<td><%= f.text_area(:notes,:size=>"20x5") %>
-<tr style="border-top:1px solid grey;"><td colspan=2>
-<tr><td>Welcome Email Text<td><%= f.text_area(:welcome_email_text,:size=>"10x10") %>
-<tr><td>Splash HTML<td><%= f.text_area(:splash_html,:size=>"10x10") %>
-<!--<tr style="border-top:1px solid grey;"><td colspan=2>
-<tr><td>Twitter Key<td><%= f.text_field(:twitter_key) %>
-<tr><td>Twitter Secret<td><%= f.text_field(:twitter_secret) %>
-<tr><td>Twitter Token<td><%= f.text_field(:twitter_token) %>
-<tr><td>Twitter Token Secret<td><%= f.text_field(:twitter_token_secret) %>-->
-<tr style="border-top:1px solid grey;"><td colspan=2>
-<tr><td>Volunteer Self-Unschedule<br>
-  <span class="subtext">When checked volunteers will be able to de-schedule themselves
-  from a shift (otherwise, only region admins can do this)</span>
-  <td><%= f.check_box(:unschedule_self) %>
-<tr><td>Post-pickup emails<br>
-  <span class="subtext">When checked, users who are having their shifts
-    covered will receive an email about whom is covering their shift.</span>
-  <td><%= f.check_box(:post_pickup_emails) %>
-<tr style="border-top:1px solid grey;"><td colspan=2>
-<tr><td>Weight Unit<td><%= f.text_field(:weight_unit) %> (currently unused)
-<tr><td>Time Zone<td><%= f.text_field(:time_zone) %> (currently unused)
-</table>
+  <table class="table table-striped">
+    <tr>
+      <td width="400">
+        <label for="region_logo">Logo</label>
+      </td>
+      <td>
+        <%= image_tag @region.logo.url(:thumb, class: "form-control") %>
+        <%= f.file_field(:logo, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_name">Short Name</label>
+      </td>
+      <td>
+        <%= f.text_field(:name, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_title">Title</label>
+      </td>
+      <td>
+        <%= f.text_field(:title, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_tagline">Tagline</label>
+      </td>
+      <td>
+        <%= f.text_field(:tagline, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_address">Address</label>
+      </td>
+      <td>
+        <%= f.text_area(:address, size: "20x5", class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_website">Website</label>
+      </td>
+      <td>
+        <%= f.text_field(:website, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_phone">Phone</label>
+      </td>
+      <td>
+        <%= f.text_field(:phone, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_volunteer_coordinator_email">Volunteer Coordinator Email</label>
+      </td>
+      <td>
+        <%= f.text_field(:volunteer_coordinator_email, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_handbook_url">Handbook</label>
+      </td>
+      <td>
+        <%= f.text_field(:handbook_url, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_tax_id">Tax ID</label>
+      </td>
+      <td>
+        <%= f.text_field(:tax_id, class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_notes">Notes</label>
+      </td>
+      <td>
+        <%= f.text_area(:notes, size: "20x5", class: "form-control") %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="region_welcome_email_text">Welcome Email Text</label>
+      </td>
+      <td>
+          <%= f.text_area(:welcome_email_text, size: "10x10", class: "form-control") %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_splash_html">Splash HTML</label>
+      </td>
+      <td>
+        <%= f.text_area(:splash_html, size: "10x10", class: "form-control") %>
+      </td>
+    </tr>
+      <!--<tr style="border-top:1px solid grey;"><td colspan=2>
+      <tr>
+        <td>Twitter Key<td><%= f.text_field(:twitter_key) %>
+      <tr>
+        <td>Twitter Secret<td><%= f.text_field(:twitter_secret) %>
+      <tr>
+        <td>Twitter Token<td><%= f.text_field(:twitter_token) %>
+      <tr>
+        <td>Twitter Token Secret<td><%= f.text_field(:twitter_token_secret) %>-->
+    <tr>
+      <td>
+        <label for="region_unschedule_self">Volunteer Self-Unschedule</label>
+        <div class="subtext">When checked volunteers will be able to de-schedule themselves from a shift (otherwise, only region admins can do this)</div>
+      </td>
+      <td>
+        <%= f.check_box(:unschedule_self) %>
+      </td>
+    <tr>
+      <td>
+        <label for="region_post_pickup_emails">Post-pickup emails</label>
+        <div class="subtext">When checked, users who are having their shifts
+        covered will receive an email about whom is covering their shift.</div>
+      </td>
+      <td>
+        <%= f.check_box(:post_pickup_emails) %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="region_weight_unit">Weight Unit</label>
+      </td>
+      <td>
+        <%= f.text_field(:weight_unit) %> (currently unused)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="region_time_zone">Time Zone</label>
+      </td>
+      <td>
+        <%= f.text_field(:time_zone) %> (currently unused)
+      </td>
+    </tr>
+  </table>
 <%= submit_tag %>
 <% end %>

@@ -17,28 +17,28 @@ class RegionsController < ApplicationController
 
   def edit
     @region = Region.find(params[:id])
-    unless current_volunteer.region_admin?(@region)
+    unless current_volunteer.region_admin?(@region, false)
       flash[:notice] = "Sorry, you can't go there"
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
     render :edit
   end
 
   def update
     @region = Region.find(params[:id])
-    unless current_volunteer.region_admin?(@region)
+
+    unless current_volunteer.region_admin?(@region, false) # false means super admins can edit
       flash[:notice] = "Sorry, you can't go there"
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
-    if @region.update_attributes(params[:region])
-      flash[:notice] = "Updated Successfully."
-      render :edit
-    else
-      flash[:notice] = "Update failed :("
-      render :edit
-    end
+
+    flash[:notice] = if @region.update_attributes(params[:region])
+                       'Updated Successfully.'
+                     else
+                       'Update failed :('
+                     end
+
+    render :edit
   end
 
   def new
@@ -49,7 +49,7 @@ class RegionsController < ApplicationController
   def create
     @region = Region.new(params[:region])
     if @region.save
-      flash[:notice] = "Created successfully."
+      flash[:notice] = 'Created successfully.'
       index
     else
       flash[:notice] = "Didn't save successfully :("
@@ -90,4 +90,4 @@ class RegionsController < ApplicationController
   end
 
 
-end 
+end

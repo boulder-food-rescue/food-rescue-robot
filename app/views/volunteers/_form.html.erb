@@ -18,7 +18,7 @@
       </label>
     </td>
     <td>
-      <%= image_tag @volunteer.photo.url(:thumb) %>
+      <%= image_tag @volunteer.photo.url(:thumb), alt: "#{@volunteer.name} Photo" %>
       <%= f.file_field(:photo) %>
     </td>
   </tr>

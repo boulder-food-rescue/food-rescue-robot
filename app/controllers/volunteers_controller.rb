@@ -155,7 +155,7 @@ class VolunteersController < ApplicationController
     params[:volunteer].delete(:admin)
     params[:volunteer][:assignments].each{ |a| a.delete(:admin) } unless params[:volunteer][:assignments].nil?
     if @volunteer.update_attributes(params[:volunteer])
-      flash[:notice] = "Updated Successfully."
+      flash[:notice] = "Updated #{@volunteer.name} Successfully."
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else

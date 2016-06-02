@@ -251,14 +251,14 @@ class LogsController < ApplicationController
           format.html { render :edit }
         end
       else
-        flash[:notice] = "Failed to mark as complete."
+        flash[:error] = "Failed to mark as complete."
         respond_to do |format|
           format.json { render json: {:error => 2, :message => flash[:notice] } }
           format.html { render :edit }
         end
       end
     else
-      flash[:notice] = "Update failed :("
+      flash[:error] = "Update failed :("
       respond_to do |format|
         format.json { render json: {:error => 1, :message => flash[:notice] } }
         format.html { render :edit }

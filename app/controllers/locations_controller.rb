@@ -7,15 +7,15 @@ class LocationsController < ApplicationController
       @schedules = ScheduleChain.for_location(@loc)
       if @loc.is_donor
         @logs = Log.at(@loc)
-      else 
-        @logs = Log.at(@loc).keep_if{ |x| x.weight_sum.to_f > 0 } 
+      else
+        @logs = Log.at(@loc).keep_if{ |x| x.weight_sum.to_f > 0 }
       end
       render :hud
     else
       flash[:notice] = "Sorry, the key you're using is expired or you're not authorized to do that"
       redirect_to(root_path)
       return
-    end    
+    end
   end
 
   def donors
@@ -135,9 +135,9 @@ class LocationsController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Update failed :("
+      flash[:error] = "Update failed :("
       render :edit
     end
   end
 
-end 
+end

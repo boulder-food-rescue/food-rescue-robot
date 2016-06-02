@@ -62,18 +62,18 @@ class FoodTypesController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Update failed :("
+      flash[:error] = "Update failed :("
       render :edit
     end
   end
 
   def check_permissions(l)
     unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids.include? l.region_id) or
-      flash[:notice] = "Not authorized to create/edit/delete food_types for that region"
+      flash[:error] = "Not authorized to create/edit/delete food_types for that region"
       redirect_to(root_path)
       return false
     end
     return true
   end
 
-end 
+end

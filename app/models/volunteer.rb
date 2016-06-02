@@ -1,25 +1,34 @@
+# Volunteer is the god object for BFR Robot
 class Volunteer < ActiveRecord::Base
   belongs_to :transport_type
   belongs_to :cell_carrier
   has_many :assignments
   has_many :absences
-  has_many :regions, :through => :assignments
-  belongs_to :requested_region, :class_name => "Region"
-  attr_accessible :pre_reminders_too, :region_ids, :password, :password_confirmation, 
-    :remember_me, :admin_notes, :email, :has_car, :is_disabled, :name,
-    :on_email_list, :phone, :pickup_prefs, :preferred_contact, :transport, :sms_too, 
-    :transport_type, :cell_carrier, :cell_carrier_id, :transport_type_id, :photo, :get_sncs_email, 
-    :assigned, :requested_region_id, :authentication_token
+  has_many :regions, through: :assignments
+  belongs_to :requested_region, class_name: 'Region'
+
+  attr_accessible :pre_reminders_too, :region_ids, :password,
+                  :password_confirmation, :remember_me, :admin_notes, :email,
+                  :has_car, :is_disabled, :name, :on_email_list, :phone,
+                  :pickup_prefs, :preferred_contact, :transport, :sms_too,
+                  :transport_type, :cell_carrier, :cell_carrier_id,
+                  :transport_type_id, :photo, :get_sncs_email,
+                  :assigned, :requested_region_id, :authentication_token
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-  has_attached_file :photo, :styles => { :thumb => "50x50", :small => "200x200", :medium => "500x500" }
-  default_scope { order('volunteers.name ASC').where(active:true) }
+
+  has_attached_file :photo,
+                    styles: { thumb: '50x50', small: '200x200', medium: '500x500' },
+                    s3_credentials: { bucket: 'boulder-food-rescue-robot-volunteer-photo' }
+
+  default_scope { order('volunteers.name ASC').where(active: true) }
 
   has_many :schedule_volunteers
-  has_many :schedule_chains, :through=>:schedule_volunteers, 
-           :conditions=>{"schedule_volunteers.active"=>true}
-  has_many :prior_schedules, :through=>:schedule_volunteers, 
-           :conditions=>{"schedule_volunteers.active"=>false}, :class_name=>"ScheduleChain"
+  has_many :schedule_chains, through: :schedule_volunteers,
+           conditions: { 'schedule_volunteers.active' => true }
+  has_many :prior_schedules, through: :schedule_volunteers,
+           conditions: { 'schedule_volunteers.active' => false }, class_name: 'ScheduleChain'
 
   has_many :log_volunteers
   has_many :logs, :through=>:log_volunteers,
@@ -92,20 +101,22 @@ class Volunteer < ActiveRecord::Base
   # if first argument is nil, checks if they're a region admin
   # of any kind. otherwise, tests if they're a admin for the given region
   # if strict is false, will not return true if they're a super admin
-  def region_admin?(r=nil,strict=true)
-    return true if not strict and self.super_admin?
-    a = self.admin_region_ids(strict)
+  def region_admin?(r = nil, strict = true)
+    return true if !strict && super_admin?
+
+    a = admin_region_ids(strict)
     if r.nil?
       return true unless a.empty?
-    else
-      return true if a.include? r.id
+    elsif a.include? r.id
+      return true
     end
-    return false
+
+    false
   end
 
   # non-strict version of the above
-  def any_admin?(region=nil)
-    self.region_admin?(region,false)
+  def any_admin?(region = nil)
+    region_admin?(region, false)
   end
 
   def has_main_region?

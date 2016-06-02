@@ -1,4 +1,9 @@
 <div class="nested_fields">
-  <%= f.association :volunteer, :collection => @region.volunteers, :as=>:select, :label=>false %>
-  <button onclick="$(this).parent().remove();">Remove</button>
+  <%= f.association :volunteer, collection: @region.volunteers, as: :select, label: false, input_html: {class: "form-control"} %>
+  <button onclick="$(this).parent().remove();" class="btn btn-xs btn-danger">
+    <i class="fa fa-remove"></i>
+    Remove
+  </button>
+  <br />
+  <br />
 </div>

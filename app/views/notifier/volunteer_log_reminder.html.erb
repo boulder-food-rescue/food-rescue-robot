@@ -4,31 +4,41 @@
   <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
 </head>
 <body>
+  Hi <%= @volunteer.name %>,
+  <p>
+    This is a friendly reminder from the food robot that you need to enter
+    some data for your recent pickup<%= @logs.length > 1 ? "s" : "" %>:
+  </p>
 
-Hi <%= @volunteer.name %>,
-<p>
-  This is a friendly reminder from the food robot that you need to enter
-  some data for your recent pickup<%= @logs.length > 1 ? "s" : "" %>:
-</p>
-<ul>
-  <% @logs.each{ |l| %>
-    <li><%= readable_time_until l %>
-      <ul>
-        <li><%= l.donor.nil? ? "?" : l.donor.name %> to <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ") %></li>
-        <li><%= link_to "Click Here!", edit_log_url(l) %> to enter this data and stop getting these emails!
-        <li>Food Types: <%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>
-        <li>This is your <strong><%= l.num_reminders.ordinalize %> reminder</strong>.</li>
-      </ul>
-  <% } %>
-</ul>
-<p>
-  Thanks!
-</p>
-<p>
-  *chirp* *beep*
-</p>
---<br/>
-The Food Rescue Robot<br/>
-http://robot.boulderfoodrescue.org
+  <ul>
+    <% @logs.each{ |l| %>
+      <li>
+        <%= readable_time_until l %>
+        <ul>
+          <li>
+            <%= l.donor.nil? ? "?" : l.donor.name %> to <%= l.recipients.collect{ |r| r.nil? ? nil : r.name }.compact.join(", ") %>
+          </li>
+          <li>
+            <%= link_to "Click Here!", edit_log_url(l) %> to enter this data and stop getting these emails!
+          </li>
+          <li>
+            Food Types: <%= l.food_types.length == 0 ? "Miscellany" : l.food_types.collect{ |ft| ft.name }.join(",") %>
+          </li>
+          <li>
+            This is your <strong><%= l.num_reminders.ordinalize %> reminder</strong>.
+          </li>
+        </ul>
+      </li>
+    <% } %>
+  </ul>
+
+  <p>Thanks!</p>
+  <p>*chirp* *beep*</p>
+  --<br/>
+  <p>
+    The Food Rescue Robot<br/>
+    <a href="http://robot.boulderfoodrescue.org">http://robot.boulderfoodrescue.org</a>
+  </p>
+
 </body>
 </html>

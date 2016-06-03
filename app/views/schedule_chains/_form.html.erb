@@ -31,10 +31,10 @@
       </td>
       <td>
         <div>
-        <%= f.simple_fields_for :schedule_volunteers do |schedule_volunteer| %>
-          <%= render 'schedule_volunteer_fields', :f => schedule_volunteer %>
-        <% end %>
-        <%= link_to_add_association '<i class="fa fa-plus"></i> add another volunteer'.html_safe, f, :schedule_volunteers, class: 'btn btn-primary btn-sm' %>
+          <%= f.simple_fields_for :schedule_volunteers do |schedule_volunteer| %>
+            <%= render 'schedule_volunteer_fields', :f => schedule_volunteer %>
+          <% end %>
+          <%= link_to_add_association '<i class="fa fa-plus"></i> add another volunteer'.html_safe, f, :schedule_volunteers, class: 'btn btn-primary btn-sm' %>
         </div>
       </td>
     </tr>
@@ -64,7 +64,7 @@
         <% end %>
 
         <div id="add_stop_button">
-        <%= link_to_add_association 'add another stop', f, :schedules, {:class=>'btn','data-association-insertion-method' => 'before','data-association-insertion-node' => '#add_stop_button'} %>
+          <%= link_to_add_association 'add another stop', f, :schedules, {class: 'btn', 'data-association-insertion-method' => 'before', 'data-association-insertion-node' => '#add_stop_button'} %>
         </div>
       </td>
     </tr>

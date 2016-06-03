@@ -40,21 +40,22 @@ class ScheduleChainsController < ApplicationController
 
     unless schedules.empty? || schedules.first.location.nil?
       sched = schedules.first
-      embed_parameters += ('&origin=' + sched.location.address.tr(' ', '+'))
+      embed_parameters += '&origin=' + sched.location.address.tr(' ', '+').gsub(/\r\n?/, "")
     end
 
     unless schedules.empty? || schedules.last.location.nil?
       addr = schedules.last.location.address
-      embed_parameters += ('&destination=' + addr.tr(' ', '+'))
+      embed_parameters += '&destination=' + addr.tr(' ', '+').gsub(/\r\n?/, "")
     end
 
     unless trimmed_stops.empty?
       embed_parameters += '&waypoints='
       trimmed_stops.each do |stop|
-        embed_parameters += stop.location.address.tr(' ', '+')
+        embed_parameters += stop.location.address.tr(' ', '+').gsub(/\r\n?/, "")
         embed_parameters += '|' unless stop == trimmed_stops.last
       end
     end
+
 
     embed_parameters += '&mode=bicycling'
     @embed_request_url = ('https://www.google.com/maps/embed/v1/directions' + '?key=' + api_key + embed_parameters)

@@ -96,7 +96,7 @@
           <% schedule.volunteers.each do |volunteer| %>
             <%= link_to volunteer.name, volunteer %><br />
           <% end %>
-          <%= render 'take_or_leave', :schedule=>schedule%>
+          <%= render 'take_or_leave', schedule: schedule %>
         <% end %>
       </td>
       <td>

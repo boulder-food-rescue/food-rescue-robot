@@ -181,8 +181,6 @@ class ScheduleChainsController < ApplicationController
   def leave
     schedule_chain = ScheduleChain.find(params[:id])
 
-    if
-
     if current_volunteer.in_region? schedule_chain.region_id
       if schedule_chain.has_volunteer? current_volunteer
         ScheduleVolunteer.where(volunteer_id: current_volunteer.id, schedule_chain_id: schedule_chain.id).each{ |sv|

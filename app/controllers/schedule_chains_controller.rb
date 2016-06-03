@@ -34,7 +34,7 @@ class ScheduleChainsController < ApplicationController
 
     # prep the google maps embed request
     api_key = 'AIzaSyD8c6OCF67BCrCMbgBNrcdEEuDnCNqWlk4'
-    embed_parameters = ' '
+    embed_parameters = ''
     f_l_scheds = [schedules.first, schedules.last]
     trimmed_stops = schedules.select { |stop| !(f_l_scheds.include? stop) }
 

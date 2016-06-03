@@ -179,21 +179,24 @@ class ScheduleChainsController < ApplicationController
   end
 
   def leave
-    schedule = ScheduleChain.find(params[:id])
-    if current_volunteer.in_region? schedule.region_id
-      if schedule.has_volunteer? current_volunteer
-        ScheduleVolunteer.where(:volunteer_id=>current_volunteer.id, :schedule_id=>schedule.id).each{ |sv|
+    schedule_chain = ScheduleChain.find(params[:id])
+
+    if
+
+    if current_volunteer.in_region? schedule_chain.region_id
+      if schedule_chain.has_volunteer? current_volunteer
+        ScheduleVolunteer.where(volunteer_id: current_volunteer.id, schedule_chain_id: schedule_chain.id).each{ |sv|
           sv.active = false
           sv.save
         }
-        flash[:notice] = "You are no longer on the route ending at "+schedule.schedules.last.name+"."
+        flash[:notice] = "You are no longer on the route ending at #{schedule_chain.schedules.last.name}."
       else
         flash[:error] = "Cannot leave route since you're not part of it!"
       end
     else
       flash[:error] = "Cannot leave that route since you are not a member of that region!"
     end
-    redirect_to :action=>'show', :id=>schedule.id
+    redirect_to action: 'show', id: schedule_chain.id
   end
 
   def take

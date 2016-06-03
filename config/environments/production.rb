@@ -16,8 +16,7 @@ Webapp::Application.configure do
   }
   # ActionMailer Config
   #config.action_mailer.default_url_options = { :host => 'robot.boulderfoodrescue.org' }
-  config.action_mailer.default_url_options = { :host => "//#{ENV['DOMAIN_NAME']}" }
-  #config.action_mailer.delivery_method = :sendmail
+  config.action_mailer.default_url_options = { host: "//#{ENV['DOMAIN_NAME']}" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
@@ -31,7 +30,6 @@ Webapp::Application.configure do
   config.action_controller.perform_caching = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
-  #config.serve_static_assets = false
   config.serve_static_assets = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   # Compress JavaScripts and CSS
@@ -68,7 +66,7 @@ Webapp::Application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 
-  # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
+  # Precompile additional assets (application.*, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
 
   # Disable delivery errors, bad email addresses will be ignored
@@ -89,9 +87,9 @@ Webapp::Application.configure do
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   config.middleware.use ExceptionNotifier,
-    :email_prefix => '[BFR ROBOT ERROR] ',
-    :sender_address => %{"BFR Robot" <notifier@boulderfoodrescue.org>},
-    :exception_recipients => %w{rylanb@gmail.com cphillips@smallwhitecube.com}
+    email_prefix: '[BFR ROBOT ERROR] ',
+    sender_address: %{"BFR Robot" <notifier@boulderfoodrescue.org>},
+    exception_recipients: %w{rylanb@gmail.com cphillips@smallwhitecube.com}
 
   config.paperclip_defaults = {
     storage: :s3,

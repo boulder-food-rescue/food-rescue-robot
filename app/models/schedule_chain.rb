@@ -113,15 +113,15 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def one_time?
-    frequency=='one-time'
+    frequency == 'one-time'
   end
 
   def weekly?
-    frequency=='weekly'
+    frequency == 'weekly'
   end
 
   def max_weight
-    Log.where("schedule_chain_id = ?",self.id).collect{ |l| l.summed_weight }.compact.max
+    Log.where("schedule_chain_id = ?", self.id).collect{ |l| l.summed_weight }.compact.max
   end
 
   def mean_weight

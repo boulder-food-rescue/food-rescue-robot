@@ -185,7 +185,7 @@ class ScheduleChainsController < ApplicationController
       if schedule_chain.has_volunteer? current_volunteer
         volunteers = ScheduleVolunteer.where(volunteer_id: current_volunteer.id, schedule_chain_id: schedule_chain.id)
         volunteers.each{ |sv| sv.update_attributes({active: false}) }
-        flash[:notice] = "You are no longer on the route ending at #{schedule_chain.schedules.last.name}."
+        flash[:notice] = "You are no longer on the route ending at #{schedule_chain.from_to_name}."
       else
         flash[:error] = "Cannot leave route since you're not part of it!"
       end

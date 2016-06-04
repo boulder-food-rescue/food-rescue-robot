@@ -165,4 +165,10 @@ class ScheduleChain < ActiveRecord::Base
     self.recipient_stops.collect{ |rs| rs.location }
   end
 
+  def from_to_name
+    schedule_1 = schedules.first
+    schedule_2 = schedules.last
+    "#{schedule_1.location.try(:name)} to #{schedule_2.location.try(:name)}"
+  end
+
 end

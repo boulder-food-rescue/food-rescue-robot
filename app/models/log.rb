@@ -185,8 +185,8 @@ class Log < ActiveRecord::Base
     ret = []
     h = {}
     logs.each{ |log|
-        if log.schedule_chain.nil?
-        ret << [l]
+      if log.schedule_chain.nil?
+        ret << [log]
       else
         k = [log.when, log.schedule_chain_id].join(":")
         if h[k].nil?

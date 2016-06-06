@@ -193,7 +193,7 @@ class Log < ActiveRecord::Base
           h[k] = ret.length
           ret << []
         end
-        ret[h[k]] << l
+        ret[h[k]] << log
       end
     }
     ret

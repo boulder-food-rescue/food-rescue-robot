@@ -32,8 +32,7 @@
           <th>Link</th>
         </tr>
         <% @upcoming_pickups.each do |pickup_group|
-         first_pickup = pickup_group[0]
-         %>
+           first_pickup = pickup_group[0] %>
            <tr class="bordered">
             <td>
               <% pickup_group.each{ |pickup| %>
@@ -83,12 +82,15 @@
         %>
           <tr class="bordered">
             <td>
-              <%= link_to report.donor.name, report.donor %> -&gt; <% report.recipients.each do |recip| %> <%=link_to recip.name, recip %><% end %>
+              <%= link_to report.donor.try(:name), report.donor if report.donor.present? %> -&gt;
+              <% report.recipients.each do |recip| %>
+                <%= link_to recip.try(:name), recip if recip.present? %>
+              <% end %>
               <% unless report.food_types.empty? %>
                 <br />
                 <em>(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</em>
-              </td>
               <% end %>
+            </td>
             <td>
               <%= readable_time_until report %>
             </td>

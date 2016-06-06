@@ -11,7 +11,7 @@
 
 <% @locations.each_with_index do |loc,index| %>
   <%= '</div>'.html_safe if index>0 and index % 3 == 0 %>
-  <%= '<div class="row-fluid">'.html_safe if index % 3 == 0 %>
+  <%= '<div class="row">'.html_safe if index % 3 == 0 %>
   <div class="span4">
     <%= render :partial=>"locations/details", :locals=> {:loc=>loc} %>
   </div>

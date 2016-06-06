@@ -9,7 +9,7 @@ Have some extra food to donate?  Fill in this form and we'll contact you to sche
 
   <%= hidden_field_tag :region_id, @region.id %>
 
-  <div class="row-fluid">
+  <div class="row">
     <div class="span4">
       <fieldset>
         <legend>When</legend>
@@ -47,11 +47,11 @@ Have some extra food to donate?  Fill in this form and we'll contact you to sche
   <div class="form-actions">
     <%= submit_tag 'Request It!', :class=>'btn, btn-primary'%>
     <i>We'll contact you to follow up</i>
-  </div>  
+  </div>
 
 <% end %>
 
-<% content_for :scripts do %> 
+<% content_for :scripts do %>
 <script type="text/javascript">
 $(function(){
   $('#schedule_donor_id').bind('change',function(){

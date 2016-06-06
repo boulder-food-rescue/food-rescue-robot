@@ -37,7 +37,10 @@
            <tr class="bordered">
             <td>
               <% pickup_group.each{ |pickup| %>
-                <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %>
+                <%= link_to pickup.donor.try(:name), pickup.donor if pickup.donor.present? %> -&gt;
+                  <% pickup.recipients.each do |recip| %>
+                    <%= link_to recip.try(:name), recip if recip.present? %>
+                  <% end %>
                 <% unless pickup.food_types.empty? %>
                   <br />
                   <em>(<%= pickup.food_types.collect{ |ft| ft.name }.join(",") %>)</em>

@@ -1,5 +1,12 @@
 class Log < ActiveRecord::Base
+  WhyZero = {1 => "No Food", 2 => "Didn't Happen"}
+
   belongs_to :schedule_chain
+  belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
+  belongs_to :scale_type
+  belongs_to :transport_type
+  belongs_to :region
+
   has_many :log_volunteers
   has_many :volunteers, :through => :log_volunteers,
            :conditions=>{"log_volunteers.active"=>true}
@@ -7,10 +14,6 @@ class Log < ActiveRecord::Base
            :conditions=>{"log_volunteers.active"=>false}
   has_many :log_recipients
   has_many :recipients, :through => :log_recipients
-  belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
-  belongs_to :scale_type
-  belongs_to :transport_type
-  belongs_to :region
   has_many :log_parts
   has_many :food_types, :through => :log_parts
   has_and_belongs_to_many :absences
@@ -18,8 +21,6 @@ class Log < ActiveRecord::Base
   accepts_nested_attributes_for :log_recipients
   accepts_nested_attributes_for :log_volunteers
   accepts_nested_attributes_for :schedule_chain
-
-  WhyZero = {1 => "No Food", 2 => "Didn't Happen"}
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 and a.why_zero == 2 },
              message: "can't be blank if weights/counts are all zero: let us know what happened!" }
@@ -31,7 +32,7 @@ class Log < ActiveRecord::Base
   validates :why_zero, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 } }
 
   attr_accessible :region_id, :donor_id, :why_zero,
-                  :food_type_id, :transport_type_id, :flag_for_admin, :notes, 
+                  :food_type_id, :transport_type_id, :flag_for_admin, :notes,
                   :num_reminders, :transport, :when, :scale_type_id, :hours_spent,
                   :log_volunteers_attributes, :weight_unit, :volunteers_attributes,
                   :schedule_chain_id, :recipients_attributes, :log_recipients_attributes, :log_volunteers_attributes,
@@ -122,14 +123,14 @@ class Log < ActiveRecord::Base
   end
 
   def self.pickup_count region_id
-    Log.where(:region_id=>region_id, :complete=>true).count
+    Log.where(region_id: region_id, complete: true).count
   end
 
-  def self.picked_up_by(volunteer_id,complete=true,limit=nil)
+  def self.picked_up_by(volunteer_id,complete=true, limit=nil)
     if limit.nil?
-      Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC')
+      Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active", volunteer_id, complete).order('"logs"."when" DESC')
     else
-      Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active",volunteer_id,complete).order('"logs"."when" DESC').limit(limit.to_i)
+      Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active", volunteer_id, complete).order('"logs"."when" DESC').limit(limit.to_i)
     end
   end
 
@@ -143,7 +144,7 @@ class Log < ActiveRecord::Base
     end
   end
 
-  def self.picked_up_weight(region_id=nil,volunteer_id=nil)
+  def self.picked_up_weight(region_id=nil, volunteer_id=nil)
     cq = "logs.complete"
     vq = volunteer_id.nil? ? nil : "log_volunteers.volunteer_id=#{volunteer_id}"
     rq = region_id.nil? ? nil : "logs.region_id=#{region_id}"
@@ -159,7 +160,7 @@ class Log < ActiveRecord::Base
     Log.joins(:log_volunteers).where("active AND \"when\" < ? AND volunteer_id = ?",Time.zone.today,volunteer_id).order("logs.when")
   end
 
-  def self.needing_coverage(region_id_list=nil,days_away=nil,limit=nil)
+  def self.needing_coverage(region_id_list=nil, days_away=nil, limit=nil)
     unless region_id_list.nil?
       if days_away.nil?
         Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).order("logs.when").limit(limit).reject{ |l| l.covered? }
@@ -183,11 +184,11 @@ class Log < ActiveRecord::Base
   def self.group_by_schedule(logs)
     ret = []
     h = {}
-    logs.each{ |l|
-        if l.schedule_chain.nil?
+    logs.each{ |log|
+        if log.schedule_chain.nil?
         ret << [l]
       else
-        k = [l.when,l.schedule_chain_id].join(":")
+        k = [log.when, log.schedule_chain_id].join(":")
         if h[k].nil?
           h[k] = ret.length
           ret << []

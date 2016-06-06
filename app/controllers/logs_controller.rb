@@ -237,9 +237,11 @@ class LogsController < ApplicationController
       return
     end
 
-    parse_and_create_log_parts(params,@log)
+    parse_and_create_log_parts(params, @log)
+
     if @log.update_attributes(params[:log])
       finalize_log(@log)
+
       if @log.save
         if @log.complete
           flash[:notice] = "Updated Successfully. All done!"
@@ -247,20 +249,20 @@ class LogsController < ApplicationController
           flash[:warning] = "Saved, but some weights/counts still needed to complete this log. Finish it here: <a href=\"/logs/#{@log.id}/edit\">(Fill In)</a>"
         end
         respond_to do |format|
-          format.json { render json: {:error => 0, :message => flash[:notice] } }
+          format.json { render json: {error: 0, message: flash[:notice] } }
           format.html { render :edit }
         end
       else
         flash[:error] = "Failed to mark as complete."
         respond_to do |format|
-          format.json { render json: {:error => 2, :message => flash[:notice] } }
+          format.json { render json: {error: 2, message: flash[:notice] } }
           format.html { render :edit }
         end
       end
     else
       flash[:error] = "Update failed :("
       respond_to do |format|
-        format.json { render json: {:error => 1, :message => flash[:notice] } }
+        format.json { render json: {error: 1, message: flash[:notice] } }
         format.html { render :edit }
       end
     end
@@ -413,11 +415,12 @@ class LogsController < ApplicationController
       # mark as complete if deserving
       filled_count = 0
       required_unfilled = 0
+
       log.log_parts.each{ |lp|
-        required_unfilled += 1 if lp.required and lp.weight.nil? and lp.count.nil?
-        filled_count += 1 unless lp.weight.nil? and lp.count.nil?
+        required_unfilled += 1 if lp.required && lp.weight.nil? && lp.count.nil?
+        filled_count += 1 unless lp.weight.nil? && lp.count.nil?
       }
-      log.complete = filled_count > 0 and required_unfilled == 0
+      log.complete = filled_count > 0 && required_unfilled == 0
     end
 
     def admin_only

@@ -168,7 +168,7 @@ class ScheduleChainsController < ApplicationController
         s.delete if delete_schedules.include? s.id
       }
       @schedule.schedule_volunteers.each{ |s|
-        s.delete if delete_volunteers.include? s.id
+        s.update_attributes({active: false}) if delete_volunteers.include? s.id
       }
       flash[:notice] = "Updated Successfully"
       index

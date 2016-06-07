@@ -65,6 +65,12 @@ can see the routes with ```rake routes```;
  * A reasonable operating system (e.g., Linux)
  * Various dependencies for the above
 
+After checking out the code, you'll want to install the necessary gemfiles:
+
+```
+bundle install
+```
+
 ## Database
 
 You'll need to create a database and user:

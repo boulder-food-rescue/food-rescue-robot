@@ -10,7 +10,6 @@ prodbounce:
 	bundle exec rake assets:precompile RAILS_ENV=development
 	sudo /usr/bin/ruby1.9.1 /usr/bin/thin restart -C /etc/thin1.9.1/bfr.yml
 datasync:
-	ssh erichtho.smallwhitecube.com "pushd /var/www/bfr/bfr-webapp/;sudo chmod 777 log/development.log;bundle exec rake db:data:dump"
-	scp erichtho.smallwhitecube.com:/var/www/bfr/bfr-webapp/db/data.yml db/
-	sudo chmod 777 /var/www/bfr-webapp/log/development.log
-	rake db:data:load
+	heroku pg:backups capture
+	curl -o latest.dump `heroku pg:backups public-url`
+	pg_restore --verbose --clean --no-acl --no-owner -h localhost -U bfr_user -d bfr_db latest.dump

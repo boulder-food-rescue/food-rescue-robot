@@ -18,7 +18,7 @@ The issue is that the following volunteers are already scheduled to cover this s
 </p>
 <ul>
 <% @shifts.each do |shift| %>
-  <li><%= shift.when %> (<%= time_ago_in_words(shift.when) %> from now): <%= shift.volunteer.name %></li>
+  <li><%= shift.when %> (<%= time_ago_in_words(shift.when) %> from now): <%= shift.volunteers.collect { |v| v.name }.join(", ") %></li>
 <% end %>
 </ul>
 <p>

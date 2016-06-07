@@ -62,7 +62,7 @@
     </pre>
     <br />
 
-    <% unless !current_volunteer.waiver_signed %>
+    <% unless current_volunteer.waiver_signed %>
       <%= form_tag("/volunteers/sign_waiver", :method => "get") do %>
         Check to sign electronically: <%= check_box_tag 'accept', 1 %><br />
         Date: <%= Time.zone.today.to_s %><br /><br />

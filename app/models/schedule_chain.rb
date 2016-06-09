@@ -171,4 +171,14 @@ class ScheduleChain < ActiveRecord::Base
     "#{schedule_1.location.try(:name)} to #{schedule_2.location.try(:name)}"
   end
 
+  def related_shifts
+    lids = self.donors.collect{ |d|
+      d.location_type == Location::LocationType.invert["Hub"] ? nil : d.id
+    }.compact
+    return [] if lids.empty?
+    return Schedule.where("location_id IN (#{lids.join(",")}) AND schedule_chain_id!=?", self.id).reject{ |x|
+      x.schedule_chain.nil?
+    }
+  end
+
 end

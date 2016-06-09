@@ -60,12 +60,8 @@ class ScheduleChainsController < ApplicationController
     embed_parameters += '&mode=bicycling'
     @embed_request_url = ('https://www.google.com/maps/embed/v1/directions' + '?key=' + api_key + embed_parameters)
 
-    #This needs to be a scope or meethod on the Schedule module
-    related_shifts = Schedule.where("location_id IN (#{@schedule.donors.collect{ |d| d.location_type == Location::LocationType.invert["Hub"] ? nil : d.id }.compact.join(",")}) AND schedule_chain_id!=?", @schedule.id)
-    related_shifts = related_shifts.reject{ |x| x.schedule_chain.nil? }
-
     #This can apparently be nil, so have to do a funky sort fix
-    @sorted_related_shifts = related_shifts.sort{ |x,y|
+    @sorted_related_shifts = @schedule.related_shifts.sort{ |x,y|
       x.schedule_chain.day_of_week && y.schedule_chain.day_of_week ?
         x.schedule_chain.day_of_week <=> y.schedule_chain.day_of_week : x.schedule_chain.day_of_week ? -1 : 1
     }

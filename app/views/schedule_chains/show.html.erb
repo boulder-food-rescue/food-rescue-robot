@@ -8,7 +8,7 @@
               else
                 routename = "Deliveries to "
                 @schedule.recipient_stops.each do |stop|
-		  next if stop.location.nil?
+ 		              next if stop.location.nil?
                   routename += stop.location.name
                   if stop != @schedule.recipient_stops.last
                     routename += ", "
@@ -17,7 +17,7 @@
                 routename
               end
 		    else
-			  "?"
+			    "Underspecified Schedule"
 		    end%></h2>
 
     <% unless @schedule.next_pickup_time.nil? or not @schedule.functional? %>

@@ -18,11 +18,11 @@ class ApplicationController < ActionController::Base
   ActiveScaffold.set_defaults do |config|
     config.security.current_user_method = :current_volunteer
   end
-  
+
   layout :layout_by_resource
 
   protected
-  
+
     def layout_by_resource
       if devise_controller?
         "custom_devise"
@@ -49,6 +49,7 @@ class ApplicationController < ActionController::Base
   def authenticate_user_from_token!
     user_email = params["volunteer_email"]
     return if user_email.nil?
+
     user = Volunteer.find_by_email(user_email)
     token = params["volunteer_token"]
     return if token.nil?

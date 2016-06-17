@@ -8,6 +8,9 @@ namespace :foodrobot do
     FoodRobot::generate_log_entries(Date.today)
     FoodRobot::generate_log_entries(Date.today+1)
     FoodRobot::generate_log_entries(Date.today+2)
+    FoodRobot::generate_log_entries(Date.today+3)
+    FoodRobot::generate_log_entries(Date.today+4)
+    FoodRobot::generate_log_entries(Date.today+5)
   end
 
   task(:send_reminders => :environment) do

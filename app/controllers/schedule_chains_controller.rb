@@ -142,6 +142,7 @@ class ScheduleChainsController < ApplicationController
 
     @region = @schedule.region
     set_vars_for_form @region
+    @inactive_volunteers = @schedule.schedule_volunteers.select { |sched_vol| sched_vol.active == false }
     @action = "update"
   end
 

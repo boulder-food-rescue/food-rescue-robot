@@ -32,9 +32,15 @@
       <td>
         <div>
           <%= f.simple_fields_for :schedule_volunteers do |schedule_volunteer| %>
-            <%= render 'schedule_volunteer_fields', :f => schedule_volunteer %>
+            <% if schedule_volunteer.object.active == true %>
+              <%= render 'schedule_volunteer_fields', f: schedule_volunteer %>
+            <% end %>
           <% end %>
           <%= link_to_add_association '<i class="fa fa-plus"></i> add another volunteer'.html_safe, f, :schedule_volunteers, class: 'btn btn-primary btn-sm' %>
+
+          <% if @inactive_volunteers.present? %>
+            <p><em>Former Volunteers:</em> <%= @inactive_volunteers.map{ |sched_vol| sched_vol.volunteer.name}.compact  %></p>
+          <% end %>
         </div>
       </td>
     </tr>

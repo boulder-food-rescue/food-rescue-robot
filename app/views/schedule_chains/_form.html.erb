@@ -1,4 +1,4 @@
-<%= simple_form_for @schedule, :url => {:action => @action }, class: 'form-horizontal' do |f| %>
+<%= simple_form_for @schedule, url: {action: @action }, class: 'form-horizontal' do |f| %>
 
   <%= hidden_field_tag "schedule_chain[region_id]", @region.id %>
 

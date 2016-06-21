@@ -58,7 +58,7 @@
         row_bgcolor = "yellow"
       end
     %>
-    <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+    <tr style="<%= "background-color: #{row_bgcolor};" if row_bgcolor.present? %>">
       <td>
         <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= schedule.id %>';">
           <i class="fa fa-info-circle"></i>

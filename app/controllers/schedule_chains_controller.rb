@@ -134,11 +134,12 @@ class ScheduleChainsController < ApplicationController
 
   def edit
     @schedule = ScheduleChain.find(params[:id])
+
     unless current_volunteer.any_admin? @schedule.region
       flash[:error] = "Not authorized to edit schedule items for that region"
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
+
     @region = @schedule.region
     set_vars_for_form @region
     @action = "update"
@@ -146,26 +147,35 @@ class ScheduleChainsController < ApplicationController
 
   def update
     @schedule = ScheduleChain.find(params[:id])
+
     unless current_volunteer.any_admin? @schedule.region
       flash[:error] = "Not authorized to edit schedule items for that region"
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
+
     delete_schedules = []
-    params[:schedule_chain]["schedules_attributes"].collect{ |k,v|
-      delete_schedules << v["id"].to_i if v["food_type_ids"].nil?
-    } unless params[:schedule_chain]["schedules_attributes"].nil?
+    unless params[:schedule_chain]["schedules_attributes"].nil?
+      params[:schedule_chain]["schedules_attributes"].collect{ |k,v|
+        delete_schedules << v["id"].to_i if v["food_type_ids"].nil?
+      }
+    end
+
     delete_volunteers = []
-    params[:schedule_chain]["schedule_volunteers_attributes"].collect{ |k,v|
-      delete_volunteers << v["id"].to_i if v["volunteer_id"].nil?
-    } unless params[:schedule_chain]["schedule_volunteers_attributes"].nil?
+    unless params[:schedule_chain]["schedule_volunteers_attributes"].nil?
+      params[:schedule_chain]["schedule_volunteers_attributes"].collect{ |k,v|
+        delete_volunteers << v["id"].to_i if v["volunteer_id"].nil?
+      }
+    end
+
     if @schedule.update_attributes(params[:schedule_chain])
-      @schedule.schedules.each{ |s|
+      @schedule.schedules.each do |s|
         s.delete if delete_schedules.include? s.id
-      }
-      @schedule.schedule_volunteers.each{ |s|
+      end
+
+      @schedule.schedule_volunteers.each do |s|
         s.update_attributes({active: false}) if delete_volunteers.include? s.id
-      }
+      end
+
       flash[:notice] = "Updated Successfully"
       index
     else

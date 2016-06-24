@@ -46,9 +46,9 @@ class Log < ActiveRecord::Base
       record.weight_unit = record.scale_type.weight_unit if record.weight_unit.nil?
       record.log_parts.each{ |lp|
         if record.weight_unit == "kg"
-          lp.weight = (lp.weight * (1.0/2.2).to_f).round(2)
+          lp.weight = (lp.weight * (1.0/2.2).to_f).round(2) unless lp.weight.nil?
         elsif record.weight_unit == "st"
-          lp.weight = (conv_weight * (1.0/14.0).to_f).round(2)
+          lp.weight = (conv_weight * (1.0/14.0).to_f).round(2) unless lp.weight.nil?
         end
         lp.save
       }
@@ -98,21 +98,21 @@ class Log < ActiveRecord::Base
   # items and si is the index of this donor in the schedule chain
   # a is an optional absence, which changes the behavior to schedule
   # an absence shift
-  def self.from_donor_schedule(s,si,d,a=nil)
-    sc = s.schedule_chain
+  def self.from_donor_schedule(s, si, date,a = nil)
+    schedule_chain = s.schedule_chain
     log = Log.new
-    log.schedule_chain_id = sc.id
+    log.schedule_chain_id = schedule_chain.id
     log.donor_id = s.location.id # assume this is a donor
-    log.when = d
-    log.region_id = sc.region_id
+    log.when = date
+    log.region_id = schedule_chain.region_id
     log.absences << a unless a.nil?
-    sc.volunteers.each{ |v|
+    schedule_chain.volunteers.each{ |v|
       next if (not a.nil?) and (v == a.volunteer)
       log.log_volunteers << LogVolunteer.new(volunteer:v,log:log,active:true)
     }
-    log.num_volunteers = sc.num_volunteers
+    log.num_volunteers = schedule_chain.num_volunteers
     # list each recipient that follows this donor in the chain
-    sc.schedules.each_with_index{ |s2,s2i|
+    schedule_chain.schedules.each_with_index{ |s2,s2i|
       next if s2.location.nil? or s2i <= si or not s2.is_drop_stop?
       log.log_recipients << LogRecipient.new(recipient:s2.location,log:log)
     }

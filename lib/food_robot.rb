@@ -8,11 +8,11 @@ module FoodRobot
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule
-  def self.generate_log_entries(d = Time.zone.today,absence = nil)
+  def self.generate_log_entries(date = Time.zone.today,absence = nil)
     n = 0
     n_skipped = 0
     is_done = {}
-    logs = Log.select("id, schedule_chain_id, donor_id").where('logs.when = ?',d)
+    logs = Log.select("id, schedule_chain_id, donor_id").where('logs.when = ?', date)
 
     logs.each do |log|
       k = "#{log.schedule_chain_id}:#{log.donor_id}"
@@ -31,8 +31,8 @@ module FoodRobot
       # don't generate logs for malformed schedules
       next unless schedule.functional?
       # things that are relevant to this day
-      next if schedule.one_time? and schedule.detailed_date != d
-      next if schedule.weekly? and schedule.day_of_week != d.wday
+      next if schedule.one_time? and schedule.detailed_date != date
+      next if schedule.weekly? and schedule.day_of_week != date.wday
 
       puts "Schedule Chain: " + schedule.schedules.collect{ |ss|
         ss.location.nil? ? nil : ((ss.is_pickup_stop? ? "D" : "R") + ss.location.id.to_s)
@@ -62,7 +62,7 @@ module FoodRobot
 
         if is_done["#{schedule.id}:#{ss.location.id}"].nil?
           # normal case, generate a new log
-          log = Log.from_donor_schedule(ss, ssi, d, absence)
+          log = Log.from_donor_schedule(ss, ssi, date, absence)
           log.save
           n += 1
         else
@@ -213,7 +213,7 @@ module FoodRobot
         lbs += log.weight_sum.to_f
         zero_logs.push(Log.find(log.id)) if log.weight_sum.to_f == 0.0 and log.count_sum.to_f == 0.0
         flagged_logs << Log.find(log.id) if log.flag_for_admin
-        biggest = l if biggest.nil? or log.weight_sum.to_f > biggest.weight_sum.to_f
+        biggest = log if biggest.nil? or log.weight_sum.to_f > biggest.weight_sum.to_f
         num_entered += 1
       }
       next if biggest.nil?

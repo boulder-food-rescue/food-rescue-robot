@@ -271,10 +271,10 @@ class VolunteersController < ApplicationController
     @sncs_count = Log.needing_coverage(current_volunteer.region_ids,7).length
 
     #To Do Pickup Reports
-    @to_do_reports = Log.picked_up_by(current_volunteer.id,false)
+    @to_do_reports = Log.picked_up_by(current_volunteer.id, false)
 
     #Last 10 pickups
-    @last_ten_pickups = Log.picked_up_by(current_volunteer.id,true,10)
+    @last_ten_pickups = Log.picked_up_by(current_volunteer.id, true, 10)
 
     #Pickup Stats
     @completed_pickup_count = Log.picked_up_by(current_volunteer.id).count

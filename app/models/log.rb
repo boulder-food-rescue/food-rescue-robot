@@ -126,7 +126,7 @@ class Log < ActiveRecord::Base
     Log.where(region_id: region_id, complete: true).count
   end
 
-  def self.picked_up_by(volunteer_id,complete=true, limit=nil)
+  def self.picked_up_by(volunteer_id, complete=true, limit=nil)
     if limit.nil?
       Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active", volunteer_id, complete).order('"logs"."when" DESC')
     else

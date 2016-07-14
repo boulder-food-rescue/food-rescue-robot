@@ -91,6 +91,8 @@ Webapp::Application.configure do
     sender_address: %{"BFR Robot" <notifier@boulderfoodrescue.org>},
     exception_recipients: %w{rylanb@gmail.com cphillips@smallwhitecube.com}
 
+  ExceptionNotifier::Rake.configure
+
   config.paperclip_defaults = {
     storage: :s3,
     s3_credentials: {

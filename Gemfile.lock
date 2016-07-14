@@ -114,6 +114,9 @@ GEM
     eventmachine (1.2.0.1)
     exception_notification (3.0.1)
       actionmailer (>= 3.0.4)
+    exception_notification-rake (0.0.6)
+      exception_notification (~> 3.0.1)
+      rake (>= 0.9.0)
     execjs (2.7.0)
     factory_girl (4.7.0)
       activesupport (>= 3.0.0)
@@ -324,6 +327,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   devise (~> 3.2.0)
   exception_notification (~> 3.0.1)
+  exception_notification-rake (~> 0.0.6)
   factory_girl_rails
   font-awesome-sass (~> 4.4.0)
   geocoder

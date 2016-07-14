@@ -87,3 +87,4 @@ gem 'addressable'
 
 #Send email when exception occurs.
 gem 'exception_notification', '~> 3.0.1'
+gem 'exception_notification-rake', '~> 0.0.6'

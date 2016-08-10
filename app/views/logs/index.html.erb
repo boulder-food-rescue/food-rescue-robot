@@ -89,7 +89,17 @@
             <% end %>
 
             <% unless first_shift.absences.empty? %>
-              <small><br>(normally <% first_shift.absences.each{ |a| %><%= a.volunteer.name %><% } %>)</small>
+              <small>
+                <br>
+                  (normally:
+                    <% first_shift.absences.each do |a| %>
+                      <% if a.volunteer.present? %>
+                        <%= a.volunteer.name %>,
+                      <% else %>
+                        Volunteer was Deleted,
+                      <% end %>
+                    <% end %>
+                  )</small>
             <% end %>
           </td>
 

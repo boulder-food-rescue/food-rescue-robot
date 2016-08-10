@@ -1,11 +1,24 @@
 # Volunteer is the god object for BFR Robot
 class Volunteer < ActiveRecord::Base
+  default_scope { order('volunteers.name ASC').where(active: true) }
+
   belongs_to :transport_type
   belongs_to :cell_carrier
+  belongs_to :requested_region, class_name: 'Region'
+
   has_many :assignments
   has_many :absences
   has_many :regions, through: :assignments
-  belongs_to :requested_region, class_name: 'Region'
+  has_many :schedule_volunteers
+  has_many :schedule_chains, through: :schedule_volunteers,
+           conditions: { 'schedule_volunteers.active' => true }
+  has_many :prior_schedules, through: :schedule_volunteers,
+           conditions: { 'schedule_volunteers.active' => false }, class_name: 'ScheduleChain'
+  has_many :log_volunteers
+  has_many :logs, :through=>:log_volunteers,
+           :conditions=>{"log_volunteers.active"=>true}
+  has_many :prior_logs, :through=>:log_volunteers,
+           :conditions=>{"log_volunteers.active"=>false}, :class_name=>"Log"
 
   attr_accessible :pre_reminders_too, :region_ids, :password,
                   :password_confirmation, :remember_me, :admin_notes, :email,
@@ -22,21 +35,6 @@ class Volunteer < ActiveRecord::Base
                     styles: { thumb: '50x50', small: '200x200', medium: '500x500' },
                     s3_credentials: { bucket: 'boulder-food-rescue-robot-volunteer-photo' }
   validates_attachment_file_name :photo, matches: [/png\Z/, /jpe?g\Z/, /gif\Z/]
-
-
-  default_scope { order('volunteers.name ASC').where(active: true) }
-
-  has_many :schedule_volunteers
-  has_many :schedule_chains, through: :schedule_volunteers,
-           conditions: { 'schedule_volunteers.active' => true }
-  has_many :prior_schedules, through: :schedule_volunteers,
-           conditions: { 'schedule_volunteers.active' => false }, class_name: 'ScheduleChain'
-
-  has_many :log_volunteers
-  has_many :logs, :through=>:log_volunteers,
-           :conditions=>{"log_volunteers.active"=>true}
-  has_many :prior_logs, :through=>:log_volunteers,
-           :conditions=>{"log_volunteers.active"=>false}, :class_name=>"Log"
 
   before_save :ensure_authentication_token
   after_save :auto_assign_region

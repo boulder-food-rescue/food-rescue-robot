@@ -97,7 +97,7 @@ class AbsencesController < ApplicationController
     else
       if @absence.save
         flash[:warning] = nil
-        flash[:notice] = "Thanks for scheduling an absence, if you would like to pick one up to replace it go here: <a href=\"#{open_logs_path}\">cover shifts list</a>.<br><br>#{n+ns} shifts will be skipped (12 is the max at one time, #{ns} were already present). You can see your scheduled absences <a href=\"#{absences_path}\">here</a>."
+        flash[:notice] = "Thanks for scheduling an absence, if you would like to pick one up to replace it go here: <a href=\"#{open_logs_path}\">cover shifts list</a>.<br><br>#{n+ns} shifts will be skipped (12 is the max at one time, #{ns} were already present). You can see your scheduled absences <a href=\"#{absences_path}\">here</a>.".html_safe
         render :new
       else
         flash[:warning] = "Didn't save successfully :("

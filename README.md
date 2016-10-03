@@ -99,7 +99,7 @@ $ rails console
 >
 > v = Volunteer.new
 > v.email = "jane.doe@gmail.com"
-> v.password "changeme"
+> v.password = "changeme"
 > v.admin = true
 > v.regions << r
 > v.save

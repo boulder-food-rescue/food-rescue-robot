@@ -2,10 +2,6 @@ Webapp::Application.config.DayOfWeek = [["Unknown/varies",nil],["Sunday",0],["Mo
 
 # add some useful functions to the array class
 class Array
-  def sum
-    inject( 0.0 ) { |sum,x| sum ? sum+x : x }
-  end
-
   def mean
     size == 0 ? nil : sum / size
   end

@@ -26,10 +26,13 @@ group :development do
   gem 'rails-erd'
   gem 'binding_of_caller'
 end
+
 group :development, :test do
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'pry-remote'
+  gem 'byebug'
+  gem 'awesome_print'
 end
 
 group :test do

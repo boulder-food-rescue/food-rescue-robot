@@ -69,7 +69,7 @@ gem 'gmaps4rails', "1.5.6"
 gem "highcharts-rails", "~> 3.0.0"
 
 # gives us pretty data tables
-gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-rails.git'
+gem 'jquery-datatables-rails', git: 'https://github.com/rweng/jquery-datatables-rails.git'
 
 # pretty select form elements
 #gem 'select2-rails'

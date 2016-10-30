@@ -31,7 +31,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'pry-remote'
-  gem 'byebug'
+  gem 'pry-byebug'
   gem 'awesome_print'
 end
 

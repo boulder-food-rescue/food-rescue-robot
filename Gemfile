@@ -33,7 +33,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rspec-rails'
+  gem 'rspec-rails', "~> 3.5"
   gem 'factory_girl_rails'
   gem 'capybara'
   gem 'rack-test'

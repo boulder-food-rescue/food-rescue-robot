@@ -14,7 +14,7 @@
 //= require jquery_ujs
 //= require jquery.cookie
 //= require bootstrap-sprockets
-//= require dataTables/jquery.dataTables.min
+//= require dataTables/jquery.dataTables
 //= require highcharts
 //= require active_scaffold
 //= require jstz

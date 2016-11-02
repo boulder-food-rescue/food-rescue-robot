@@ -87,24 +87,9 @@ $ exit
 
 Next, copy /config/database.yml.dist to /config/database.yml and make any necessary changes.
 
-If you want to start with an empty schema, you can proceed as usual (rake db:setup, etc.), or you can
-load a database dump from me or elsewhere. If you start with an empty schema, you'll want to start
-by creating a Volunteer user with the admin bit set, and a first region e.g.:
+If you want to start with an empty schema, you can proceed as usual (rake db:setup, etc.), or you can load a database dump from me or elsewhere.
 
-```
-$ rails console
-> r = Region.new
-> r.name = "Somewhere"
-> r.save
->
-> v = Volunteer.new
-> v.email = "jane.doe@gmail.com"
-> v.password = "changeme"
-> v.admin = true
-> v.regions << r
-> v.assigned = true
-> v.save
-```
+You can also populate your local database with sample data by running `rake db:populate`. This will create an admin volunteer with username `volunteer@example.com` and password `changeme`.
 
 ## Running It
 

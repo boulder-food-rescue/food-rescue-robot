@@ -271,19 +271,23 @@ class LogsController < ApplicationController
   # can be given a single id or a list of ids
   def take
     unless params[:ids].present?
-      l = [Log.find(params[:id])]
+      logs = [Log.find(params[:id])]
     else
-      l = params[:ids].collect{ |i| Log.find(i) }
+      logs = Log.find(params[:ids])
     end
-    if l.all?{ |x| current_volunteer.regions.collect{ |r| r.id }.include? x.region_id }
-      l.each{ |x|
-        x.log_volunteers << LogVolunteer.new(volunteer:current_volunteer,covering:true,log:x)
-        x.save
-      }
-      flash[:notice] = "Successfully took a shift with #{l.length} donor(s)."
+
+    volunteer_regions = current_volunteer.regions.pluck(:id).uniq.sort
+    log_regions = logs.flat_map {|log| log.region.id }.uniq.sort
+
+    if log_regions == volunteer_regions
+      logs.each do |log|
+        LogVolunteer.create(volunteer: current_volunteer, covering: true, log: log)
+      end
+      flash[:notice] = "Successfully took a shift with #{logs.length} donor(s)."
     else
       flash[:notice] = "Cannot take shifts for regions that you aren't assigned to!"
     end
+
     respond_to do |format|
       format.json {
         render json: {error: 0, message: flash[:notice]}
@@ -292,6 +296,7 @@ class LogsController < ApplicationController
         redirect_to :back
       }
     end
+
   end
 
   # can be given a single id or a list of ids

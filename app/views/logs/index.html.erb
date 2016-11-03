@@ -64,10 +64,10 @@
           </td>
           <td>
             <% unless first_shift.schedule_chain.nil? %>
-              <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= first_shift.schedule_chain.id %>';">
+              <%= link_to schedule_chain_path(first_shift.schedule_chain.id), class: 'btn btn-info info' do %>
                 <i class="fa fa-info-circle"></i>
                 Info
-              </button>
+              <% end %>
             <% else %>
               One-time Shift
             <% end %>
@@ -77,15 +77,15 @@
           </td>
           <td>
             <% if shift_group.any?{ |s| s.volunteers.empty? } %>
-              <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(first_shift,:ids => shift_group.collect{ |s| s.id }) %>';">
+              <%= link_to take_log_path(first_shift, ids: shift_group.collect{ |s| s.id }), class: 'btn btn-primary take' do %>
                 <i class="fa fa-hand-rock-o"></i>
                 Take
-              </button>
+              <% end %>
             <% else %>
               <% shift_group.collect{ |s| s.volunteers }.flatten.uniq.each do |volunteer| %>
                 <%= link_to volunteer.name, volunteer %><br />
               <% end %>
-              <%= render 'take_or_leave', :logs=>shift_group %>
+              <%= render 'take_or_leave', logs: shift_group %>
             <% end %>
 
             <% unless first_shift.absences.empty? %>

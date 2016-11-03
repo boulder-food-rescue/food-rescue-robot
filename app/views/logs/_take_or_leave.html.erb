@@ -1,8 +1,8 @@
-<% volunteers = logs.collect{ |l| l.volunteers }.flatten.uniq %>
-<% if volunteers.include? current_volunteer %>
+<% volunteers = logs.collect{ |log| log.volunteers }.flatten.uniq %>
+<% if volunteers.include?(current_volunteer) %>
   <% if volunteers.length > 1 %>
-    <%= link_to "(Leave it)", controller: "logs", action: "leave", id: logs[0], ids: logs.collect{ |l| l.id } %>
+    <%= link_to "(Leave it)", controller: "logs", action: "leave", id: logs[0], ids: logs.collect{ |log| log.id } %>
   <% end %>
 <% else %>
-  <%= link_to "(Join it)", controller: "logs", action: "take", id: logs, ids: logs.collect{ |l| l.id } %>
+  <%= link_to "(Join it)", controller: "logs", action: "take", id: logs, ids: logs.collect{ |log| log.id } %>
 <% end %>

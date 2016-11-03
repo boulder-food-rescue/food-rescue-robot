@@ -102,6 +102,7 @@ $ rails console
 > v.password = "changeme"
 > v.admin = true
 > v.regions << r
+> v.assigned = true
 > v.save
 ```
 

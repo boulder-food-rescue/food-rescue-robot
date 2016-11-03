@@ -26,17 +26,21 @@ group :development do
   gem 'rails-erd'
   gem 'binding_of_caller'
 end
+
 group :development, :test do
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'pry-remote'
+  gem 'pry-byebug'
+  gem 'awesome_print'
 end
 
 group :test do
-  gem 'rspec-rails'
+  gem 'rspec-rails', "~> 3.5"
   gem 'factory_girl_rails'
   gem 'capybara'
   gem 'rack-test'
+  gem 'test-unit', '~> 3.0'
 end
 
 
@@ -69,7 +73,7 @@ gem 'gmaps4rails', "1.5.6"
 gem "highcharts-rails", "~> 3.0.0"
 
 # gives us pretty data tables
-gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-rails.git'
+gem 'jquery-datatables-rails', git: 'https://github.com/rweng/jquery-datatables-rails.git'
 
 # pretty select form elements
 #gem 'select2-rails'

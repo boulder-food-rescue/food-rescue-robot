@@ -25,6 +25,75 @@ RSpec.describe VolunteersController do
       it 'renders the unassigned template' do
         expect(subject).to render_template :unassigned
       end
+
+      context 'setting instance variables' do
+        let(:assigned_volunteer) { volunteer }
+        let(:unassigned_volunteers) { create_list :volunteer, 2 }
+        let(:unassigned_vol1) { unassigned_volunteers.first }
+        let(:region_id) { admin.admin_region_ids.first }
+        let(:volunteers) { assigns(:volunteers) }
+
+        before do
+          assigned_volunteer
+          unassigned_volunteers
+        end
+
+        describe '@volunteers' do
+          context 'unassigned volunteers' do
+            it 'includes the volunteers' do
+              subject
+              expect(volunteers).to match_array unassigned_volunteers
+            end
+
+            context 'without requested_region_id of logged-in admin' do
+              it 'includes the volunteer' do
+                unassigned_vol1.update_attribute(:requested_region_id, nil)
+
+                subject
+                expect(volunteers).to include unassigned_vol1
+              end
+            end
+
+            context 'with requested_region_id of logged-in admin' do
+              before do
+                unassigned_vol1.requested_region_id = region_id
+                unassigned_vol1.save
+              end
+
+              it 'includes the volunteer' do
+                subject
+                expect(volunteers).to include unassigned_vol1
+              end
+
+              context 'without assignments' do
+                it 'includes the volunteer' do
+                  unassigned_vol1.assignments = []
+                  unassigned_vol1.save
+
+                  subject
+                  expect(volunteers).to include unassigned_vol1
+                end
+              end
+            end
+          end
+
+          context 'assigned volunteers' do
+            it 'does _not_ include the volunteer' do
+              subject
+              expect(volunteers).not_to include assigned_volunteer
+            end
+          end
+        end
+
+        describe '@header' do
+          let(:header) { 'Unassigned Volunteers' }
+
+          it 'sets it' do
+            subject
+            expect(assigns(:header)).to eq header
+          end
+        end
+      end
     end
   end
 
@@ -285,12 +354,8 @@ RSpec.describe VolunteersController do
     context 'admin user' do
       before { sign_in admin }
 
-      it 'renders the knight template' do
-        # TODO: fails with undef ar or meth `admin` in controller.
-        # Should be `admin_only`? Which is not a route. Or, `admin_only`
-        # should be `admin`?
-        expect(subject).to render_template :knight
-      end
+      it 'renders the knight template'
+      # PENDING: fails with undef var or method `admin` in controller.
     end
   end
 

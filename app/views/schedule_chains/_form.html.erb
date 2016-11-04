@@ -11,7 +11,7 @@
         <div class="form-inline">
           <%= f.select(:frequency, options_for_select({'Weekly'=>'weekly', 'One Time'=>'one-time'}), {}, {class: "form-control"} ) %>
           <span id="frequency-option-weekly" class="frequency-option" style="display:none;">
-            on <%= f.select(:day_of_week, Webapp::Application.config.DayOfWeek, {}, {class: "form-control"}) %>
+            on <%= f.select(:day_of_week, Date::DAYNAMES.each_with_index.to_a, { prompt: 'Unknown/varies' }, {class: "form-control"}) %>
           </span>
           <span id="frequency-option-one-time" class="frequency-option" style="display:none;">
               on <%= f.date_select(:detailed_date, {}, {class: "form-control"}) %>

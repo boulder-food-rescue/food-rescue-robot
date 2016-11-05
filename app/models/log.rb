@@ -48,7 +48,7 @@ class Log < ActiveRecord::Base
         if record.weight_unit == "kg"
           lp.weight = (lp.weight * (1.0/2.2).to_f).round(2) unless lp.weight.nil?
         elsif record.weight_unit == "st"
-          lp.weight = (conv_weight * (1.0/14.0).to_f).round(2) unless lp.weight.nil?
+          lp.weight = (lp.weight.to_f * (1.0/14.0).to_f).round(2) unless lp.weight.nil?
         end
         lp.save
       }

@@ -54,9 +54,13 @@
 
     <h3>Current Volunteers</h3>
     <p>
-      <% if @schedule.volunteers.count == 0 %>
+      <% if @schedule.volunteers.count > 0 %>
         No volunteers yet...
-        <b><%=link_to "take this scheduled pickup now!", :controller => "schedule_chains", :action => "take", :id => @schedule %></b>
+        <%=link_to take_schedule_chains_path(id: @schedule), confirm: "Are you sure you want to sign up for this weekly pickup?", class: 'btn btn-primary' do %>
+          <i class="fa fa-hand-rock-o"></i>
+          <strong>Signup for this <u>weekly</u> pickup now!</strong>
+        <% end %>
+
       <% else %>
         <ul>
           <% @schedule.volunteers.each do |volunteer| %>

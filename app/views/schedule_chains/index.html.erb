@@ -1,13 +1,15 @@
 <h2><%=@page_title%></h2>
 
-<% if current_volunteer.any_admin? and not @my_admin_regions.nil? %>
-  <div class="text-right">
-    <%= form_tag("/schedule_chains/new", :method => "get") do %>
-      New Scheduled Route For <%= select_tag("region_id", options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
-      <%= submit_tag("Go") %>
-    <% end %>
-  </div>
-<% end %>
+<div class="row">
+  <% if current_volunteer.any_admin? and not @my_admin_regions.nil? %>
+    <div class="col-sm-6 text-right">
+      <%= form_tag("/schedule_chains/new", method: "get") do %>
+        New Scheduled Route For <%= select_tag("region_id", options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] })) %>
+        <%= submit_tag("Go") %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
 
 <% if current_volunteer.assignments.length == 0 %>
   <p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
@@ -90,7 +92,7 @@
         <% if schedule.no_volunteers? or schedule.temporary %>
           <button class="btn btn-primary take" onclick="window.location='/schedule_chains/take?id=<%= schedule.id %>';">
             <i class="fa fa-hand-rock-o"></i>
-            Take
+            Take Weekly Shift
           </button>
         <% else %>
           <% schedule.volunteers.each do |volunteer| %>
@@ -105,9 +107,13 @@
       <td>
         <%= readable_stop_time schedule %>
       </td>
-      <td style="font-size: 10pt;"><%= word_wrap(schedule.public_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.public_notes.nil? %></td>
+      <td style="font-size: 10pt;">
+        <%= word_wrap(schedule.public_notes, line_width: 20).gsub("\n","<br>").html_safe unless schedule.public_notes.nil? %>
+      </td>
       <% if current_volunteer.any_admin? %>
-        <td><%= word_wrap(schedule.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.admin_notes.nil? or !current_volunteer.region_admin?(schedule.region) %></td>
+        <td>
+          <%= word_wrap(schedule.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless schedule.admin_notes.nil? or !current_volunteer.region_admin?(schedule.region) %>
+        </td>
       <% end %>
       <td style="font-size: 10pt;">
         <% schedule.prior_volunteers.each do |prior_volunteer| %>

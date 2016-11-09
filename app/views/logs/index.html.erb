@@ -1,140 +1,154 @@
 <h2><%= @header %></h2>
 
-<% if current_volunteer.any_admin? %>
-  <div class="text-right">
-    <%= form_tag("/logs/new", :method => "get") do %>
-      New Item For
-      <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] }), {:class => 'form-control'} ) %>
-      <%= submit_tag("Go") %>
-    <% end %>
-
-    <%= form_tag("/logs/by_day", :method => "get") do %>
-      Jump to <%= date_select("date",:d) %>
-      <%= submit_tag("Go") %>
-    <% end %>
-
-  </div>
-<% end %>
-
-<% if current_volunteer.assignments.length == 0 %>
-  <p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
-<% elsif @shifts.length == 0 %>
-  <p>
-    No shifts found.
-  </p>
-<% else %>
-  <table class="table" id="data_table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Info</th>
-        <th>When</th>
-        <th>Volunteers</th>
-        <th>Donor</th>
-        <th>Recipient(s)</th>
-
-        <% unless current_page? :controller => "logs", :action => "open" %>
-          <th>Weight</th>
-          <th>Transport Type</th>
-          <th>Food Type</th>
-        <% end %>
-
-        <th>Notes</th>
-
-        <% if current_volunteer.any_admin? %>
-          <th>Admin</th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <%
-        @shifts.each do |shift_group|
-          first_shift = shift_group[0]
-          row_bgcolor = nil
-
-          if shift_group.any?{ |s| s.volunteers.empty? } and not current_page?(:controller => "logs", :action => "open")
-            row_bgcolor = "pink"
-          elsif shift_group.any? { |s| s.volunteers.any?{ |v| v.needs_training? } }
-            row_bgcolor = "lightgreen"
-          end
-      %>
-        <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-          <td>
-            <%= first_shift.when.strftime("%Y-%m-%d") %>
-          </td>
-          <td>
-            <% unless first_shift.schedule_chain.nil? %>
-              <%= link_to schedule_chain_path(first_shift.schedule_chain.id), class: 'btn btn-info info' do %>
-                <i class="fa fa-info-circle"></i>
-                Info
-              <% end %>
-            <% else %>
-              One-time Shift
-            <% end %>
-          </td>
-          <td>
-            <%= readable_time_until first_shift %>
-          </td>
-          <td>
-            <% if shift_group.any?{ |s| s.volunteers.empty? } %>
-              <%= link_to take_log_path(first_shift, ids: shift_group.collect{ |s| s.id }), class: 'btn btn-primary take' do %>
-                <i class="fa fa-hand-rock-o"></i>
-                Take
-              <% end %>
-            <% else %>
-              <% shift_group.collect{ |s| s.volunteers }.flatten.uniq.each do |volunteer| %>
-                <%= link_to volunteer.name, volunteer %><br />
-              <% end %>
-              <%= render 'take_or_leave', logs: shift_group %>
-            <% end %>
-
-            <% unless first_shift.absences.empty? %>
-              <small>
-                <br>
-                  (normally:
-                    <% first_shift.absences.each do |a| %>
-                      <% if a.volunteer.present? %>
-                        <%= a.volunteer.name %>,
-                      <% else %>
-                        Volunteer was Deleted,
-                      <% end %>
-                    <% end %>
-                  )</small>
-            <% end %>
-          </td>
-
-          <td>
-            <% shift_group.each do |s| %> <%= (s.donor != nil) ? (link_to s.donor.name, s.donor) : "" %> <br> <% end %>
-          </td>
-          <td>
-            <% shift_group.collect{ |s| s.recipients }.flatten.uniq.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %>
-          </td>
-
-          <% unless current_page?(:controller => "logs", :action => "open") %>
-            <td> <%= shift_group.all?{ |s| s.complete } ? shift_group.collect{ |s| s.summed_weight }.sum.round : "?" %> lbs.</td>
-            <td> <% shift_group.collect{ |s| s.transport_type }.compact.each{ |tt| %> <%= tt.name %><br> <% } %></td>
-            <td> <%= shift_group.collect{ |s| s.food_types.collect{ |ft| ft.name }.join(", ") }.join("<br>").html_safe %></td>
-          <% end %>
-
-          <td style="font-size: 10pt;">
-            <% shift_group.each{ |s|
-              next if s.notes.nil?
-            %>
-              <%= word_wrap(s.notes,:line_width => 20).gsub("\n","<br>").html_safe %><hr>
-            <% } %>
-            <% if current_volunteer.any_admin?(first_shift.region) %>
-              <td>
-                <% shift_group.each{ |s| %>
-                  <%= link_to "edit", edit_log_path(s) %><br>
-                  <%= link_to "delete", s, :confirm => "Are you sure?", :method => :delete %><br>
-                <% } %>
-              </td>
-          <% end %>
-        </tr>
+<div class="row">
+  <% if current_volunteer.any_admin? %>
+    <div class="col-sm-6 text-left">
+      <%= form_tag("/logs/new", method: "get", class: "form-inline") do %>
+        <%= label_tag :region_id, 'New Item For:' %>
+        <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] }), {class: 'form-control'} ) %>
+        <%= submit_tag("Go") %>
       <% end %>
-    </tbody>
-  </table>
-<% end %>
+    </div>
+    <div class="col-sm-6">
+      <%= form_tag("/logs/by_day", method: "get", class: "form-inline") do %>
+        Jump to <%= date_select("date",:d, {order: [:day, :month, :year], start_year: 1920, end_year: DateTime.now.year}, {class: 'form-control'}) %>
+        <%= submit_tag("Go") %>
+      <% end %>
+    </div>
+  <% end %>
+  <br />
+  <br />
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <% if current_volunteer.assignments.length == 0 %>
+      <p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
+    <% elsif @shifts.length == 0 %>
+      <p>
+        No shifts found.
+      </p>
+    <% else %>
+      <table class="table" id="data_table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Info</th>
+            <th>When</th>
+            <th>Volunteers</th>
+            <th>Donor</th>
+            <th>Recipient(s)</th>
+
+            <% unless current_page?(controller: "logs", action: "open") %>
+              <th>Weight</th>
+              <th>Transport Type</th>
+              <th>Food Type</th>
+            <% end %>
+
+            <th>Notes</th>
+
+            <% if current_volunteer.any_admin? %>
+              <th>Admin</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <%
+            @shifts.each do |shift_group|
+              first_shift = shift_group[0]
+              row_bgcolor = nil
+
+              if shift_group.any?{ |shift_group| shift_group.volunteers.empty? } and not current_page?(controller: "logs", action: "open")
+                row_bgcolor = "pink"
+              elsif shift_group.any? { |shift_group| shift_group.volunteers.any?{ |volunteer| volunteer.needs_training? } }
+                row_bgcolor = "lightgreen"
+              end
+          %>
+            <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+              <td>
+                <%= first_shift.when.strftime("%Y-%m-%d") %>
+              </td>
+              <td>
+                <% unless first_shift.schedule_chain.nil? %>
+                  <%= link_to schedule_chain_path(first_shift.schedule_chain.id), class: 'btn btn-info info' do %>
+                    <i class="fa fa-info-circle"></i>
+                    Info
+                  <% end %>
+                <% else %>
+                  One-time Shift
+                <% end %>
+              </td>
+              <td>
+                <%= readable_time_until first_shift %>
+              </td>
+              <td>
+                <% if shift_group.any?{ |shift| shift.volunteers.empty? } %>
+                  <%= link_to take_log_path(first_shift, ids: shift_group.collect{ |shift| shift.id }), class: 'btn btn-primary take' do %>
+                    <i class="fa fa-hand-rock-o"></i>
+                    Cover Shift
+                  <% end %>
+                <% else %>
+                  <% shift_group.collect{ |shift| shift.volunteers }.flatten.uniq.each do |volunteer| %>
+                    <%= link_to volunteer.name, volunteer %><br />
+                  <% end %>
+                  <%= render 'take_or_leave', logs: shift_group %>
+                <% end %>
+
+                <% unless first_shift.absences.empty? %>
+                  <small>
+                    <br>
+                      (normally:
+                        <% first_shift.absences.each do |absence| %>
+                          <% if absence.volunteer.present? %>
+                            <%= absence.volunteer.name %>,
+                          <% else %>
+                            Volunteer was Deleted,
+                          <% end %>
+                        <% end %>
+                      )</small>
+                <% end %>
+              </td>
+
+              <td>
+                <% shift_group.each do |shift| %> <%= (shift.donor != nil) ? (link_to shift.donor.name, shift.donor) : "" %><br> <% end %>
+              </td>
+              <td>
+                <% shift_group.collect{ |shift| shift.recipients }.flatten.uniq.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %>
+              </td>
+
+              <% unless current_page?(controller: "logs", action: "open") %>
+                <td>
+                  <%= shift_group.all?{ |shift| shift.complete } ? shift_group.collect{ |shift| shift.summed_weight }.sum.round : "?" %> lbs.
+                </td>
+                <td>
+                  <% shift_group.collect{ |shift| shift.transport_type }.compact.each{ |transport_type| %> <%= transport_type.name %><br> <% } %>
+                </td>
+                <td>
+                  <%= shift_group.collect{ |shift| shift.food_types.collect{ |food_type| food_type.name }.join(", ") }.join("<br>").html_safe %>
+                </td>
+              <% end %>
+
+              <td style="font-size: 10pt;">
+                <% shift_group.each{ |shift|
+                  next if shift.notes.nil?
+                %>
+                  <%= word_wrap(shift.notes, line_width: 20).gsub("\n","<br>").html_safe %><hr>
+                <% } %>
+                <% if current_volunteer.any_admin?(first_shift.region) %>
+                  <td>
+                    <% shift_group.each{ |shift_group| %>
+                      <%= link_to "edit", edit_log_path(shift_group), class: 'btn btn-primary' %>
+                      <%= link_to "delete", shift_group, class: 'btn btn-danger', confirm: "Are you sure?", method: :delete %>
+                    <% } %>
+                  </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>
 
 <% content_for :scripts do %>
   <script type="text/javascript">

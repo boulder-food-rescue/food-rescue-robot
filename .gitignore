@@ -11,3 +11,4 @@ public/system
 log/*.log.*
 .idea
 .bundle/*
+.byebug_history

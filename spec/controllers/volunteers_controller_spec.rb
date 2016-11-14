@@ -22,6 +22,11 @@ RSpec.describe VolunteersController do
     context 'admin user' do
       before { sign_in admin }
 
+      it 'responds with success' do
+        subject
+        expect(response.status).to eq 200
+      end
+
       it 'renders the unassigned template' do
         expect(subject).to render_template :unassigned
       end
@@ -39,13 +44,13 @@ RSpec.describe VolunteersController do
         end
 
         describe '@volunteers' do
-          context 'unassigned volunteers' do
+          context 'volunteers without assignments' do
             it 'includes the volunteers' do
               subject
               expect(volunteers).to match_array unassigned_volunteers
             end
 
-            context 'without requested_region_id of logged-in admin' do
+            context 'without requested_region_id' do
               it 'includes the volunteer' do
                 unassigned_vol1.update_attribute(:requested_region_id, nil)
 
@@ -64,20 +69,10 @@ RSpec.describe VolunteersController do
                 subject
                 expect(volunteers).to include unassigned_vol1
               end
-
-              context 'without assignments' do
-                it 'includes the volunteer' do
-                  unassigned_vol1.assignments = []
-                  unassigned_vol1.save
-
-                  subject
-                  expect(volunteers).to include unassigned_vol1
-                end
-              end
             end
           end
 
-          context 'assigned volunteers' do
+          context 'volunteers with assignments' do
             it 'does _not_ include the volunteer' do
               subject
               expect(volunteers).not_to include assigned_volunteer
@@ -100,15 +95,68 @@ RSpec.describe VolunteersController do
   describe 'GET #assigned' do
     let(:region) { create :region }
     let(:alert) { 'Assignment worked' }
+    let(:params) do
+      {
+        volunteer_id: volunteer.id,
+        region_id: region.id
+      }
+    end
+    let(:welcome_params) { params.merge(send_welcome_email: '1') }
+    let(:region_id) { volunteer.regions.first.id }
+    let(:unassign_params) { params.merge(unassign: true, region_id: region_id) }
 
-    subject do
-      get :assign, { volunteer_id: volunteer.id, region_id: region.id }
+    context 'logged in user is an assigned volunteer' do
+      before { sign_in volunteer }
+
+      subject { get :assign, welcome_params }
+
+      it 'redirects to action: :unassigned' do
+        expect(subject).to redirect_to unassigned_volunteers_path(alert: alert)
+      end
+
+      it 'creates an assignment with the volunteer and region' do
+        subject
+        assignment = Assignment.where(volunteer_id: volunteer.id,
+                                      region_id: region.id).first
+
+        expect(volunteer.assignments).to include assignment
+      end
+
+      it 'calls for generating a welcome email' do
+        expect(Notifier).to receive(:region_welcome_email)
+        subject
+      end
+
+      it 'sends a welcome email' do
+        expect_any_instance_of(Mail::Message).to receive(:deliver)
+        subject
+      end
+
+      context 'a welcome email does not need to be sent' do
+        it 'does _not_ call for sending a welcome email' do
+          expect_any_instance_of(Mail::Message).not_to receive(:deliver)
+          get :assign, params
+        end
+      end
+
+      context 'params[:unassign] is present' do
+        it 'deletes the assignment' do
+          expect(volunteer.assignments.count).to eq 1
+          get :assign, unassign_params
+          expect(volunteer.assignments).to be_empty
+        end
+      end
     end
 
-    before { sign_in volunteer }
+    context 'logged in user has not yet been assigned by region admin' do
+      let(:unassigned_volunteer) { create :volunteer }
 
-    it 'redirects to action: :unassigned' do
-      expect(subject).to redirect_to unassigned_volunteers_path(alert: alert)
+      before { sign_in unassigned_volunteer }
+
+      it 'redirects to sign in' do
+        get :assign, params.merge(volunteer_id: unassigned_volunteer.id)
+        expect(subject).to redirect_to new_volunteer_session_path
+      end
     end
   end
 

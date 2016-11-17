@@ -19,7 +19,7 @@ class Location < ActiveRecord::Base
 
   validate :detailed_hours_cannot_end_before_start
 
-  attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours, 
+  attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours,
                   :is_donor, :lat, :lng, :name, :public_notes, :recip_category, :website, :receipt_key,
                   :email, :phone, :equipment_storage_info, :food_storage_info, :entry_info, :exit_info,
                   :onsite_contact_info, :active, :location_type
@@ -36,14 +36,14 @@ class Location < ActiveRecord::Base
   def weight_stats
     w = Log.where("donor_id = ? OR recipient_id = ?",self.id,self.id).collect{ |l| l.summed_weight }
     nozeroes = w.collect{ |e| e == 0 ? nil : e }.compact
-    return {:mean => nozeroes.mean, :median => nozeroes.median, :std => nozeroes.std, :n => w.length, 
+    return {:mean => nozeroes.mean, :median => nozeroes.median, :std => nozeroes.std, :n => w.length,
             :zeroes => (w.length-nozeroes.length) }
   end
 
   def gmaps4rails_title
     self.name
   end
-  
+
   def gmaps4rails_infowindow
     ret = "<span style=\"font-weight: bold;color: darkblue;\">#{self.name}</span><br>"
     ret += self.address.gsub("\n","<br>") unless self.address.nil?
@@ -55,10 +55,10 @@ class Location < ActiveRecord::Base
     ret += "<a href=\"#{self.website}\">website</a>" unless self.website.nil?
     ret
   end
-  
+
   def gmaps4rails_marker_picture
    {
-     "picture" => self.is_donor ? "http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-start.png" : 
+     "picture" => self.is_donor ? "http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-start.png" :
                                   "http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-end.png"          # string,  mandatory
    }
   end
@@ -80,15 +80,15 @@ class Location < ActiveRecord::Base
   def open_on_day? index
     read_day_info('day'+index.to_s+'_status') == 1
   end
-  
+
   def populate_detailed_hours_from_form params
     (0..6).each do |index|
       prefix = "day"+index.to_s
       write_day_info(prefix+"_status", params[prefix]["status"].to_i)
-      write_day_info(prefix+"_start", 
+      write_day_info(prefix+"_start",
         Time.find_zone(self.time_zone).parse( params[prefix]['start']['hour']+":"+params[prefix]['start']['minute'] )
       )
-      write_day_info(prefix+"_end", 
+      write_day_info(prefix+"_end",
         Time.find_zone(self.time_zone).parse( params[prefix]['end']['hour']+":"+params[prefix]['end']['minute'] )
       )
     end
@@ -118,6 +118,14 @@ class Location < ActiveRecord::Base
     @day_info
   end
 
+  def clean_address
+    address.gsub(/\r/," ").gsub(/\n/, " ")
+  end
+
+  def mappable_address
+    clean_address.tr(' ', '+')
+  end
+
   # class methods
   def self.donors
     Location.where(:location_type=>LocationType.invert["Donor"])
@@ -143,8 +151,8 @@ class Location < ActiveRecord::Base
     Location.where("region_id IN (#{rids.join(",")})")
   end
 
-  private 
-  
+  private
+
     def detailed_hours_cannot_end_before_start
       (0..6).each do |index|
         if open_on_day? index
@@ -155,7 +163,7 @@ class Location < ActiveRecord::Base
         end
       end
     end
-   
+
     def populate_receipt_key
       self.receipt_key = (0...8).map { ('a'..'z').to_a[rand(26)] }.join if self.receipt_key.blank?
     end

@@ -13,10 +13,5 @@ FactoryGirl.define do
     frequency "Weekly"
     difficulty_rating { rand(3) }
     hilliness { rand(3) }
-
-    after(:create) do |s|
-      d = create(:donation_schedule,schedule_chain:s)
-      r = create(:recipient_schedule,schedule_chain:s)
-    end
   end
 end

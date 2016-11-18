@@ -1,6 +1,5 @@
 FactoryGirl.define do
   factory :location do
-    is_donor { rand > 0.5 ? true : false }
     address { "710 31st St., Boulder, CO, 80303" }
     name "Some place"
     contact "Some dude"

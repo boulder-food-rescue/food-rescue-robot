@@ -34,4 +34,7 @@ Webapp::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  # Quiet logs
+  config.log_level = :error
 end

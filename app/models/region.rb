@@ -6,12 +6,14 @@ class Region < ActiveRecord::Base
   has_many :schedule_chains
   has_many :locations
   has_many :logs
-
   has_many :donors
   has_many :recipients
 
+  scope :all_admin, ->(volunteer) { where(id: volunteer.admin_region_ids) }
+
   geocoded_by :address, latitude:  :lat, longitude:  :lng # can also be an IP address
   after_validation :geocode
+
   attr_accessible :address, :lat, :lng, :name, :notes, :website, :handbook_url, :welcome_email_text,
                   :splash_html, :title, :tagline,
                   :phone, :tax_id, :twitter_key, :twitter_secret, :twitter_token,
@@ -23,36 +25,33 @@ class Region < ActiveRecord::Base
                     s3_credentials: { bucket: 'boulder-food-rescue-robot-region-photo' }
   validates_attachment_file_name :logo, matches: [/png\Z/, /jpe?g\Z/, /gif\Z/]
 
-  def active_volunteer_count
-    volunteers = self.schedule_chains.collect_concat {|schedule| schedule.volunteers }
-    volunteers.uniq.count
+  def self.has_any_handbooks?(region_list)
+    region_list.any?(&:has_handbook?)
   end
 
-  def self.all_admin(volunteer)
-    Region.where(id: volunteer.admin_region_ids)
+  def active_volunteer_count
+   schedule_chains.flat_map(&:volunteers).uniq.count
   end
 
   def has_sellers?
-    Location.select("location_type").where(:region_id=>self.id).any?{ |l| l.location_type == Location::LocationType.invert["Seller"] }
+    locations.any? do |location|
+      location.location_type == Location::LocationType.invert["Seller"]
+    end
   end
 
   def has_buyers?
-    Location.select("location_type").where(:region_id=>self.id).any?{ |l| l.location_type == Location::LocationType.invert["Buyer"] }
+    locations.any? do |location|
+      location.location_type == Location::LocationType.invert["Buyer"]
+    end
   end
 
   def has_hubs?
-    Location.select("location_type").where(:region_id=>self.id).any?{ |l| l.location_type == Location::LocationType.invert["Hub"] }
+    locations.any? do |location|
+      location.location_type == Location::LocationType.invert["Hub"]
+    end
   end
 
   def has_handbook?
-    not handbook_url.nil?
+    handbook_url.present?
   end
-
-  def self.has_any_handbooks? region_list
-    handbook_count = 0
-    # for some reason I couldn't get .count to work here :-(
-    region_list.each { |r| handbook_count+= 1 if r.has_handbook? }
-    handbook_count > 0
-  end
-
 end

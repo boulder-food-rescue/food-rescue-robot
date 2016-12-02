@@ -8,8 +8,8 @@ class Location < ActiveRecord::Base
     4 => "Buyer"
   }
 
-  PickupLocationTypes = [1,2,3]
-  DropLocationTypes = [0,2,4]
+  PICKUP_LOCATION_TYPES = [1,2,3]
+  DROP_LOCATION_TYPES   = [0,2,4]
 
   belongs_to :region
   has_many :log_recipients

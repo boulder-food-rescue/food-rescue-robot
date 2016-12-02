@@ -80,7 +80,7 @@ class Location < ActiveRecord::Base
   end
 
   # this has to be smart about time zones
-  def open? time=nil
+  def open?(time = nil)
     time = Time.new if time.nil?
     time = time.in_time_zone(self.time_zone)
     day_index = time.wday
@@ -89,15 +89,15 @@ class Location < ActiveRecord::Base
     (time > hours[0]) && (time < hours[1])
   end
 
-  def hours_on_day index
+  def hours_on_day(index)
     [ read_day_info("day"+index.to_s+"_start") , read_day_info("day"+index.to_s+"_end") ]
   end
 
-  def open_on_day? index
+  def open_on_day?(index)
     read_day_info('day'+index.to_s+'_status') == 1
   end
 
-  def populate_detailed_hours_from_form params
+  def populate_detailed_hours_from_form(params)
     (0..6).each do |index|
       prefix = "day"+index.to_s
       write_day_info(prefix+"_status", params[prefix]["status"].to_i)
@@ -125,7 +125,7 @@ class Location < ActiveRecord::Base
     region.time_zone
   end
 
-  def read_day_info key
+  def read_day_info(key)
     self.day_info[key]
   end
 
@@ -204,8 +204,7 @@ class Location < ActiveRecord::Base
       end
     end
 
-    def write_day_info key, value
+    def write_day_info(key, value)
       self.day_info[key] = value
     end
-
 end

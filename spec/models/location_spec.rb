@@ -4,7 +4,7 @@ RSpec.describe Location do
 
   describe "is_donor" do
     let(:donor_type) do
-      described_class::LocationType.invert['Donor']
+      described_class::LOCATION_TYPES.invert['Donor']
     end
 
     subject do
@@ -33,7 +33,7 @@ RSpec.describe Location do
 
   describe "is_hub" do
     let(:hub_type) do
-      described_class::LocationType.invert['Hub']
+      described_class::LOCATION_TYPES.invert['Hub']
     end
 
     subject do

@@ -19,23 +19,23 @@ class LocationsController < ApplicationController
   end
 
   def donors
-    index(Location::LocationType.invert["Donor"],"Donors")
+    index(Location::LOCATION_TYPES.invert["Donor"],"Donors")
   end
 
   def hubs
-    index(Location::LocationType.invert["Hub"],"Hubs")
+    index(Location::LOCATION_TYPES.invert["Hub"],"Hubs")
   end
 
   def buyers
-    index(Location::LocationType.invert["Buyer"],"Buyers")
+    index(Location::LOCATION_TYPES.invert["Buyer"],"Buyers")
   end
 
   def sellers
-    index(Location::LocationType.invert["Seller"],"Sellers")
+    index(Location::LOCATION_TYPES.invert["Seller"],"Sellers")
   end
 
   def recipients
-    index(Location::LocationType.invert["Recipient"],"Recipients")
+    index(Location::LOCATION_TYPES.invert["Recipient"],"Recipients")
   end
 
   def index(location_type=nil,header="Locations")

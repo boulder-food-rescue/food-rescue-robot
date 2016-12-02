@@ -12,7 +12,7 @@
   </tr>
 
   <tr><td>Location Type<br><span class="subtext">What kind of location?</span></td>
-    <td><%= f.select(:location_type,Location::LocationType.invert.to_a) %></td>
+    <td><%= f.select(:location_type,Location::LOCATION_TYPES.invert.to_a) %></td>
   </tr>
 
   <tr><td>Address</td>

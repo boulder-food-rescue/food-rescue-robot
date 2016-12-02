@@ -60,13 +60,13 @@
             <li>
               <strong>Number of Recipient Organizations:</strong>
               <span class="label label-success">
-                <%= number_to_human(Location.where("location_type = ?",Location::LocationType.invert["Recipient"]).count) %>
+                <%= number_to_human(Location.where("location_type = ?",Location::LOCATION_TYPES.invert["Recipient"]).count) %>
               </span>
             </li>
             <li>
               <strong>Number of Donor Organizations:</strong>
               <span class="label label-success">
-                <%= number_to_human(Location.where("location_type = ?",Location::LocationType.invert["Donor"]).count) %>
+                <%= number_to_human(Location.where("location_type = ?",Location::LOCATION_TYPES.invert["Donor"]).count) %>
               </span>
             </li>
           </ul>

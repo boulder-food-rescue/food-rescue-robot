@@ -1,6 +1,13 @@
 class Location < ActiveRecord::Base
 
-  LocationType = {0 => "Recipient", 1 => "Donor", 2 => "Hub", 3 => "Seller", 4 => "Buyer"}
+  LOCATION_TYPES = {
+    0 => "Recipient",
+    1 => "Donor",
+    2 => "Hub",
+    3 => "Seller",
+    4 => "Buyer"
+  }
+
   PickupLocationTypes = [1,2,3]
   DropLocationTypes = [0,2,4]
 
@@ -25,12 +32,12 @@ class Location < ActiveRecord::Base
                   :onsite_contact_info, :active, :location_type
 
   def is_donor
-    location_type == LocationType.invert["Donor"]
+    location_type == LOCATION_TYPES.invert["Donor"]
   end
   alias donor? is_donor
 
   def is_hub
-    location_type == LocationType.invert["Hub"]
+    location_type == LOCATION_TYPES.invert["Hub"]
   end
   alias hub? is_hub
 
@@ -129,23 +136,23 @@ class Location < ActiveRecord::Base
 
   # class methods
   def self.donors
-    Location.where(:location_type=>LocationType.invert["Donor"])
+    Location.where(:location_type=>LOCATION_TYPES.invert["Donor"])
   end
 
   def self.recipients
-    Location.where(:location_type=>LocationType.invert["Recipient"])
+    Location.where(:location_type=>LOCATION_TYPES.invert["Recipient"])
   end
 
   def self.hubs
-    Location.where(:location_type=>LocationType.invert["Hub"])
+    Location.where(:location_type=>LOCATION_TYPES.invert["Hub"])
   end
 
   def self.sellers
-    Location.where(:location_type=>LocationType.invert["Seller"])
+    Location.where(:location_type=>LOCATION_TYPES.invert["Seller"])
   end
 
   def self.buyers
-    Location.where(:location_type=>LocationType.invert["Buyer"])
+    Location.where(:location_type=>LOCATION_TYPES.invert["Buyer"])
   end
 
   def self.regional(rids)

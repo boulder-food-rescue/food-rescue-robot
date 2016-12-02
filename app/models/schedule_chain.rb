@@ -78,11 +78,11 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def self.for_donor(d)
-    Schedule.joins(:location).where("locations.location_type = ? AND locations.id = ?",Location::LocationType.invert["Donor"],d.id).collect{ |s| s.schedule_chain }.uniq
+    Schedule.joins(:location).where("locations.location_type = ? AND locations.id = ?",Location::LOCATION_TYPES.invert["Donor"],d.id).collect{ |s| s.schedule_chain }.uniq
   end
 
   def self.for_recipient(r)
-    Schedule.joins(:location).where("NOT locations.location_type = ? AND locations.id = ?",Location::LocationType.invert["Recipient"],r.id).collect{ |s| s.schedule_chain }.uniq
+    Schedule.joins(:location).where("NOT locations.location_type = ? AND locations.id = ?",Location::LOCATION_TYPES.invert["Recipient"],r.id).collect{ |s| s.schedule_chain }.uniq
   end
 
   def food_types
@@ -173,7 +173,7 @@ class ScheduleChain < ActiveRecord::Base
 
   def related_shifts
     lids = self.donors.collect{ |d|
-      d.location_type == Location::LocationType.invert["Hub"] ? nil : d.id
+      d.location_type == Location::LOCATION_TYPES.invert["Hub"] ? nil : d.id
     }.compact
     return [] if lids.empty?
     return Schedule.where("location_id IN (#{lids.join(",")}) AND schedule_chain_id!=?", self.id).reject{ |x|

@@ -25,13 +25,14 @@ class Location < ActiveRecord::Base
                   :onsite_contact_info, :active, :location_type
 
   def is_donor
-    self.location_type == LocationType.invert["Donor"]
+    location_type == LocationType.invert["Donor"]
   end
+  alias donor? is_donor
+
   def is_hub
-    self.location_type == LocationType.invert["Hub"]
+    location_type == LocationType.invert["Hub"]
   end
   alias hub? is_hub
-  alias donor? is_donor
 
   def weight_stats
     w = Log.where("donor_id = ? OR recipient_id = ?",self.id,self.id).collect{ |l| l.summed_weight }

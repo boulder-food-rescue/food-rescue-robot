@@ -24,6 +24,14 @@ class Location < ActiveRecord::Base
 
   default_scope { order('locations.name ASC').where(active:true) }
 
+  scope :regional, ->(ids) { where(region_id: ids) }
+
+  scope :recipients, -> { where(location_type: LOCATION_TYPES.invert['Recipient']) }
+  scope :donors,     -> { where(location_type: LOCATION_TYPES.invert['Donor']) }
+  scope :hubs,       -> { where(location_type: LOCATION_TYPES.invert['Hub']) }
+  scope :sellers,    -> { where(location_type: LOCATION_TYPES.invert['Seller']) }
+  scope :buyers,     -> { where(location_type: LOCATION_TYPES.invert['Buyer']) }
+
   validate :detailed_hours_cannot_end_before_start
 
   attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours,
@@ -132,31 +140,6 @@ class Location < ActiveRecord::Base
 
   def mappable_address
     clean_address.tr(' ', '+')
-  end
-
-  # class methods
-  def self.donors
-    Location.where(:location_type=>LOCATION_TYPES.invert["Donor"])
-  end
-
-  def self.recipients
-    Location.where(:location_type=>LOCATION_TYPES.invert["Recipient"])
-  end
-
-  def self.hubs
-    Location.where(:location_type=>LOCATION_TYPES.invert["Hub"])
-  end
-
-  def self.sellers
-    Location.where(:location_type=>LOCATION_TYPES.invert["Seller"])
-  end
-
-  def self.buyers
-    Location.where(:location_type=>LOCATION_TYPES.invert["Buyer"])
-  end
-
-  def self.regional(rids)
-    Location.where("region_id IN (#{rids.join(",")})")
   end
 
   private

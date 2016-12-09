@@ -4,61 +4,76 @@
   <%= link_to 'New Region', new_region_url, class: 'btn btn-primary' %>
 </div>
 
-<% if @regions.length == 0 %>
-
+<% if @regions.empty? %>
   <p>No regions.</p>
-
 <% else %>
-
   <table id="data_table">
     <thead>
       <tr>
-        <th> </th>
-        <th> Short Name </th>
-        <th> Title </th>
-        <th> Address </th>
-        <th> Notes </th>
-        <th> Stats </th>
+        <th></th>
+        <th>Short Name</th>
+        <th>Title</th>
+        <th>Address</th>
+        <th>Notes</th>
+        <th>Stats</th>
         <th></th>
       </tr>
     </thead>
 
     <tbody>
-    <% @regions.each do |region| %>
-      <tr>
-        <td><% unless region.logo_file_name.nil? %>
-              <a href="<%= region.logo(:medium) %>"><img src="<%= region.logo(:thumb) %>"></a>
-            <% end %></td>
-        <td><%= region.name %>:
-            <% unless region.website.nil? %><%= link_to "website", region.website %><% end %>
-            <% unless region.handbook_url.nil? %><%= link_to "handbook", region.handbook_url %><% end %>
-        </td>
-        <td><%= region.title %><%= region.tagline.nil? ? "" : ": #{region.tagline}" %></td>
-        <td><%= region.address.gsub("\n","<br>").html_safe unless region.address.nil? %></td>    
-        <td><small>
-          <%= word_wrap(region.notes,:line_width => 30).gsub("\n","<br>").html_safe unless region.notes.nil? %>
-        </small></td>
-        <td>Completed Pickups: <%= Log.pickup_count region.id %>, 
+      <% @regions.each do |region| %>
+        <tr>
+          <td>
+            <% if region.logo.present? %>
+              <a href="<%= region.logo(:medium) %>">
+                <img src="<%= region.logo(:thumb) %>">
+              </a>
+            <% end %>
+          </td>
+          <td>
+            <%= region.name %>:
+            <% if region.website.present? %>
+              <%= link_to "website", region.website %>
+            <% end %>
+            <% if region.handbook_url.present? %>
+              <%= link_to "handbook", region.handbook_url %>
+            <% end %>
+          </td>
+          <td>
+            <%= region.title %><%= ": #{region.tagline}" if region.tagline.present? %>
+          </td>
+          <td>
+            <%= region.address.gsub("\n","<br>").html_safe unless region.address.nil? %>
+          </td>    
+          <td>
+            <% if region.notes.present? %>
+              <small>
+                <%= word_wrap(region.notes, :line_width => 30).gsub("\n","<br>").html_safe %>
+              </small>
+            <% end %>
+          </td>
+          <td>
+            Completed Pickups: <%= Log.pickup_count region.id %>, 
             Active Volunteers: <%= region.active_volunteer_count %>
-        </td>
-        <td>
-          <%= link_to 'edit', :controller => "regions", :action => "edit", :id => region %><br>
-          <%= link_to "delete", region, :confirm => "Are you sure?", :method => :delete %> </td>
-        </td>
-      </tr>
-    <% end %>
+          </td>
+          <td>
+            <%= link_to 'edit', edit_region_url(region) %>
+            <br>
+            <%= link_to "delete", region_url(region), :confirm => "Are you sure?", :method => :delete %>
+          </td>
+        </tr>
+      <% end %>
     </tbody>
-
   </table>
-
 <% end %>
+
 <% content_for :scripts do %>
-<script type="text/javascript">
-$(function () { 
-  $('#data_table').dataTable( {
-    'iDisplayLength' : 50,
-     "aaSorting": [[ 1, "asc" ]]
-  });
-});
-</script>
+  <script type="text/javascript">
+    $(function () { 
+      $('#data_table').dataTable( {
+        'iDisplayLength' : 50,
+         "aaSorting": [[ 1, "asc" ]]
+      });
+    });
+  </script>
 <% end %>

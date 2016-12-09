@@ -2,13 +2,6 @@ class RegionsController < ApplicationController
   before_filter :authenticate_volunteer!, :except => [:recipients, :request_rescue]
   before_filter :super_admin_only, :except => [:recipients, :request_rescue, :edit, :update]
 
-  def super_admin_only
-    unless current_volunteer.super_admin?
-      flash[:notice] = "Sorry, you can't go there"
-      redirect_to(root_path)
-    end
-  end
-
   def index
     @regions = Region.all
     @header = "All Regions"
@@ -89,5 +82,12 @@ class RegionsController < ApplicationController
     index
   end
 
+  private
 
+  def super_admin_only
+    unless current_volunteer.super_admin?
+      flash[:notice] = "Sorry, you can't go there"
+      redirect_to(root_path)
+    end
+  end
 end

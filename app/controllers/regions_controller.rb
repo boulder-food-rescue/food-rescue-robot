@@ -26,17 +26,15 @@ class RegionsController < ApplicationController
     @region = Region.find(params[:id])
 
     unless current_volunteer.region_admin?(@region, false)
-      flash[:notice] = "Sorry, you can't go there"
-      return redirect_to(root_path)
+      return redirect_unauthorized
     end
   end
 
   def update
     @region = Region.find(params[:id])
 
-    unless current_volunteer.region_admin?(@region, false) # false means super admins can edit
-      flash[:notice] = "Sorry, you can't go there"
-      return redirect_to(root_path)
+    unless current_volunteer.region_admin?(@region, false)
+      return redirect_unauthorized
     end
 
     if @region.update_attributes(params[:region])
@@ -84,9 +82,11 @@ class RegionsController < ApplicationController
   private
 
   def super_admin_only
-    unless current_volunteer.super_admin?
-      flash[:notice] = "Sorry, you can't go there"
-      redirect_to(root_path)
-    end
+    return if current_volunteer.super_admin?
+    redirect_unauthorized
+  end
+
+  def redirect_unauthorized
+    redirect_to root_path, error: "Sorry, you can't go there"
   end
 end

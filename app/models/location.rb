@@ -49,13 +49,6 @@ class Location < ActiveRecord::Base
   end
   alias hub? is_hub
 
-  def weight_stats
-    w = Log.where("donor_id = ? OR recipient_id = ?",self.id,self.id).collect{ |l| l.summed_weight }
-    nozeroes = w.collect{ |e| e == 0 ? nil : e }.compact
-    return {:mean => nozeroes.mean, :median => nozeroes.median, :std => nozeroes.std, :n => w.length,
-            :zeroes => (w.length-nozeroes.length) }
-  end
-
   def gmaps4rails_title
     self.name
   end

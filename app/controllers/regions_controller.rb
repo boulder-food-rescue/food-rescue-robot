@@ -4,8 +4,6 @@ class RegionsController < ApplicationController
 
   def index
     @regions = Region.all
-    @header = "All Regions"
-    render :index
   end
 
   def edit

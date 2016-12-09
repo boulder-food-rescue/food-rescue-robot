@@ -1,9 +1,7 @@
 <h2>All Regions</h2>
 
 <div style="text-align: right;">
-  <%= form_tag("/regions/new", :method => "get") do %>
-    New Region <%= submit_tag("Go") %>
-  <% end %>
+  <%= link_to 'New Region', new_region_url, class: 'btn btn-primary' %>
 </div>
 
 <% if @regions.length == 0 %>

@@ -6,6 +6,10 @@ class RegionsController < ApplicationController
     @regions = Region.all
   end
 
+  def new
+    @region = Region.new
+  end
+
   def edit
     @region = Region.find(params[:id])
     unless current_volunteer.region_admin?(@region, false)
@@ -32,10 +36,6 @@ class RegionsController < ApplicationController
     render :edit
   end
 
-  def new
-    @region = Region.new
-    render :new
-  end
 
   def create
     @region = Region.new(params[:region])

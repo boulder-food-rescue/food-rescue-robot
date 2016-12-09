@@ -10,13 +10,25 @@ class RegionsController < ApplicationController
     @region = Region.new
   end
 
+  def create
+    @region = Region.new(params[:region])
+
+    if @region.save
+      flash[:notice] = 'Created successfully'
+      redirect_to regions_url
+    else
+      flash.now[:error] = "Create failed"
+      render :new
+    end
+  end
+
   def edit
     @region = Region.find(params[:id])
+
     unless current_volunteer.region_admin?(@region, false)
       flash[:notice] = "Sorry, you can't go there"
       return redirect_to(root_path)
     end
-    render :edit
   end
 
   def update
@@ -27,25 +39,20 @@ class RegionsController < ApplicationController
       return redirect_to(root_path)
     end
 
-    flash[:notice] = if @region.update_attributes(params[:region])
-                       'Updated Successfully.'
-                     else
-                       'Update failed :('
-                     end
-
-    render :edit
+    if @region.update_attributes(params[:region])
+      flash.now[:notice] = 'Updated successfully'
+      redirect_to edit_region_url(@region)
+    else
+      flash.now[:error] = 'Update failed'
+      render :edit
+    end
   end
 
+  def destroy
+    Region.find(params[:id]).destroy
 
-  def create
-    @region = Region.new(params[:region])
-    if @region.save
-      flash[:notice] = 'Created successfully.'
-      index
-    else
-      flash[:notice] = "Didn't save successfully :("
-      render :new
-    end
+    flash.now[:notice] = 'Deleted successfully'
+    redirect_to regions_url
   end
 
   def recipients
@@ -72,12 +79,6 @@ class RegionsController < ApplicationController
         end
       end
     end
-  end
-
-  def destroy
-    @r = Region.find(params[:id])
-    @r.destroy
-    index
   end
 
   private

@@ -6,7 +6,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  resources :regions do
+  resources :regions, except: [:show] do
     get 'recipients', :on => :member
     get 'request_rescue', :on => :member
   end

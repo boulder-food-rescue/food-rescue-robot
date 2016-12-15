@@ -34,13 +34,15 @@ class ApplicationController < ActionController::Base
   private
 
   # add in the variables needed by the form partial for schedules and logs
-  def set_vars_for_form region
+  def set_vars_for_form(region)
     @volunteers = Volunteer.all_for_region(region.id).collect{ |v| [v.name,v.id] }
     @donors = Location.donors.where(:region_id=>region.id).collect{ |d| [d.name,d.id] }
     @recipients = Location.recipients.where(:region_id=>region.id).collect{ |r| [r.name,r.id] }
-    @food_types = FoodType.regional(region.id).collect{ |ft| [ft.name,ft.id] }
     @transport_types = TransportType.all.collect{ |tt| [tt.name,tt.id] }
-    @scale_types = ScaleType.regional(region.id).collect{ |st| ["#{st.name} (#{st.weight_unit})",st.id] }
+
+    @food_types = region.food_types.collect { |food_type| [food_type.name, food_type.id] }
+    @scale_types = region.scale_types.collect { |scale_type| ["#{scale_type.name} (#{scale_type.weight_unit})", scale_type.id] }
+
     @regions = Region.all
   end
 

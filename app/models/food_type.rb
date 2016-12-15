@@ -9,6 +9,4 @@ class FoodType < ActiveRecord::Base
   has_many :logs, through: :log_parts
 
   default_scope { where(active: true) }
-
-  scope :regional -> (region_id) { where(region_id: region_id) }
 end

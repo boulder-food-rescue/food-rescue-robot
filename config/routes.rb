@@ -1,11 +1,5 @@
 Webapp::Application.routes.draw do
 
-  resources :home do
-    collection do
-      get :welcome
-    end
-  end
-
   resources :assignments do
     collection do
       get :index

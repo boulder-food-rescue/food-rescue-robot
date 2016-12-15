@@ -1,8 +1,7 @@
 Webapp::Application.routes.draw do
 
-  resources :assignments do
+  resources :assignments, only: [] do
     collection do
-      get :index
       get :knight
     end
   end

@@ -17,11 +17,11 @@ FactoryGirl.define do
     onsite_contact_info "Some people"
 
     factory :recipient do
-      is_donor false
+      location_type Location::LOCATION_TYPES.invert["Recipient"]
     end
 
     factory :donor do
-      is_donor true
+      location_type Location::LOCATION_TYPES.invert["Donor"]
     end
   end
 end

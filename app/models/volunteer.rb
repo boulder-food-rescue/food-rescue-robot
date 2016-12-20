@@ -6,19 +6,24 @@ class Volunteer < ActiveRecord::Base
   belongs_to :cell_carrier
   belongs_to :requested_region, class_name: 'Region'
 
-  has_many :assignments
   has_many :absences
+
+  has_many :assignments
   has_many :regions, through: :assignments
+
   has_many :schedule_volunteers
   has_many :schedule_chains, through: :schedule_volunteers,
            conditions: { 'schedule_volunteers.active' => true }
   has_many :prior_schedules, through: :schedule_volunteers,
-           conditions: { 'schedule_volunteers.active' => false }, class_name: 'ScheduleChain'
+           conditions: { 'schedule_volunteers.active' => false },
+           class_name: 'ScheduleChain'
+
   has_many :log_volunteers
-  has_many :logs, :through=>:log_volunteers,
-           :conditions=>{"log_volunteers.active"=>true}
-  has_many :prior_logs, :through=>:log_volunteers,
-           :conditions=>{"log_volunteers.active"=>false}, :class_name=>"Log"
+  has_many :logs, through: :log_volunteers,
+           conditions: { 'log_volunteers.active' => true }
+  has_many :prior_logs, through: :log_volunteers,
+           conditions: { 'log_volunteers.active' => false },
+           class_name: 'Log'
 
   attr_accessible :pre_reminders_too, :region_ids, :password,
                   :password_confirmation, :remember_me, :admin_notes, :email,
@@ -41,11 +46,11 @@ class Volunteer < ActiveRecord::Base
 
   # more trustworthy and self.assigned? attribute?
   def unassigned?
-    self.assignments.length == 0
+    assignments.empty?
   end
 
   def needs_training?
-    not self.logs.collect{ |l| l.complete }.any?
+    logs.where(complete: true).count.zero?
   end
 
   # devise overrides to deal with not approved stuff
@@ -55,14 +60,14 @@ class Volunteer < ActiveRecord::Base
   end
 
   def inactive_message
-    if not assigned
-      :not_assigned
-    else
+    if assigned?
       super
+    else
+      :not_assigned
     end
   end
 
-  def self.send_reset_password_instructions(attributes={})
+  def self.send_reset_password_instructions(attributes = {})
     recoverable = find_or_initialize_with_errors(reset_password_keys, attributes, :not_found)
     if !recoverable.assigned?
       recoverable.errors[:base] << I18n.t("devise.failure.not_approved")
@@ -73,29 +78,29 @@ class Volunteer < ActiveRecord::Base
   end
 
   def sms_email
-    return nil if self.cell_carrier.nil? or self.phone.nil? or self.phone.strip == ""
-    return nil unless self.phone.tr('^0-9','') =~ /^(\d{10})$/
+    return nil if cell_carrier.nil? || phone.nil? || phone.strip == ""
+    return nil unless phone.tr('^0-9', '') =~ /^(\d{10})$/
     # a little scary that we're blindly assuming the format is reasonable, but only admin can edit it...
-    return sprintf(self.cell_carrier.format,$1)
+    sprintf(cell_carrier.format, $1)
   end
 
   def ensure_authentication_token
-    if authentication_token.blank?
-      self.authentication_token = generate_authentication_token
-      self.save
-    end
+    return unless authentication_token.blank?
+
+    self.authentication_token = generate_authentication_token
+    save
   end
 
   def reset_authentication_token
     self.authentication_token = generate_authentication_token
-    self.save
+    save
   end
 
   ### REGION-RELATED METHODS
 
   # Admin info accessors
   def super_admin?
-    self.admin
+    admin
   end
 
   # if first argument is nil, checks if they're a region admin
@@ -124,60 +129,71 @@ class Volunteer < ActiveRecord::Base
   end
 
   def main_region
-    self.regions[0]
+    regions.first
   end
 
-  def region_ids
-    self.regions.collect{ |r| r.id }
+  def admin_region_ids(strict = false)
+    admin_regions(strict).collect(&:id)
   end
 
-  def admin_region_ids(strict=false)
-    admin_regions(strict).collect { |r| r.id }
-  end
-
-  def admin_regions(strict=false)
-    if self.super_admin? and not strict
+  def admin_regions(strict = false)
+    if super_admin? && !strict
       Region.all
     else
-      self.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+      assignments.
+        eager_load(:region).
+        where(admin: true).
+        collect(&:region)
     end
   end
 
-  def in_region? region_id
-    self.region_ids.include? region_id
-  end
-
-  # better first-time experience: if there is only one region, add the user to that one automatically when they sign up
-  def auto_assign_region
-    if Region.count==1 and self.regions.count==0
-      Assignment.add_volunteer_to_region self, Region.first
-      logger.info "Automatically assigned new user to region #{self.regions.first.name}"
-    end
+  def in_region?(region_id)
+    region_ids.include? region_id
   end
 
   def current_absences
-    self.absences.keep_if{ |a| a.start_date < Date.today and a.stop_date > Date.today }
+    today = Date.today
+
+    absences.where('start_date < ? AND stop_date > ?', today, today)
   end
 
   ### CLASS METHODS
 
-  def self.active(region_ids=nil,ndays=90)
-    Volunteer.joins(:logs).select("max(logs.when) as last_log_date,volunteers.*").
-      group("volunteers.id").keep_if{ |v|
-        (Date.parse(v.last_log_date) > Time.zone.today-ndays) and (region_ids.nil? or (v.region_ids & region_ids).length > 0)
-      }
+  # TODO: turn this into SQL
+  def self.active(region_ids = nil, ndays = 90)
+    joins(:logs).
+      select('max(logs.when) as last_log_date,volunteers.*').
+      group('volunteers.id').
+      keep_if do |v|
+        (Date.parse(v.last_log_date) > Time.zone.today - ndays) &&
+          (region_ids.nil? || (v.region_ids & region_ids).length > 0)
+      end
   end
 
-  def self.inactive(region_ids=nil)
-    Volunteer.find_all_by_active(false).keep_if{ |v| (region_ids.nil? or (v.region_ids & region_ids).length > 0) }
+  # TODO: turn this into SQL
+  def self.inactive(region_ids = nil)
+    find_all_by_active(false).
+      keep_if do |v|
+        (region_ids.nil? || (v.region_ids & region_ids).length > 0)
+      end
   end
 
-  def self.all_for_region region_id
-    self.includes(:regions).where(:regions=>{:id=>region_id}).compact
+  def self.all_for_region(region_id)
+    includes(:regions).
+      where(regions: { id: region_id }).
+      compact
   end
-
 
   private
+
+  # better first-time experience: if there is only one region, add the user to
+  # that one automatically when they sign up
+  def auto_assign_region
+    if Region.count == 1 && regions.count.zero?
+      Assignment.add_volunteer_to_region self, Region.first
+      logger.info "Automatically assigned new user to region #{regions.first.name}"
+    end
+  end
 
   def generate_authentication_token
     loop do
@@ -185,5 +201,4 @@ class Volunteer < ActiveRecord::Base
       break token unless Volunteer.where(authentication_token: token).first
     end
   end
-
 end

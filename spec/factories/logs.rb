@@ -14,7 +14,7 @@ FactoryGirl.define do
         d.log_parts << create(:log_part)
       }
       d.scale_type = (ScaleType.all.count >= 5 ? ScaleType.all.sort_by{ rand }.first : create(:scale_type,region:d.region))
-      d.transport_type = (TransportType.all.count >= 5 ? TransportType.all.sort_by{ rand }.first : create(:transport_type,region:d.region))
+      d.transport_type = (TransportType.all.count >= 5 ? TransportType.all.sort_by{ rand }.first : create(:transport_type))
       d.save
     end
 

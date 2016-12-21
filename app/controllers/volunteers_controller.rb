@@ -212,21 +212,6 @@ class VolunteersController < ApplicationController
     @region_locations = Location.where(:region_id=>current_volunteer.admin_region_ids)
   end
 
-  def waiver
-    @region = current_volunteer.main_region
-    render :waiver
-  end
-
-  def sign_waiver
-    if params[:accept].to_i == 1
-      current_volunteer.waiver_signed = true
-      current_volunteer.waiver_signed_at = Time.zone.now
-      current_volunteer.save
-      flash[:notice] = "Waiver signed!"
-    end
-    home
-  end
-
   def knight
     unless current_volunteer.super_admin?
       flash[:error] = "You're not permitted to do that!"
@@ -258,9 +243,8 @@ class VolunteersController < ApplicationController
   end
 
   def home
-    if !current_volunteer.waiver_signed
-      waiver
-      return
+    unless current_volunteer.waiver_signed?
+      return redirect_to new_waiver_url
     end
 
     @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length

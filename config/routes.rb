@@ -118,14 +118,14 @@ Webapp::Application.routes.draw do
       get :update
       get :create
       get :destroy
-      get :waiver
-      get :sign_waiver
       get :assign
     end
     member do
       get :reactivate
     end
   end
+
+  resource :waiver, only: [:new, :create]
 
   devise_scope :volunteer do
     authenticated do

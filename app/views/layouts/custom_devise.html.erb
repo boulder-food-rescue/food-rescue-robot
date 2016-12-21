@@ -42,7 +42,7 @@
             <li>
               <strong>Total Food Pickups To Date:</strong>
               <span class="label label-success">
-                <%= number_to_human(Log.where("complete").count) %> pickups
+                <%= number_to_human(Log.complete.count) %> pickups
               </span>
             </li>
             <li>

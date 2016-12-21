@@ -48,7 +48,7 @@
             <li>
               <strong>Total Food Rescued:</strong>
               <span class="label label-success">
-                <%= number_to_human(Log.joins(:log_parts).where("complete").sum("weight")) %> lbs
+                <%= number_to_human(Log.complete.joins(:log_parts).sum(:weight)) %> lbs
               </span>
             </li>
             <li>

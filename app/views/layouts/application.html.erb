@@ -136,7 +136,7 @@
                 <%= menu_item "<i class='fa fa-external-link'></i> #{region.name} Handbook".html_safe, region.handbook_url, target: "_blank" if region.has_handbook? %>
               <% end %>
               <%= menu_item "<i class='fa fa-cog'></i> Settings".html_safe, edit_volunteer_path(current_volunteer.id) %>
-              <%= menu_item "<i class='fa fa-file-o'></i> Waiver".html_safe, waiver_volunteers_path %>
+              <%= menu_item "<i class='fa fa-file-o'></i> Waiver".html_safe, new_waiver_url %>
 
               <%= menu_divider %>
 

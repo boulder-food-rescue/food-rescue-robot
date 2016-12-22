@@ -145,13 +145,6 @@
       </td>
         <td><%= f.select(:transport_type_id, @transport_types, {}, {class: "form-control"}) %></td>
     </tr>
-    <!--<tr>
-      <td>
-        Food Type(s)</td><td>< FoodType.regional(@schedule.region).each{ |f
-      t| %>
-      <= check_box_tag "schedule[food_type_ids][]", ft.id, @schedule.food_types.include?(ft) %> <= ft.name %>
-    < } %></td>
-    </tr>-->
   </table>
 
   <%= submit_tag %>

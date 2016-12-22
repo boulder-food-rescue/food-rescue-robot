@@ -48,4 +48,69 @@ RSpec.describe Volunteer do
       end
     end
   end
+
+  describe '#current_absences' do
+    subject { volunteer }
+    let(:today) { Date.today }
+
+    it 'includes absences that started before today and end after today' do
+      current_absence = create(:absence, volunteer: subject, start_date: today - 1.day, stop_date: today + 1.day)
+
+      expect(subject.current_absences).to contain_exactly(current_absence)
+    end
+
+    it 'excludes absences for other volunteers' do
+      absence_for_other = create(
+        :absence,
+        start_date: today - 1.day,
+        stop_date: today + 1.day
+      )
+
+      expect(subject.current_absences).not_to include(absence_for_other)
+    end
+
+    it 'excludes absences that start today' do
+      absence_starting_today = create(
+        :absence,
+        volunteer: subject,
+        start_date: today,
+        stop_date: today + 3.days
+      )
+
+      expect(subject.current_absences).not_to include(absence_starting_today)
+    end
+
+    it 'excludes absences that start in the future' do
+      future_absence = create(
+        :absence,
+        volunteer: subject,
+        start_date: today + 1.day,
+        stop_date: today + 3.days
+      )
+
+      expect(subject.current_absences).not_to include(future_absence)
+    end
+
+    it 'excludes absences that stopped in the past' do
+      past_absence = create(
+        :absence,
+        volunteer: subject,
+        start_date: today - 3.days,
+        stop_date: today - 1.day
+      )
+
+      expect(subject.current_absences).not_to include(past_absence)
+    end
+
+    it 'excludes absences that stop today' do
+      absence_stopping_today = create(
+        :absence,
+        volunteer: subject,
+        start_date: today - 3.days,
+        stop_date: today
+      )
+
+      expect(subject.current_absences).not_to include(absence_stopping_today)
+    end
+  end
 end

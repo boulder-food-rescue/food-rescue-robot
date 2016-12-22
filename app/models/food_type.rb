@@ -10,5 +10,5 @@ class FoodType < ActiveRecord::Base
 
   default_scope { where(active: true) }
 
-  scope :regional -> (region_id) { where(region_id: region_id) }
+  scope :regional, -> (region_id) { where(region_id: region_id) }
 end

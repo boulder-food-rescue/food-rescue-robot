@@ -159,15 +159,14 @@ class Volunteer < ActiveRecord::Base
 
   ### CLASS METHODS
 
-  # TODO: turn this into SQL
   def self.active(region_ids = nil, ndays = 90)
-    joins(:logs).
-      select('max(logs.when) as last_log_date,volunteers.*').
-      group('volunteers.id').
-      keep_if do |v|
-        (Date.parse(v.last_log_date) > Time.zone.today - ndays) &&
-          (region_ids.nil? || (v.region_ids & region_ids).length > 0)
-      end
+    query = joins(:logs).group('volunteers.id').having('max(logs.when) > ?', Time.zone.today - ndays)
+
+    if region_ids.present?
+      query.joins(:regions).where(regions: { id: region_ids })
+    else
+      query
+    end
   end
 
   # TODO: turn this into SQL

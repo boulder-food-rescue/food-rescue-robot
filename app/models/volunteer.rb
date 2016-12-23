@@ -169,12 +169,14 @@ class Volunteer < ActiveRecord::Base
     end
   end
 
-  # TODO: turn this into SQL
   def self.inactive(region_ids = nil)
-    find_all_by_active(false).
-      keep_if do |v|
-        (region_ids.nil? || (v.region_ids & region_ids).length > 0)
-      end
+    query = where(active: false)
+
+    if region_ids.present?
+      query.joins(:regions).where(regions: { id: region_ids }).group('volunteers.id')
+    else
+      query
+    end
   end
 
   def self.all_for_region(region_id)

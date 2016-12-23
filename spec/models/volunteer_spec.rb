@@ -169,4 +169,38 @@ RSpec.describe Volunteer do
       end
     end
   end
+
+  describe '::inactive' do
+    let!(:volunteer) { create(:volunteer, active: false) }
+
+    context 'with no parameters' do
+      subject { described_class.inactive }
+
+      it 'includes inactive volunteers' do
+        expect(subject).to include(volunteer)
+      end
+
+      it 'excludes active volunteers' do
+        volunteer.active = true
+        volunteer.save!
+
+        expect(subject).not_to include(volunteer)
+      end
+    end
+
+    context 'with specified region ids' do
+      let(:region) { create(:region) }
+      subject { described_class.inactive([region.id]) }
+
+      it 'includes inactive volunteers assigned to those regions' do
+        create(:assignment, volunteer: volunteer, region: region)
+
+        expect(subject).to include(volunteer)
+      end
+
+      it 'excludes inactive volunteers not assigned to those regions' do
+        expect(subject).not_to include(volunteer)
+      end
+    end
+  end
 end

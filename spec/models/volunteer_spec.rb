@@ -113,4 +113,60 @@ RSpec.describe Volunteer do
       expect(subject.current_absences).not_to include(absence_stopping_today)
     end
   end
+
+  describe '::active' do
+    let!(:log_volunteer) { create(:log_volunteer, volunteer: volunteer) }
+    let(:log) { log_volunteer.log }
+
+    context 'with no parameters' do
+      subject { described_class.active }
+
+      it 'includes volunteers with a log date in the past 89 days' do
+        log.update_attributes(when: Time.zone.today - 89.days)
+
+        expect(subject).to include(volunteer)
+      end
+
+      it 'excludes volunteers with a log date 90 days or more in the past' do
+        log.update_attributes(when: Time.zone.today - 90.days)
+
+        expect(subject).not_to include(volunteer)
+      end
+    end
+
+    context 'with specified region ids' do
+      let(:region) { create(:region) }
+      subject { described_class.active([region.id]) }
+
+      it 'includes volunteers assigned to those regions' do
+        log.update_attributes(when: Time.zone.today - 89.days)
+        create(:assignment, volunteer: volunteer, region: region)
+
+        expect(subject).to include(volunteer)
+      end
+
+      it 'excludes volunteers not assigned to those regions' do
+        log.update_attributes(when: Time.zone.today - 89.days)
+
+        expect(subject).not_to include(volunteer)
+      end
+    end
+
+    context 'with specified number of days' do
+      let(:number_of_days) { 30 }
+      subject { described_class.active(nil, number_of_days) }
+
+      it 'includes volunteers with a log date up to the provided number of days in the past' do
+        log.update_attributes(when: Time.zone.today - (number_of_days - 1).days)
+
+        expect(subject).to include(volunteer)
+      end
+
+      it 'excludes volunteers with a log date more than the provided number of days in the past' do
+        log.update_attributes(when: Time.zone.today - number_of_days.days)
+
+        expect(subject).not_to include(volunteer)
+      end
+    end
+  end
 end

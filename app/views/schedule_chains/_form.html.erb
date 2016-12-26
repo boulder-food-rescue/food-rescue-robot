@@ -79,7 +79,7 @@
         <label for="schedule_chain_hilliness">Hilliness</label>
       </td>
       <td>
-        <%= f.select(:hilliness, ScheduleChain::Hilliness.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{class: "form-control"}) %>
+        <%= f.select(:hilliness, ScheduleChain::HILLINESS_OPTIONS.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{class: "form-control"}) %>
 
       </td>
     </tr>

@@ -26,7 +26,7 @@ class ScheduleChain < ActiveRecord::Base
   accepts_nested_attributes_for :schedule_volunteers
   accepts_nested_attributes_for :schedules
 
-  Hilliness = [
+  HILLINESS_OPTIONS = [
     'Flat',
     'Mostly Flat',
     'Some Small Hills',

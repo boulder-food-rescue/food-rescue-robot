@@ -292,7 +292,6 @@ class VolunteersController < ApplicationController
     @num_shifts = current_volunteer.schedule_chains.count
     @num_to_cover = Log.needing_coverage.count
     @num_upcoming = Log.upcoming_for(current_volunteer.id).count
-    @num_unassigned = ScheduleChain.unassigned_in_regions(current_volunteer.assignments).count
     render :home
   end
 end

@@ -31,16 +31,6 @@ class ScheduleChain < ActiveRecord::Base
     }
   }
 
-  # list all the schedules chains that have at least two stops, but don't have any volunteer
-  def self.unassigned_in_regions region_id_list
-    conditions = {}
-    conditions[:region_id] = region_id_list if region_id_list.length > 0
-    self.includes(:schedule_volunteers).keep_if { |schedule|
-        schedule.volunteers.count == 0 and schedule.functional?
-    }
-		conditions
-  end
-
   def covered?
     self.volunteers.length >= self.num_volunteers
   end

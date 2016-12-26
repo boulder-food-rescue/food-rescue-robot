@@ -45,7 +45,7 @@
     <% end %>
 
     <% unless @schedule.hilliness.nil? %>
-      <p><b>Hilliness:</b> <%= ScheduleChain::Hilliness[@schedule.hilliness] %></p>
+      <p><b>Hilliness:</b> <%= ScheduleChain::HILLINESS_OPTIONS[@schedule.hilliness] %></p>
     <% end %>
 
     <% unless @schedule.difficulty_rating.nil? %>

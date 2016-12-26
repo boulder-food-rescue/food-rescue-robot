@@ -49,7 +49,7 @@
     <% end %>
 
     <% unless @schedule.difficulty_rating.nil? %>
-      <p><b>Overall Difficulty:</b> <%= ScheduleChain::Difficulty[@schedule.difficulty_rating] %></p>
+      <p><b>Overall Difficulty:</b> <%= ScheduleChain::DIFFICULTY_OPTIONS[@schedule.difficulty_rating] %></p>
     <% end %>
 
     <h3>Current Volunteers</h3>

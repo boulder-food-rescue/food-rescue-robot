@@ -34,7 +34,7 @@ class ScheduleChain < ActiveRecord::Base
     'Mountaineering'
   ].freeze
 
-  Difficulty = [
+  DIFFICULTY_OPTIONS = [
     'Easiest',
     'Typical',
     'Challenging',

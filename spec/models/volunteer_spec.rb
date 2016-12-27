@@ -203,4 +203,23 @@ RSpec.describe Volunteer do
       end
     end
   end
+
+  describe '::needing_training' do
+    subject { described_class.needing_training }
+    let(:log_volunteer) { create(:log_volunteer, volunteer: volunteer) }
+    let(:log) { log_volunteer.log }
+
+    it 'includes volunteers with no complete logs' do
+      expect(subject).to include(volunteer)
+    end
+
+    it 'excludes volunteers with complete logs' do
+      log.complete = true
+      log.why_zero = Log::WhyZero.invert['No Food']
+      log.hours_spent = 1
+      log.save!
+
+      expect(subject).not_to include(volunteer)
+    end
+  end
 end

@@ -25,6 +25,8 @@ class Volunteer < ActiveRecord::Base
            conditions: { 'log_volunteers.active' => false },
            class_name: 'Log'
 
+  scope :needing_training, -> { eager_load(:logs).where(logs: { id: nil }) }
+
   attr_accessible :pre_reminders_too, :region_ids, :password,
                   :password_confirmation, :remember_me, :admin_notes, :email,
                   :has_car, :is_disabled, :name, :on_email_list, :phone,

@@ -246,7 +246,7 @@ class LogsController < ApplicationController
         if @log.complete
           flash[:notice] = "Updated Successfully. All done!"
         else
-          flash[:warning] = "Saved, but some weights/counts still needed to complete this log. Finish it here: <a href=\"/logs/#{@log.id}/edit\">(Fill In)</a>"
+          flash[:warning] = "Saved, but some weights/counts still needed to complete this log. Finish it here: <a href=\"/logs/#{@log.id}/edit\">(Fill In)</a>".html_safe
         end
         respond_to do |format|
           format.json { render json: {error: 0, message: flash[:notice] } }

@@ -26,6 +26,8 @@ class Location < ActiveRecord::Base
 
   scope :regional, ->(ids) { where(region_id: ids) }
 
+  scope :active, -> { where(active: true) }
+
   scope :recipients, -> { where(location_type: LOCATION_TYPES.invert['Recipient']) }
   scope :donors,     -> { where(location_type: LOCATION_TYPES.invert['Donor']) }
   scope :hubs,       -> { where(location_type: LOCATION_TYPES.invert['Hub']) }

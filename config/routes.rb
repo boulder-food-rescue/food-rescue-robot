@@ -75,7 +75,6 @@ Webapp::Application.routes.draw do
 
   resources :locations do
     collection do
-      get :donors
       get :recipients
       get :hubs
       get :sellers
@@ -118,6 +117,10 @@ Webapp::Application.routes.draw do
   end
 
   resource :waiver, only: [:new, :create]
+
+  namespace :region_admin do
+    resources :donors, only: [:index]
+  end
 
   devise_scope :volunteer do
     authenticated do

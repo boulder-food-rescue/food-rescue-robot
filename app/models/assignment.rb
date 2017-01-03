@@ -16,7 +16,7 @@ class Assignment < ActiveRecord::Base
 
   def self.add_volunteer_to_region volunteer, region
     return false if volunteer.new_record?
-    if Assignment.where(:volunteer_id=>volunteer, :region_id=>region.id).count==0
+    if Assignment.where(volunteer_id: volunteer, region_id: region.id).count == 0
       a = Assignment.new
       a.volunteer = volunteer
       a.region = region

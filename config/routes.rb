@@ -1,22 +1,14 @@
 Webapp::Application.routes.draw do
 
-  resources :home do
+  resources :assignments, only: [] do
     collection do
-      get :welcome
-    end
-  end
-
-  resources :assignments do
-    collection do
-      get :index
       get :knight
     end
   end
 
-  resources :regions do
+  resources :regions, except: [:show] do
     get 'recipients', :on => :member
     get 'request_rescue', :on => :member
-    as_routes
   end
 
   resources :cell_carriers do as_routes end

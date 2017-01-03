@@ -18,10 +18,6 @@ class LocationsController < ApplicationController
     end
   end
 
-  def donors
-    index(Location::LOCATION_TYPES.invert["Donor"],"Donors")
-  end
-
   def hubs
     index(Location::LOCATION_TYPES.invert["Hub"],"Hubs")
   end

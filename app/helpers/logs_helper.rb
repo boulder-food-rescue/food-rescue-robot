@@ -1,3 +1,0 @@
-module LogsHelper
-
-end

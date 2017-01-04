@@ -23,5 +23,9 @@ FactoryGirl.define do
     factory :donor do
       location_type Location::LOCATION_TYPES.invert["Donor"]
     end
+
+    factory :hub do
+      location_type Location::LOCATION_TYPES.invert["Hub"]
+    end
   end
 end

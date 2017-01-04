@@ -75,7 +75,6 @@ Webapp::Application.routes.draw do
 
   resources :locations do
     collection do
-      get :recipients
       get :hubs
       get :sellers
       get :buyers
@@ -122,7 +121,8 @@ Webapp::Application.routes.draw do
   resource :waiver, only: [:new, :create]
 
   namespace :region_admin do
-    resources :donors, only: [:index]
+    resources :donors,     only: [:index]
+    resources :recipients, only: [:index]
   end
 
   devise_scope :volunteer do
@@ -134,5 +134,4 @@ Webapp::Application.routes.draw do
       root to: 'sessions#new', as: :unauthenticated_root
     end
   end
-
 end

@@ -95,7 +95,7 @@
 
             <%= drop_down "Region Admin" do %>
               <%= menu_item "Donors", region_admin_donors_url %>
-              <%= menu_item "Recipients", recipients_locations_path %>
+              <%= menu_item "Recipients", region_admin_recipients_url %>
               <% if current_volunteer.main_region.has_sellers? %>
                 <%= menu_item "Sellers", sellers_locations_path %>
               <% end %>

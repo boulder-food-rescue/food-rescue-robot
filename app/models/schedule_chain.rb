@@ -195,7 +195,7 @@ class ScheduleChain < ActiveRecord::Base
 
     return [] if lids.empty?
 
-    schedules.where(location: lids).reject do |x|
+    Schedule.where('schedule_chain_id != ?', id).where(location_id: lids).reject do |x|
       x.schedule_chain.nil?
     end
   end

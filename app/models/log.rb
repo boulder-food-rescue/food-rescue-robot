@@ -96,35 +96,6 @@ class Log < ActiveRecord::Base
 
   #### CLASS METHODS
 
-  # Creates a log for a given schedule (s) and date (d)
-  # it is assumed that this is only called for donor schedule
-  # items and si is the index of this donor in the schedule chain
-  # a is an optional absence, which changes the behavior to schedule
-  # an absence shift
-  def self.from_donor_schedule(s, si, date,a = nil)
-    schedule_chain = s.schedule_chain
-    log = Log.new
-    log.schedule_chain_id = schedule_chain.id
-    log.donor_id = s.location.id # assume this is a donor
-    log.when = date
-    log.region_id = schedule_chain.region_id
-    log.absences << a unless a.nil?
-    schedule_chain.volunteers.each{ |v|
-      next if (not a.nil?) and (v == a.volunteer)
-      log.log_volunteers << LogVolunteer.new(volunteer:v,log:log,active:true)
-    }
-    log.num_volunteers = schedule_chain.num_volunteers
-    # list each recipient that follows this donor in the chain
-    schedule_chain.schedules.each_with_index{ |s2,s2i|
-      next if s2.location.nil? or s2i <= si or not s2.is_drop_stop?
-      log.log_recipients << LogRecipient.new(recipient:s2.location,log:log)
-    }
-    s.schedule_parts.each{ |sp|
-      log.log_parts << LogPart.new(food_type_id:sp.food_type.id,required:sp.required)
-    }
-    log
-  end
-
   def self.pickup_count region_id
     Log.where(region_id: region_id, complete: true).count
   end

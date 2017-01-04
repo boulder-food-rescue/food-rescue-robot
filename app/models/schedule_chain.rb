@@ -98,9 +98,7 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def volunteers_needing_training?
-    somebody_needs_training = false
-    self.volunteers.each { |volunteer| somebody_needs_training |= volunteer.needs_training? }
-    somebody_needs_training
+    volunteers.needing_training.count > 0
   end
 
   def prior_volunteers

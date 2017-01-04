@@ -11,7 +11,6 @@ Webapp::Application.routes.draw do
   resources :cell_carriers do as_routes end
   resources :transport_types do as_routes end
 
-  resources :food_types
   resources :scale_types
 
   resources :absences do
@@ -120,6 +119,8 @@ Webapp::Application.routes.draw do
 
   namespace :region_admin do
     resources :donors, only: [:index]
+
+    resources :food_types, only: [:index, :new, :create, :edit, :update, :destroy]
   end
 
   devise_scope :volunteer do

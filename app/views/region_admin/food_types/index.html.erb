@@ -1,0 +1,46 @@
+<h2>Food Types</h2>
+
+<div style="text-align: right;">
+  <%= link_to "New Food Type", new_region_admin_food_type_url, class: "btn btn-primary" %>
+</div>
+
+<% if @food_types.empty? %>
+  <p>No food types.</p>
+<% else %>
+  <table id="data_table" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Region</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @food_types.each do |food_type| %>
+        <tr>
+          <td>
+            <%= food_type.name %>
+          </td>
+          <td>
+            <%= food_type.region.try(:name) %>
+          </td>
+          <td>
+            <%= link_to 'Edit', edit_region_admin_food_type_url(food_type) %><br>
+            <%= link_to "Delete", region_admin_food_type_url(food_type), :confirm => "Are you sure?", :method => :delete %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $(function () { 
+      $('#data_table').dataTable( {
+        'iDisplayLength' : 50,
+      });
+    });
+  </script>
+<% end %>

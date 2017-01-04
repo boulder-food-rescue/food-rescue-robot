@@ -1,7 +1,0 @@
-<%= form_for @food_type, :url => {:action => @action } do |f| %>
-<table>
-<%= hidden_field_tag "food_type[region_id]", @food_type.region_id %>
-<tr><td>Name<td><%= f.text_field(:name) %>
-</table>
-<%= submit_tag %>
-<% end %>

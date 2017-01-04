@@ -1,6 +1,8 @@
 require 'logger'
 require 'csv'
 
+require 'food_robot/log_generator'
+
 module FoodRobot
 
   # Set to true to disable emailing and just print the emails to STDOUT
@@ -8,80 +10,15 @@ module FoodRobot
 
   # Given a date, generates the corresponding log entries for that
   # date based on the /current/ schedule
-  def self.generate_log_entries(date = Time.zone.today,absence = nil)
-    n = 0
-    n_skipped = 0
-    is_done = {}
-    logs = Log.select("id, schedule_chain_id, donor_id").where('logs.when = ?', date)
+  def self.generate_log_entries(date = Time.zone.today, absence = nil)
+    generator = FoodRobot::LogGenerator.new(date, absence)
 
-    logs.each do |log|
-      k = "#{log.schedule_chain_id}:#{log.donor_id}"
-      is_done[k] = log.id
-    end
+    generator.generate_logs!
 
-    # if volunteer is specified, we're generating an absence so proceed with ones for
-    # whom that volunteer is the only volunteer
-    if absence.nil?
-      schedules = ScheduleChain.where("NOT irregular")
-    else
-      schedules = absence.volunteer.schedule_chains
-    end
-
-    schedules.each do |schedule|
-      # don't generate logs for malformed schedules
-      next unless schedule.functional?
-      # things that are relevant to this day
-      next if schedule.one_time? and schedule.detailed_date != date
-      next if schedule.weekly? and schedule.day_of_week != date.wday
-
-      puts "Schedule Chain: " + schedule.schedules.collect{ |ss|
-        ss.location.nil? ? nil : ((ss.is_pickup_stop? ? "D" : "R") + ss.location.id.to_s)
-      }.compact.join(" -> ")
-
-      ssi_last = schedule.schedules.length - 1
-
-      schedule.schedules.each_with_index do |ss, ssi|
-        # don't insert a duplicate log entry if one already exists
-        # e.g. generating logs from a chain (D1->D2->R1->D3->R2)
-        # results in two logs
-        #
-        # D1 -> {R1,R2}
-        # D2 -> {R1,R2}
-        # D3 -> {R2}
-        #
-        # and (D1->D2->D3->D4->R1) will be four logs:
-        #
-        # D1 -> {R1}
-        # D2 -> {R1}
-        # D3 -> {R1}
-        # D4 -> {R1}
-        #
-        # Note: Hub acts like a donor when it's not the last location, otherwise acts like
-        #       a recipient
-        next if not ss.is_pickup_stop? or ss.location_id.nil? or ((ssi==ssi_last) and ss.location.hub?)
-
-        if is_done["#{schedule.id}:#{ss.location.id}"].nil?
-          # normal case, generate a new log
-          log = Log.from_donor_schedule(ss, ssi, date, absence)
-          log.save
-          n += 1
-        else
-          if absence.nil?
-            # already generated, skip it
-            n_skipped += 1
-          else
-            # deal with any already generated logs that are now covered with absences
-            log = Log.find(is_done["#{schedule.id}:#{ss.location.id}"])
-            log.volunteers -= [absence.volunteer]
-            log.absences << absence
-            log.save
-            n += 1
-          end
-          next
-        end
-      end
-    end
-    return [n, n_skipped]
+    [
+      generator.number_logs_touched,
+      generator.number_logs_skipped
+    ]
   end
 
   # Sends an email to any volunteer who has a outstanding log entry

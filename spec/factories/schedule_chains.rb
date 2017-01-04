@@ -13,5 +13,11 @@ FactoryGirl.define do
     frequency "weekly"
     difficulty_rating { rand(3) }
     hilliness { rand(3) }
+
+    trait :one_time do
+      frequency "one-time"
+      day_of_week nil
+      detailed_date Date.today + 4.days
+    end
   end
 end

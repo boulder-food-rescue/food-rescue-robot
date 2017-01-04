@@ -1,0 +1,25 @@
+<h2>New Food Type</h2>
+
+<%= form_for [:region_admin, @food_type] do |f| %>
+  <table class="table table-striped">
+    <tr>
+      <th>
+        <%= f.label :region %>
+      </th>
+      <td>
+        <%= f.select :region_id, @available_regions.map{|r| [r.name, r.id]} %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <%= f.label :name %>
+      </th>
+      <td>
+        <%= f.text_field :name %>
+      </td>
+    </tr>
+  </table>
+
+  <%= f.submit class: "btn btn-primary" %>
+  <%= link_to "Cancel", region_admin_food_types_url, class: "btn btn-default" %>
+<% end %>

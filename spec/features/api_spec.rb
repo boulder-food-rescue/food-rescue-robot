@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'pp'
 
-describe 'api' do
+xdescribe 'api' do
 
   def get_auth_params(u)
     data = {email: u.email,password: u.password}

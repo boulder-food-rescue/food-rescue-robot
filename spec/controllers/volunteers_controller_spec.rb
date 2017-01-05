@@ -364,28 +364,6 @@ RSpec.describe VolunteersController do
     end
   end
 
-  describe 'GET #waiver' do
-    subject { get :waiver }
-
-    before { sign_in volunteer }
-
-    it 'renders the waiver template' do
-      expect(subject).to render_template :waiver
-    end
-  end
-
-  describe 'GET #sign_waiver' do
-    subject do
-      get :sign_waiver, { accept: '1' }
-    end
-
-    before { sign_in volunteer }
-
-    it 'renders the home template' do
-      expect(subject).to render_template :home
-    end
-  end
-
   describe 'GET #knight' do
     subject do
       get :knight, { volunteer_id: volunteer.id }

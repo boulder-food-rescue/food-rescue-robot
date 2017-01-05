@@ -13,6 +13,5 @@ FactoryGirl.define do
         v.save
       end
     end
-
   end
 end

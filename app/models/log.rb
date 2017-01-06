@@ -101,10 +101,14 @@ class Log < ActiveRecord::Base
   end
 
   def self.picked_up_by(volunteer_id, complete=true, limit=nil)
-    if limit.nil?
-      Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active", volunteer_id, complete).order('"logs"."when" DESC')
+    logs = joins(:log_volunteers).
+      where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active", volunteer_id, complete).
+      order('"logs"."when" DESC')
+
+    if limit.present?
+      logs.limit(limit.to_i)
     else
-      Log.joins(:log_volunteers).where("log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active", volunteer_id, complete).order('"logs"."when" DESC').limit(limit.to_i)
+      logs
     end
   end
 

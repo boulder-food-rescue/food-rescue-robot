@@ -89,7 +89,7 @@ Webapp::Application.configure do
   config.middleware.use ExceptionNotifier,
     email_prefix: '[BFR ROBOT ERROR] ',
     sender_address: %{"BFR Robot" <notifier@boulderfoodrescue.org>},
-    exception_recipients: %w{rylanb@gmail.com cphillips@smallwhitecube.com}
+    exception_recipients: ENV["ERROR_EMAILS"]
 
   ExceptionNotifier::Rake.configure
 

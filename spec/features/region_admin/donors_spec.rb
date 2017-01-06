@@ -13,10 +13,6 @@ RSpec.describe "Region Admin Donors" do
       let(:volunteer) { create(:volunteer, regions: [], assigned: true) }
 
       before do
-        volunteer.waiver_signed    = true
-        volunteer.waiver_signed_at = Time.zone.now
-        volunteer.save
-
         create(:assignment, :admin, volunteer: volunteer, region: boulder)
         create(:assignment,         volunteer: volunteer, region: denver)
 
@@ -40,10 +36,6 @@ RSpec.describe "Region Admin Donors" do
       let(:volunteer) { create(:volunteer, regions: [], assigned: true, admin: true) }
 
       before do
-        volunteer.waiver_signed    = true
-        volunteer.waiver_signed_at = Time.zone.now
-        volunteer.save
-
         create(:assignment, volunteer: volunteer, region: boulder)
 
         login volunteer
@@ -69,10 +61,6 @@ RSpec.describe "Region Admin Donors" do
       let(:volunteer) { create(:volunteer, regions: [boulder], assigned: true) }
 
       before do
-        volunteer.waiver_signed    = true
-        volunteer.waiver_signed_at = Time.zone.now
-        volunteer.save
-
         login volunteer
       end
 

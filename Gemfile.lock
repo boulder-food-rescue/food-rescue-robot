@@ -145,6 +145,7 @@ GEM
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
+    interactor (3.1.0)
     interception (0.5)
     jmespath (1.2.4)
       json_pure (>= 1.8.1)
@@ -351,6 +352,7 @@ DEPENDENCIES
   geocoder
   gmaps4rails (= 1.5.6)
   highcharts-rails (~> 3.0.0)
+  interactor
   jquery-datatables-rails!
   jquery-rails (= 2.1.4)
   json

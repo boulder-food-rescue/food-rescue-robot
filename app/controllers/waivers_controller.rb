@@ -6,11 +6,12 @@ class WaiversController < ApplicationController
   end
 
   def create
-    if accepted_waiver?
-      sign_waiver
+    if !accepted_waiver?
+      redirect_to new_waiver_url, alert: "Accept the waiver by checking 'Check to sign electronically'"
+    elsif SignWaiver.call(volunteer: current_volunteer, signed_at: Time.zone.now).success?
       redirect_to root_url, notice: 'Waiver signed!'
     else
-      redirect_to new_waiver_url, alert: "Accept the waiver by checking 'Check to sign electronically'"
+      redirect_to new_waiver_url, alert: "There was an error signing the waiver"
     end
   end
 
@@ -18,12 +19,5 @@ class WaiversController < ApplicationController
 
   def accepted_waiver?
     params[:accept].present?
-  end
-
-  def sign_waiver
-    current_volunteer.waiver_signed    = true
-    current_volunteer.waiver_signed_at = Time.zone.now
-
-    current_volunteer.save
   end
 end

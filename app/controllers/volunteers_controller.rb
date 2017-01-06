@@ -218,10 +218,11 @@ class VolunteersController < ApplicationController
       redirect_to(root_path)
       return
     end
-    v = Volunteer.find(params[:volunteer_id])
-    v.admin = !v.admin
-    v.save
-    admin
+
+    volunteer = Volunteer.find(params[:volunteer_id])
+    volunteer.admin = !volunteer.admin
+    volunteer.save
+    volunteer
   end
 
   def reactivate

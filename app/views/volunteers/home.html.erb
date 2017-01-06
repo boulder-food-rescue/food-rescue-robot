@@ -167,51 +167,11 @@
 
 <div class="row bordered-bottom">
   <div class="col-sm-6">
-    <h2>Pickup Stats</h2>
-
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th> Stat </th>
-          <th> Value </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td> Stats Start Date </td>
-          <td> <%= @earliest == nil ? "No Pickups Logged" : @earliest.when %> </td>
-        </tr>
-        <tr>
-          <td> Completed Pickups </td>
-          <td> <%= @completed_pickup_count %> </td>
-        </tr>
-        <tr>
-          <td> Amount of Food Rescued </td>
-          <td> <%= @total_food_rescued %> lbs</td>
-        </tr>
-        <tr>
-          <td> Weekly Avg </td>
-          <td> <%= sprintf("%.02f", @earliest != nil ? (@lbs/((Time.zone.today-(@earliest.when))/7.0)): "0" ) %> lbs</td>
-        </tr>
-        <tr>
-          <td> Pickup Avg </td>
-          <td> <%= sprintf('%.02f',@lbs/@pickups.length.to_f) %> lbs</td>
-        </tr>
-        <tr>
-          <td> % Human Powered </td>
-          <% if @human_pct > -1 %>
-          <td> <%= @human_pct.round %>%<%= @human_pct > 90 ? " :)" : "" %> </td>
-          <% else %>
-          <td> You have no pickups logged </td>
-          <% end %>
-        </tr>
-      </tbody>
-    </table>
+    <%= render partial: 'pickup_stats', locals: { presenter: @volunteer_stats_presenter.pickup_stats } %>
   </div>
 
   <div class="col-sm-6">
-    <h2> Food Collected by Month </h2>
-    <div id="highchart"></div>
+    <%= render partial: 'food_by_month', locals: { presenter: @volunteer_stats_presenter.lbs_by_month_graph } %>
   </div>
 
   <div class="col-sm-6">
@@ -285,29 +245,3 @@
     </table>
   </div>
 </div>
-
-<% content_for :scripts do %>
-  <script type="text/javascript">
-    $(function () {
-      $('#highchart').highcharts({
-        chart: {
-          type: 'column'
-        },
-        title: {
-          text: 'Monthly Stats'
-        },
-        xAxis: {
-          title: { text: 'Month' },
-          categories: ['<%= raw @by_month.sort_by{ |k,v| k}.collect{ |pair| pair[0] }.join("','") %>']
-        },
-        yAxis: {
-          title: { text: 'Pounds' }
-        },
-        series: [{
-          name: 'Food Rescued',
-          data: [<%= @by_month.sort_by{ |k,v| k}.collect{ |pair| pair[1] }.join(",") %>]
-        }]
-      });
-    });
-  </script>
-<% end %>

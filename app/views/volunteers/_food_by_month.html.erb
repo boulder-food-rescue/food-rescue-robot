@@ -1,0 +1,28 @@
+<h2> Food Collected by Month </h2>
+<div id="food_by_month_graph"></div>
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $(function () {
+      $('#food_by_month_graph').highcharts({
+        chart: {
+          type: 'column'
+        },
+        title: {
+          text: 'Monthly Stats'
+        },
+        xAxis: {
+          title: { text: 'Month' },
+          categories: ['<%= raw presenter.labels.join("','") %>']
+        },
+        yAxis: {
+          title: { text: 'Pounds' }
+        },
+        series: [{
+          name: 'Food Rescued',
+          data: [<%= presenter.values.join(",") %>]
+        }]
+      });
+    });
+  </script>
+<% end %>

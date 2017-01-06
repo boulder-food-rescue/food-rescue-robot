@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Volunteer waivers" do
   
   let(:region)    { create(:region) }
-  let(:volunteer) { create(:volunteer, regions: [region], assigned: true) }
+  let(:volunteer) { create(:volunteer, :not_waived, regions: [region], assigned: true) }
 
   feature "A volunteer without a signed waiver" do
     before do

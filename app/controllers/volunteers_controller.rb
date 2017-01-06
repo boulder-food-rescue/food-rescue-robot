@@ -265,38 +265,27 @@ class VolunteersController < ApplicationController
     #Last 10 pickups
     @last_ten_pickups = Log.picked_up_by(current_volunteer.id, true, 10)
 
-    #Pickup Stats
-    @completed_pickup_count = Log.picked_up_by(current_volunteer.id).count
-    @total_food_rescued = Log.picked_up_weight(nil,current_volunteer.id)
-
     @unassigned = current_volunteer.unassigned?
 
     # FIXME: the below is Sean's code. It's quite nonDRY and should be cleaned up substantially
-    @pickups = Log.picked_up_by current_volunteer.id
-    @lbs = 0.0
-    @human_pct = 0.0
-    @num_pickups = {}
     @num_covered = 0
     @biggest = nil
-    @earliest = nil
     @bike = TransportType.where("name = 'Bike'").shift
     @by_month = {}
-    @pickups.each{ |l|
+    Log.picked_up_by(current_volunteer.id).each{ |l|
       l.transport_type = @bike if l.transport_type.nil?
-      @num_pickups[l.transport_type] = 0 if @num_pickups[l.transport_type].nil?
-      @num_pickups[l.transport_type] += 1
       #@num_covered += 1 if l.orig_volunteer != current_volunteer and !l.orig_volunteer.nil?
-      @lbs += l.summed_weight
       @biggest = l if @biggest.nil? or l.summed_weight > @biggest.summed_weight
-      @earliest = l if @earliest.nil? or l.when < @earliest.when
       yrmo = l.when.strftime("%Y-%m")
       @by_month[yrmo] = 0.0 if @by_month[yrmo].nil?
       @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }
-    @human_pct = 100.0*@num_pickups.collect{ |t,c| t.name =~ /car/i ? nil : c }.compact.sum/@num_pickups.values.sum
     @num_shifts = current_volunteer.schedule_chains.count
     @num_to_cover = Log.needing_coverage.count
     @num_upcoming = Log.upcoming_for(current_volunteer.id).count
+
+    @volunteer_stats_presenter = VolunteerStatsPresenter.new(current_volunteer)
+
     render :home
   end
 end

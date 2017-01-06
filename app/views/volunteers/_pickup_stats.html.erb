@@ -1,0 +1,51 @@
+<h2>Pickup Stats</h2>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th> Stat </th>
+      <th> Value </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> Stats Start Date </td>
+      <td> <%= presenter.first_pickup_date.present? ? presenter.first_pickup_date : "No Pickups Logged" %> </td>
+    </tr>
+    <tr>
+      <td> Completed Pickups </td>
+      <td> <%= presenter.num_completed_pickups %> </td>
+    </tr>
+    <tr>
+      <td> Amount of Food Rescued </td>
+      <td> <%= presenter.total_lbs_rescued %> lbs</td>
+    </tr>
+    <tr>
+      <td> Weekly Avg </td>
+      <% if presenter.avg_lbs_per_week.present? %>
+      <td> <%= sprintf("%.02f", presenter.avg_lbs_per_week) %> lbs</td>
+      <% else %>
+      <td> - </td>
+      <% end %>
+    </tr>
+    <tr>
+      <td> Pickup Avg </td>
+      <% if presenter.avg_lbs_per_pickup.present? %>
+      <td> <%= sprintf("%.02f", presenter.avg_lbs_per_pickup) %> lbs</td>
+      <% else %>
+      <td> - </td>
+      <% end %>
+    </tr>
+    <tr>
+      <td> % Human Powered </td>
+      <% if presenter.num_completed_pickups > 0 %>
+      <td>
+        <%= presenter.percent_human_powered_pickups.round %>%
+        <%= ":)" if presenter.percent_human_powered_pickups > 90 %>
+      </td>
+      <% else %>
+      <td> You have no pickups logged </td>
+      <% end %>
+    </tr>
+  </tbody>
+</table>

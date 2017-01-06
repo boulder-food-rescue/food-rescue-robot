@@ -33,7 +33,7 @@
     <h2> Toggle Super-Admin Priviledges </h2>
     <p>
     Super-admins can do most anything for any region. This should only be given to site
-    administrators. See <%= link_to 'assignments', '/assignments' %> to assign per-region admins.
+    administrators. Toggle below to assign super admins. Go to <%= link_to "Region Admin", "/volunteers/region_admin" %> to manage region admins.
     </p>
     <%= form_tag("/volunteers/knight", :method => "get") do %>
       <table>

@@ -221,8 +221,12 @@ class VolunteersController < ApplicationController
 
     volunteer = Volunteer.find(params[:volunteer_id])
     volunteer.admin = !volunteer.admin
-    volunteer.save
-    volunteer
+    if volunteer.save
+      flash[:notice] = "#{volunteer.name} Updated to Admin: #{volunteer.admin}"
+    else
+      flash[:error] = "#{volunteer.errors.full_messages}"
+    end
+    redirect_to(super_admin_volunteers_path)
   end
 
   def reactivate

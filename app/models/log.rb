@@ -2,20 +2,20 @@ class Log < ActiveRecord::Base
   WhyZero = {1 => "No Food", 2 => "Didn't Happen"}
 
   belongs_to :schedule_chain
-  belongs_to :donor, :class_name => "Location", :foreign_key => "donor_id"
+  belongs_to :donor, class_name: "Location", foreign_key: "donor_id"
   belongs_to :scale_type
   belongs_to :transport_type
   belongs_to :region
 
   has_many :log_volunteers
-  has_many :volunteers, :through => :log_volunteers,
-           :conditions=>{"log_volunteers.active"=>true}
-  has_many :inactive_volunteers, :through => :log_volunteers,
-           :conditions=>{"log_volunteers.active"=>false}
+  has_many :volunteers, through: :log_volunteers,
+           conditions: {"log_volunteers.active" => true}
+  has_many :inactive_volunteers, through: :log_volunteers,
+           conditions: {"log_volunteers.active" => false}
   has_many :log_recipients
-  has_many :recipients, :through => :log_recipients
+  has_many :recipients, through: :log_recipients
   has_many :log_parts
-  has_many :food_types, :through => :log_parts
+  has_many :food_types, through: :log_parts
 
   has_and_belongs_to_many :absences
 
@@ -96,7 +96,7 @@ class Log < ActiveRecord::Base
 
   #### CLASS METHODS
 
-  def self.pickup_count region_id
+  def self.pickup_count(region_id)
     Log.where(region_id: region_id, complete: true).count
   end
 
@@ -161,21 +161,21 @@ class Log < ActiveRecord::Base
 
   # Turns a flat array into an array of arrays
   def self.group_by_schedule(logs)
-    ret = []
-    h = {}
-    logs.each{ |log|
+    return_array = []
+    group = {}
+    logs.each { |log|
       if log.schedule_chain.nil?
-        ret << [log]
+        return_array << [log]
       else
-        k = [log.when, log.schedule_chain_id].join(":")
-        if h[k].nil?
-          h[k] = ret.length
-          ret << []
+        key = [log.when, log.schedule_chain_id].join(":")
+        if group[key].nil?
+          group[key] = return_array.length
+          return_array << []
         end
-        ret[h[k]] << log
+        return_array[group[key]] << log
       end
     }
-    ret
+    return_array
   end
 
   def self.to_csv

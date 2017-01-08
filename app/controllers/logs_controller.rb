@@ -6,15 +6,15 @@ class LogsController < ApplicationController
   before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create,:stats,:export]
 
   def mine_past
-    index(Log.group_by_schedule(Log.past_for(current_volunteer.id)),"My Past Shifts")
+    index(Log.past_for(current_volunteer.id),"My Past Shifts")
   end
 
   def mine_upcoming
-    index(Log.group_by_schedule(Log.upcoming_for(current_volunteer.id)),"My Upcoming Shifts")
+    index(Log.upcoming_for(current_volunteer.id),"My Upcoming Shifts")
   end
 
   def open
-    index(Log.group_by_schedule(Log.needing_coverage(current_volunteer.region_ids)),"Open Shifts")
+    index(Log.needing_coverage(current_volunteer.region_ids),"Open Shifts")
   end
 
   def by_day
@@ -24,30 +24,30 @@ class LogsController < ApplicationController
       n = params[:n].present? ? params[:n].to_i : 0
       d = Time.zone.today+n
     end
-    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{d.to_s}'")),"Shifts on #{d.strftime("%A, %B %-d")}")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{d.to_s}'"),"Shifts on #{d.strftime("%A, %B %-d")}")
   end
 
   def last_ten
-    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'")),"Last 10 Days of Shifts")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'"),"Last 10 Days of Shifts")
   end
 
   def being_covered
-    index(Log.group_by_schedule(Log.being_covered(current_volunteer.region_ids)),"Being Covered")
+    index(Log.being_covered(current_volunteer.region_ids),"Being Covered")
   end
 
   def todo
-    index(Log.group_by_schedule(Log.past_for(current_volunteer.id).where("\"when\" < current_date AND NOT complete")),"My To Do Shift Reports")
+    index(Log.past_for(current_volunteer.id).where("\"when\" < current_date AND NOT complete"),"My To Do Shift Reports")
   end
 
   def tardy
-    index(Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)")),"Missing Data (>= 3 Reminders)")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)"),"Missing Data (>= 3 Reminders)")
   end
 
-  def index(shifts=nil,header="Entire Log")
+  def index(logs=nil,header="Entire Log")
     filter = filter.nil? ? "" : " AND #{filter}"
     @shifts = []
     if current_volunteer.region_ids.length > 0
-      @shifts = shifts.nil? ? Log.group_by_schedule(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})")) : shifts
+      @shifts = Shift.build_shifts(logs.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})"): logs)
     end
     @header = header
     @regions = Region.all

@@ -159,25 +159,6 @@ class Log < ActiveRecord::Base
     Log.where("\"when\" >= ?",Time.zone.today).where(:region_id=>region_id_list).order("logs.when").reject{ |l| l.covering_volunteers.empty? }
   end
 
-  # Turns a flat array into an array of arrays
-  def self.group_by_schedule(logs)
-    return_array = []
-    group = {}
-    logs.each { |log|
-      if log.schedule_chain.nil?
-        return_array << [log]
-      else
-        key = [log.when, log.schedule_chain_id].join(":")
-        if group[key].nil?
-          group[key] = return_array.length
-          return_array << []
-        end
-        return_array[group[key]] << log
-      end
-    }
-    return_array
-  end
-
   def self.to_csv
     CSV.generate do |csv|
       csv << ["id","date","item types","item weights","item descriptions","total weight","donor","recipients","volunteers","scale","transport","hours spent","reminders sent","volunteer notes"]

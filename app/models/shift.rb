@@ -34,6 +34,10 @@ class Shift
     logs.first
   end
 
+  def volunteers
+    logs.flat_map(&:volunteers).uniq
+  end
+
   def volunteers_needed?
     logs.any? { |log| log.volunteers.empty? }
   end

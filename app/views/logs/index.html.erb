@@ -109,7 +109,7 @@
               </td>
 
               <td>
-                <% shift.logs.each do |shift| %> <%= (shift.donor != nil) ? (link_to shift.donor.name, shift.donor) : "" %><br> <% end %>
+                <% shift.donors.each do |donor| %> <%= link_to donor.name, donor %><br> <% end %>
               </td>
               <td>
                 <% shift.logs.collect{ |shift| shift.recipients }.flatten.uniq.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %>

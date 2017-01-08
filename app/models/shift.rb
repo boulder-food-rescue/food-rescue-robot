@@ -34,6 +34,10 @@ class Shift
     logs.first
   end
 
+  def log_ids
+    logs.map(&:id)
+  end
+
   def volunteers
     logs.flat_map(&:volunteers).uniq
   end

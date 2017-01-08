@@ -1,6 +1,9 @@
 class Shift
   attr_reader :logs
 
+  delegate :when,
+           to: :first_log
+
   def self.build_shifts(logs)
     shifts = []
     group = {}

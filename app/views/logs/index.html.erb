@@ -66,7 +66,7 @@
           %>
             <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
               <td>
-                <%= first_shift.when.strftime("%Y-%m-%d") %>
+                <%= shift.when.strftime("%Y-%m-%d") %>
               </td>
               <td>
                 <% unless first_shift.schedule_chain.nil? %>

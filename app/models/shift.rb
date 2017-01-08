@@ -23,4 +23,8 @@ class Shift
   def initialize(logs)
     @logs = logs
   end
+
+  def first_log
+    logs.first
+  end
 end

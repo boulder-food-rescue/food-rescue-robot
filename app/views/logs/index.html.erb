@@ -79,11 +79,11 @@
                 <% end %>
               </td>
               <td>
-                <%= readable_time_until first_shift %>
+                <%= readable_time_until shift.first_log %>
               </td>
               <td>
                 <% if shift.logs.any?{ |shift| shift.volunteers.empty? } %>
-                  <%= link_to take_log_path(first_shift, ids: shift.logs.collect{ |shift| shift.id }), class: 'btn btn-primary take' do %>
+                  <%= link_to take_log_path(shift.first_log, ids: shift.logs.collect{ |shift| shift.id }), class: 'btn btn-primary take' do %>
                     <i class="fa fa-hand-rock-o"></i>
                     Cover Shift
                   <% end %>

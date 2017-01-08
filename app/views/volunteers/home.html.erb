@@ -48,7 +48,7 @@
               <% } %>
             </td>
             <td>
-              <%= readable_time_until first_pickup %>
+              <%= readable_time_until shift.first_log %>
             </td>
             <td>
               <% unless first_pickup.schedule_chain.nil? %>
@@ -141,10 +141,10 @@
                 <% } %>
               </td>
               <td>
-                <%= readable_time_until first_pickup %>
+                <%= readable_time_until shift.first_log %>
               </td>
               <td>
-                <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => shift.logs.collect{ |p| p.id }) %>';">
+                <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(shift.first_log,:ids => shift.logs.collect{ |p| p.id }) %>';">
                   <i class="fa fa-hand-rock-o"></i>
                   Take
                 </button>

@@ -120,10 +120,12 @@
                   <%= shift.complete? ? shift.summed_weight.round : "?" %> lbs.
                 </td>
                 <td>
-                  <% shift.logs.collect{ |shift| shift.transport_type }.compact.each{ |transport_type| %> <%= transport_type.name %><br> <% } %>
+                  <% shift.transport_types.each{ |transport_type| %> <%= transport_type.name %><br> <% } %>
                 </td>
                 <td>
-                  <%= shift.logs.collect{ |shift| shift.food_types.collect{ |food_type| food_type.name }.join(", ") }.join("<br>").html_safe %>
+                  <% shift.food_types_by_log.each do |types| %>
+                    <div><%= types.map(&:name).join(", ") %></div>
+                  <% end %>
                 </td>
               <% end %>
 

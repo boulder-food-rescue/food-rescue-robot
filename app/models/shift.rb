@@ -42,6 +42,14 @@ class Shift
     logs.flat_map(&:volunteers).uniq
   end
 
+  def transport_types
+    logs.map(&:transport_type).compact
+  end
+
+  def food_types_by_log
+    logs.map(&:food_types)
+  end
+
   def donors
     logs.map(&:donor).compact
   end

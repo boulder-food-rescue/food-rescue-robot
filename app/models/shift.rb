@@ -42,6 +42,10 @@ class Shift
     logs.flat_map(&:volunteers).uniq
   end
 
+  def donors
+    logs.map(&:donor).compact
+  end
+
   def volunteers_need_training?
     volunteers.any?(&:needs_training?)
   end

@@ -2,6 +2,9 @@ class Shift
   attr_reader :logs
 
   delegate :when,
+           :region,
+           :absences,
+           :schedule_chain,
            to: :first_log
 
   def self.build_shifts(logs)

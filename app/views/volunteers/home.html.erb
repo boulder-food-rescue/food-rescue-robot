@@ -31,8 +31,7 @@
           <th>Date</th>
           <th>Link</th>
         </tr>
-        <% @upcoming_pickups.each do |shift|
-           first_pickup = shift.logs[0] %>
+        <% @upcoming_pickups.each do |shift| %>
            <tr class="bordered">
             <td>
               <% shift.logs.each{ |pickup| %>
@@ -51,8 +50,8 @@
               <%= readable_time_until shift.first_log %>
             </td>
             <td>
-              <% unless first_pickup.schedule_chain.nil? %>
-                <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">
+              <% unless shift.schedule_chain.nil? %>
+                <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= shift.schedule_chain.id %>';">
                   <i class="fa fa-info-circle"></i>
                   Info
                 </button>
@@ -126,7 +125,6 @@
           <% n = 0
           @sncs_pickups.each do |shift|
             next if shift.logs.all? {|x| x.donor.nil? or x.recipients.empty? }
-            first_pickup = shift.logs[0]
             %>
             <tr class="bordered">
               <td>
@@ -150,8 +148,8 @@
                 </button>
               </td>
               <td>
-                <% if first_pickup.schedule_chain.present? %>
-                  <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= first_pickup.schedule_chain.id %>';">
+                <% if shift.schedule_chain.present? %>
+                  <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= shift.schedule_chain.id %>';">
                     <i class="fa fa-info-circle"></i>
                     Info
                   </button>

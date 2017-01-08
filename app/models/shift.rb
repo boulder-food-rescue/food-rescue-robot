@@ -50,6 +50,14 @@ class Shift
     logs.flat_map(&:recipients).uniq
   end
 
+  def summed_weight
+    logs.sum(&:summed_weight)
+  end
+
+  def complete?
+    logs.all?(&:complete)
+  end
+
   def volunteers_need_training?
     volunteers.any?(&:needs_training?)
   end

@@ -55,7 +55,6 @@
         <tbody>
           <%
             @shifts.each do |shift|
-              first_shift = shift.logs[0]
               row_bgcolor = nil
 
               if shift.logs.any?{ |shift_group| shift_group.volunteers.empty? } and not current_page?(controller: "logs", action: "open")
@@ -69,8 +68,8 @@
                 <%= shift.when.strftime("%Y-%m-%d") %>
               </td>
               <td>
-                <% unless first_shift.schedule_chain.nil? %>
-                  <%= link_to schedule_chain_path(first_shift.schedule_chain.id), class: 'btn btn-info info' do %>
+                <% unless shift.schedule_chain.nil? %>
+                  <%= link_to schedule_chain_path(shift.schedule_chain.id), class: 'btn btn-info info' do %>
                     <i class="fa fa-info-circle"></i>
                     Info
                   <% end %>
@@ -94,11 +93,11 @@
                   <%= render 'take_or_leave', logs: shift.logs %>
                 <% end %>
 
-                <% unless first_shift.absences.empty? %>
+                <% unless shift.absences.empty? %>
                   <small>
                     <br>
                       (normally:
-                        <% first_shift.absences.each do |absence| %>
+                        <% shift.absences.each do |absence| %>
                           <% if absence.volunteer.present? %>
                             <%= absence.volunteer.name %>,
                           <% else %>
@@ -134,7 +133,7 @@
                 %>
                   <%= word_wrap(shift.notes, line_width: 20).gsub("\n","<br>").html_safe %><hr>
                 <% } %>
-                <% if current_volunteer.any_admin?(first_shift.region) %>
+                <% if current_volunteer.any_admin?(shift.region) %>
                   <td>
                     <% shift.logs.each{ |shift_group| %>
                       <%= link_to "edit", edit_log_path(shift_group), class: 'btn btn-primary' %>

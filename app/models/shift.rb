@@ -33,4 +33,8 @@ class Shift
   def first_log
     logs.first
   end
+
+  def volunteers_needed?
+    logs.any? { |log| log.volunteers.empty? }
+  end
 end

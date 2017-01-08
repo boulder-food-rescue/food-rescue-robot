@@ -31,11 +31,11 @@
           <th>Date</th>
           <th>Link</th>
         </tr>
-        <% @upcoming_pickups.each do |pickup_group|
-           first_pickup = pickup_group[0] %>
+        <% @upcoming_pickups.each do |shift|
+           first_pickup = shift.logs[0] %>
            <tr class="bordered">
             <td>
-              <% pickup_group.each{ |pickup| %>
+              <% shift.logs.each{ |pickup| %>
                 <%= link_to pickup.donor.try(:name), pickup.donor if pickup.donor.present? %> -&gt;
                   <% pickup.recipients.each do |recip| %>
                     <%= link_to recip.try(:name), recip if recip.present? %>
@@ -124,13 +124,13 @@
         </thead>
         <tbody>
           <% n = 0
-          @sncs_pickups.each do |pickup_group|
-            next if pickup_group.all? {|x| x.donor.nil? or x.recipients.empty? }
-            first_pickup = pickup_group[0]
+          @sncs_pickups.each do |shift|
+            next if shift.logs.all? {|x| x.donor.nil? or x.recipients.empty? }
+            first_pickup = shift.logs[0]
             %>
             <tr class="bordered">
               <td>
-                <% pickup_group.each{ |pickup| %>
+                <% shift.logs.each{ |pickup| %>
                 <% next if pickup.donor.nil? or pickup.recipients.empty? %>
                 <%= link_to pickup.donor.name, pickup.donor %> -&gt; <% pickup.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %>
                 <% unless pickup.food_types.empty? %>
@@ -144,7 +144,7 @@
                 <%= readable_time_until first_pickup %>
               </td>
               <td>
-                <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => pickup_group.collect{ |p| p.id }) %>';">
+                <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(first_pickup.id,:ids => shift.logs.collect{ |p| p.id }) %>';">
                   <i class="fa fa-hand-rock-o"></i>
                   Take
                 </button>

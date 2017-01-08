@@ -54,13 +54,13 @@
         </thead>
         <tbody>
           <%
-            @shifts.each do |shift_group|
-              first_shift = shift_group[0]
+            @shifts.each do |shift|
+              first_shift = shift.logs[0]
               row_bgcolor = nil
 
-              if shift_group.any?{ |shift_group| shift_group.volunteers.empty? } and not current_page?(controller: "logs", action: "open")
+              if shift.logs.any?{ |shift_group| shift_group.volunteers.empty? } and not current_page?(controller: "logs", action: "open")
                 row_bgcolor = "pink"
-              elsif shift_group.any? { |shift_group| shift_group.volunteers.any?{ |volunteer| volunteer.needs_training? } }
+              elsif shift.logs.any? { |shift_group| shift_group.volunteers.any?{ |volunteer| volunteer.needs_training? } }
                 row_bgcolor = "lightgreen"
               end
           %>
@@ -82,16 +82,16 @@
                 <%= readable_time_until first_shift %>
               </td>
               <td>
-                <% if shift_group.any?{ |shift| shift.volunteers.empty? } %>
-                  <%= link_to take_log_path(first_shift, ids: shift_group.collect{ |shift| shift.id }), class: 'btn btn-primary take' do %>
+                <% if shift.logs.any?{ |shift| shift.volunteers.empty? } %>
+                  <%= link_to take_log_path(first_shift, ids: shift.logs.collect{ |shift| shift.id }), class: 'btn btn-primary take' do %>
                     <i class="fa fa-hand-rock-o"></i>
                     Cover Shift
                   <% end %>
                 <% else %>
-                  <% shift_group.collect{ |shift| shift.volunteers }.flatten.uniq.each do |volunteer| %>
+                  <% shift.logs.collect{ |shift| shift.volunteers }.flatten.uniq.each do |volunteer| %>
                     <%= link_to volunteer.name, volunteer %><br />
                   <% end %>
-                  <%= render 'take_or_leave', logs: shift_group %>
+                  <%= render 'take_or_leave', logs: shift.logs %>
                 <% end %>
 
                 <% unless first_shift.absences.empty? %>
@@ -110,33 +110,33 @@
               </td>
 
               <td>
-                <% shift_group.each do |shift| %> <%= (shift.donor != nil) ? (link_to shift.donor.name, shift.donor) : "" %><br> <% end %>
+                <% shift.logs.each do |shift| %> <%= (shift.donor != nil) ? (link_to shift.donor.name, shift.donor) : "" %><br> <% end %>
               </td>
               <td>
-                <% shift_group.collect{ |shift| shift.recipients }.flatten.uniq.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %>
+                <% shift.logs.collect{ |shift| shift.recipients }.flatten.uniq.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %>
               </td>
 
               <% unless current_page?(controller: "logs", action: "open") %>
                 <td>
-                  <%= shift_group.all?{ |shift| shift.complete } ? shift_group.collect{ |shift| shift.summed_weight }.sum.round : "?" %> lbs.
+                  <%= shift.logs.all?{ |shift| shift.complete } ? shift.logs.collect{ |shift| shift.summed_weight }.sum.round : "?" %> lbs.
                 </td>
                 <td>
-                  <% shift_group.collect{ |shift| shift.transport_type }.compact.each{ |transport_type| %> <%= transport_type.name %><br> <% } %>
+                  <% shift.logs.collect{ |shift| shift.transport_type }.compact.each{ |transport_type| %> <%= transport_type.name %><br> <% } %>
                 </td>
                 <td>
-                  <%= shift_group.collect{ |shift| shift.food_types.collect{ |food_type| food_type.name }.join(", ") }.join("<br>").html_safe %>
+                  <%= shift.logs.collect{ |shift| shift.food_types.collect{ |food_type| food_type.name }.join(", ") }.join("<br>").html_safe %>
                 </td>
               <% end %>
 
               <td style="font-size: 10pt;">
-                <% shift_group.each{ |shift|
+                <% shift.logs.each{ |shift|
                   next if shift.notes.nil?
                 %>
                   <%= word_wrap(shift.notes, line_width: 20).gsub("\n","<br>").html_safe %><hr>
                 <% } %>
                 <% if current_volunteer.any_admin?(first_shift.region) %>
                   <td>
-                    <% shift_group.each{ |shift_group| %>
+                    <% shift.logs.each{ |shift_group| %>
                       <%= link_to "edit", edit_log_path(shift_group), class: 'btn btn-primary' %>
                       <%= link_to "delete", shift_group, class: 'btn btn-danger', confirm: "Are you sure?", method: :delete %>
                     <% } %>

@@ -82,7 +82,7 @@
               </td>
               <td>
                 <% if shift.volunteers_needed? %>
-                  <%= link_to take_log_path(shift.first_log, ids: shift.logs.collect{ |shift| shift.id }), class: 'btn btn-primary take' do %>
+                  <%= link_to take_log_path(shift.first_log, ids: shift.log_ids), class: 'btn btn-primary take' do %>
                     <i class="fa fa-hand-rock-o"></i>
                     Cover Shift
                   <% end %>

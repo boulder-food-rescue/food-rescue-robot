@@ -59,7 +59,7 @@
 
               if shift.volunteers_needed? and not current_page?(controller: "logs", action: "open")
                 row_bgcolor = "pink"
-              elsif shift.logs.any? { |shift_group| shift_group.volunteers.any?{ |volunteer| volunteer.needs_training? } }
+              elsif shift.volunteers_need_training?
                 row_bgcolor = "lightgreen"
               end
           %>

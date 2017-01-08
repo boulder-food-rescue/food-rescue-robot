@@ -57,7 +57,7 @@
             @shifts.each do |shift|
               row_bgcolor = nil
 
-              if shift.logs.any?{ |shift_group| shift_group.volunteers.empty? } and not current_page?(controller: "logs", action: "open")
+              if shift.volunteers_needed? and not current_page?(controller: "logs", action: "open")
                 row_bgcolor = "pink"
               elsif shift.logs.any? { |shift_group| shift_group.volunteers.any?{ |volunteer| volunteer.needs_training? } }
                 row_bgcolor = "lightgreen"
@@ -81,7 +81,7 @@
                 <%= readable_time_until shift.first_log %>
               </td>
               <td>
-                <% if shift.logs.any?{ |shift| shift.volunteers.empty? } %>
+                <% if shift.volunteers_needed? %>
                   <%= link_to take_log_path(shift.first_log, ids: shift.logs.collect{ |shift| shift.id }), class: 'btn btn-primary take' do %>
                     <i class="fa fa-hand-rock-o"></i>
                     Cover Shift

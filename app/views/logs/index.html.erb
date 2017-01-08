@@ -112,7 +112,7 @@
                 <% shift.donors.each do |donor| %> <%= link_to donor.name, donor %><br> <% end %>
               </td>
               <td>
-                <% shift.logs.collect{ |shift| shift.recipients }.flatten.uniq.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %>
+                <% shift.recipients.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %>
               </td>
 
               <% unless current_page?(controller: "logs", action: "open") %>

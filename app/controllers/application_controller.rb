@@ -19,6 +19,21 @@ class ApplicationController < ActionController::Base
     config.security.current_user_method = :current_volunteer
   end
 
+  rescue_from CanCan::AccessDenied do
+    respond_to do |format|
+      format.json { head :forbidden }
+      format.html do
+        flash[:error] = "You are not authorized to do that"
+
+        begin
+          redirect_to :back
+        rescue ActionController::RedirectBackError
+          redirect_to root_path
+        end
+      end
+    end
+  end
+
   alias_method :current_user, :current_volunteer
 
   layout :layout_by_resource

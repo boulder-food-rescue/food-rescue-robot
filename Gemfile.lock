@@ -78,6 +78,7 @@ GEM
     buftok (0.2.0)
     builder (3.0.4)
     byebug (9.0.6)
+    cancancan (1.15.0)
     capybara (2.7.1)
       addressable
       mime-types (>= 1.16)
@@ -341,6 +342,7 @@ DEPENDENCIES
   binding_of_caller
   bootstrap-sass (~> 3.2.0)
   browser-timezone-rails
+  cancancan
   capybara
   cocoon
   coffee-rails (~> 3.2.1)

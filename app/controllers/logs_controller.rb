@@ -399,7 +399,7 @@ class LogsController < ApplicationController
   def export
     start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
     stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-    regions = current_volunteer.admin_regions(true)
+    regions = current_volunteer.admin_regions
 
     logs = Log.where("logs.when >= ? AND logs.when <= ?", start_date, stop_date).where(
       complete: true,

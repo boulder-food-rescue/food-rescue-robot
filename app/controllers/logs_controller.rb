@@ -397,14 +397,14 @@ class LogsController < ApplicationController
   end
 
   def export
-    @start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
-    @stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-    @regions = current_volunteer.admin_regions(true)
-    @logs = Log.where("logs.when >= ? AND logs.when <= ? AND complete AND region_id IN (#{@regions.collect{ |r| r.id }.join(",")})",@start_date,@stop_date)
+    start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
+    stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
+    regions = current_volunteer.admin_regions(true)
+    logs = Log.where("logs.when >= ? AND logs.when <= ? AND complete AND region_id IN (#{regions.collect{ |r| r.id }.join(",")})",start_date,stop_date)
     respond_to do |format|
       format.html
       format.csv do
-        send_data @logs.to_csv
+        send_data logs.to_csv
       end
     end
   end

@@ -19,6 +19,8 @@ class ApplicationController < ActionController::Base
     config.security.current_user_method = :current_volunteer
   end
 
+  alias_method :current_user, :current_volunteer
+
   layout :layout_by_resource
 
   protected

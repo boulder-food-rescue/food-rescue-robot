@@ -1,13 +1,5 @@
 module LocationsHelper
 
-  def type_for_display location
-    if location.donor? 
-      return "Donor" 
-    else
-      return "Recipient"
-    end
-  end
-
   def readable_hours location
     readable_detailed_hours location
   end

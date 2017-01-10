@@ -42,6 +42,22 @@ class ApplicationPolicy
 
   alias_method :volunteer, :user
 
+  def super_admin?
+    volunteer.admin?
+  end
+
+  def region_admin?
+    !volunteer.assignments.where(admin: true).empty?
+  end
+
+  def admin_region_ids
+    volunteer.assignments.where(admin: true).pluck(:region_id)
+  end
+
+  def region_admin_of?(*region_ids)
+    (region_ids - admin_region_ids).empty?
+  end
+
   class Scope
     attr_reader :volunteer, :scope
 

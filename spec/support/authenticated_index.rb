@@ -12,9 +12,9 @@ RSpec.shared_examples_for 'an authenticated indexable resource' do
     before { sign_in volunteer }
 
     context 'GET #index' do
-      it 'should have a 200 response' do
+      it 'should not redirect to sign in' do
         get :index
-        expect(response).to be_success
+        expect(response).not_to redirect_to(new_volunteer_session_path)
       end
     end
   end

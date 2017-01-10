@@ -43,6 +43,7 @@ group :test do
   gem 'poltergeist', '~> 1.12'
   gem 'rack-test'
   gem 'test-unit', '~> 3.0'
+  gem 'pundit-matchers'
 end
 
 

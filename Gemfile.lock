@@ -210,6 +210,9 @@ GEM
       pry
     pundit (1.1.0)
       activesupport (>= 3.0.0)
+    pundit-matchers (1.1.0)
+      pundit (~> 1.1, >= 1.1.0)
+      rspec-rails (>= 3.0.0)
     rack (1.4.7)
     rack-cache (1.6.1)
       rack (>= 0.4)
@@ -368,6 +371,7 @@ DEPENDENCIES
   pry-remote
   pry-rescue
   pundit
+  pundit-matchers
   rack-test
   rails (~> 3.2.16)
   rails-erd

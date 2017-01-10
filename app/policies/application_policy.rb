@@ -11,7 +11,7 @@ class ApplicationPolicy
   end
 
   def show?
-    scope.where(:id => record.id).exists?
+    false
   end
 
   def create?
@@ -51,7 +51,7 @@ class ApplicationPolicy
     end
 
     def resolve
-      scope
+      scope.where('false')
     end
   end
 end

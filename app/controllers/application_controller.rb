@@ -22,6 +22,8 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
 
+  alias_method :pundit_user, :current_volunteer
+
   protected
 
     def layout_by_resource

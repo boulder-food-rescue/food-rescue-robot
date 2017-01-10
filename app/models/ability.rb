@@ -6,6 +6,7 @@ class Ability
 
     super_admin_permissions if super_admin?
     region_admin_permissions if region_admin?
+    volunteer_permissions
   end
 
   private
@@ -29,6 +30,13 @@ class Ability
     can :manage, Location, region_id: admin_region_ids
     can :manage, FoodType, region_id: admin_region_ids
     can :manage, ScaleType, region_id: admin_region_ids
+    can :manage, Log, region_id: admin_region_ids
+  end
+
+  def volunteer_permissions
+    can :read, Log
+    can [:take, :leave], Log, region_id: region_ids
+    can :update, Log, log_volunteers: { volunteer_id: volunteer.id }
   end
 
   def assignments
@@ -41,5 +49,9 @@ class Ability
 
   def admin_region_ids
     admin_assignments.pluck(:region_id)
+  end
+
+  def region_ids
+    assignments.pluck(:region_id)
   end
 end

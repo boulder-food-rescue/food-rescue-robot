@@ -137,25 +137,17 @@ class LogsController < ApplicationController
 
   def destroy
     @l = Log.find(params[:id])
-    unless current_volunteer.any_admin? @l.region
-      flash[:notice] = "Not authorized to delete log items for that region"
-      redirect_to(root_path)
-      return
-    end
+    authorize! :destroy, @l
     @l.destroy
     redirect_to(request.referrer)
   end
 
   def new
     @region = Region.find(params[:region_id])
-    unless current_volunteer.any_admin? @region
-      flash[:notice] = "Not authorized to create schedule items for that region"
-      redirect_to(root_path)
-      return
-    end
     @log = Log.new
     @log.region = @region
     @action = "create"
+    authorize! :create, @log
     session[:my_return_to] = request.referer
     set_vars_for_form @region
     render :new
@@ -170,11 +162,7 @@ class LogsController < ApplicationController
     if @scale_types.length<2 and @log.scale_type_id.nil?
       @log.scale_type_id = @region.scale_types.first.id
     end
-    unless current_volunteer.any_admin? @log.region
-      flash[:error] = "Not authorized to create logs for that region"
-      redirect_to(root_path)
-      return
-    end
+    authorize! :create, @log
     parse_and_create_log_parts(params,@log)
     finalize_log(@log)
     if @log.save
@@ -192,6 +180,7 @@ class LogsController < ApplicationController
 
   def show
     @log = Log.find(params[:id])
+    authorize! :read, @log
     respond_to do |format|
       format.html
       format.json {
@@ -210,11 +199,7 @@ class LogsController < ApplicationController
 
   def edit
     @log = Log.find(params[:id])
-    unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
-      flash[:notice] = "Not authorized to edit that log item."
-      redirect_to(root_path)
-      return
-    end
+    authorize! :update, @log
     @region = @log.region
     @action = "update"
     session[:my_return_to] = request.referer
@@ -228,7 +213,7 @@ class LogsController < ApplicationController
     @action = "update"
     set_vars_for_form @region
 
-    unless current_volunteer.any_admin? @log.region or @log.volunteers.include? current_volunteer
+    unless can?(:update, @log)
       flash[:notice] = "Not authorized to edit that log item."
       respond_to do |format|
         format.json { render json: {:error => 1, :message => flash[:notice] } }
@@ -276,10 +261,7 @@ class LogsController < ApplicationController
       logs = Log.find(params[:ids])
     end
 
-    volunteer_regions = current_volunteer.regions.pluck(:id).uniq.sort
-    log_regions = logs.flat_map {|log| log.region.id }.uniq.sort
-
-    if log_regions == volunteer_regions
+    if logs.all? { |log| can?(:take, log) }
       logs.each do |log|
         LogVolunteer.create(volunteer: current_volunteer, covering: true, log: log)
       end
@@ -306,19 +288,18 @@ class LogsController < ApplicationController
     else
       l = params[:ids].collect{ |i| Log.find(i) }
     end
-    if l.all?{ |x| current_volunteer.in_region? x.region_id }
-      l.each do |x|
-        if x.has_volunteer? current_volunteer
-          LogVolunteer.where(:volunteer_id=>current_volunteer.id, :log_id=>x.id).each{ |lv|
-            lv.active = false
-            lv.save
-          }
-        end
+
+    l.each { |log| authorize! :leave, log }
+
+    l.each do |x|
+      if x.has_volunteer? current_volunteer
+        LogVolunteer.where(:volunteer_id=>current_volunteer.id, :log_id=>x.id).each{ |lv|
+          lv.active = false
+          lv.save
+        }
       end
-      flash[:notice] = "You left a pickup with #{l.length} donor(s)."
-    else
-      flash[:error] = "Cannot leave that pickup since you are not a member of that region!"
     end
+    flash[:notice] = "You left a pickup with #{l.length} donor(s)."
     redirect_to :back
   end
 
@@ -339,11 +320,7 @@ class LogsController < ApplicationController
 
     @loc = Location.find(params[:location_id])
 
-    unless current_volunteer.any_admin?(@loc.region)
-      flash[:notice] = "Cannot generate receipt for donors/receipients in other regions than your own!"
-      redirect_to(root_path)
-      return
-    end
+    authorize! :receipt, @loc
 
     @logs = Log.where("logs.when >= ? AND logs.when <= ? AND donor_id = ? AND complete",@start_date,@stop_date,@loc.id)
 

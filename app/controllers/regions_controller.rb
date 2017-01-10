@@ -1,17 +1,19 @@
 class RegionsController < ApplicationController
   before_filter :authenticate_volunteer!, :except => [:recipients, :request_rescue]
-  before_filter :super_admin_only, :except => [:recipients, :request_rescue, :edit, :update]
 
   def index
-    @regions = Region.all
+    authorize! :read, Region
+    @regions = Region.accessible_by(current_ability)
   end
 
   def new
     @region = Region.new
+    authorize! :create, @region
   end
 
   def create
     @region = Region.new(params[:region])
+    authorize! :create, @region
 
     if @region.save
       flash[:notice] = 'Created successfully'
@@ -24,18 +26,12 @@ class RegionsController < ApplicationController
 
   def edit
     @region = Region.find(params[:id])
-
-    unless current_volunteer.region_admin?(@region, false)
-      return redirect_unauthorized
-    end
+    authorize! :update, @region
   end
 
   def update
     @region = Region.find(params[:id])
-
-    unless current_volunteer.region_admin?(@region, false)
-      return redirect_unauthorized
-    end
+    authorize! :update, @region
 
     if @region.update_attributes(params[:region])
       flash.now[:notice] = 'Updated successfully'
@@ -47,7 +43,9 @@ class RegionsController < ApplicationController
   end
 
   def destroy
-    Region.find(params[:id]).destroy
+    region = Region.find(params[:id])
+    authorize! :destroy, region
+    region.destroy
 
     flash.now[:notice] = 'Deleted successfully'
     redirect_to regions_url
@@ -77,16 +75,5 @@ class RegionsController < ApplicationController
         end
       end
     end
-  end
-
-  private
-
-  def super_admin_only
-    return if current_volunteer.super_admin?
-    redirect_unauthorized
-  end
-
-  def redirect_unauthorized
-    redirect_to root_path, error: "Sorry, you can't go there"
   end
 end

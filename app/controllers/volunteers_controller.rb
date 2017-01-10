@@ -248,6 +248,8 @@ class VolunteersController < ApplicationController
   end
 
   def home
+    skip_authorization
+
     unless current_volunteer.waiver_signed?
       return redirect_to new_waiver_url
     end

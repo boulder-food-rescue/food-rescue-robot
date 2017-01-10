@@ -1,5 +1,6 @@
 class WaiversController < ApplicationController
   before_filter :authenticate_volunteer!
+  before_filter :skip_authorization, only: [:new, :create]
 
   def new
     @region = current_volunteer.main_region

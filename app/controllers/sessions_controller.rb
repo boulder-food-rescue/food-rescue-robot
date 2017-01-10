@@ -1,5 +1,6 @@
 class SessionsController < Devise::SessionsController
   respond_to :json
+  before_filter :skip_authorization, only: [ :new, :create, :destroy ]
 
   def create
     respond_to do |format|

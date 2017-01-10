@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   after_filter :setup_headers
   before_filter :authenticate_user_from_token!
 
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
   respond_to :html, :json
 
   def setup_headers
@@ -64,5 +66,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
-
+  def user_not_authorized
+    respond_to do |format|
+      format.json { head :forbidden }
+      format.html do
+        flash[:error] = "You are not authorized to do that"
+        redirect_to(request.referrer || root_path)
+      end
+    end
+  end
 end

@@ -35,14 +35,18 @@ class ApplicationPolicy
   end
 
   def scope
-    Pundit.policy_scope!(user, record.class)
+    Pundit.policy_scope!(volunteer, record.class)
   end
 
-  class Scope
-    attr_reader :user, :scope
+  private
 
-    def initialize(user, scope)
-      @user = user
+  alias_method :volunteer, :user
+
+  class Scope
+    attr_reader :volunteer, :scope
+
+    def initialize(volunteer, scope)
+      @volunteer = volunteer
       @scope = scope
     end
 

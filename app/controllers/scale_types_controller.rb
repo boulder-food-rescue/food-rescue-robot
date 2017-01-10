@@ -60,11 +60,11 @@ class ScaleTypesController < ApplicationController
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else
-      index
-  end
-  else
-    flash[:notice] = "Scale update didn't go through."
-    render :edit
+        index
+      end
+    else
+      flash[:notice] = "Scale update didn't go through."
+      render :edit
     end
   end
 

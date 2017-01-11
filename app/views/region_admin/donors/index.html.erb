@@ -30,7 +30,7 @@
           </td>
           <td>
             <% if location.receipt_key.present? %>
-              <%= link_to 'Hud', "/locations/hud?id=#{location.id}&key=#{location.receipt_key}" %><br>
+              <%= link_to 'Hud', hud_location_path(location, key: location.reciept_key) %><br>
             <% end %>
             <%= link_to "Edit", edit_location_url(location) %><br>
             <%= link_to "Delete", location_url(location), :confirm => "Are you sure?", :method => :delete %>

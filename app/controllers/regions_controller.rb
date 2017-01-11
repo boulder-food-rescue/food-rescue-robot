@@ -1,17 +1,20 @@
 class RegionsController < ApplicationController
   before_filter :authenticate_volunteer!, :except => [:recipients, :request_rescue]
-  before_filter :super_admin_only, :except => [:recipients, :request_rescue, :edit, :update]
+  before_filter :skip_authorization, only: [:recipients, :request_rescue]
 
   def index
-    @regions = Region.all
+    authorize Region
+    @regions = policy_scope(Region)
   end
 
   def new
     @region = Region.new
+    authorize @region
   end
 
   def create
     @region = Region.new(params[:region])
+    authorize @region
 
     if @region.save
       flash[:notice] = 'Created successfully'
@@ -24,6 +27,7 @@ class RegionsController < ApplicationController
 
   def edit
     @region = Region.find(params[:id])
+    authorize @region
 
     unless current_volunteer.region_admin?(@region, false)
       return redirect_unauthorized
@@ -32,6 +36,7 @@ class RegionsController < ApplicationController
 
   def update
     @region = Region.find(params[:id])
+    authorize @region
 
     unless current_volunteer.region_admin?(@region, false)
       return redirect_unauthorized
@@ -47,7 +52,9 @@ class RegionsController < ApplicationController
   end
 
   def destroy
-    Region.find(params[:id]).destroy
+    region = Region.find(params[:id])
+    authorize region
+    region.destroy
 
     flash.now[:notice] = 'Deleted successfully'
     redirect_to regions_url
@@ -77,16 +84,5 @@ class RegionsController < ApplicationController
         end
       end
     end
-  end
-
-  private
-
-  def super_admin_only
-    return if current_volunteer.super_admin?
-    redirect_unauthorized
-  end
-
-  def redirect_unauthorized
-    redirect_to root_path, error: "Sorry, you can't go there"
   end
 end

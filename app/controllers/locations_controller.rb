@@ -2,6 +2,7 @@ class LocationsController < ApplicationController
   before_filter :authenticate_volunteer!, :except => [:hud]
 
   def hud
+    skip_authorization
     @loc = Location.find(params[:id])
     if (params[:key] == @loc.receipt_key) or (!current_volunteer.nil? and (current_volunteer.region_admin?(@loc.region) or current_volunteer.super_admin?))
       @schedules = ScheduleChain.for_location(@loc)
@@ -35,6 +36,7 @@ class LocationsController < ApplicationController
   end
 
   def index(location_type=nil,header="Locations")
+    authorize Location
     unless location_type.nil?
       @locations = Location.regional(current_volunteer.region_ids).where("location_type = ?",location_type)
     else
@@ -68,7 +70,7 @@ class LocationsController < ApplicationController
 
   def destroy
     @l = Location.find(params[:id])
-    return unless check_permissions(@l)
+    authorize @l
     @l.active = false
     @l.save
     redirect_to(request.referrer)
@@ -77,25 +79,16 @@ class LocationsController < ApplicationController
   def new
     @location = Location.new
     @location.region_id = params[:region_id]
-    return unless check_permissions(@location)
+    authorize @l
     @action = "create"
     session[:my_return_to] = request.referer
     render :new
   end
 
-  def check_permissions(l)
-    unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids.include? l.region_id) or
-      flash[:notice] = "Not authorized to create/edit locations for that region"
-      redirect_to(root_path)
-      return false
-    end
-    return true
-  end
-
   def create
     @location = Location.new(params[:location])
     @location.populate_detailed_hours_from_form params
-    return unless check_permissions(@location)
+    authorize @location
     # can't set admin bits from CRUD controls
     if @location.save
       flash[:notice] = "Created successfully."
@@ -112,7 +105,7 @@ class LocationsController < ApplicationController
 
   def edit
     @location = Location.find(params[:id])
-    return unless check_permissions(@location)
+    authorize @location
     @action = "update"
     session[:my_return_to] = request.referer
     render :edit
@@ -121,7 +114,7 @@ class LocationsController < ApplicationController
   def update
     @location = Location.find(params[:id])
     @location.populate_detailed_hours_from_form params
-    return unless check_permissions(@location)
+    authorize @location
     # can't set admin bits from CRUD controls
     if @location.update_attributes(params[:location])
       flash[:notice] = "Updated Successfully."

@@ -84,6 +84,9 @@ Webapp::Application.routes.draw do
       get :update
       get :create
       get :destroy
+    end
+
+    member do
       get :hud
     end
   end

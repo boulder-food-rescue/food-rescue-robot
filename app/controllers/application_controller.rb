@@ -2,6 +2,7 @@ require 'food_robot'
 
 class ApplicationController < ActionController::Base
   include Pundit
+  after_filter :verify_authorized unless Rails.env.production?
 
   protect_from_forgery with: :null_session
   after_filter :setup_headers

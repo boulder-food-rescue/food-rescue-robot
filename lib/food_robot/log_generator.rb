@@ -17,7 +17,7 @@ module FoodRobot
 
     def generate_logs!
       decorated_schedule_chains.each do |chain|
-        puts "Schedule Chain: #{chain.summary}"
+        Rails.logger.info("Schedule Chain: #{chain.summary}")
 
         chain.donors.each do |donor|
           existing_log = existing_logs.log_for_donor(donor)

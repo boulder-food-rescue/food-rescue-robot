@@ -53,7 +53,7 @@ class Log < ActiveRecord::Base
         elsif record.weight_unit == "st"
           lp.weight = (lp.weight.to_f * (1.0/14.0).to_f).round(2) unless lp.weight.nil?
         end
-        lp.save
+        lp.save unless lp.new_record?
       }
       record.weight_unit = "lb"
     end

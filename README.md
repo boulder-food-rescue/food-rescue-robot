@@ -78,9 +78,9 @@ You'll need to create a database and user:
 ```
 $ sudo su - postgres
 $ psql
-> CREATE DATABASE robot_db;
-> CREATE ROLE robot_user WITH LOGIN PASSWORD 'changeme';
-> GRANT ALL ON DATABASE robot_db TO robot_user;
+> CREATE DATABASE bfr_webapp_db;
+> CREATE ROLE bfr_webapp_user WITH LOGIN PASSWORD 'changeme';
+> GRANT ALL ON DATABASE bfr_webapp_db TO bfr_webapp_user;
 > \q
 $ exit
 ```

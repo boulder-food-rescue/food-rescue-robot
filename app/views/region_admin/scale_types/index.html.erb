@@ -1,49 +1,42 @@
-<h2>Schedule</h2>
+<h2>Scale Types</h2>
 
-<% if current_volunteer.any_admin? %>
 <div style="text-align: right;">
-<%= form_tag("/scale_types/new", :method => "get") do %>
-New Scale For <%= select_tag(:region_id, options_for_select(Region.all_admin(current_volunteer).collect{ |r| [r.name,r.id] })) %>
-<%= submit_tag("Go") %>
-<% end %>
+  <%= link_to 'New Scale Type', new_region_admin_scale_type_url, class: 'btn btn-primary' %>
 </div>
+
+
+<% if @scale_types.empty? %>
+  <p>No scales. All entered weights will be flagged as estimates.</p>
+<% else %>
+  <table id="data_table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Unit</th>
+        <th>Region</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @scale_types.each do |scale_type| %>
+        <tr>
+          <td><%= scale_type.name %></td>
+          <td><%= scale_type.weight_unit %></td>
+          <td><%= scale_type.region.name %></td>
+          <td><%= link_to 'Edit', edit_region_admin_scale_type_url(scale_type)  %><br>
+               <%= link_to "Delete", region_admin_scale_type_url(scale_type), :confirm => "Are you sure?", :method => :delete %> </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>
 
-<% if @scale_types.length == 0 %>
-<p> 
-No scales. All entered weights will be flagged as estimates.
-</p>
-<% else %>
-<table id="data_table">
-  <thead>
-  <tr>
-    <th> Name </th>
-    <th> Unit </th>
-    <th> Region </th>
-    <th> Link </th>
-  </tr>
-  </thead>
-  <tbody>
-  <%
-  @scale_types.each do |st|
-  %>
-  <tr>
-    <td> <%= st.name %>
-    <td> <%= st.weight_unit %>
-    <td> <%= st.region.name %>
-    <td><%= link_to 'edit', :controller => "scale_types", :action => "edit", :id => st %><br>
-         <%= link_to "delete", st, :confirm => "Are you sure?", :method => :delete %> </td>
-  </tr>
-  <% end %>
-  </tbody>
-</table>
-<% end %>
 <% content_for :scripts do %>
-<script type="text/javascript">
-$(function () { 
-  $('#data_table').dataTable( {
-    'iDisplayLength' : 50,
-  });
-});
-</script>
+  <script type="text/javascript">
+    $(function () { 
+      $('#data_table').dataTable( {
+        'iDisplayLength' : 50,
+      });
+    });
+  </script>
 <% end %>

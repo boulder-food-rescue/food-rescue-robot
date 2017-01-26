@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150623180213) do
+ActiveRecord::Schema.define(:version => 20170126022713) do
 
   create_table "absences", :force => true do |t|
     t.integer "volunteer_id"
@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(:version => 20150623180213) do
     t.boolean  "covering"
   end
 
+  add_index "log_volunteers", ["log_id", "volunteer_id"], :name => "index_log_volunteers_on_log_id_and_volunteer_id", :unique => true
   add_index "log_volunteers", ["log_id"], :name => "index_log_volunteers_on_log_id"
   add_index "log_volunteers", ["volunteer_id"], :name => "index_log_volunteers_on_volunteer_id"
 

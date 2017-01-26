@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.5'
+ruby '2.3.0'
 
 # the base rails libraries
 gem 'rails', '~> 3.2.16'

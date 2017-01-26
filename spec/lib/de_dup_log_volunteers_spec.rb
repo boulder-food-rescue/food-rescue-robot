@@ -16,7 +16,7 @@ RSpec.describe DeDupLogVolunteers do
       dup = LogVolunteer.create!(log_id: @log2.id, volunteer_id: @volunteer.id)
       dup.destroy
     rescue ActiveRecord::StatementInvalid
-      skip # duplicates are no longer allowed
+      skip "duplicate log_volunteers are now prevented"
     end
   end
   it 'removes duplicates' do

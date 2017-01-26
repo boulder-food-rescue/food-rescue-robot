@@ -106,7 +106,7 @@
                 <%= menu_item "Hubs", hubs_locations_path %>
               <% end %>
               <%= menu_item "Food Types", '/food_types' %>
-	      			<%= menu_item "Scale Types", '/scale_types' %>
+	      			<%= menu_item "Scale Types", region_admin_scale_types_url %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
               <%= menu_item "Absences", all_absences_path %>
               <% if not current_volunteer.super_admin? %>

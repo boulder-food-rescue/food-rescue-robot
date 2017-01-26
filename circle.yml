@@ -1,0 +1,5 @@
+machine:
+  timezone: America/Denver
+dependencies:
+  pre:
+    - gem install bundler

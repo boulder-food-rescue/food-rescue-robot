@@ -178,6 +178,7 @@ GEM
     multi_json (1.12.1)
     multipart-post (2.0.0)
     naught (1.1.0)
+    newrelic_rpm (3.18.0.329)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     orm_adapter (0.5.0)
@@ -358,6 +359,7 @@ DEPENDENCIES
   jquery-datatables-rails!
   jquery-rails (= 2.1.4)
   json
+  newrelic_rpm
   paperclip!
   pg
   poltergeist (~> 1.12)
@@ -383,9 +385,6 @@ DEPENDENCIES
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)
   yaml_db
-
-RUBY VERSION
-   ruby 2.1.5p273
 
 BUNDLED WITH
    1.13.6

@@ -87,3 +87,4 @@ gem 'exception_notification-rake', '~> 0.0.6'
 
 gem 'interactor'
 gem 'cancancan'
+gem 'newrelic_rpm'

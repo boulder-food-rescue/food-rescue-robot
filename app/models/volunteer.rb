@@ -106,13 +106,13 @@ class Volunteer < ActiveRecord::Base
   # if first argument is nil, checks if they're a region admin
   # of any kind. otherwise, tests if they're a admin for the given region
   # if strict is false, will not return true if they're a super admin
-  def region_admin?(r = nil, strict = true)
+  def region_admin?(region = nil, strict = true)
     return true if !strict && super_admin?
 
-    a = admin_region_ids(strict)
-    if r.nil?
-      return true unless a.empty?
-    elsif a.include? r.id
+    admin_regions = admin_region_ids(strict)
+    if region.nil?
+      return true unless admin_regions.empty?
+    elsif admin_regions.include?(region.id)
       return true
     end
 

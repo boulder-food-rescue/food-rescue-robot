@@ -1,23 +1,39 @@
-<h3><%=loc.name%></h3>
+<div class="well">
+  <h3>
+    <%= location.name %>
+  </h3>
 
-<% if loc.open? %>
-  <b style="font-variant:small-caps;">( open now )</b><br />
-<% end %>
+  <% if location.open? %>
+    <b style="font-variant:small-caps;">( open now )</b><br />
+  <% end %>
 
-<%= loc.contact %>
-<br />
+  <p>
+    <%= location.contact %>
+  </p>
 
-<%= loc.phone %>
-<br />
+  <% if location.phone.present? %>
+    <p>
+      <strong>Phone:</strong>
+      <%= location.phone %>
+    </p>
+  <% end %>
 
-<%= loc.address %>
-<br />
 
-<% unless loc.website.nil? %>
-  <a target="_new" href="<%=loc.website%>">website</a>
-  <br />
-<% end %>
+  <p>
+    <%= location.address.gsub(",", ",<br />").html_safe %>
+  </p>
 
-<small>
-  <%= readable_hours loc %>
-</small>
+
+  <% unless location.website.nil? %>
+    <p>
+      <a target="_new" href="<%=location.website%>" class="btn btn-primary">
+        <%= location.name %> Website
+        <i class='fa fa-external-link'></i>
+      </a>
+    </p>
+  <% end %>
+
+  <strong>
+    <%= readable_hours(location) %>
+  </strong>
+</div>

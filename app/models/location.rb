@@ -1,5 +1,6 @@
 class Location < ActiveRecord::Base
 
+  # MOVE TO ENUM
   LOCATION_TYPES = {
     0 => "Recipient",
     1 => "Donor",
@@ -14,27 +15,23 @@ class Location < ActiveRecord::Base
   belongs_to :region
   has_many :log_recipients
 
-  geocoded_by :address, :latitude => :lat, :longitude => :lng   # can also be an IP address
-  acts_as_gmappable :process_geocoding => false, :lat => "lat", :lng => "lng", :address => "address"
+  geocoded_by :address, latitude: :lat, longitude: :lng   # can also be an IP address
+  acts_as_gmappable process_geocoding: false, lat: "lat", lng: "lng", address: "address"
 
   after_initialize :init_detailed_hours
   before_save :populate_detailed_hours_json_before_save
   before_save :populate_receipt_key
   after_validation :geocode
+  validate :detailed_hours_cannot_end_before_start
 
-  default_scope { order('locations.name ASC').where(active:true) }
-
-  scope :regional, ->(ids) { where(region_id: ids) }
-
-  scope :active, -> { where(active: true) }
-
+  default_scope { order('locations.name ASC').where(active: true) }
+  scope :regional,   -> (ids) { where(region_id: ids) }
+  scope :active,     -> { where(active: true) }
   scope :recipients, -> { where(location_type: LOCATION_TYPES.invert['Recipient']) }
   scope :donors,     -> { where(location_type: LOCATION_TYPES.invert['Donor']) }
   scope :hubs,       -> { where(location_type: LOCATION_TYPES.invert['Hub']) }
   scope :sellers,    -> { where(location_type: LOCATION_TYPES.invert['Seller']) }
   scope :buyers,     -> { where(location_type: LOCATION_TYPES.invert['Buyer']) }
-
-  validate :detailed_hours_cannot_end_before_start
 
   attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours,
                   :lat, :lng, :name, :public_notes, :recip_category, :website, :receipt_key,

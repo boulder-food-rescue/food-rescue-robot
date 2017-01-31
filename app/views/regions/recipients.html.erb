@@ -1,7 +1,8 @@
-
 <h2>Who can Receive Food?</h2>
 
-<p><%=@region.name%> has <%=@locations.count%> places that accept food.  Places that are open right now are shown in green.  Closed places are in red.  Click any marker on the map for more details.</p>
+<p>
+  <%=@region.name%> has <%=@locations.count%> places that accept food.  Places that are open right now are shown in green.  Closed places are in red.  Click any marker on the map for more details.
+</p>
 
 <div id="region-recipient-map">
   <%= gmaps4rails(@json) %>
@@ -10,9 +11,9 @@
 <h2>Locations</h2>
 
 <% @locations.each_with_index do |loc,index| %>
-  <%= '</div>'.html_safe if index>0 and index % 3 == 0 %>
+  <%= '</div>'.html_safe if index > 0 and index % 3 == 0 %>
   <%= '<div class="row">'.html_safe if index % 3 == 0 %>
   <div class="span4">
-    <%= render :partial=>"locations/details", :locals=> {:loc=>loc} %>
+    <%= render partial: "locations/details", locals: {loc: loc} %>
   </div>
 <% end %>

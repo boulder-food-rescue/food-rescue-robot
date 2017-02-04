@@ -160,6 +160,8 @@ GEM
     json_pure (1.8.3)
     jstz-rails (1.0.4.1)
       railties (~> 3.1)
+    launchy (2.4.3)
+      addressable (~> 2.3)
     less (2.6.0)
       commonjs (~> 0.2.7)
     less-rails (2.6.0)
@@ -359,6 +361,7 @@ DEPENDENCIES
   jquery-datatables-rails!
   jquery-rails (= 2.1.4)
   json
+  launchy
   newrelic_rpm
   paperclip!
   pg
@@ -386,5 +389,8 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   yaml_db
 
+RUBY VERSION
+   ruby 2.1.5p273
+
 BUNDLED WITH
-   1.13.6
+   1.13.7

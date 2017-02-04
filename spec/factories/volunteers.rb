@@ -7,6 +7,14 @@ FactoryGirl.define do
     waiver_signed true
     waiver_signed_at Time.zone.now
 
+    factory :volunteer_with_region do
+      after(:create) do |v|
+        region = create(:region)
+        v.regions << region
+        v.save
+      end
+    end
+
     factory :volunteer_with_assignment do
       after(:create) do |v|
         a = create(:assignment,volunteer:v)
@@ -15,7 +23,7 @@ FactoryGirl.define do
         v.save
       end
     end
-
+    
     trait :not_waived do
       waiver_signed false
       waiver_signed_at nil

@@ -11,6 +11,7 @@ FactoryGirl.define do
       after(:create) do |v|
         region = create(:region)
         v.regions << region
+        v.assigned = true
         v.save
       end
     end

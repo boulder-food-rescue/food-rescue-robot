@@ -10,20 +10,9 @@ RSpec.describe 'Scheduling an Absence' do
       context 'WITHOUT assignment' do
         it 'cannot schedule' do
           login volunteer_without_assignment
-          byebug
 
-save_and_open_page
-
-           within ".navbar" do
-             within('ul:nth-child(1)') do
-               within('li:nth-child(3)') do
-                 within('ul:nth-child(1)') do
-                   within('li:nth-child(4)') do
-                     click_on 'Schedule An Absence'
-                   end
-                 end
-               end
-             end
+           within '.navbar' do
+             click_on 'Schedule An Absence'
            end
            
            expect(current_path).to eq(new_absence_path)

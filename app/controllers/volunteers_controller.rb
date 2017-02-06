@@ -60,7 +60,6 @@ class VolunteersController < ApplicationController
   end
 
   def index
-    @volunteers = Volunteer.all.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
     @header = "All Volunteers"
     respond_to do |format|
       format.json {

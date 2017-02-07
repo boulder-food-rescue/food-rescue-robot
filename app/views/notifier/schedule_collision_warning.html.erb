@@ -10,7 +10,7 @@
     </p>
 
     <p>
-      <%= @schedule.volunteers.last.try(:name) %> just picked up a regular shift (#<%= @schedule.id %>), from <%= @schedule.schedules.first.location.try(:name) %> to <%= @schedule.schedules.first.location.try(:name) %> on <%= @schedule.day_of_week.nil? ? "(any day)" : Date::DAYNAMES[@schedule.day_of_week] %> at <%= readable_start_time(@schedule) %>-<%= readable_stop_time(@schedule) %>.
+      <%= @schedule.volunteers.last.try(:name) %> just picked up a regular shift (#<%= @schedule.id %>), from <%= @schedule.schedules.first.location.try(:name) %> to <%= @schedule.schedules.last.location.try(:name) %> on <%= @schedule.day_of_week.nil? ? "(any day)" : Date::DAYNAMES[@schedule.day_of_week] %> at <%= readable_start_time(@schedule) %>-<%= readable_stop_time(@schedule) %>.
     </p>
 
     <p>

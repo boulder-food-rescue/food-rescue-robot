@@ -11,18 +11,18 @@ RSpec.describe 'Scheduling an Absence' do
       it 'cannot schedule' do
         login volunteer_without_assignment
 
-          within '.navbar' do
-            click_on 'Schedule An Absence'
-          end
-          
-          expect(current_path).to eq(new_absence_path)
+        within '.navbar' do
+          click_on 'Schedule An Absence'
+        end
 
-          click_on 'Save changes'
+        expect(current_path).to eq(new_absence_path)
 
-          expect(current_path).to eq(absences_path)
-          within('.alert') do
+        click_on 'Save changes'
+
+        expect(current_path).to eq(absences_path)
+        within('.alert') do
           expect(page).to have_content('No shifts of yours was found in that timeframe')
-          end
+        end
       end
     end
   end

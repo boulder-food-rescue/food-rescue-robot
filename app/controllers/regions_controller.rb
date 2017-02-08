@@ -1,5 +1,5 @@
 class RegionsController < ApplicationController
-  before_filter :authenticate_volunteer!, :except => [:recipients, :request_rescue]
+  before_filter :authenticate_volunteer!
 
   def index
     authorize! :read, Region
@@ -51,18 +51,8 @@ class RegionsController < ApplicationController
     redirect_to regions_url
   end
 
-  def recipients
-    @region = Region.find(params[:id])
-    @locations = Location.recipients.where(region_id: @region.id)
-    @json = @locations.to_gmaps4rails do |location, marker|
-      marker.infowindow render_to_string(template: "locations/_details.html", layout: nil, locals: { location: location}).html_safe
-      marker.picture({
-        "picture" => location.open? ? 'http://maps.google.com/mapfiles/marker_green.png' : 'http://maps.google.com/mapfiles/marker.png',
-        "width" =>  '32', "height" => '37'
-      })
-    end
-  end
-
+  # Currently not implemented correctly
+  # Commented out as a route by Rylan Bowers 2-7-2017
   def request_rescue
     @region = Region.find(params[:id])
     set_vars_for_form @region

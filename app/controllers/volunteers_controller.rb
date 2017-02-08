@@ -67,9 +67,8 @@ class VolunteersController < ApplicationController
         render json: @volunteers.to_json
       }
       format.html {
-        @volunteers = Volunteer.all.
-                        includes(:regions).
-                        collect { |volunteer|
+        @volunteers = Volunteer.includes(:regions).
+                        all.collect { |volunteer|
                           (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0 ? volunteer : nil
                         }.compact
         render :index

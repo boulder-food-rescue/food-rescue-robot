@@ -5,7 +5,7 @@ RSpec.describe "Volunteer takes One-Time Shifts" do
   let(:donor) { create(:donor, name: "This is a name") }
   let(:volunteer) { create(:volunteer, :not_waived, regions: [log.region], assigned: true) }
   let(:location) { create(:location) }
-  let(:recipient) { create(:recipient, name: "Recipient")}
+  let(:recipient) { create(:recipient)}
   # Expect page to show log entry
   feature "An available one-time shift" do
     before do

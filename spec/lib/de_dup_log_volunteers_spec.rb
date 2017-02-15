@@ -5,12 +5,12 @@ RSpec.describe DeDupLogVolunteers do
   before :context do
     Log.destroy_all
     @log = FactoryGirl.create(:log)
+    @log2 = FactoryGirl.create(:log)
     Volunteer.destroy_all
     @volunteer = FactoryGirl.create(:volunteer)
   end
   before :example do
     LogVolunteer.destroy_all
-    @log2 = FactoryGirl.create(:log)
     LogVolunteer.create!(log_id: @log2.id, volunteer_id: @volunteer.id)
     begin
       dup = LogVolunteer.create!(log_id: @log2.id, volunteer_id: @volunteer.id)
@@ -18,72 +18,31 @@ RSpec.describe DeDupLogVolunteers do
     rescue ActiveRecord::StatementInvalid
       skip "duplicate log_volunteers are now prevented"
     end
+    3.times do
+      LogVolunteer.create(log_id: @log.id, volunteer_id: @volunteer.id,
+        active: true)
+    end
+    LogVolunteer.create(log_id: @log.id, volunteer_id: @volunteer.id,
+      active: false)
+    @latest = LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
+      active: true)
+    LogVolunteer.create(log_id: @log.id, volunteer_id: @volunteer.id,
+      active: false)
   end
-  it 'removes duplicates' do
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id)
-    expect(LogVolunteer.count).to eq 5
-
+  it 'finds all active duplicates and sets all but one to inactive' do
+    expect(LogVolunteer.count).to eq 7
     DeDupLogVolunteers.de_duplicate
-
-    expect(LogVolunteer.count).to eq 2
+    expect(LogVolunteer.count).to eq 7
     log1_r = LogVolunteer.where(log_id: @log.id)
-    expect(log1_r.count).to eq 1
+    expect(log1_r.count).to eq 6
     log2_r = LogVolunteer.where(log_id: @log2.id)
     expect(log2_r.count).to eq 1
+    active = LogVolunteer.where(log_id: @log.id, active: true)
+    expect(active.count).to eq 1
   end
-  it 'captures covering true' do
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: true, covering: false)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: false, covering: false)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: true, covering: true)
-
+  it 'keeps the most recently updated duplicate' do
     DeDupLogVolunteers.de_duplicate
-
-    log1_r = LogVolunteer.where(log_id: @log.id)
-    expect(log1_r.count).to eq 1
-    expect(log1_r.first.covering).to be true
-  end
-  it 'captures covering false' do
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: true, covering: false)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: false, covering: false)
-
-    DeDupLogVolunteers.de_duplicate
-
-    log1_r = LogVolunteer.where(log_id: @log.id)
-    expect(log1_r.count).to eq 1
-    expect(log1_r.first.covering).to be false
-  end
-  it 'captures active true' do
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: false, covering: true)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: false, covering: false)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: true, covering: true)
-
-    DeDupLogVolunteers.de_duplicate
-
-    log1_r = LogVolunteer.where(log_id: @log.id)
-    expect(log1_r.count).to eq 1
-    expect(log1_r.first.active).to be true
-  end
-  it 'captures active false' do
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: false, covering: true)
-    LogVolunteer.create!(log_id: @log.id, volunteer_id: @volunteer.id,
-      active: false, covering: false)
-
-    DeDupLogVolunteers.de_duplicate
-
-    log1_r = LogVolunteer.where(log_id: @log.id)
-    expect(log1_r.count).to eq 1
-    expect(log1_r.first.active).to be false
+    active = LogVolunteer.where(log_id: @log.id, active: true).first
+    expect(active.id).to eq @latest.id
   end
 end

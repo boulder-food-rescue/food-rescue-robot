@@ -11,12 +11,14 @@ RSpec.describe DeDupLogVolunteers do
   end
   before :example do
     LogVolunteer.destroy_all
-    LogVolunteer.create!(log_id: @log2.id, volunteer_id: @volunteer.id)
+    LogVolunteer.create!(log_id: @log2.id, volunteer_id: @volunteer.id,
+      active: true)
     begin
-      dup = LogVolunteer.create!(log_id: @log2.id, volunteer_id: @volunteer.id)
+      dup = LogVolunteer.create!(log_id: @log2.id, volunteer_id: @volunteer.id,
+        active: true)
       dup.destroy
     rescue ActiveRecord::StatementInvalid
-      skip "duplicate log_volunteers are now prevented"
+      skip "duplicate log_volunteers with active = true are now prevented"
     end
     3.times do
       LogVolunteer.create(log_id: @log.id, volunteer_id: @volunteer.id,

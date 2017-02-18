@@ -1,9 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe VolunteersController do
+  before :context do
+    Volunteer.destroy_all
+  end
   let(:volunteer) { create :volunteer_with_assignment }
   let(:admin) { create :volunteer_with_assignment, admin: true }
-  let(:resource) { create :volunteer }
+  let(:resource) { volunteer }
 
   it_behaves_like 'an authenticated indexable resource'
   it_behaves_like 'an authenticated showable resource'

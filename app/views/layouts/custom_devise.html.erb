@@ -86,6 +86,8 @@
     </div>
   </div>
   <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "google_analytics" if Rails.env.production? %>
+
 
 </body>
 </html>

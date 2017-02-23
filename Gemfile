@@ -40,6 +40,7 @@ group :test do
   gem 'rspec-rails', '~> 3.5'
   gem 'factory_girl_rails'
   gem 'capybara'
+  gem 'launchy'
   gem 'poltergeist', '~> 1.12'
   gem 'rack-test'
   gem 'test-unit', '~> 3.0'

@@ -9,15 +9,15 @@ class AssignmentsController < ApplicationController
       flash[:notice] = "Not permitted to do knightings in that region..."
       return redirect_to(root_path)
     end
-    assignment = Assignment.where("volunteer_id = ? and region_id = ?", volunteer.id,region.id)
-    if assignment.length == 0
-      assignment = Assignment.new
-      assignment.volunteer = volunteer
-      assignment.region = region
-      assignment.admin = true
-      assignment.save
+    assignments = Assignment.where("volunteer_id = ? and region_id = ?", volunteer.id, region.id)
+    if assignments.length == 0
+      new_assignment = Assignment.new
+      new_assignment.volunteer = volunteer
+      new_assignment.region = region
+      new_assignment.admin = true
+      new_assignment.save
     else
-      assignment.each do |assignment|
+      assignments.each do |assignment|
         assignment.admin = !assignment.admin
         assignment.save
       end

@@ -58,9 +58,9 @@ class RegionsController < ApplicationController
     set_vars_for_form @region
     @schedule = Schedule.new
     @time_options = []
-    ['am','pm'].each do |ampm|
+    %w(am pm).each do |ampm|
       (1..12).each do |hour|
-        ['00','30'].each do |min|
+        %w(00 30).each do |min|
           @time_options << hour.to_s+':'+min+' '+ampm
         end
       end

@@ -24,11 +24,11 @@ class LogsController < ApplicationController
       n = params[:n].present? ? params[:n].to_i : 0
       d = Time.zone.today+n
     end
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{d.to_s}'"),"Shifts on #{d.strftime("%A, %B %-d")}")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" = '#{d.to_s}'"),"Shifts on #{d.strftime('%A, %B %-d')}")
   end
 
   def last_ten
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'"),"Last 10 Days of Shifts")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'"),"Last 10 Days of Shifts")
   end
 
   def being_covered
@@ -40,14 +40,14 @@ class LogsController < ApplicationController
   end
 
   def tardy
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)"),"Missing Data (>= 3 Reminders)")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)"),"Missing Data (>= 3 Reminders)")
   end
 
   def index(logs=nil,header="Entire Log")
     filter = filter.nil? ? "" : " AND #{filter}"
     @shifts = []
     if current_volunteer.region_ids.length > 0
-      @shifts = Shift.build_shifts(logs.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})"): logs)
+      @shifts = Shift.build_shifts(logs.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(',')})"): logs)
     end
     @header = header
     @regions = Region.all
@@ -65,7 +65,7 @@ class LogsController < ApplicationController
   def stats
     @regions = current_volunteer.admin_regions(true)
     @regions = Region.all if current_volunteer.admin? and @regions.empty?
-    @first_recorded_pickup = Log.where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(",")})").
+    @first_recorded_pickup = Log.where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
       order("logs.when ASC").limit(1)
     @pounds_per_year = Log.joins(:log_parts).select("extract(YEAR from logs.when) as year, sum(weight)").
       where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
@@ -341,7 +341,7 @@ class LogsController < ApplicationController
           pdf.font_size 10
           pdf.font "Times-Roman"
           pdf.move_down 10
-          pdf.text "#{@loc.region.address.tr("\n",", ")}", :align => :center
+          pdf.text "#{@loc.region.address.tr("\n",', ')}", :align => :center
         end
 
         unless @loc.region.website.nil?

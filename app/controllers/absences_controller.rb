@@ -74,7 +74,7 @@ class AbsencesController < ApplicationController
 
     if (@absence.start_date <= Date.today+2) and (not current_volunteer.any_admin?)
       emails = current_volunteer.admin_regions.collect{ |r| r.volunteer_coordinator_email }.compact
-      flash[:warning] = "You cannot schedule an absence within 48 hours. If you will be unable to do your shift, please contact your volunteer coordinator(s)#{emails.empty? ? "" : ": "+emails.join(", ")}."
+      flash[:warning] = "You cannot schedule an absence within 48 hours. If you will be unable to do your shift, please contact your volunteer coordinator(s)#{emails.empty? ? '' : ': '+emails.join(', ')}."
       redirect_to :back
       return
     end

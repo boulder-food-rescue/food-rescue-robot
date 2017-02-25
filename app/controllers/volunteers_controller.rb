@@ -205,10 +205,10 @@ class VolunteersController < ApplicationController
   def stats
     @regions = current_volunteer.admin_regions(true)
     @regions = Region.all if current_volunteer.admin? and @regions.empty?
-    @per_volunteer = Log.joins(:log_parts,:volunteers).select("volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)").where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(",")}) and logs.when>?",Date.today-12.months).group("volunteers.id, volunteers.name").order("sum DESC")
-    @per_volunteer2 = Log.joins(:log_parts,:volunteers).select("volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)").where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(",")}) and logs.when>?",Date.today-1.month).group("volunteers.id, volunteers.name").order("sum DESC")
+    @per_volunteer = Log.joins(:log_parts,:volunteers).select("volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)").where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?",Date.today-12.months).group("volunteers.id, volunteers.name").order("sum DESC")
+    @per_volunteer2 = Log.joins(:log_parts,:volunteers).select("volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)").where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?",Date.today-1.month).group("volunteers.id, volunteers.name").order("sum DESC")
     @lazy_volunteers = Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
-            joins(:logs,:log_volunteers).where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(",")})").
+            joins(:logs,:log_volunteers).where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(',')})").
             group("volunteers.id, name, email")
 
     @region_locations = Location.where(:region_id=>current_volunteer.admin_region_ids)

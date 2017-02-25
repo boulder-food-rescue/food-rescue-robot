@@ -26,6 +26,7 @@ group :development do
   gem 'rails-erd'
   gem 'binding_of_caller'
   gem 'faker', '~> 1.7.3'
+  gem 'rubocop', :require => false
 end
 
 group :development, :test do

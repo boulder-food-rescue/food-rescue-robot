@@ -9,8 +9,8 @@ class Location < ActiveRecord::Base
     4 => 'Buyer'
   }
 
-  PICKUP_LOCATION_TYPES = [1,2,3]
-  DROP_LOCATION_TYPES   = [0,2,4]
+  PICKUP_LOCATION_TYPES = [1, 2, 3]
+  DROP_LOCATION_TYPES   = [0, 2, 4]
 
   belongs_to :region
   has_many :log_recipients
@@ -54,11 +54,11 @@ class Location < ActiveRecord::Base
 
   def gmaps4rails_infowindow
     ret = "<span style=\"font-weight: bold;color: darkblue;\">#{self.name}</span><br>"
-    ret += self.address.gsub("\n",'<br>') unless self.address.nil?
+    ret += self.address.gsub("\n", '<br>') unless self.address.nil?
     ret += '<br>'
-    ret += self.contact.gsub("\n",'<br>') unless self.contact.nil?
+    ret += self.contact.gsub("\n", '<br>') unless self.contact.nil?
     ret += '<br>'
-    ret += self.hours.gsub("\n",'<br>') unless self.hours.nil?
+    ret += self.hours.gsub("\n", '<br>') unless self.hours.nil?
     ret += '<br>'
     ret += "<a href=\"#{self.website}\">website</a>" unless self.website.nil?
     ret
@@ -107,7 +107,7 @@ class Location < ActiveRecord::Base
   def website_url
     return nil if self.website.blank?
     uri = Addressable::URI.parse(self.website)
-    uri = Addressable::URI.parse("http://#{self.website.gsub(/^\/*/,'')}") if uri.scheme.nil?
+    uri = Addressable::URI.parse("http://#{self.website.gsub(/^\/*/, '')}") if uri.scheme.nil?
     return nil if uri.scheme.nil? or uri.host.nil?
     uri.normalize.to_s
   end
@@ -127,7 +127,7 @@ class Location < ActiveRecord::Base
   end
 
   def clean_address
-    address.gsub(/\r/,' ').gsub(/\n/, ' ')
+    address.gsub(/\r/, ' ').gsub(/\n/, ' ')
   end
 
   def mappable_address
@@ -141,7 +141,7 @@ class Location < ActiveRecord::Base
         if open_on_day? index
           prefix = 'day'+index.to_s
           if read_day_info(prefix+'_start') > read_day_info(prefix+'_start')
-            errors.add(prefix+'_status','must have an end time AFTER the start time')
+            errors.add(prefix+'_status', 'must have an end time AFTER the start time')
           end
         end
       end
@@ -187,11 +187,11 @@ class Location < ActiveRecord::Base
         write_day_info( prefix+'status', detailed_hours[index.to_s]['status'].to_i )
         # carefully set start time
         t = Time.find_zone(self.time_zone).parse( start )
-        t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
+        t = t.change(:year=>now.year, :month=>now.month, :day=>now.day)
         write_day_info( prefix+'start', t )
         # carefully set end time
         t = Time.find_zone(self.time_zone).parse( stop )
-        t = t.change(:year=>now.year,:month=>now.month, :day=>now.day)
+        t = t.change(:year=>now.year, :month=>now.month, :day=>now.day)
         write_day_info( prefix+'end', t )
       end
     end

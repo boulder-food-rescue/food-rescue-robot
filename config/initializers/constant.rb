@@ -18,7 +18,7 @@ class Array
 
   def std
     mu = mean
-    (size < 2) ? 0.0 : Math.sqrt(inject(0.0){ |sum,x| sum + (x-mu)**2 } / size)
+    (size < 2) ? 0.0 : Math.sqrt(inject(0.0){ |sum, x| sum + (x-mu)**2 } / size)
   end
 
   def rmse

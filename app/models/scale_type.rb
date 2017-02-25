@@ -3,5 +3,5 @@ class ScaleType < ActiveRecord::Base
   has_many :logs
   belongs_to :region
 
-  default_scope { where(active:true) }
+  default_scope { where(active: true) }
 end

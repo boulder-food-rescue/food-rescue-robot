@@ -1,6 +1,6 @@
 class VolunteersController < ApplicationController
   before_filter :authenticate_volunteer!
-  before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user,:stats]
+  before_filter :admin_only, :only => [:knight, :unassigned, :shiftless, :shiftless_old, :admin, :switch_user, :stats]
 
   def unassigned
     unassigned = Volunteer.where(assigned: false)
@@ -23,7 +23,7 @@ class VolunteersController < ApplicationController
     else
       Assignment.add_volunteer_to_region v, r
       unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
-        m = Notifier.region_welcome_email(r,v)
+        m = Notifier.region_welcome_email(r, v)
         m.deliver unless m.nil?
       end
       v.save
@@ -205,10 +205,10 @@ class VolunteersController < ApplicationController
   def stats
     @regions = current_volunteer.admin_regions(true)
     @regions = Region.all if current_volunteer.admin? and @regions.empty?
-    @per_volunteer = Log.joins(:log_parts,:volunteers).select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?",Date.today-12.months).group('volunteers.id, volunteers.name').order('sum DESC')
-    @per_volunteer2 = Log.joins(:log_parts,:volunteers).select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?",Date.today-1.month).group('volunteers.id, volunteers.name').order('sum DESC')
+    @per_volunteer = Log.joins(:log_parts, :volunteers).select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?", Date.today-12.months).group('volunteers.id, volunteers.name').order('sum DESC')
+    @per_volunteer2 = Log.joins(:log_parts, :volunteers).select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?", Date.today-1.month).group('volunteers.id, volunteers.name').order('sum DESC')
     @lazy_volunteers = Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
-            joins(:logs,:log_volunteers).where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(',')})").
+            joins(:logs, :log_volunteers).where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(',')})").
             group('volunteers.id, name, email')
 
     @region_locations = Location.where(:region_id=>current_volunteer.admin_region_ids)
@@ -258,8 +258,8 @@ class VolunteersController < ApplicationController
 
     #Upcoming pickup list
     @upcoming_pickups = Shift.build_shifts(Log.upcoming_for(current_volunteer.id))
-    @sncs_pickups = Shift.build_shifts(Log.needing_coverage(current_volunteer.region_ids,7,10))
-    @sncs_count = Log.needing_coverage(current_volunteer.region_ids,7).length
+    @sncs_pickups = Shift.build_shifts(Log.needing_coverage(current_volunteer.region_ids, 7, 10))
+    @sncs_count = Log.needing_coverage(current_volunteer.region_ids, 7).length
 
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id, false)

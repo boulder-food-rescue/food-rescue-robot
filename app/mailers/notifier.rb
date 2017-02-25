@@ -5,10 +5,10 @@ class Notifier < ActionMailer::Base
   ForceTo = nil
 
   def admin_emails_for_region(region)
-    Assignment.where('region_id = ? AND admin = ?',region.id,true).collect{ |a| a.volunteer.nil? ? nil : a.volunteer.email }.compact
+    Assignment.where('region_id = ? AND admin = ?', region.id, true).collect{ |a| a.volunteer.nil? ? nil : a.volunteer.email }.compact
   end
 
-  def schedule_collision_warning(schedule,shifts)
+  def schedule_collision_warning(schedule, shifts)
     @schedule = schedule
     @shifts = shifts
     to = admin_emails_for_region(@schedule.region)
@@ -56,14 +56,14 @@ class Notifier < ActionMailer::Base
     mail(to: to, subject: '[FoodRobot]'){ |format| format.text }
   end
 
-  def admin_reminder_summary(region,logs)
+  def admin_reminder_summary(region, logs)
     @logs = logs
     to = admin_emails_for_region(region)
     to = ForceTo.nil? ? to : ForceTo
     mail(to: to, subject: "[FoodRobot] #{region.name} Data Entry Reminder Summary"){ |format| format.html }
   end
 
-  def admin_short_term_cover_summary(region,logs)
+  def admin_short_term_cover_summary(region, logs)
     @logs = logs
     to = admin_emails_for_region(region) + Volunteer.where('get_sncs_email').collect{ |v|
       (v.region_ids.include?(region.id)) ? v.email : nil
@@ -72,7 +72,7 @@ class Notifier < ActionMailer::Base
     mail(to: to, subject: "[FoodRobot] #{region.name} Shifts Needing Coverage Soon (SNCS!)"){ |format| format.html }
   end
 
-  def admin_weekly_summary(region,lbs,flagged_logs,biggest,num_logs,num_entered,zero_logs)
+  def admin_weekly_summary(region, lbs, flagged_logs, biggest, num_logs, num_entered, zero_logs)
     @region = region
     @lbs = lbs
     @flagged_logs = flagged_logs

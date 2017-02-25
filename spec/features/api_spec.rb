@@ -4,7 +4,7 @@ require 'pp'
 xdescribe 'api' do
 
   def get_auth_params(u)
-    data = {email: u.email,password: u.password}
+    data = {email: u.email, password: u.password}
     post '/volunteers/sign_in.json', data
     expect(last_response.status).to eq(201)
     json = JSON.parse(last_response.body)
@@ -46,7 +46,7 @@ xdescribe 'api' do
   it 'can look up a log' do
     v = create(:volunteer_with_assignment)
     r = v.assignments.first.region
-    l = create(:log,region:r)
+    l = create(:log, region: r)
     auth_params = get_auth_params(v)
     get "/logs/#{l.id}.json", auth_params
     expect(last_response.status).to eq(200)
@@ -59,7 +59,7 @@ xdescribe 'api' do
   it 'can cover a shift' do
     v = create(:volunteer_with_assignment)
     r = v.assignments.first.region
-    l = create(:log,region:r)
+    l = create(:log, region: r)
     auth_params = get_auth_params(v)
     get "/logs/#{l.id}/take.json", auth_params
     expect(last_response.status).to eq(200)
@@ -71,7 +71,7 @@ xdescribe 'api' do
   it 'can take a open shift' do
     v = create(:volunteer_with_assignment)
     r = v.assignments.first.region
-    s = create(:schedule_chain,region:r)
+    s = create(:schedule_chain, region: r)
     auth_params = get_auth_params(v)
     get "/schedule_chains/#{s.id}/take.json", auth_params
     expect(last_response.status).to eq(200)
@@ -83,7 +83,7 @@ xdescribe 'api' do
   it 'can update a log' do
     v = create(:volunteer_with_assignment)
     r = v.assignments.first.region
-    l = create(:log,region:r)
+    l = create(:log, region: r)
     l.volunteers << v
     l.save
 
@@ -92,7 +92,7 @@ xdescribe 'api' do
     expect(last_response.status).to eq(200)
     json = JSON.parse(last_response.body)
     pp json
-    json['log_parts'].each{ |i,lp|
+    json['log_parts'].each{ |i, lp|
       json['log_parts'][i][:weight] = 42.0
       json['log_parts'][i][:count] = 5
     }
@@ -109,7 +109,7 @@ xdescribe 'api' do
   it 'can look up a donor or recipient' do
     v = create(:volunteer_with_assignment)
     r = v.assignments.first.region
-    d = create(:donor,region:r)
+    d = create(:donor, region: r)
     auth_params = get_auth_params(v)
     get "/locations/#{d.id}.json", auth_params
     puts last_response.body

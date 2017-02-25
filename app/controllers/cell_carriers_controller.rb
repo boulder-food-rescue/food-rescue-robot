@@ -2,7 +2,7 @@ class CellCarriersController < ApplicationController
   before_filter :authenticate_volunteer!
 
   active_scaffold :cell_carrier do |conf|
-    conf.columns = [:name,:format]
+    conf.columns = [:name, :format]
   end
   def create_authorized?
     current_volunteer.super_admin?

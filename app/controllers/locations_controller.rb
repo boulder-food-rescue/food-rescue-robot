@@ -19,24 +19,24 @@ class LocationsController < ApplicationController
   end
 
   def hubs
-    index(Location::LOCATION_TYPES.invert['Hub'],'Hubs')
+    index(Location::LOCATION_TYPES.invert['Hub'], 'Hubs')
   end
 
   def buyers
-    index(Location::LOCATION_TYPES.invert['Buyer'],'Buyers')
+    index(Location::LOCATION_TYPES.invert['Buyer'], 'Buyers')
   end
 
   def sellers
-    index(Location::LOCATION_TYPES.invert['Seller'],'Sellers')
+    index(Location::LOCATION_TYPES.invert['Seller'], 'Sellers')
   end
 
   def recipients
-    index(Location::LOCATION_TYPES.invert['Recipient'],'Recipients')
+    index(Location::LOCATION_TYPES.invert['Recipient'], 'Recipients')
   end
 
-  def index(location_type=nil,header='Locations')
+  def index(location_type=nil, header='Locations')
     @locations = unless location_type.nil?
-                   Location.regional(current_volunteer.region_ids).where('location_type = ?',location_type)
+                   Location.regional(current_volunteer.region_ids).where('location_type = ?', location_type)
                  else
                    Location.regional(current_volunteer.region_ids)
                  end

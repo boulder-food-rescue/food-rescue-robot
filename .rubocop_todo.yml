@@ -665,23 +665,6 @@ Style/RegexpLiteral:
     - 'app/controllers/logs_controller.rb'
     - 'app/models/location.rb'
 
-# Offense count: 12
-# Cop supports --auto-correct.
-Style/SpaceAfterColon:
-  Exclude:
-    - 'app/models/absence.rb'
-    - 'app/models/scale_type.rb'
-    - 'app/models/transport_type.rb'
-    - 'db/migrate/20140418163926_create_schedule_chains.rb'
-    - 'spec/factories/logs.rb'
-    - 'spec/factories/volunteers.rb'
-    - 'spec/features/api_spec.rb'
-
-# Offense count: 243
-# Cop supports --auto-correct.
-Style/SpaceAfterComma:
-  Enabled: false
-
 # Offense count: 18
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.

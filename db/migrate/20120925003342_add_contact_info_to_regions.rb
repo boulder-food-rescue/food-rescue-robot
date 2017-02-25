@@ -4,7 +4,7 @@ class AddContactInfoToRegions < ActiveRecord::Migration
       t.string :phone
       t.string :tax_id
     end
-    change_table :locations do |t| 
+    change_table :locations do |t|
       t.string :receipt_key
     end
   end

@@ -7,4 +7,4 @@ class TransportTypesController < ApplicationController
     end
   end
 
-end 
+end

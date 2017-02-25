@@ -5,7 +5,7 @@ class AddUnitsToFoodTypes < ActiveRecord::Migration
     add_column :log_parts, :description, :text
     Log.all.each{ |l|
       next if l.description.nil?
-      l.log_parts.each{ |lp| 
+      l.log_parts.each{ |lp|
         lp.description = l.description
         lp.save
         break

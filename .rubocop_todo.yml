@@ -769,17 +769,6 @@ Style/SpaceInsidePercentLiteralDelimiters:
 Style/StringLiterals:
   Enabled: false
 
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiteralsInInterpolation:
-  Exclude:
-    - 'app/controllers/absences_controller.rb'
-    - 'app/controllers/logs_controller.rb'
-    - 'app/controllers/volunteers_controller.rb'
-    - 'app/models/location.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/SymbolLiteral:

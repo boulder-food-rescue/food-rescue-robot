@@ -107,7 +107,7 @@ class Location < ActiveRecord::Base
   def website_url
     return nil if self.website.blank?
     uri = Addressable::URI.parse(self.website)
-    uri = Addressable::URI.parse("http://#{self.website.gsub(/^\/*/,"")}") if uri.scheme.nil?
+    uri = Addressable::URI.parse("http://#{self.website.gsub(/^\/*/,'')}") if uri.scheme.nil?
     return nil if uri.scheme.nil? or uri.host.nil?
     uri.normalize.to_s
   end

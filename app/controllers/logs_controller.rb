@@ -393,38 +393,38 @@ class LogsController < ApplicationController
 
   private
 
-    def parse_and_create_log_parts(params, log)
-      ret = []
-      params['log_parts'].each{ |dc, lpdata|
-        lpdata['weight'] = nil if lpdata['weight'].strip == ''
-        lpdata['count'] = nil if lpdata['count'].strip == ''
-        next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?
-        lp = lpdata['id'].nil? ? LogPart.new : LogPart.find(lpdata['id'].to_i)
-        lp.count = lpdata['count']
-        lp.description = lpdata['description']
-        lp.food_type_id = lpdata['food_type_id'].to_i
-        lp.log_id = log.id
-        lp.weight = lpdata['weight'].to_f
-        ret.push lp
-        lp.save
-      } unless params['log_parts'].nil?
-      ret
-    end
+  def parse_and_create_log_parts(params, log)
+    ret = []
+    params['log_parts'].each{ |dc, lpdata|
+      lpdata['weight'] = nil if lpdata['weight'].strip == ''
+      lpdata['count'] = nil if lpdata['count'].strip == ''
+      next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?
+      lp = lpdata['id'].nil? ? LogPart.new : LogPart.find(lpdata['id'].to_i)
+      lp.count = lpdata['count']
+      lp.description = lpdata['description']
+      lp.food_type_id = lpdata['food_type_id'].to_i
+      lp.log_id = log.id
+      lp.weight = lpdata['weight'].to_f
+      ret.push lp
+      lp.save
+    } unless params['log_parts'].nil?
+    ret
+  end
 
-    def finalize_log(log)
-      # mark as complete if deserving
-      filled_count = 0
-      required_unfilled = 0
+  def finalize_log(log)
+    # mark as complete if deserving
+    filled_count = 0
+    required_unfilled = 0
 
-      log.log_parts.each{ |lp|
-        required_unfilled += 1 if lp.required && lp.weight.nil? && lp.count.nil?
-        filled_count += 1 unless lp.weight.nil? && lp.count.nil?
-      }
-      log.complete = filled_count > 0 && required_unfilled == 0
-    end
+    log.log_parts.each{ |lp|
+      required_unfilled += 1 if lp.required && lp.weight.nil? && lp.count.nil?
+      filled_count += 1 unless lp.weight.nil? && lp.count.nil?
+    }
+    log.complete = filled_count > 0 && required_unfilled == 0
+  end
 
-    def admin_only
-      redirect_to(root_path) unless current_volunteer.any_admin?
-    end
+  def admin_only
+    redirect_to(root_path) unless current_volunteer.any_admin?
+  end
 
 end

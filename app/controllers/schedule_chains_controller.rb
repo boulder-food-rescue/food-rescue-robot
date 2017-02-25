@@ -243,7 +243,7 @@ class ScheduleChainsController < ApplicationController
           end
           flash[:notice] = notice
        else
-          flash[:error] = "Hrmph. That didn't work..."
+         flash[:error] = "Hrmph. That didn't work..."
         end
       end
     else

@@ -1,6 +1,6 @@
 class PopulateScheduleRegionAssignments < ActiveRecord::Migration
   def up
-    br = Region.where("name = ?","Boulder").shift
+    br = Region.where('name = ?','Boulder').shift
     Schedule.all.each{ |s|
       s.region = br
       s.save

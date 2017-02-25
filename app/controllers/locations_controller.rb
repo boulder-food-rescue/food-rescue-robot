@@ -19,24 +19,24 @@ class LocationsController < ApplicationController
   end
 
   def hubs
-    index(Location::LOCATION_TYPES.invert["Hub"],"Hubs")
+    index(Location::LOCATION_TYPES.invert['Hub'],'Hubs')
   end
 
   def buyers
-    index(Location::LOCATION_TYPES.invert["Buyer"],"Buyers")
+    index(Location::LOCATION_TYPES.invert['Buyer'],'Buyers')
   end
 
   def sellers
-    index(Location::LOCATION_TYPES.invert["Seller"],"Sellers")
+    index(Location::LOCATION_TYPES.invert['Seller'],'Sellers')
   end
 
   def recipients
-    index(Location::LOCATION_TYPES.invert["Recipient"],"Recipients")
+    index(Location::LOCATION_TYPES.invert['Recipient'],'Recipients')
   end
 
-  def index(location_type=nil,header="Locations")
+  def index(location_type=nil,header='Locations')
     @locations = unless location_type.nil?
-                   Location.regional(current_volunteer.region_ids).where("location_type = ?",location_type)
+                   Location.regional(current_volunteer.region_ids).where('location_type = ?',location_type)
                  else
                    Location.regional(current_volunteer.region_ids)
                  end
@@ -78,7 +78,7 @@ class LocationsController < ApplicationController
     @location = Location.new
     @location.region_id = params[:region_id]
     authorize! :create, @location
-    @action = "create"
+    @action = 'create'
     session[:my_return_to] = request.referer
     render :new
   end
@@ -89,7 +89,7 @@ class LocationsController < ApplicationController
     authorize! :create, @location
     # can't set admin bits from CRUD controls
     if @location.save
-      flash[:notice] = "Created successfully."
+      flash[:notice] = 'Created successfully.'
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else
@@ -104,7 +104,7 @@ class LocationsController < ApplicationController
   def edit
     @location = Location.find(params[:id])
     authorize! :update, @location
-    @action = "update"
+    @action = 'update'
     session[:my_return_to] = request.referer
     render :edit
   end
@@ -115,14 +115,14 @@ class LocationsController < ApplicationController
     authorize! :update, @location
     # can't set admin bits from CRUD controls
     if @location.update_attributes(params[:location])
-      flash[:notice] = "Updated Successfully."
+      flash[:notice] = 'Updated Successfully.'
       unless session[:my_return_to].nil?
         redirect_to session[:my_return_to]
       else
         index
       end
     else
-      flash[:error] = "Update failed :("
+      flash[:error] = 'Update failed :('
       render :edit
     end
   end

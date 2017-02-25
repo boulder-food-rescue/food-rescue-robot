@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.json { head :forbidden }
       format.html do
-        flash[:error] = "You are not authorized to do that"
+        flash[:error] = 'You are not authorized to do that'
 
         begin
           redirect_to :back
@@ -42,9 +42,9 @@ class ApplicationController < ActionController::Base
 
     def layout_by_resource
       if devise_controller?
-        "custom_devise"
+        'custom_devise'
       else
-        "application"
+        'application'
       end
     end
 
@@ -66,11 +66,11 @@ class ApplicationController < ActionController::Base
   # Token Authentication:
   # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
   def authenticate_user_from_token!
-    user_email = params["volunteer_email"]
+    user_email = params['volunteer_email']
     return if user_email.nil?
 
     user = Volunteer.find_by_email(user_email)
-    token = params["volunteer_token"]
+    token = params['volunteer_token']
     return if token.nil?
     if user and Devise.secure_compare(user.authentication_token,token)
       sign_in user, store: false

@@ -2,8 +2,8 @@ FactoryGirl.define do
   factory :volunteer do
     sequence(:name) { |n| "John Doe the #{n.ordinalize}" }
     sequence(:email) { |n| "user#{n}@boulderfoodrescue.org" }
-    phone "555-555-5555"
-    password "SomePassword"
+    phone '555-555-5555'
+    password 'SomePassword'
     waiver_signed true
     waiver_signed_at Time.zone.now
 

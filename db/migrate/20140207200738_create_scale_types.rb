@@ -13,23 +13,23 @@ class CreateScaleTypes < ActiveRecord::Migration
 
     execute "UPDATE logs SET weight_unit='lb'"
     Region.all.each{ |r|
-      Log.select("weighed_by").where("region_id = ?",r).collect{ |l| l.weighed_by }.uniq.each{ |s|
+      Log.select('weighed_by').where('region_id = ?',r).collect{ |l| l.weighed_by }.uniq.each{ |s|
         next if s.nil? or s.squish.blank?
         sn = ScaleType.new
         sn.region_id = r.id
         sn.name = s
-        sn.weight_unit = "lb"
+        sn.weight_unit = 'lb'
         sn.save
       }
       unless ScaleType.where('region_id = ?',r.id).length >= 1
         t = ScaleType.new
-        t.name = "Bathroom Scale"
-        t.weight_unit = "lb"
+        t.name = 'Bathroom Scale'
+        t.weight_unit = 'lb'
         t.region_id=r.id
         t.save
         t = ScaleType.new
-        t.name = "Guesstimate"
-        t.weight_unit = "lb"
+        t.name = 'Guesstimate'
+        t.weight_unit = 'lb'
         t.region_id=r.id
         t.save
       end

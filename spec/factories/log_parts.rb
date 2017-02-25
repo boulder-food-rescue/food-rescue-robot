@@ -5,7 +5,7 @@ FactoryGirl.define do
 
     factory :complete_log_part do
       weight 42.0
-      description "Or something"
+      description 'Or something'
       self.count 5
     end
 

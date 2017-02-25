@@ -40,13 +40,13 @@ class ApplicationController < ActionController::Base
 
   protected
 
-    def layout_by_resource
-      if devise_controller?
-        'custom_devise'
-      else
-        'application'
-      end
+  def layout_by_resource
+    if devise_controller?
+      'custom_devise'
+    else
+      'application'
     end
+  end
 
   private
 

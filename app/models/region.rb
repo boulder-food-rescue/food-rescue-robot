@@ -28,7 +28,7 @@ class Region < ActiveRecord::Base
   end
 
   def active_volunteer_count
-   schedule_chains.flat_map(&:volunteers).uniq.count
+    schedule_chains.flat_map(&:volunteers).uniq.count
   end
 
   def has_sellers?

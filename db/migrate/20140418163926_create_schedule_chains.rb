@@ -58,7 +58,7 @@ class CreateScheduleChains < ActiveRecord::Migration
         l.save
       }
       original.delete
-        n += 1
+      n += 1
     }
     change_table :schedules do |s|
       s.remove :detailed_start_time

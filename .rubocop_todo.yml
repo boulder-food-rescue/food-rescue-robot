@@ -417,33 +417,6 @@ Style/IfUnlessModifier:
 Style/IndentHash:
   EnforcedStyle: consistent
 
-# Offense count: 38
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: normal, rails
-Style/IndentationConsistency:
-  Exclude:
-    - 'app/controllers/application_controller.rb'
-    - 'app/controllers/logs_controller.rb'
-    - 'app/helpers/locations_helper.rb'
-    - 'app/models/location.rb'
-    - 'app/models/schedule_volunteer.rb'
-    - 'config/initializers/devise.rb'
-    - 'db/migrate/20140418163926_create_schedule_chains.rb'
-
-# Offense count: 13
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Exclude:
-    - 'app/controllers/schedule_chains_controller.rb'
-    - 'app/models/location.rb'
-    - 'app/models/region.rb'
-    - 'app/models/schedule_volunteer.rb'
-    - 'config/initializers/devise.rb'
-    - 'config/initializers/food_rescue_robot.rb'
-    - 'db/migrate/20140418163926_create_schedule_chains.rb'
-
 # Offense count: 18
 # Cop supports --auto-correct.
 Style/LeadingCommentSpace:

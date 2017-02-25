@@ -50,7 +50,7 @@ RSpec.describe Region do
           volunteers: [volunteer_1]
         )
       end
-      
+
       let!(:schedule_chain_2) do
         create(
           :schedule_chain,
@@ -115,7 +115,7 @@ RSpec.describe Region do
         location_type: 2
       )
     end
-    
+
     let!(:seller) do
       create(
         :location,
@@ -147,7 +147,7 @@ RSpec.describe Region do
 
   describe "#has_hubs?" do
     subject { create(:region) }
-    
+
     let!(:seller) do
       create(
         :location,
@@ -155,7 +155,7 @@ RSpec.describe Region do
         location_type: 3
       )
     end
-    
+
     let!(:buyer) do
       create(
         :location,

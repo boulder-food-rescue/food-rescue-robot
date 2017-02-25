@@ -17,6 +17,5 @@ class MakeFoodTypesRegional < ActiveRecord::Migration
   def down
     execute "DELETE FROM food_types WHERE region_id IS NOT NULL"
     remove_column :food_types, :region_id
-    
   end
 end

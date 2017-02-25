@@ -846,26 +846,6 @@ Style/TrailingUnderscoreVariable:
   Exclude:
     - 'spec/lib/food_robot_spec.rb'
 
-# Offense count: 23
-# Cop supports --auto-correct.
-Style/TrailingWhitespace:
-  Exclude:
-    - 'app/controllers/cell_carriers_controller.rb'
-    - 'app/controllers/transport_types_controller.rb'
-    - 'app/helpers/locations_helper.rb'
-    - 'app/helpers/regions_helper.rb'
-    - 'app/models/schedule_volunteer.rb'
-    - 'config/initializers/devise.rb'
-    - 'db/migrate/20120924192716_new_fields_for_region.rb'
-    - 'db/migrate/20120925003342_add_contact_info_to_regions.rb'
-    - 'db/migrate/20130511201748_create_log_parts.rb'
-    - 'db/migrate/20130511202327_create_schedule_parts.rb'
-    - 'db/migrate/20130511204756_make_food_types_regional.rb'
-    - 'db/migrate/20130512224042_add_units_to_food_types.rb'
-    - 'spec/factories/assignments.rb'
-    - 'spec/features/volunteer_waiver_spec.rb'
-    - 'spec/models/region_spec.rb'
-
 # Offense count: 17
 # Cop supports --auto-correct.
 Style/UnlessElse:

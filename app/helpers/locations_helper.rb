@@ -4,17 +4,17 @@ module LocationsHelper
     readable_detailed_hours location
   end
 
-  private 
+  private
 
     def readable_simple_hours loc
-      loc.hours.gsub("\n","<br>").html_safe unless loc.hours.nil? 
+      loc.hours.gsub("\n","<br>").html_safe unless loc.hours.nil?
     end
 
     def readable_detailed_hours location
       str = ''
       (0..6).each do |index|
         if location.open_on_day? index
-          str += Date::ABBR_DAYNAMES[index] + ': ' + format_time(location.read_day_info('day'+index.to_s+'_start')) + 
+          str += Date::ABBR_DAYNAMES[index] + ': ' + format_time(location.read_day_info('day'+index.to_s+'_start')) +
             ' - ' + format_time(location.read_day_info('day'+index.to_s+'_end')) + '<br />'
         end
       end

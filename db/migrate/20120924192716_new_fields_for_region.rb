@@ -3,7 +3,7 @@ class NewFieldsForRegion < ActiveRecord::Migration
     change_table :regions do |t|
       t.string :title
       t.string :tagline
-    end 
+    end
     add_attachment :regions, :logo
   end
   def down

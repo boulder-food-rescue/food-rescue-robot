@@ -13,4 +13,4 @@ class CellCarriersController < ApplicationController
   def delete_authorized?(record=nil)
     current_volunteer.super_admin?
   end
-end 
+end

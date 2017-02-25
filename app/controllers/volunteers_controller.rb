@@ -97,11 +97,11 @@ class VolunteersController < ApplicationController
     @volunteer = Volunteer.new
     @action = "create"
     @regions = Region.all
-    if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-    else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end
+    @my_admin_regions = if current_volunteer.super_admin?
+                          @regions
+                        else
+                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+                        end
     session[:my_return_to] = request.referer
     flash[:notice] = "Thanks for signing up! You will recieve an email shortly when a regional admin approves your registration."
     render :new
@@ -140,11 +140,11 @@ class VolunteersController < ApplicationController
     @volunteer = Volunteer.find(params[:id])
     return unless check_permissions(@volunteer)
     @regions = Region.all
-    if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-    else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end
+    @my_admin_regions = if current_volunteer.super_admin?
+                          @regions
+                        else
+                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+                        end
     @action = "update"
     session[:my_return_to] = request.referer
     render :edit

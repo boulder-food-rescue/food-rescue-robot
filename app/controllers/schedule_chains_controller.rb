@@ -17,11 +17,11 @@ class ScheduleChainsController < ApplicationController
   end
 
   def index(title = 'Full Schedule', day_of_week = nil)
-    if day_of_week.nil?
-      dowq = ' '
-    else
-      dowq = "day_of_week = #{day_of_week.to_i}"
-    end
+    dowq = if day_of_week.nil?
+             ' '
+           else
+             "day_of_week = #{day_of_week.to_i}"
+           end
     @schedules = ScheduleChain.where(region_id: current_volunteer.region_ids).where(dowq)
     @my_admin_regions = current_volunteer.admin_regions
     @page_title = title
@@ -224,21 +224,21 @@ class ScheduleChainsController < ApplicationController
             m.deliver
           end
           notice = "You have "
-          if schedule.volunteers.length == 0
-            notice += "taken"
-          else
-            notice += "joined"
-          end
+          notice += if schedule.volunteers.length == 0
+                      "taken"
+                    else
+                      "joined"
+                    end
           notice += " the route to "
           if schedule.recipient_stops.length == 1
             notice += (schedule.recipient_stops.first.location.name + ".")
           else
             schedule.recipient_stops.each_with_index do |stop, index|
-              if index == (schedule.recipient_stops.length-1)
-                notice += ("and " + stop.location.name + ".")
-              else
-                notice += (stop.location.name + ", ") #oxford comma
-              end
+              notice += if index == (schedule.recipient_stops.length-1)
+                          ("and " + stop.location.name + ".")
+                        else
+                          (stop.location.name + ", ") #oxford comma
+                        end
             end
           end
           flash[:notice] = notice

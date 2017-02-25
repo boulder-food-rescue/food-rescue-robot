@@ -5,11 +5,11 @@ class LocationsController < ApplicationController
     @loc = Location.find(params[:id])
     if (params[:key] == @loc.receipt_key) or (!current_volunteer.nil? and (current_volunteer.region_admin?(@loc.region) or current_volunteer.super_admin?))
       @schedules = ScheduleChain.for_location(@loc)
-      if @loc.is_donor
-        @logs = Log.at(@loc)
-      else
-        @logs = Log.at(@loc).keep_if{ |x| x.weight_sum.to_f > 0 }
-      end
+      @logs = if @loc.is_donor
+                Log.at(@loc)
+              else
+                Log.at(@loc).keep_if{ |x| x.weight_sum.to_f > 0 }
+              end
       render :hud
     else
       flash[:notice] = "Sorry, the key you're using is expired or you're not authorized to do that"
@@ -35,18 +35,18 @@ class LocationsController < ApplicationController
   end
 
   def index(location_type=nil,header="Locations")
-    unless location_type.nil?
-      @locations = Location.regional(current_volunteer.region_ids).where("location_type = ?",location_type)
-    else
-      @locations = Location.regional(current_volunteer.region_ids)
-    end
+    @locations = unless location_type.nil?
+                   Location.regional(current_volunteer.region_ids).where("location_type = ?",location_type)
+                 else
+                   Location.regional(current_volunteer.region_ids)
+                 end
     @header = header
     @regions = Region.all
-    if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-    else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end
+    @my_admin_regions = if current_volunteer.super_admin?
+                          @regions
+                        else
+                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+                        end
     render :index
   end
 

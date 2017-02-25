@@ -51,11 +51,11 @@ class LogsController < ApplicationController
     end
     @header = header
     @regions = Region.all
-    if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-    else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end
+    @my_admin_regions = if current_volunteer.super_admin?
+                          @regions
+                        else
+                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+                        end
     respond_to do |format|
       format.json { render json: @shifts }
       format.html { render :index }
@@ -255,11 +255,11 @@ class LogsController < ApplicationController
 
   # can be given a single id or a list of ids
   def take
-    unless params[:ids].present?
-      logs = [Log.find(params[:id])]
-    else
-      logs = Log.find(params[:ids])
-    end
+    logs = unless params[:ids].present?
+             [Log.find(params[:id])]
+           else
+             Log.find(params[:ids])
+           end
 
     if logs.all? { |log| can?(:take, log) }
       logs.each do |log|
@@ -283,11 +283,11 @@ class LogsController < ApplicationController
 
   # can be given a single id or a list of ids
   def leave
-    unless params[:ids].present?
-      l = [Log.find(params[:id])]
-    else
-      l = params[:ids].collect{ |i| Log.find(i) }
-    end
+    l = unless params[:ids].present?
+          [Log.find(params[:id])]
+        else
+          params[:ids].collect{ |i| Log.find(i) }
+        end
 
     l.each { |log| authorize! :leave, log }
 

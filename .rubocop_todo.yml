@@ -234,17 +234,6 @@ Style/ColonMethodCall:
     - 'app/controllers/absences_controller.rb'
     - 'lib/tasks/foodrobot.rake'
 
-# Offense count: 9
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, SingleLineConditionsOnly, IncludeTernaryExpressions.
-# SupportedStyles: assign_to_condition, assign_inside_condition
-Style/ConditionalAssignment:
-  Exclude:
-    - 'app/controllers/locations_controller.rb'
-    - 'app/controllers/logs_controller.rb'
-    - 'app/controllers/schedule_chains_controller.rb'
-    - 'db/migrate/20120709010156_init_food_types_and_transport_types.rb'
-
 # Offense count: 2
 Style/ConstantName:
   Exclude:

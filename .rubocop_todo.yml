@@ -823,22 +823,6 @@ Style/TernaryParentheses:
     - 'config/initializers/constant.rb'
     - 'config/initializers/food_rescue_robot.rb'
 
-# Offense count: 9
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: final_newline, final_blank_line
-Style/TrailingBlankLines:
-  Exclude:
-    - 'app/models/absence.rb'
-    - 'app/models/log_recipient.rb'
-    - 'config/initializers/constant.rb'
-    - 'db/migrate/20140408172606_create_log_volunteers.rb'
-    - 'db/migrate/20140418163926_create_schedule_chains.rb'
-    - 'spec/factories/food_types.rb'
-    - 'spec/factories/regions.rb'
-    - 'spec/factories/scale_types.rb'
-    - 'spec/factories/transport_types.rb'
-
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: AllowNamedUnderscoreVariables.

@@ -6,9 +6,9 @@ class LogPart < ActiveRecord::Base
   # weight in db is always lbs, so convert to what the user expects to see (in the units of the scale)
   def scale_weight
     display_unit = self.log.scale_type.weight_unit
-    if display_unit == "kg"
+    if display_unit == 'kg'
       self.weight*2.2
-    elsif display_unit == "st"
+    elsif display_unit == 'st'
       self.weight*14
     else
       self.weight

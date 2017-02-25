@@ -28,7 +28,7 @@ module RegionAdmin
 
     def authorize_region_admin!
       return if region_admin?
-      redirect_to root_url, alert: "Unauthorized"
+      redirect_to root_url, alert: 'Unauthorized'
     end
 
     def region_admin?

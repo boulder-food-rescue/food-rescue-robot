@@ -33,19 +33,19 @@ class Region < ActiveRecord::Base
 
   def has_sellers?
     locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert["Seller"]
+      location.location_type == Location::LOCATION_TYPES.invert['Seller']
     end
   end
 
   def has_buyers?
     locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert["Buyer"]
+      location.location_type == Location::LOCATION_TYPES.invert['Buyer']
     end
   end
 
   def has_hubs?
     locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert["Hub"]
+      location.location_type == Location::LOCATION_TYPES.invert['Hub']
     end
   end
 

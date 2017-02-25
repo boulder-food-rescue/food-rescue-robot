@@ -19,7 +19,7 @@ class RegionsController < ApplicationController
       flash[:notice] = 'Created successfully'
       redirect_to regions_url
     else
-      flash.now[:error] = "Create failed"
+      flash.now[:error] = 'Create failed'
       render :new
     end
   end

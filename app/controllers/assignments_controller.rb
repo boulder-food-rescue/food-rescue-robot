@@ -6,10 +6,10 @@ class AssignmentsController < ApplicationController
     volunteer = Volunteer.find(params[:volunteer_id])
     region = Region.find(params[:region_id])
     unless current_volunteer.any_admin?(region)
-      flash[:notice] = "Not permitted to do knightings in that region..."
+      flash[:notice] = 'Not permitted to do knightings in that region...'
       return redirect_to(root_path)
     end
-    assignments = Assignment.where("volunteer_id = ? and region_id = ?", volunteer.id, region.id)
+    assignments = Assignment.where('volunteer_id = ? and region_id = ?', volunteer.id, region.id)
     if assignments.length == 0
       new_assignment = Assignment.new
       new_assignment.volunteer = volunteer
@@ -22,7 +22,7 @@ class AssignmentsController < ApplicationController
         assignment.save
       end
     end
-    flash[:notice] = "Assignment succeeded."
+    flash[:notice] = 'Assignment succeeded.'
     redirect_to :back
   end
 

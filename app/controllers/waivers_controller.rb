@@ -11,7 +11,7 @@ class WaiversController < ApplicationController
     elsif SignWaiver.call(volunteer: current_volunteer, signed_at: Time.zone.now).success?
       redirect_to root_url, notice: 'Waiver signed!'
     else
-      redirect_to new_waiver_url, alert: "There was an error signing the waiver"
+      redirect_to new_waiver_url, alert: 'There was an error signing the waiver'
     end
   end
 

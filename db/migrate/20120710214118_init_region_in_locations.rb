@@ -1,6 +1,6 @@
 class InitRegionInLocations < ActiveRecord::Migration
   def up
-    br = Region.where("name = ?","Boulder").shift
+    br = Region.where('name = ?','Boulder').shift
     Location.all.each{ |l|
       l.region = br
       l.save

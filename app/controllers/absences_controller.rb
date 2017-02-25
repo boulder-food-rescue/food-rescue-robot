@@ -3,15 +3,15 @@ class AbsencesController < ApplicationController
   before_filter :admin_only, :only => [:all]
 
   def all
-    absences = Absence.where("stop_date >= ?",Date.today).keep_if{ |a|
+    absences = Absence.where('stop_date >= ?',Date.today).keep_if{ |a|
       (a.volunteer.region_ids & current_volunteer.admin_region_ids).length > 0
     }
-    index(absences,"All Absences")
+    index(absences,'All Absences')
   end
 
-  def index(a=nil,header="Absences")
-    @absences = a.nil? ? Absence.where("stop_date >= ? AND volunteer_id=?",Date.today,current_volunteer.id) : a
-    @header = header.nil? ? "Absences" : header
+  def index(a=nil,header='Absences')
+    @absences = a.nil? ? Absence.where('stop_date >= ? AND volunteer_id=?',Date.today,current_volunteer.id) : a
+    @header = header.nil? ? 'Absences' : header
     respond_to do |format|
       format.html { render :index } # index.html.erb
     end
@@ -67,7 +67,7 @@ class AbsencesController < ApplicationController
     adminrids = current_volunteer.admin_region_ids
 
     unless volunteer.id == current_volunteer.id or current_volunteer.super_admin? or (vrids & adminrids).length > 0
-      flash[:warning] = "Cannot schedule an absence for that person, mmmmk."
+      flash[:warning] = 'Cannot schedule an absence for that person, mmmmk.'
       redirect_to(root_path)
       return
     end

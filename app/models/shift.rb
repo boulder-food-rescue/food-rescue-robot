@@ -14,7 +14,7 @@ class Shift
       if log.schedule_chain.nil?
         shifts << [log]
       else
-        key = [log.when, log.schedule_chain_id].join(":")
+        key = [log.when, log.schedule_chain_id].join(':')
         if group[key].nil?
           group[key] = shifts.length
           shifts << []

@@ -31,7 +31,7 @@ module FoodRobot
     pre_reminder_list = {}
     c = 0
 
-    Log.where("NOT complete").each{ |log|
+    Log.where('NOT complete').each{ |log|
       # FUTURE reminders...
       days_future = (log.when - Time.zone.today).to_i
 
@@ -144,7 +144,7 @@ module FoodRobot
       puts num_logs
       zero_logs = []
 
-      logs = Log.joins(:log_parts).select("sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin").where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Time.zone.today-7,Time.zone.today).group("logs.id, flag_for_admin")
+      logs = Log.joins(:log_parts).select('sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin').where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Time.zone.today-7,Time.zone.today).group('logs.id, flag_for_admin')
 
       logs.each{ |log|
         lbs += log.weight_sum.to_f

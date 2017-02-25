@@ -803,13 +803,6 @@ Style/SymbolProc:
     - 'db/migrate/20140207200738_create_scale_types.rb'
     - 'db/migrate/20140418163926_create_schedule_chains.rb'
 
-# Offense count: 42
-# Cop supports --auto-correct.
-Style/Tab:
-  Exclude:
-    - 'app/models/schedule_volunteer.rb'
-    - 'db/migrate/20140418163926_create_schedule_chains.rb'
-
 # Offense count: 6
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowSafeAssignment.

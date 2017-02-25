@@ -1,34 +1,34 @@
 class CreateScheduleChains < ActiveRecord::Migration
   def change
-		create_table :schedule_chains do |c|
-			c.time :detailed_start_time
-			c.time :detailed_stop_time
-			c.date :detailed_date
-			c.references :transport_type
-			c.boolean :backup
-			c.boolean :temporary
-			c.boolean :irregular
-			c.integer :difficulty_rating
-			c.integer :hilliness
-			c.references :scale_type
-			c.references :region
+    create_table :schedule_chains do |c|
+      c.time :detailed_start_time
+      c.time :detailed_stop_time
+      c.date :detailed_date
+      c.references :transport_type
+      c.boolean :backup
+      c.boolean :temporary
+      c.boolean :irregular
+      c.integer :difficulty_rating
+      c.integer :hilliness
+      c.references :scale_type
+      c.references :region
       c.text :frequency
-			c.integer :day_of_week
-			c.integer :expected_weight
-			c.text :public_notes
-			c.text :admin_notes
+      c.integer :day_of_week
+      c.integer :expected_weight
+      c.text :public_notes
+      c.text :admin_notes
     end
     create_table :log_recipients do |lr|
       lr.belongs_to :log
       lr.belongs_to :recipient
     end
     change_table :schedules do |s|
-			s.references :schedule_chain
-			s.references :location
-			s.integer :position
+      s.references :schedule_chain
+      s.references :location
+      s.integer :position
     end
-		change_table :schedule_volunteers do |sv|
-			sv.references :schedule_chain
+    change_table :schedule_volunteers do |sv|
+      sv.references :schedule_chain
     end
     change_table :logs do |l|
       l.references :schedule_chain
@@ -36,7 +36,7 @@ class CreateScheduleChains < ActiveRecord::Migration
 
     old_schedules = Schedule.all.collect{ |s| s.id }
     n = 0
-		old_schedules.each{ |sid|
+    old_schedules.each{ |sid|
       original = Schedule.find(sid)
       puts "Converting #{sid}: #{n}/#{old_schedules.length}"
       sc = ScheduleChain.create(irregular: original.irregular, backup: original.backup,	frequency: original.frequency,
@@ -59,28 +59,28 @@ class CreateScheduleChains < ActiveRecord::Migration
       }
       original.delete
         n += 1
-		}
-		change_table :schedules do |s|
-			s.remove :detailed_start_time
-			s.remove :detailed_stop_time
-			s.remove :detailed_date
-			s.remove :backup
-			s.remove :temporary
+    }
+    change_table :schedules do |s|
+      s.remove :detailed_start_time
+      s.remove :detailed_stop_time
+      s.remove :detailed_date
+      s.remove :backup
+      s.remove :temporary
       s.remove :irregular
-			s.remove :difficulty_rating
-			s.remove :hilliness
-			s.remove :day_of_week
-			s.remove :frequency
-			s.remove :expected_weight
-			s.remove :public_notes
-			s.remove :admin_notes
-			s.remove :transport_type_id
+      s.remove :difficulty_rating
+      s.remove :hilliness
+      s.remove :day_of_week
+      s.remove :frequency
+      s.remove :expected_weight
+      s.remove :public_notes
+      s.remove :admin_notes
+      s.remove :transport_type_id
       s.remove :region_id
       s.remove :donor_id
       s.remove :recipient_id
     end
-		change_table :schedule_volunteers do |sv|
-			sv.remove :schedule_id
+    change_table :schedule_volunteers do |sv|
+      sv.remove :schedule_id
     end
     # this is slow so do this last
     n = 0

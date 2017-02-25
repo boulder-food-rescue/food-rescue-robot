@@ -61,7 +61,7 @@ class ScheduleChainsController < ApplicationController
     @embed_request_url = ('https://www.google.com/maps/embed/v1/directions' + '?key=' + api_key + embed_parameters)
 
     #This can apparently be nil, so have to do a funky sort fix
-    @sorted_related_shifts = @schedule.related_shifts.sort{ |x,y|
+    @sorted_related_shifts = @schedule.related_shifts.sort{ |x, y|
       x.schedule_chain.day_of_week && y.schedule_chain.day_of_week ?
         x.schedule_chain.day_of_week <=> y.schedule_chain.day_of_week : x.schedule_chain.day_of_week ? -1 : 1
     }
@@ -156,14 +156,14 @@ class ScheduleChainsController < ApplicationController
 
     delete_schedules = []
     unless params[:schedule_chain]['schedules_attributes'].nil?
-      params[:schedule_chain]['schedules_attributes'].collect{ |k,v|
+      params[:schedule_chain]['schedules_attributes'].collect{ |k, v|
         delete_schedules << v['id'].to_i if v['food_type_ids'].nil?
       }
     end
 
     delete_volunteers = []
     unless params[:schedule_chain]['schedule_volunteers_attributes'].nil?
-      params[:schedule_chain]['schedule_volunteers_attributes'].collect{ |k,v|
+      params[:schedule_chain]['schedule_volunteers_attributes'].collect{ |k, v|
         delete_volunteers << v['id'].to_i if v['volunteer_id'].nil?
       }
     end
@@ -211,7 +211,7 @@ class ScheduleChainsController < ApplicationController
         schedule_volunteer = ScheduleVolunteer.new(:volunteer_id=>current_volunteer.id, :schedule_chain_id=>schedule.id)
         if schedule_volunteer.save
           collided_shifts = []
-          Log.where('schedule_chain_id = ? AND "when" >= current_date AND NOT complete',schedule.id).each{ |l|
+          Log.where('schedule_chain_id = ? AND "when" >= current_date AND NOT complete', schedule.id).each{ |l|
             if l.volunteers.empty?
               l.volunteers << current_volunteer
               l.save
@@ -220,7 +220,7 @@ class ScheduleChainsController < ApplicationController
             end
           }
           if collided_shifts.length > 0
-            m = Notifier.schedule_collision_warning(schedule,collided_shifts)
+            m = Notifier.schedule_collision_warning(schedule, collided_shifts)
             m.deliver
           end
           notice = 'You have '

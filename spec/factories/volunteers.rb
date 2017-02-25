@@ -9,7 +9,7 @@ FactoryGirl.define do
 
     factory :volunteer_with_assignment do
       after(:create) do |v|
-        a = create(:assignment,volunteer:v)
+        a = create(:assignment, volunteer: v)
         v.assignments << a
         v.assigned = true
         v.save

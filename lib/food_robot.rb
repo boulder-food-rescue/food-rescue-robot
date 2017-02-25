@@ -77,7 +77,7 @@ module FoodRobot
       c += 1
 
       if v.sms_too and !v.sms_email.nil?
-        m = Notifier.volunteer_log_sms_reminder(v,logs)
+        m = Notifier.volunteer_log_sms_reminder(v, logs)
         if @@DontDeliverEmails
           puts m
         else
@@ -87,8 +87,8 @@ module FoodRobot
     }
 
     # Send reminders to do FUTURE pickups
-    pre_reminder_list.each{ |v,logs|
-      m = Notifier.volunteer_log_pre_reminder(v,logs)
+    pre_reminder_list.each{ |v, logs|
+      m = Notifier.volunteer_log_pre_reminder(v, logs)
       if @@DontDeliverEmails
         puts m
       else
@@ -97,7 +97,7 @@ module FoodRobot
       c += 1
 
       if v.sms_too and !v.sms_email.nil?
-        m = Notifier.volunteer_log_sms_pre_reminder(v,logs)
+        m = Notifier.volunteer_log_sms_pre_reminder(v, logs)
         if @@DontDeliverEmails
           puts m
         else
@@ -138,13 +138,13 @@ module FoodRobot
       lbs = 0.0
       flagged_logs = []
       biggest = nil
-      num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?',r.id,Time.zone.today-7,Time.zone.today).count
+      num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?', r.id, Time.zone.today-7, Time.zone.today).count
       num_entered = 0
       next unless num_logs > 0
       puts num_logs
       zero_logs = []
 
-      logs = Log.joins(:log_parts).select('sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin').where('region_id = ? AND "when" > ? AND "when" < ? AND complete',r.id,Time.zone.today-7,Time.zone.today).group('logs.id, flag_for_admin')
+      logs = Log.joins(:log_parts).select('sum(weight) as weight_sum, sum(count) as count_sum, logs.id, flag_for_admin').where('region_id = ? AND "when" > ? AND "when" < ? AND complete', r.id, Time.zone.today-7, Time.zone.today).group('logs.id, flag_for_admin')
 
       logs.each{ |log|
         lbs += log.weight_sum.to_f
@@ -155,7 +155,7 @@ module FoodRobot
       }
       next if biggest.nil?
       biggest = Log.find(biggest.id)
-      m = Notifier.admin_weekly_summary(r,lbs,flagged_logs,biggest,num_logs,num_entered,zero_logs)
+      m = Notifier.admin_weekly_summary(r, lbs, flagged_logs, biggest, num_logs, num_entered, zero_logs)
       if @@DontDeliverEmails
         puts m
       else

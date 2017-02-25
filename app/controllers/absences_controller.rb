@@ -3,14 +3,14 @@ class AbsencesController < ApplicationController
   before_filter :admin_only, :only => [:all]
 
   def all
-    absences = Absence.where('stop_date >= ?',Date.today).keep_if{ |a|
+    absences = Absence.where('stop_date >= ?', Date.today).keep_if{ |a|
       (a.volunteer.region_ids & current_volunteer.admin_region_ids).length > 0
     }
-    index(absences,'All Absences')
+    index(absences, 'All Absences')
   end
 
-  def index(a=nil,header='Absences')
-    @absences = a.nil? ? Absence.where('stop_date >= ? AND volunteer_id=?',Date.today,current_volunteer.id) : a
+  def index(a=nil, header='Absences')
+    @absences = a.nil? ? Absence.where('stop_date >= ? AND volunteer_id=?', Date.today, current_volunteer.id) : a
     @header = header.nil? ? 'Absences' : header
     respond_to do |format|
       format.html { render :index } # index.html.erb
@@ -84,7 +84,7 @@ class AbsencesController < ApplicationController
     n = 0
     ns = 0
     while from <= to
-      (n_did,n_skipped) = FoodRobot::generate_log_entries(from,@absence)
+      (n_did, n_skipped) = FoodRobot::generate_log_entries(from, @absence)
       n += n_did
       ns += n_skipped
       break if n >= 12

@@ -3,7 +3,7 @@ class InitFoodTypesAndTransportTypes < ActiveRecord::Migration
     tthash = {}
     # Make sure these are in there to start...
     %w(Bike Car Foot).each{ |v|
-      check = TransportType.where('name = ?',v)
+      check = TransportType.where('name = ?', v)
       unless check.length >= 1
         t = TransportType.new
         t.name = v

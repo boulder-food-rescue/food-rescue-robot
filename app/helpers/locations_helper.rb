@@ -7,7 +7,7 @@ module LocationsHelper
   private
 
     def readable_simple_hours loc
-      loc.hours.gsub("\n",'<br>').html_safe unless loc.hours.nil?
+      loc.hours.gsub("\n", '<br>').html_safe unless loc.hours.nil?
     end
 
     def readable_detailed_hours location

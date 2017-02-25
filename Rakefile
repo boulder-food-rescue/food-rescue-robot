@@ -9,7 +9,7 @@ Webapp::Application.load_tasks
 task(:export_log_data => :environment) do
 
   CSV.open("orgs.csv","wb") do |csv|
-    csv << ["id","name","lat","lng","type"]
+    csv << %w(id name lat lng type)
     Location.where("region_id = ?",1).each{ |l|
       csv << [l.id,l.name,l.lat,l.lng,l.is_donor ? "donor" : "recipient"]
     }
@@ -17,9 +17,9 @@ task(:export_log_data => :environment) do
 
   n = 0
   CSV.open("logs.csv","wb") do |csv|
-    csv << ["id","date","volunteer_ids","donor_id","recipient_ids","part_ids",
-            "part_food_types","part_weights","part_counts",
-            "transport","scale","why_zero","schedule_id"]
+    csv << %w(id date volunteer_ids donor_id recipient_ids part_ids
+              part_food_types part_weights part_counts transport scale why_zero
+              schedule_id)
     ntotal = Log.where("region_id = ? AND complete",1).count
     Log.where("region_id = ? AND complete",1).each{ |l|
       lp = LogPart.select("log_parts.id,food_types.name,weight,count").where("log_id = ?",l.id).

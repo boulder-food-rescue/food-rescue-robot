@@ -25,6 +25,7 @@ group :development do
   gem 'better_errors'
   gem 'rails-erd'
   gem 'binding_of_caller'
+  gem 'faker', '~> 1.7.3'
 end
 
 group :development, :test do

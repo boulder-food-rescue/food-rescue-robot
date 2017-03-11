@@ -6,6 +6,27 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Emanuel', :city => cities.first)
 
+# Create global transport types
+[
+  {name: 'Bike'},
+  {name: 'Car'},
+  {name: 'Foot'}
+].each do |attrs|
+  TransportType.create(attrs)
+end
+
+# Create global cell phone carriers
+[
+  { name: 'T-Mobile', format: '%d@tmomail.net' },
+  { name: 'AT&T', format: '%d@txt.att.net' },
+  { name: 'Verizon', format: '%d@vtext.com' },
+  { name: 'Boost Mobile', format: '%d@myboostmobile.com' },
+  { name: 'Nextel', format: '%d@messaging.nextel.com' },
+  { name: 'Sprint', format: '%d@messaging.sprintpcs.com' }
+].each do |attrs|
+  CellCarrier.create(attrs)
+end
+
 #region.attributes.slice('lat', 'lng', 'name', 'website', 'address', 'notes', 'handbook_url', 'prior_lbs_rescued', 'prior_num_pickups', 'title', 'tagline', 'phone', 'tax_id', 'welcome_email_text', 'splash_html', 'weight_unit', 'time_zone', 'volunteer_coordinator_email', 'post_pickup_emails', 'unschedule_self' )
 region = Region.create({
   "lat"=> 41.5409097,

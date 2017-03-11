@@ -6,8 +6,6 @@ class Region < ActiveRecord::Base
   has_many :schedule_chains
   has_many :locations
   has_many :logs
-  has_many :donors
-  has_many :recipients
 
   scope :all_admin, ->(volunteer) { where(id: volunteer.admin_region_ids) }
 

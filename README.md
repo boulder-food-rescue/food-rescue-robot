@@ -125,6 +125,14 @@ bundle exec rake foodrobot:send_reminders
 bundle exec rake foodrobot:send_weekly_summary
 ```
 
+## Generating Sample Data
+
+Running the `db:sample_region` rake task will create a new `Region` in your database and populate it with a bunch of random data (volunteers, donors, recipients, schedule chains, etc.). For more info on what exactly is created, see `lib/sample_data/region_data.rb`.
+
+Region admins will be created for the new region with email addresses based on the region's name. For example, if the region name is `San Francisco`, the created region admins will have email addresses: `admin-san-francisco@example.com`, `admin-san-francisco-2@example.com`, etc. Their passwords will all be `password`.
+
+The `db:sample_region` rake task does not create any `Log` records, so you'll have to run the rake task to generate logs based on the newly created schedule chains: `rake foodrobot:generate_logs`.
+
 ## Hosting
 
 The current production version is hosted via Heroku, collaborators can push to/pull from Heroku once their repository has been setup. To do this, first install the Heroku tool belt, then add the remote git location:

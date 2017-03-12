@@ -3,7 +3,7 @@
 The Food Rescue Robot is a Rails 3 web application for managing the logistics
 of just-in-time (i.e., warehouse-less) food rescue. It keeps track of donors,
 recipients, a pickup and delivery schedule, and all the volunteers responsible
-for doing the work. It sends reminders to users about their pickups. The site 
+for doing the work. It sends reminders to users about their pickups. The site
 also logs how much food is rescued, and can automatically issue receipts for donations.
 
 # Who uses it? (And how can I?)
@@ -25,7 +25,7 @@ development on the master branch and we are growing a small team of hackers to m
 
 # How can I help?
 
-If you want to help with development, feel free to fork the project. If you have something 
+If you want to help with development, feel free to fork the project. If you have something
 to submit upstream, send a pull request from your fork. If you're trying to setup a dev environment, keep reading.
 
 # General Tech Overview
@@ -64,6 +64,8 @@ can see the routes with ```rake routes```;
  * Postgresql 9.3 or greater (runs on at least 9.4.4)
  * A reasonable operating system (e.g., Linux)
  * Various dependencies for the above
+
+## (The instructions below are slightly dated, try [SETUP.md](SETUP.md))
 
 After checking out the code, you'll want to install the necessary gemfiles:
 

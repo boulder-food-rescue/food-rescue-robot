@@ -30,10 +30,6 @@ class LocationsController < ApplicationController
     index(Location::LOCATION_TYPES.invert["Seller"],"Sellers")
   end
 
-  def recipients
-    index(Location::LOCATION_TYPES.invert["Recipient"],"Recipients")
-  end
-
   def index(location_type=nil,header="Locations")
     unless location_type.nil?
       @locations = Location.regional(current_volunteer.region_ids).where("location_type = ?",location_type)

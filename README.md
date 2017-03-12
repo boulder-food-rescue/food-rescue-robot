@@ -174,8 +174,7 @@ bundle exec rake foodrobot:send_weekly_summary
 
 ## Generating Sample Data
 
-If you start with an empty schema, you'll want to start by creating a Volunteer user with the admin bit set, and a first region e.g.:
-
+The seeds command generates a regular volunteer and an admin volunteer for you. Please review seeds.rb. You can make more regions / volunteers with this code:
 
 ```
 $ rails console
@@ -187,7 +186,7 @@ volunteer.regions << region
 volunteer.save!
 ```
 
-**Alternatively:**
+**Additionally:**
 
 Run:
 

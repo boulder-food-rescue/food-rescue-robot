@@ -6,10 +6,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  resources :regions, except: [:show] do
-    get 'recipients', :on => :member
-    get 'request_rescue', :on => :member
-  end
+  resources :regions, except: [:show]
 
   resources :cell_carriers do as_routes end
   resources :transport_types do as_routes end
@@ -91,7 +88,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  devise_for :volunteers, :controllers => { :sessions => "sessions" }
+  devise_for :volunteers, :controllers => { :sessions => 'sessions' }
 
   resources :volunteers do
     collection do

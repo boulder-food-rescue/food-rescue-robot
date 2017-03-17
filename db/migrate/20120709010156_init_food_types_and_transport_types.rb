@@ -2,8 +2,8 @@ class InitFoodTypesAndTransportTypes < ActiveRecord::Migration
   def up
     tthash = {}
     # Make sure these are in there to start...
-    ["Bike","Car","Foot"].each{ |v|
-      check = TransportType.where('name = ?',v)
+    %w(Bike Car Foot).each{ |v|
+      check = TransportType.where('name = ?', v)
       unless check.length >= 1
         t = TransportType.new
         t.name = v
@@ -50,27 +50,27 @@ class InitFoodTypesAndTransportTypes < ActiveRecord::Migration
     end
 
     Schedule.all.each{ |s|
-      if s.transport_type.nil?
-        s.transport = nil
-      else
-        s.transport = s.transport_type.name
-      end
+      s.transport = if s.transport_type.nil?
+                      nil
+                    else
+                      s.transport_type.name
+                    end
       s.save
     }
     Volunteer.all.each{ |v|
-      if v.transport_type.nil?
-        v.transport = nil
-      else
-        v.transport = v.transport_type.name
-      end
+      v.transport = if v.transport_type.nil?
+                      nil
+                    else
+                      v.transport_type.name
+                    end
       v.save
     }
     Log.all.each{ |l|
-      if l.transport_type.nil?
-        l.transport = nil
-      else
-        l.transport = l.transport_type.name
-      end
+      l.transport = if l.transport_type.nil?
+                      nil
+                    else
+                      l.transport_type.name
+                    end
       l.save
     }
   end

@@ -1,20 +1,20 @@
-require "prawn/table"
+require 'prawn/table'
 
 class LogsController < ApplicationController
 
   before_filter :authenticate_volunteer!, :except => :stats_service
-  before_filter :admin_only, :only => [:today,:tomorrow,:yesterday,:being_covered,:tardy,:receipt,:new,:create,:stats,:export]
+  before_filter :admin_only, :only => [:today, :tomorrow, :yesterday, :being_covered, :tardy, :receipt, :new, :create, :stats, :export]
 
   def mine_past
-    index(Log.past_for(current_volunteer.id),"My Past Shifts")
+    index(Log.past_for(current_volunteer.id), 'My Past Shifts')
   end
 
   def mine_upcoming
-    index(Log.upcoming_for(current_volunteer.id),"My Upcoming Shifts")
+    index(Log.upcoming_for(current_volunteer.id), 'My Upcoming Shifts')
   end
 
   def open
-    index(Log.needing_coverage(current_volunteer.region_ids),"Open Shifts")
+    index(Log.needing_coverage(current_volunteer.region_ids), 'Open Shifts')
   end
 
   def by_day
@@ -24,38 +24,38 @@ class LogsController < ApplicationController
       n = params[:n].present? ? params[:n].to_i : 0
       d = Time.zone.today+n
     end
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" = '#{d.to_s}'"),"Shifts on #{d.strftime("%A, %B %-d")}")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" = '#{d.to_s}'"), "Shifts on #{d.strftime('%A, %B %-d')}")
   end
 
   def last_ten
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'"),"Last 10 Days of Shifts")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" >= '#{(Time.zone.today-10).to_s}'"), 'Last 10 Days of Shifts')
   end
 
   def being_covered
-    index(Log.being_covered(current_volunteer.region_ids),"Being Covered")
+    index(Log.being_covered(current_volunteer.region_ids), 'Being Covered')
   end
 
   def todo
-    index(Log.past_for(current_volunteer.id).where("\"when\" < current_date AND NOT complete"),"My To Do Shift Reports")
+    index(Log.past_for(current_volunteer.id).where('"when" < current_date AND NOT complete'), 'My To Do Shift Reports')
   end
 
   def tardy
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(",")}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3","Missing Data (>= 3 Reminders)"),"Missing Data (>= 3 Reminders)")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3", 'Missing Data (>= 3 Reminders)'), 'Missing Data (>= 3 Reminders)')
   end
 
-  def index(logs=nil,header="Entire Log")
-    filter = filter.nil? ? "" : " AND #{filter}"
+  def index(logs=nil, header='Entire Log')
+    filter = filter.nil? ? '' : " AND #{filter}"
     @shifts = []
     if current_volunteer.region_ids.length > 0
-      @shifts = Shift.build_shifts(logs.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(",")})"): logs)
+      @shifts = Shift.build_shifts(logs.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(',')})"): logs)
     end
     @header = header
     @regions = Region.all
-    if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-    else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end
+    @my_admin_regions = if current_volunteer.super_admin?
+                          @regions
+                        else
+                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+                        end
     respond_to do |format|
       format.json { render json: @shifts }
       format.html { render :index }
@@ -65,19 +65,19 @@ class LogsController < ApplicationController
   def stats
     @regions = current_volunteer.admin_regions(true)
     @regions = Region.all if current_volunteer.admin? and @regions.empty?
-    @first_recorded_pickup = Log.where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(",")})").
-      order("logs.when ASC").limit(1)
-    @pounds_per_year = Log.joins(:log_parts).select("extract(YEAR from logs.when) as year, sum(weight)").
+    @first_recorded_pickup = Log.where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
+      order('logs.when ASC').limit(1)
+    @pounds_per_year = Log.joins(:log_parts).select('extract(YEAR from logs.when) as year, sum(weight)').
       where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
-      group("year").order("year ASC").collect{ |l| [l.year,l.sum] }
+      group('year').order('year ASC').collect{ |l| [l.year, l.sum] }
     @pounds_per_month = Log.joins(:log_parts).select("date_trunc('month',logs.when) as month, sum(weight)").
       where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
-      group("month").order("month ASC").collect{ |l| [Date.parse(l.month).strftime("%Y-%m"),l.sum] }
+      group('month').order('month ASC').collect{ |l| [Date.parse(l.month).strftime('%Y-%m'), l.sum] }
     @transport_per_year = {}
     @transport_years = []
-    @transport_data = Log.joins(:transport_type).select("extract(YEAR from logs.when) as year, transport_types.name, count(*)").
+    @transport_data = Log.joins(:transport_type).select('extract(YEAR from logs.when) as year, transport_types.name, count(*)').
       where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
-      group("name,year").order("name,year ASC")
+      group('name,year').order('name,year ASC')
     @transport_years.sort!
     @transport_data.each{ |l|
       @transport_years << l.year unless @transport_years.include? l.year
@@ -95,35 +95,35 @@ class LogsController < ApplicationController
     case params[:what]
     when 'poundage'
       if params[:region_id].nil?
-        t = LogPart.sum(:weight) + Region.where("prior_lbs_rescued IS NOT NULL").sum("prior_lbs_rescued")
+        t = LogPart.sum(:weight) + Region.where('prior_lbs_rescued IS NOT NULL').sum('prior_lbs_rescued')
       else
         r = params[:region_id]
         @region = Region.find(r)
-        t = Log.joins(:log_parts).where("region_id = ? AND complete",r).sum("weight").to_f
+        t = Log.joins(:log_parts).where('region_id = ? AND complete', r).sum('weight').to_f
         t += @region.prior_lbs_rescued.to_f unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
       render :text => t.to_s
     when 'wordcloud'
       words = {}
-      LogPart.select("description").where("description IS NOT NULL").each{ |l|
+      LogPart.select('description').where('description IS NOT NULL').each{ |l|
         l.description.strip.split(/\s*\,\s*/).each{ |w|
-          w = w.strip.downcase.tr(',','')
+          w = w.strip.downcase.tr(',', '')
           next if w =~ /(nothing|no |none)/ or w =~ /etc/ or w =~ /n\/a/ or w =~ /misc/
           # people cannot seem to spell the most delicious fruit correctly
-          w = "avocados" if w == "avacados" or w == "avocadoes" or w == "avocado"
+          w = 'avocados' if w == 'avacados' or w == 'avocadoes' or w == 'avocado'
           words[w] = 0 if words[w].nil?
           words[w] += 1
         }
       }
-      render :text => words.collect{ |k,v| (v >= 10) ? "#{k}:#{v}" : nil }.compact.join(",")
+      render :text => words.collect{ |k, v| (v >= 10) ? "#{k}:#{v}" : nil }.compact.join(',')
     when 'transport'
-      rq = ""
-      wq = ""
+      rq = ''
+      wq = ''
       unless params[:region_id].nil?
         rq = "AND region_id=#{params[:region_id].to_i}"
       end
       unless params[:timespan].nil?
-        if params[:timespan] == "month"
+        if params[:timespan] == 'month'
           wq = "AND \"when\" > NOW() - interval '1 month'"
         end
       end
@@ -131,7 +131,7 @@ class LogsController < ApplicationController
       car = Log.where("complete AND transport_type_id IN (SELECT id FROM transport_types WHERE name = 'Car') #{rq} #{wq}").count.to_f
       render :text => "#{100.0*noncar/(noncar+car)} #{100.0*car/(noncar+car)}"
     else
-      render :text => "NO"
+      render :text => 'NO'
     end
   end
 
@@ -146,7 +146,7 @@ class LogsController < ApplicationController
     @region = Region.find(params[:region_id])
     @log = Log.new
     @log.region = @region
-    @action = "create"
+    @action = 'create'
     authorize! :create, @log
     session[:my_return_to] = request.referer
     set_vars_for_form @region
@@ -156,17 +156,17 @@ class LogsController < ApplicationController
   def create
     @log = Log.new(params[:log])
     @region = @log.region
-    @food_types = @region.food_types.collect{ |e| [e.name,e.id] }
-    @scale_types = @region.scale_types.collect{ |e| [e.name,e.id] }
-    @transport_types = TransportType.all.collect{ |e| [e.name,e.id] }
+    @food_types = @region.food_types.collect{ |e| [e.name, e.id] }
+    @scale_types = @region.scale_types.collect{ |e| [e.name, e.id] }
+    @transport_types = TransportType.all.collect{ |e| [e.name, e.id] }
     if @scale_types.length<2 and @log.scale_type_id.nil?
       @log.scale_type_id = @region.scale_types.first.id
     end
     authorize! :create, @log
-    parse_and_create_log_parts(params,@log)
+    parse_and_create_log_parts(params, @log)
     finalize_log(@log)
     if @log.save
-      flash[:notice] = "Created successfully."
+      flash[:notice] = 'Created successfully.'
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else
@@ -201,7 +201,7 @@ class LogsController < ApplicationController
     @log = Log.find(params[:id])
     authorize! :update, @log
     @region = @log.region
-    @action = "update"
+    @action = 'update'
     session[:my_return_to] = request.referer
     set_vars_for_form @region
     render :edit
@@ -210,11 +210,11 @@ class LogsController < ApplicationController
   def update
     @log = Log.find(params[:id])
     @region = @log.region
-    @action = "update"
+    @action = 'update'
     set_vars_for_form @region
 
     unless can?(:update, @log)
-      flash[:notice] = "Not authorized to edit that log item."
+      flash[:notice] = 'Not authorized to edit that log item.'
       respond_to do |format|
         format.json { render json: {:error => 1, :message => flash[:notice] } }
         format.html { redirect_to(root_path) }
@@ -229,7 +229,7 @@ class LogsController < ApplicationController
 
       if @log.save
         if @log.complete
-          flash[:notice] = "Updated Successfully. All done!"
+          flash[:notice] = 'Updated Successfully. All done!'
         else
           flash[:warning] = "Saved, but some weights/counts still needed to complete this log. Finish it here: <a href=\"/logs/#{@log.id}/edit\">(Fill In)</a>".html_safe
         end
@@ -238,14 +238,14 @@ class LogsController < ApplicationController
           format.html { render :edit }
         end
       else
-        flash[:error] = "Failed to mark as complete."
+        flash[:error] = 'Failed to mark as complete.'
         respond_to do |format|
           format.json { render json: {error: 2, message: flash[:notice] } }
           format.html { render :edit }
         end
       end
     else
-      flash[:error] = "Update failed :("
+      flash[:error] = 'Update failed :('
       respond_to do |format|
         format.json { render json: {error: 1, message: flash[:notice] } }
         format.html { render :edit }
@@ -255,11 +255,11 @@ class LogsController < ApplicationController
 
   # can be given a single id or a list of ids
   def take
-    unless params[:ids].present?
-      logs = [Log.find(params[:id])]
-    else
-      logs = Log.find(params[:ids])
-    end
+    logs = unless params[:ids].present?
+             [Log.find(params[:id])]
+           else
+             Log.find(params[:ids])
+           end
 
     if logs.all? { |log| can?(:take, log) }
       logs.each do |log|
@@ -283,11 +283,11 @@ class LogsController < ApplicationController
 
   # can be given a single id or a list of ids
   def leave
-    unless params[:ids].present?
-      l = [Log.find(params[:id])]
-    else
-      l = params[:ids].collect{ |i| Log.find(i) }
-    end
+    l = unless params[:ids].present?
+          [Log.find(params[:id])]
+        else
+          params[:ids].collect{ |i| Log.find(i) }
+        end
 
     l.each { |log| authorize! :leave, log }
 
@@ -304,17 +304,17 @@ class LogsController < ApplicationController
   end
 
   def receipt
-    if Date.valid_date?(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
-      @start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
+    if Date.valid_date?(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
+      @start_date = Date.new(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
     else
-      flash[:notice] = "Invalid Date Set for Start Date. Please try again!"
+      flash[:notice] = 'Invalid Date Set for Start Date. Please try again!'
       return redirect_to(request.referer || root_path)
     end
 
-    if Date.valid_date?(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
-      @stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
+    if Date.valid_date?(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
+      @stop_date = Date.new(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
     else
-      flash[:notice] = "Invalid Date Set for End Date. Please try again!"
+      flash[:notice] = 'Invalid Date Set for End Date. Please try again!'
       return redirect_to(request.referer || root_path)
     end
 
@@ -322,7 +322,7 @@ class LogsController < ApplicationController
 
     authorize! :receipt, @loc
 
-    @logs = Log.where("logs.when >= ? AND logs.when <= ? AND donor_id = ? AND complete",@start_date,@stop_date,@loc.id)
+    @logs = Log.where('logs.when >= ? AND logs.when <= ? AND donor_id = ? AND complete', @start_date, @stop_date, @loc.id)
 
     respond_to do |format|
       format.html
@@ -339,9 +339,9 @@ class LogsController < ApplicationController
 
         unless @loc.region.address.nil?
           pdf.font_size 10
-          pdf.font "Times-Roman"
+          pdf.font 'Times-Roman'
           pdf.move_down 10
-          pdf.text "#{@loc.region.address.tr("\n",", ")}", :align => :center
+          pdf.text "#{@loc.region.address.tr("\n", ', ')}", :align => :center
         end
 
         unless @loc.region.website.nil?
@@ -358,15 +358,15 @@ class LogsController < ApplicationController
         pdf.move_down 5
         pdf.text "Receipt for: #{@loc.name}", :align => :center
         pdf.move_down 10
-        pdf.font "Helvetica"
+        pdf.font 'Helvetica'
         sum = 0.0
-        pdf.table([["Date","Description","Log #","Weight (lbs)"]] + @logs.collect{ |l|
+        pdf.table([['Date', 'Description', 'Log #', 'Weight (lbs)']] + @logs.collect{ |l|
           sum += l.summed_weight
-          l.summed_weight == 0 ? nil : [l.when,l.log_parts.collect{ |lp| lp.food_type.nil? ? nil : lp.food_type.name }.compact.join(","),l.id,l.summed_weight]
-        }.compact + [["Total:","","",sum]])
+          l.summed_weight == 0 ? nil : [l.when, l.log_parts.collect{ |lp| lp.food_type.nil? ? nil : lp.food_type.name }.compact.join(','), l.id, l.summed_weight]
+        }.compact + [['Total:', '', '', sum]])
         pdf.move_down 20
         pdf.font_size 10
-        pdf.font "Courier", :style => :italic
+        pdf.font 'Courier', :style => :italic
         pdf.text "This receipt was generated by The Food Rescue Robot at #{Time.zone.now.to_s}. Beep beep mrrrp!", :align => :center
         send_data pdf.render
       end
@@ -374,11 +374,11 @@ class LogsController < ApplicationController
   end
 
   def export
-    start_date = Date.new(params[:start_date][:year].to_i,params[:start_date][:month].to_i,params[:start_date][:day].to_i)
-    stop_date = Date.new(params[:stop_date][:year].to_i,params[:stop_date][:month].to_i,params[:stop_date][:day].to_i)
+    start_date = Date.new(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
+    stop_date = Date.new(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
     regions = current_volunteer.admin_regions
 
-    logs = Log.where("logs.when >= ? AND logs.when <= ?", start_date, stop_date).where(
+    logs = Log.where('logs.when >= ? AND logs.when <= ?', start_date, stop_date).where(
       complete: true,
       region_id: regions.map(&:id)
     )
@@ -393,38 +393,38 @@ class LogsController < ApplicationController
 
   private
 
-    def parse_and_create_log_parts(params,log)
-      ret = []
-      params["log_parts"].each{ |dc,lpdata|
-        lpdata["weight"] = nil if lpdata["weight"].strip == ""
-        lpdata["count"] = nil if lpdata["count"].strip == ""
-        next if lpdata["id"].nil? and lpdata["weight"].nil? and lpdata["count"].nil?
-        lp = lpdata["id"].nil? ? LogPart.new : LogPart.find(lpdata["id"].to_i)
-        lp.count = lpdata["count"]
-        lp.description = lpdata["description"]
-        lp.food_type_id = lpdata["food_type_id"].to_i
-        lp.log_id = log.id
-        lp.weight = lpdata["weight"].to_f
-        ret.push lp
-        lp.save
-      } unless params["log_parts"].nil?
-      ret
-    end
+  def parse_and_create_log_parts(params, log)
+    ret = []
+    params['log_parts'].each{ |dc, lpdata|
+      lpdata['weight'] = nil if lpdata['weight'].strip == ''
+      lpdata['count'] = nil if lpdata['count'].strip == ''
+      next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?
+      lp = lpdata['id'].nil? ? LogPart.new : LogPart.find(lpdata['id'].to_i)
+      lp.count = lpdata['count']
+      lp.description = lpdata['description']
+      lp.food_type_id = lpdata['food_type_id'].to_i
+      lp.log_id = log.id
+      lp.weight = lpdata['weight'].to_f
+      ret.push lp
+      lp.save
+    } unless params['log_parts'].nil?
+    ret
+  end
 
-    def finalize_log(log)
-      # mark as complete if deserving
-      filled_count = 0
-      required_unfilled = 0
+  def finalize_log(log)
+    # mark as complete if deserving
+    filled_count = 0
+    required_unfilled = 0
 
-      log.log_parts.each{ |lp|
-        required_unfilled += 1 if lp.required && lp.weight.nil? && lp.count.nil?
-        filled_count += 1 unless lp.weight.nil? && lp.count.nil?
-      }
-      log.complete = filled_count > 0 && required_unfilled == 0
-    end
+    log.log_parts.each{ |lp|
+      required_unfilled += 1 if lp.required && lp.weight.nil? && lp.count.nil?
+      filled_count += 1 unless lp.weight.nil? && lp.count.nil?
+    }
+    log.complete = filled_count > 0 && required_unfilled == 0
+  end
 
-    def admin_only
-      redirect_to(root_path) unless current_volunteer.any_admin?
-    end
+  def admin_only
+    redirect_to(root_path) unless current_volunteer.any_admin?
+  end
 
 end

@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.json { head :forbidden }
       format.html do
-        flash[:error] = "You are not authorized to do that"
+        flash[:error] = 'You are not authorized to do that'
 
         begin
           redirect_to :back
@@ -40,22 +40,22 @@ class ApplicationController < ActionController::Base
 
   protected
 
-    def layout_by_resource
-      if devise_controller?
-        "custom_devise"
-      else
-        "application"
-      end
+  def layout_by_resource
+    if devise_controller?
+      'custom_devise'
+    else
+      'application'
     end
+  end
 
   private
 
   # add in the variables needed by the form partial for schedules and logs
   def set_vars_for_form(region)
-    @volunteers = Volunteer.all_for_region(region.id).collect{ |v| [v.name,v.id] }
-    @donors = Location.donors.where(:region_id=>region.id).collect{ |d| [d.name,d.id] }
-    @recipients = Location.recipients.where(:region_id=>region.id).collect{ |r| [r.name,r.id] }
-    @transport_types = TransportType.all.collect{ |tt| [tt.name,tt.id] }
+    @volunteers = Volunteer.all_for_region(region.id).collect{ |v| [v.name, v.id] }
+    @donors = Location.donors.where(:region_id=>region.id).collect{ |d| [d.name, d.id] }
+    @recipients = Location.recipients.where(:region_id=>region.id).collect{ |r| [r.name, r.id] }
+    @transport_types = TransportType.all.collect{ |tt| [tt.name, tt.id] }
 
     @food_types = region.food_types.collect { |food_type| [food_type.name, food_type.id] }
     @scale_types = region.scale_types.collect { |scale_type| ["#{scale_type.name} (#{scale_type.weight_unit})", scale_type.id] }
@@ -66,13 +66,13 @@ class ApplicationController < ActionController::Base
   # Token Authentication:
   # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
   def authenticate_user_from_token!
-    user_email = params["volunteer_email"]
+    user_email = params['volunteer_email']
     return if user_email.nil?
 
     user = Volunteer.find_by_email(user_email)
-    token = params["volunteer_token"]
+    token = params['volunteer_token']
     return if token.nil?
-    if user and Devise.secure_compare(user.authentication_token,token)
+    if user and Devise.secure_compare(user.authentication_token, token)
       sign_in user, store: false
     end
   end

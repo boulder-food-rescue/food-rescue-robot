@@ -1,14 +1,14 @@
 class VolunteersController < ApplicationController
   before_filter :authenticate_volunteer!
-  before_filter :admin_only, :only => [:knight,:unassigned,:shiftless,:shiftless_old,:admin,:switch_user,:stats]
+  before_filter :admin_only, :only => [:knight, :unassigned, :shiftless, :shiftless_old, :admin, :switch_user, :stats]
 
   def unassigned
     unassigned = Volunteer.where(assigned: false)
-    no_assignments = Volunteer.where("((SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0)")
+    no_assignments = Volunteer.where('((SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0)')
     unrequested = Volunteer.where(requested_region_id: nil)
     requested_my_region = Volunteer.where(requested_region_id: current_volunteer.admin_region_ids)
     @volunteers = unassigned | (no_assignments & (unrequested | requested_my_region))
-    @header = "Unassigned Volunteers"
+    @header = 'Unassigned Volunteers'
   end
 
   def assign
@@ -23,31 +23,31 @@ class VolunteersController < ApplicationController
     else
       Assignment.add_volunteer_to_region v, r
       unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
-        m = Notifier.region_welcome_email(r,v)
+        m = Notifier.region_welcome_email(r, v)
         m.deliver unless m.nil?
       end
       v.save
     end
-    redirect_to :action => "unassigned", :alert => "Assignment worked"
+    redirect_to :action => 'unassigned', :alert => 'Assignment worked'
   end
 
   def shiftless
     @volunteers = Volunteer.all.keep_if do |v|
       ((v.region_ids & current_volunteer.region_ids).length > 0) and v.schedule_chains.length == 0
     end
-    @header = "Shiftless Volunteers"
+    @header = 'Shiftless Volunteers'
     render :index
   end
 
   def active
     @volunteers = Volunteer.active(current_volunteer.region_ids)
-    @header = "Active Volunteers"
+    @header = 'Active Volunteers'
     render :index
   end
 
   def inactive
     @volunteers = Volunteer.inactive(current_volunteer.region_ids)
-    @header = "Inactive (Disabled) Volunteer Accounts"
+    @header = 'Inactive (Disabled) Volunteer Accounts'
     render :index
   end
 
@@ -55,20 +55,22 @@ class VolunteersController < ApplicationController
     @volunteers = Volunteer.all.keep_if{ |v|
       ((v.region_ids & current_volunteer.region_ids).length > 0) and v.needs_training?
     }
-    @header = "Volunteers Needing Training"
+    @header = 'Volunteers Needing Training'
     render :index
   end
 
   def index
-    @volunteers = Volunteer.all.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
-    @header = "All Volunteers"
+    @header = 'All Volunteers'
     respond_to do |format|
       format.json {
-        @volunteers = Volunteer.select("email,id,name,phone").collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+        @volunteers = Volunteer.select('email,id,name,phone').collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
         render json: @volunteers.to_json
       }
       format.html {
-        @volunteers = Volunteer.all.collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+        @volunteers = Volunteer.includes(:regions).
+                        all.collect { |volunteer|
+                          (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0 ? volunteer : nil
+                        }.compact
         render :index
       }
     end
@@ -93,22 +95,22 @@ class VolunteersController < ApplicationController
 
   def new
     @volunteer = Volunteer.new
-    @action = "create"
+    @action = 'create'
     @regions = Region.all
-    if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-    else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end
+    @my_admin_regions = if current_volunteer.super_admin?
+                          @regions
+                        else
+                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+                        end
     session[:my_return_to] = request.referer
-    flash[:notice] = "Thanks for signing up! You will recieve an email shortly when a regional admin approves your registration."
+    flash[:notice] = 'Thanks for signing up! You will recieve an email shortly when a regional admin approves your registration.'
     render :new
   end
 
   def check_permissions(v)
     unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 or
            current_volunteer == v
-      flash[:error] = "Not authorized to create/edit volunteers for that region"
+      flash[:error] = 'Not authorized to create/edit volunteers for that region'
       redirect_to(root_path)
       return false
     end
@@ -122,7 +124,7 @@ class VolunteersController < ApplicationController
     @volunteer.admin = false
     @volunteer.assignments.each{ |r| r.admin = false }
     if @volunteer.save
-      flash[:notice] = "Created successfully."
+      flash[:notice] = 'Created successfully.'
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else
@@ -138,12 +140,12 @@ class VolunteersController < ApplicationController
     @volunteer = Volunteer.find(params[:id])
     return unless check_permissions(@volunteer)
     @regions = Region.all
-    if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-    else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end
-    @action = "update"
+    @my_admin_regions = if current_volunteer.super_admin?
+                          @regions
+                        else
+                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+                        end
+    @action = 'update'
     session[:my_return_to] = request.referer
     render :edit
   end
@@ -162,7 +164,7 @@ class VolunteersController < ApplicationController
         index
       end
     else
-      flash[:error] = "Update failed :("
+      flash[:error] = 'Update failed :('
       render :edit
     end
   end
@@ -203,11 +205,11 @@ class VolunteersController < ApplicationController
   def stats
     @regions = current_volunteer.admin_regions(true)
     @regions = Region.all if current_volunteer.admin? and @regions.empty?
-    @per_volunteer = Log.joins(:log_parts,:volunteers).select("volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)").where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(",")}) and logs.when>?",Date.today-12.months).group("volunteers.id, volunteers.name").order("sum DESC")
-    @per_volunteer2 = Log.joins(:log_parts,:volunteers).select("volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)").where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(",")}) and logs.when>?",Date.today-1.month).group("volunteers.id, volunteers.name").order("sum DESC")
+    @per_volunteer = Log.joins(:log_parts, :volunteers).select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?", Date.today-12.months).group('volunteers.id, volunteers.name').order('sum DESC')
+    @per_volunteer2 = Log.joins(:log_parts, :volunteers).select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?", Date.today-1.month).group('volunteers.id, volunteers.name').order('sum DESC')
     @lazy_volunteers = Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
-            joins(:logs,:log_volunteers).where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(",")})").
-            group("volunteers.id, name, email")
+            joins(:logs, :log_volunteers).where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(',')})").
+            group('volunteers.id, name, email')
 
     @region_locations = Location.where(:region_id=>current_volunteer.admin_region_ids)
   end
@@ -256,15 +258,15 @@ class VolunteersController < ApplicationController
 
     #Upcoming pickup list
     @upcoming_pickups = Shift.build_shifts(Log.upcoming_for(current_volunteer.id))
-    @sncs_pickups = Shift.build_shifts(Log.needing_coverage(current_volunteer.region_ids,7,10))
-    @sncs_count = Log.needing_coverage(current_volunteer.region_ids,7).length
+    @sncs_pickups = Shift.build_shifts(Log.needing_coverage(current_volunteer.region_ids, 7, 10))
+    @sncs_count = Log.needing_coverage(current_volunteer.region_ids, 7).length
 
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id, false)
 
     @by_month = {}
     Log.picked_up_by(current_volunteer.id).each{ |l|
-      yrmo = l.when.strftime("%Y-%m")
+      yrmo = l.when.strftime('%Y-%m')
       @by_month[yrmo] = 0.0 if @by_month[yrmo].nil?
       @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
     }

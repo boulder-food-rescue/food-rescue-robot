@@ -4,7 +4,7 @@ class MakeFoodTypesRegional < ActiveRecord::Migration
       t.references :region
     end
     Region.all.each{ |r|
-      FoodType.where("region_id IS NULL").each{ |ft|
+      FoodType.where('region_id IS NULL').each{ |ft|
         ftnew = FoodType.new
         ftnew.region_id = r.id
         ftnew.name = ft.name
@@ -15,8 +15,7 @@ class MakeFoodTypesRegional < ActiveRecord::Migration
     }
   end
   def down
-    execute "DELETE FROM food_types WHERE region_id IS NOT NULL"
+    execute 'DELETE FROM food_types WHERE region_id IS NOT NULL'
     remove_column :food_types, :region_id
-    
   end
 end

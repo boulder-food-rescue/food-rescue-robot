@@ -6,12 +6,12 @@ class AddEmailToTextEmailToVolunteer < ActiveRecord::Migration
     end
 
     # These are taken from: http://www.emailtextmessages.com/
-    CellCarrier.create :name => "T-Mobile", :format => '%d@tmomail.net'
-    CellCarrier.create :name => "AT&T", :format => '%d@txt.att.net'
-    CellCarrier.create :name => "Verizon", :format => '%d@vtext.com'
-    CellCarrier.create :name => "Boost Mobile", :format => '%d@myboostmobile.com'
-    CellCarrier.create :name => "Nextel", :format => '%d@messaging.nextel.com'
-    CellCarrier.create :name => "Sprint", :format => '%d@messaging.sprintpcs.com'
+    CellCarrier.create :name => 'T-Mobile', :format => '%d@tmomail.net'
+    CellCarrier.create :name => 'AT&T', :format => '%d@txt.att.net'
+    CellCarrier.create :name => 'Verizon', :format => '%d@vtext.com'
+    CellCarrier.create :name => 'Boost Mobile', :format => '%d@myboostmobile.com'
+    CellCarrier.create :name => 'Nextel', :format => '%d@messaging.nextel.com'
+    CellCarrier.create :name => 'Sprint', :format => '%d@messaging.sprintpcs.com'
 
     change_table :volunteers do |t|
       t.references :cell_carrier

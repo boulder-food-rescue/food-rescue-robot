@@ -2,8 +2,8 @@
 <html>
 <head>
   <title>The Food Rescue Robot</title>
-  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
-  <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="//yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
+  <link href='//fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
   <%= stylesheet_link_tag "application", :media => "all" %>
   <%= csrf_meta_tags %>
@@ -86,6 +86,8 @@
     </div>
   </div>
   <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "google_analytics" if Rails.env.production? %>
+
 
 </body>
 </html>

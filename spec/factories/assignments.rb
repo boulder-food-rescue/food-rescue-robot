@@ -6,7 +6,7 @@ FactoryGirl.define do
     trait :admin do
       admin true
     end
-    
+
     factory :admin_volunteer, traits: [:admin]
   end
 end

@@ -11,7 +11,7 @@ class CreateLogVolunteers < ActiveRecord::Migration
     add_index :log_volunteers, [:log_id]
     add_index :log_volunteers, [:volunteer_id]
     # now migrate data (do it with raw data cause the model class is changing)
-    Log.select("id,volunteer_id,orig_volunteer_id").each do |log|
+    Log.select('id,volunteer_id,orig_volunteer_id').each do |log|
       unless log.volunteer_id.blank?
         logVolunteer = LogVolunteer.new
         logVolunteer.volunteer_id = log.volunteer_id

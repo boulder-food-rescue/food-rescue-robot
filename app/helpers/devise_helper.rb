@@ -11,18 +11,18 @@ module DeviseHelper
       error_key = 'devise.failure.invalid' unless flash[:notice].present?
     end
 
-    return "" if resource.errors.empty? && flash_alerts.empty?
+    return '' if resource.errors.empty? && flash_alerts.empty?
 
     errors = resource.errors.empty? ? flash_alerts : resource.errors.full_messages
 
     messages = errors.map { |msg| content_tag(:li, msg) }.join
 
-    unless flash[:notice].present?
-      sentence = I18n.t(error_key, :count    => errors.count,
-                                 :resource => resource.class.model_name.human.downcase)
-    else
-      sentence = ""
-    end
+    sentence = unless flash[:notice].present?
+                 I18n.t(error_key, :count    => errors.count,
+                                   :resource => resource.class.model_name.human.downcase)
+               else
+                 ''
+               end
 
     html = <<-HTML
     <div id="error_explanation">

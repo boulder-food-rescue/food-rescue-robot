@@ -3,15 +3,15 @@ class AbsencesController < ApplicationController
   before_filter :admin_only, :only => [:all]
 
   def all
-    absences = Absence.where("stop_date >= ?",Date.today).keep_if{ |a|
+    absences = Absence.where('stop_date >= ?', Date.today).keep_if{ |a|
       (a.volunteer.region_ids & current_volunteer.admin_region_ids).length > 0
     }
-    index(absences,"All Absences")
+    index(absences, 'All Absences')
   end
 
-  def index(a=nil,header="Absences")
-    @absences = a.nil? ? Absence.where("stop_date >= ? AND volunteer_id=?",Date.today,current_volunteer.id) : a
-    @header = header.nil? ? "Absences" : header
+  def index(a=nil, header='Absences')
+    @absences = a.nil? ? Absence.where('stop_date >= ? AND volunteer_id=?', Date.today, current_volunteer.id) : a
+    @header = header.nil? ? 'Absences' : header
     respond_to do |format|
       format.html { render :index } # index.html.erb
     end
@@ -67,14 +67,14 @@ class AbsencesController < ApplicationController
     adminrids = current_volunteer.admin_region_ids
 
     unless volunteer.id == current_volunteer.id or current_volunteer.super_admin? or (vrids & adminrids).length > 0
-      flash[:warning] = "Cannot schedule an absence for that person, mmmmk."
+      flash[:warning] = 'Cannot schedule an absence for that person, mmmmk.'
       redirect_to(root_path)
       return
     end
 
     if (@absence.start_date <= Date.today+2) and (not current_volunteer.any_admin?)
       emails = current_volunteer.admin_regions.collect{ |r| r.volunteer_coordinator_email }.compact
-      flash[:warning] = "You cannot schedule an absence within 48 hours. If you will be unable to do your shift, please contact your volunteer coordinator(s)#{emails.empty? ? "" : ": "+emails.join(", ")}."
+      flash[:warning] = "You cannot schedule an absence within 48 hours. If you will be unable to do your shift, please contact your volunteer coordinator(s)#{emails.empty? ? '' : ': '+emails.join(', ')}."
       redirect_to :back
       return
     end
@@ -84,7 +84,7 @@ class AbsencesController < ApplicationController
     n = 0
     ns = 0
     while from <= to
-      (n_did,n_skipped) = FoodRobot::generate_log_entries(from,@absence)
+      (n_did, n_skipped) = FoodRobot::generate_log_entries(from, @absence)
       n += n_did
       ns += n_skipped
       break if n >= 12

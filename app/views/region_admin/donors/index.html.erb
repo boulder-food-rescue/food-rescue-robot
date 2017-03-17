@@ -1,52 +1,60 @@
 <h2>Donors</h2>
 
-<div style="text-align: right;">
-  <%= form_tag("/locations/new", :method => "get") do %>
-    New Donor Location For <%= select_tag(:region_id, options_for_select(@regions.collect{ |r| [r.name,r.id] })) %>
-    <%= submit_tag("Go") %>
-  <% end %>
+<div class="row">
+  <div class="col-sm-6">&nbsp;</div>
+  <div class="col-sm-6 text-right">
+    <%= form_tag("/locations/new", method: "get", class: "form-inline") do %>
+      <strong>New Donor Location For</strong>
+      <%= select_tag(:region_id, options_for_select(@regions.collect{ |r| [r.name,r.id] }), {class: "form-control"} ) %>
+      <%= submit_tag("Go", class: "btn btn-primary") %>
+    <% end %>
+  </div>
 </div>
 
-<% if @locations.empty? %>
-  <p>No locations.</p>
-<% else %>
-  <table id="data_table" class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Address</th>
-        <th>Link</th>
-      </tr>
-    </thead>
+<div class="row">
+  <div class="col-sm-12">
+    <% if @locations.empty? %>
+      <p>No locations.</p>
+    <% else %>
+      <table id="data_table" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Link</th>
+          </tr>
+        </thead>
 
-    <tbody>
-      <% @locations.each do |location| %>
-        <tr>
-          <td>
-            <%= link_to location.name.presence || "Unnamed location", location_url(location) %> <%= link_to "(website)", location.website if location.website.present? %>
-          </td>
-          <td>
-            <%= location.address.gsub("\n","<br>").html_safe unless location.address.nil? %>
-          </td>
-          <td>
-            <% if location.receipt_key.present? %>
-              <%= link_to 'Hud', hud_location_path(location, key: location.receipt_key) %><br>
-            <% end %>
-            <%= link_to "Edit", edit_location_url(location) %><br>
-            <%= link_to "Delete", location_url(location), :confirm => "Are you sure?", :method => :delete %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% end %>
+        <tbody>
+          <% @locations.each do |location| %>
+            <tr>
+              <td>
+                <%= link_to location.name.presence || "Unnamed location", location_url(location) %> <%= link_to "(website)", location.website if location.website.present? %>
+              </td>
+              <td>
+                <%= location.address.gsub("\n","<br>").html_safe unless location.address.nil? %>
+              </td>
+              <td>
+                <% if location.receipt_key.present? %>
+                  <%= link_to 'Hud', hud_location_path(location, key: location.receipt_key) %><br>
+                <% end %>
+                <%= link_to "Edit", edit_location_url(location) %><br>
+                <%= link_to "Delete", location_url(location), confirm: "Are you sure?", method: :delete %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
 
-<% content_for :scripts do %>
-  <script type="text/javascript">
-    $(function () { 
-      $('#data_table').dataTable({
-        'iDisplayLength' : 50,
-      });
-    });
-  </script>
-<% end %>
+    <% content_for :scripts do %>
+      <script type="text/javascript">
+        $(function () {
+          $('#data_table').dataTable({
+            'iDisplayLength' : 50,
+          });
+        });
+      </script>
+    <% end %>
+  </div>
+</div>

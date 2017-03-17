@@ -6,8 +6,6 @@ class Region < ActiveRecord::Base
   has_many :schedule_chains
   has_many :locations
   has_many :logs
-  has_many :donors
-  has_many :recipients
 
   scope :all_admin, ->(volunteer) { where(id: volunteer.admin_region_ids) }
 
@@ -30,24 +28,24 @@ class Region < ActiveRecord::Base
   end
 
   def active_volunteer_count
-   schedule_chains.flat_map(&:volunteers).uniq.count
+    schedule_chains.flat_map(&:volunteers).uniq.count
   end
 
   def has_sellers?
     locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert["Seller"]
+      location.location_type == Location::LOCATION_TYPES.invert['Seller']
     end
   end
 
   def has_buyers?
     locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert["Buyer"]
+      location.location_type == Location::LOCATION_TYPES.invert['Buyer']
     end
   end
 
   def has_hubs?
     locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert["Hub"]
+      location.location_type == Location::LOCATION_TYPES.invert['Hub']
     end
   end
 

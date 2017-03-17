@@ -27,7 +27,7 @@ Webapp::Application.configure do
   config.active_support.deprecation = :log
 
   # rotate logs
-  config.logger = Logger.new(Rails.root.join("log",Rails.env + ".log"),3,5*1024*1024)
+  config.logger = Logger.new(Rails.root.join('log', Rails.env + '.log'), 3, 5*1024*1024)
 
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin

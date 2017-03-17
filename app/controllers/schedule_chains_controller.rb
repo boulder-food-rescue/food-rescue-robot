@@ -5,23 +5,23 @@ class ScheduleChainsController < ApplicationController
   def open
     @schedules = ScheduleChain.open_in_regions current_volunteer.region_ids
     @my_admin_regions = current_volunteer.admin_regions
-    @page_title = "Open Shifts"
+    @page_title = 'Open Shifts'
     render :index
   end
 
   def mine
     @schedules = current_volunteer.schedule_chains
     @my_admin_regions = current_volunteer.admin_regions
-    @page_title = "My Regular Shifts"
+    @page_title = 'My Regular Shifts'
     render :index
   end
 
   def index(title = 'Full Schedule', day_of_week = nil)
-    if day_of_week.nil?
-      dowq = ' '
-    else
-      dowq = "day_of_week = #{day_of_week.to_i}"
-    end
+    dowq = if day_of_week.nil?
+             ' '
+           else
+             "day_of_week = #{day_of_week.to_i}"
+           end
     @schedules = ScheduleChain.where(region_id: current_volunteer.region_ids).where(dowq)
     @my_admin_regions = current_volunteer.admin_regions
     @page_title = title
@@ -61,7 +61,7 @@ class ScheduleChainsController < ApplicationController
     @embed_request_url = ('https://www.google.com/maps/embed/v1/directions' + '?key=' + api_key + embed_parameters)
 
     #This can apparently be nil, so have to do a funky sort fix
-    @sorted_related_shifts = @schedule.related_shifts.sort{ |x,y|
+    @sorted_related_shifts = @schedule.related_shifts.sort{ |x, y|
       x.schedule_chain.day_of_week && y.schedule_chain.day_of_week ?
         x.schedule_chain.day_of_week <=> y.schedule_chain.day_of_week : x.schedule_chain.day_of_week ? -1 : 1
     }
@@ -92,7 +92,7 @@ class ScheduleChainsController < ApplicationController
   def destroy
     @s = ScheduleChain.find(params[:id])
     unless current_volunteer.any_admin? @s.region
-      flash[:error] = "Not authorized to delete schedule items for that region"
+      flash[:error] = 'Not authorized to delete schedule items for that region'
       redirect_to(root_path)
       return
     end
@@ -104,7 +104,7 @@ class ScheduleChainsController < ApplicationController
   def new
     @region = Region.find(params[:region_id])
     unless current_volunteer.any_admin? @region
-      flash[:error] = "Not authorized to create schedule items for that region"
+      flash[:error] = 'Not authorized to create schedule items for that region'
       redirect_to(root_path)
       return
     end
@@ -112,19 +112,19 @@ class ScheduleChainsController < ApplicationController
     @schedule.volunteers.build
     @schedule.region = @region
     set_vars_for_form @region
-    @action = "create"
+    @action = 'create'
     render :new
   end
 
   def create
     @schedule = ScheduleChain.new(params[:schedule_chain])
     unless current_volunteer.any_admin? @schedule.region
-      flash[:error] = "Not authorized to create schedule items for that region"
+      flash[:error] = 'Not authorized to create schedule items for that region'
       redirect_to(root_path)
       return
     end
     if @schedule.save
-      flash[:notice] = "Created successfully"
+      flash[:notice] = 'Created successfully'
       index
     else
       flash[:error] = "Didn't save successfully :("
@@ -136,35 +136,35 @@ class ScheduleChainsController < ApplicationController
     @schedule = ScheduleChain.find(params[:id])
 
     unless current_volunteer.any_admin? @schedule.region
-      flash[:error] = "Not authorized to edit schedule items for that region"
+      flash[:error] = 'Not authorized to edit schedule items for that region'
       return redirect_to(root_path)
     end
 
     @region = @schedule.region
     set_vars_for_form @region
     @inactive_volunteers = @schedule.schedule_volunteers.select { |sched_vol| sched_vol.active == false }
-    @action = "update"
+    @action = 'update'
   end
 
   def update
     @schedule = ScheduleChain.find(params[:id])
 
     unless current_volunteer.any_admin? @schedule.region
-      flash[:error] = "Not authorized to edit schedule items for that region"
+      flash[:error] = 'Not authorized to edit schedule items for that region'
       return redirect_to(root_path)
     end
 
     delete_schedules = []
-    unless params[:schedule_chain]["schedules_attributes"].nil?
-      params[:schedule_chain]["schedules_attributes"].collect{ |k,v|
-        delete_schedules << v["id"].to_i if v["food_type_ids"].nil?
+    unless params[:schedule_chain]['schedules_attributes'].nil?
+      params[:schedule_chain]['schedules_attributes'].collect{ |k, v|
+        delete_schedules << v['id'].to_i if v['food_type_ids'].nil?
       }
     end
 
     delete_volunteers = []
-    unless params[:schedule_chain]["schedule_volunteers_attributes"].nil?
-      params[:schedule_chain]["schedule_volunteers_attributes"].collect{ |k,v|
-        delete_volunteers << v["id"].to_i if v["volunteer_id"].nil?
+    unless params[:schedule_chain]['schedule_volunteers_attributes'].nil?
+      params[:schedule_chain]['schedule_volunteers_attributes'].collect{ |k, v|
+        delete_volunteers << v['id'].to_i if v['volunteer_id'].nil?
       }
     end
 
@@ -177,10 +177,10 @@ class ScheduleChainsController < ApplicationController
         s.update_attributes({active: false}) if delete_volunteers.include? s.id
       end
 
-      flash[:notice] = "Updated Successfully"
+      flash[:notice] = 'Updated Successfully'
       index
     else
-      flash[:error] = "Update failed :("
+      flash[:error] = 'Update failed :('
       render :edit
     end
   end
@@ -197,7 +197,7 @@ class ScheduleChainsController < ApplicationController
         flash[:error] = "Cannot leave route since you're not part of it!"
       end
     else
-      flash[:error] = "Cannot leave that route since you are not a member of that region!"
+      flash[:error] = 'Cannot leave that route since you are not a member of that region!'
     end
     redirect_to action: 'show', id: schedule_chain.id
   end
@@ -206,12 +206,12 @@ class ScheduleChainsController < ApplicationController
     schedule = ScheduleChain.find(params[:id])
     if current_volunteer.in_region? schedule.region_id
       if schedule.has_volunteer? current_volunteer
-        flash[:error] = "You are already on this shift"
+        flash[:error] = 'You are already on this shift'
       else
         schedule_volunteer = ScheduleVolunteer.new(:volunteer_id=>current_volunteer.id, :schedule_chain_id=>schedule.id)
         if schedule_volunteer.save
           collided_shifts = []
-          Log.where('schedule_chain_id = ? AND "when" >= current_date AND NOT complete',schedule.id).each{ |l|
+          Log.where('schedule_chain_id = ? AND "when" >= current_date AND NOT complete', schedule.id).each{ |l|
             if l.volunteers.empty?
               l.volunteers << current_volunteer
               l.save
@@ -220,34 +220,34 @@ class ScheduleChainsController < ApplicationController
             end
           }
           if collided_shifts.length > 0
-            m = Notifier.schedule_collision_warning(schedule,collided_shifts)
+            m = Notifier.schedule_collision_warning(schedule, collided_shifts)
             m.deliver
           end
-          notice = "You have "
-          if schedule.volunteers.length == 0
-            notice += "taken"
-          else
-            notice += "joined"
-          end
-          notice += " the route to "
+          notice = 'You have '
+          notice += if schedule.volunteers.length == 0
+                      'taken'
+                    else
+                      'joined'
+                    end
+          notice += ' the route to '
           if schedule.recipient_stops.length == 1
-            notice += (schedule.recipient_stops.first.location.name + ".")
+            notice += (schedule.recipient_stops.first.location.name + '.')
           else
             schedule.recipient_stops.each_with_index do |stop, index|
-              if index == (schedule.recipient_stops.length-1)
-                notice += ("and " + stop.location.name + ".")
-              else
-                notice += (stop.location.name + ", ") #oxford comma
-              end
+              notice += if index == (schedule.recipient_stops.length-1)
+                          ('and ' + stop.location.name + '.')
+                        else
+                          (stop.location.name + ', ') #oxford comma
+                        end
             end
           end
           flash[:notice] = notice
        else
-          flash[:error] = "Hrmph. That didn't work..."
+         flash[:error] = "Hrmph. That didn't work..."
         end
       end
     else
-      flash[:error] = "Cannot take that pickup since you are not a member of that region!"
+      flash[:error] = 'Cannot take that pickup since you are not a member of that region!'
     end
     respond_to do |format|
       format.json {

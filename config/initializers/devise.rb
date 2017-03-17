@@ -2,13 +2,13 @@
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
 
- # For devise 3.1
- config.secret_key = '3cd770ec4e21f12a592de139fb8f40ba9eefb8fb6769b28223ab2dd8d543c3b5c34ae7cae346052d6c866fd17267786418d86a77eb2a57edddd102be9559673a9'
+  # For devise 3.1
+  config.secret_key = '3cd770ec4e21f12a592de139fb8f40ba9eefb8fb6769b28223ab2dd8d543c3b5c34ae7cae346052d6c866fd17267786418d86a77eb2a57edddd102be9559673a9'
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class with default "from" parameter.
-  config.mailer_sender = "robot@boulderfoodrescue.org"
+  config.mailer_sender = 'robot@boulderfoodrescue.org'
 
   # Configure the class responsible to send e-mails.
   # config.mailer = "Devise::Mailer"
@@ -129,7 +129,7 @@ Devise.setup do |config|
   # The time you want to timeout the user session without activity. After this
   # time the user will be asked for credentials again. Default is 30 minutes.
   # config.timeout_in = 30.minutes
-  
+
   # If true, expires auth token on session timeout.
   # config.expire_auth_token_on_timeout = false
 

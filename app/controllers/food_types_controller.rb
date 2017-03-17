@@ -20,7 +20,7 @@ class FoodTypesController < ApplicationController
   def new
     @food_type = FoodType.new
     @food_type.region_id = params[:region_id]
-    @action = "create"
+    @action = 'create'
     authorize! :create, @food_type
     session[:my_return_to] = request.referer
     render :new
@@ -30,7 +30,7 @@ class FoodTypesController < ApplicationController
     @food_type = FoodType.new(params[:food_type])
     authorize! :create, @food_type
     if @food_type.save
-      flash[:notice] = "Created successfully."
+      flash[:notice] = 'Created successfully.'
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else
@@ -45,7 +45,7 @@ class FoodTypesController < ApplicationController
   def edit
     @food_type = FoodType.find(params[:id])
     authorize! :update, @food_type
-    @action = "update"
+    @action = 'update'
     session[:my_return_to] = request.referer
     render :edit
   end
@@ -55,14 +55,14 @@ class FoodTypesController < ApplicationController
     authorize! :update, @food_type
     # can't set admin bits from CRUD controls
     if @food_type.update_attributes(params[:food_type])
-      flash[:notice] = "Updated Successfully."
+      flash[:notice] = 'Updated Successfully.'
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else
         index
       end
     else
-      flash[:error] = "Update failed :("
+      flash[:error] = 'Update failed :('
       render :edit
     end
   end

@@ -183,6 +183,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "google_analytics" if Rails.env.production? %>
     <%= yield :scripts %>
 
   </body>

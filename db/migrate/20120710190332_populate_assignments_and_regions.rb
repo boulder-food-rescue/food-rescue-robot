@@ -1,15 +1,15 @@
 class PopulateAssignmentsAndRegions < ActiveRecord::Migration
   def up
     rb = Region.new
-    rb.name = "Boulder"
-    rb.address = "Boulder, Colorado, USA"
-    rb.website = "http://boulderfoodrescue.org"
+    rb.name = 'Boulder'
+    rb.address = 'Boulder, Colorado, USA'
+    rb.website = 'http://boulderfoodrescue.org'
     rb.save
 
     rd = Region.new
-    rd.name = "Denver"
-    rd.address = "Denver, Colorado, USA"
-    rd.website = "http://denverfoodrescue.org"
+    rd.name = 'Denver'
+    rd.address = 'Denver, Colorado, USA'
+    rd.website = 'http://denverfoodrescue.org'
     rd.save
 
     Volunteer.all.each{ |e|

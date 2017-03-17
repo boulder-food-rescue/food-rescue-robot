@@ -22,13 +22,13 @@ module RegionAdmin
       if current_volunteer.super_admin?
         Region.all
       else
-        current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+        current_volunteer.assignments.collect{ |assignment| assignment.admin ? assignment.region : nil }.compact
       end
     end
 
     def authorize_region_admin!
       return if region_admin?
-      redirect_to root_url, alert: "Unauthorized"
+      redirect_to root_url, alert: 'Unauthorized'
     end
 
     def region_admin?

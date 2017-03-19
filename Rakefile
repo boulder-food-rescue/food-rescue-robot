@@ -32,7 +32,7 @@ task(:export_log_data => :environment) do
 
       n += 1
       if n % 100 == 0
-        puts (100.0*(n/ntotal.to_f)).round.to_s + '%'
+        puts((100.0*(n/ntotal.to_f)).round.to_s + '%')
       end
     }
   end

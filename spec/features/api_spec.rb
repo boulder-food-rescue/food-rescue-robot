@@ -92,7 +92,7 @@ xdescribe 'api' do
     expect(last_response.status).to eq(200)
     json = JSON.parse(last_response.body)
     pp json
-    json['log_parts'].each{ |i, lp|
+    json['log_parts'].each{ |i, _lp|
       json['log_parts'][i][:weight] = 42.0
       json['log_parts'][i][:count] = 5
     }

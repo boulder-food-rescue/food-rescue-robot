@@ -156,14 +156,14 @@ class ScheduleChainsController < ApplicationController
 
     delete_schedules = []
     unless params[:schedule_chain]['schedules_attributes'].nil?
-      params[:schedule_chain]['schedules_attributes'].collect{ |k, v|
+      params[:schedule_chain]['schedules_attributes'].collect{ |_k, v|
         delete_schedules << v['id'].to_i if v['food_type_ids'].nil?
       }
     end
 
     delete_volunteers = []
     unless params[:schedule_chain]['schedule_volunteers_attributes'].nil?
-      params[:schedule_chain]['schedule_volunteers_attributes'].collect{ |k, v|
+      params[:schedule_chain]['schedule_volunteers_attributes'].collect{ |_k, v|
         delete_volunteers << v['id'].to_i if v['volunteer_id'].nil?
       }
     end

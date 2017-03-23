@@ -28,6 +28,7 @@ class CreateLogParts < ActiveRecord::Migration
     remove_column :logs, :weight
     remove_column :logs, :food_type_id
   end
+
   def down
     change_table :logs do |t|
       t.decimal :weight

@@ -15,6 +15,7 @@ class UseFoodTypesAndTransportTypes < ActiveRecord::Migration
       t.references :transport_type
     end
   end
+
   def down
     change_table :volunteers do |t|
       t.remove :transport_type_id

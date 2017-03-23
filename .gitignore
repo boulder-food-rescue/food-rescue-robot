@@ -12,3 +12,4 @@ log/*.log.*
 .idea
 .bundle/*
 .byebug_history
+bfr-data/**/*

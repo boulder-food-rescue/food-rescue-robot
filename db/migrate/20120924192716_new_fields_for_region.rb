@@ -6,6 +6,7 @@ class NewFieldsForRegion < ActiveRecord::Migration
     end
     add_attachment :regions, :logo
   end
+
   def down
     remove_column :regions, :title
     remove_column :regions, :tagline

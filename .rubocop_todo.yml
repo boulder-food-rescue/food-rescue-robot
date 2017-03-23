@@ -136,12 +136,6 @@ Style/Alias:
   Exclude:
     - 'app/controllers/application_controller.rb'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/AlignArray:
-  Exclude:
-    - 'db/seeds.rb'
-
 # Offense count: 59
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedHashRocketStyle, SupportedHashRocketStyles, EnforcedColonStyle, SupportedColonStyles, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.

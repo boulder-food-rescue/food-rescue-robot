@@ -132,7 +132,7 @@ region_admin.waiver_signed_at = DateTime.now
 region_admin.active = true
 region_admin.save
 
-region_assignment = Assignment.new({
+Assignment.new({
   'admin'=>true
 })
 

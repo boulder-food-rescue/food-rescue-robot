@@ -171,7 +171,7 @@ class Location < ActiveRecord::Base
   def init_detailed_hours
     begin
       return if self.detailed_hours_json.nil?
-    rescue ActiveModel::MissingAttributeError => e
+    rescue ActiveModel::MissingAttributeError
       return
     end
     detailed_hours = JSON.parse(self.detailed_hours_json)
@@ -186,13 +186,13 @@ class Location < ActiveRecord::Base
       next if start.nil? or stop.nil?
       write_day_info( prefix+'status', detailed_hours[index.to_s]['status'].to_i )
       # carefully set start time
-      t = Time.find_zone(self.time_zone).parse( start )
-      t = t.change(:year=>now.year, :month=>now.month, :day=>now.day)
-      write_day_info( prefix+'start', t )
+      time = Time.find_zone(self.time_zone).parse( start )
+      time = time.change(:year=>now.year, :month=>now.month, :day=>now.day)
+      write_day_info( prefix+'start', time)
       # carefully set end time
-      t = Time.find_zone(self.time_zone).parse( stop )
-      t = t.change(:year=>now.year, :month=>now.month, :day=>now.day)
-      write_day_info( prefix+'end', t )
+      time = Time.find_zone(self.time_zone).parse( stop )
+      time = time.change(:year=>now.year, :month=>now.month, :day=>now.day)
+      write_day_info( prefix+'end', time )
     end
   end
 

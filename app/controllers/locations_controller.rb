@@ -67,10 +67,10 @@ class LocationsController < ApplicationController
   end
 
   def destroy
-    @l = Location.find(params[:id])
-    authorize! :destroy, @l
-    @l.active = false
-    @l.save
+    @location = Location.find(params[:id])
+    authorize! :destroy, @location
+    @location.active = false
+    @location.save
     redirect_to(request.referrer)
   end
 

@@ -94,7 +94,7 @@ RSpec.describe Ability do
       let(:region) { create(:region) }
       let(:volunteer_log) { create(:log, region: region) }
       let(:region_log) { create(:log, region: region) }
-      let(:other_log) { create(:log) }
+      let(:other_log) { create(:log, region: create(:region)) }
 
       before do
         create(:assignment, volunteer: volunteer, region: region)

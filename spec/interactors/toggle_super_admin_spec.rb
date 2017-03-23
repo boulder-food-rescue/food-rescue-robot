@@ -8,7 +8,7 @@ RSpec.describe ToggleSuperAdmin do
 
     subject do
       described_class.call(
-          volunteer: volunteer
+        volunteer: volunteer
       )
     end
 

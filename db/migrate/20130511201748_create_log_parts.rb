@@ -16,7 +16,6 @@ class CreateLogParts < ActiveRecord::Migration
     end
     execute "UPDATE logs SET complete='t' WHERE weight IS NOT NULL;"
 
-    ft_merge = {}
     Log.all.each{ |l|
       lp = LogPart.new
       lp.log_id = l.id

@@ -4,15 +4,16 @@ class CellCarriersController < ApplicationController
   active_scaffold :cell_carrier do |conf|
     conf.columns = [:name, :format]
   end
+
   def create_authorized?
     current_volunteer.super_admin?
   end
 
-  def update_authorized?(record=nil)
+  def update_authorized?(_record=nil)
     current_volunteer.super_admin?
   end
 
-  def delete_authorized?(record=nil)
+  def delete_authorized?(_record=nil)
     current_volunteer.super_admin?
   end
 end

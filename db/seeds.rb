@@ -78,8 +78,8 @@ volunteer.save!
 assignment = Assignment.new({
   'admin'=>false
 })
-assignment.volunteer_id = volunteer.id,
-assignment.region_id = region.id,
+assignment.volunteer_id = volunteer.id
+assignment.region_id = region.id
 assignment.save!
 
 super_admin = Volunteer.create({
@@ -136,6 +136,6 @@ region_assignment = Assignment.new({
   'admin'=>true
 })
 
-assignment.volunteer_id = region_admin.id,
-assignment.region_id = region.id,
+assignment.volunteer_id = region_admin.id
+assignment.region_id = region.id
 assignment.save!

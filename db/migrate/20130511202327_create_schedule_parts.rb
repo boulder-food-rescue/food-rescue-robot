@@ -14,6 +14,7 @@ class CreateScheduleParts < ActiveRecord::Migration
              SELECT food_type_id,schedule_id,'now','now' FROM food_types_schedules;"
     drop_table :food_types_schedules
   end
+
   def down
     create_table :food_types_schedules do |t|
       t.references :schedule

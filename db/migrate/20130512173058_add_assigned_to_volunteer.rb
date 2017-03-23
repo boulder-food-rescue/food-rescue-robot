@@ -9,6 +9,7 @@ class AddAssignedToVolunteer < ActiveRecord::Migration
       end
     }
   end
+
   def down
     remove_column :volunteers, :assigned
     remove_column :volunteers, :requested_region_id

@@ -7,6 +7,7 @@ class AssociateScheduleWithRegion < ActiveRecord::Migration
       t.references :region
     end
   end
+
   def down
     remove_column :schedules, :region_id
     remove_column :logs, :region_id

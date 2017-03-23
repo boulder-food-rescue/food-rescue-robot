@@ -18,6 +18,7 @@ class AddEmailToTextEmailToVolunteer < ActiveRecord::Migration
       t.boolean :sms_too, :default => false
     end
   end
+
   def down
     remove_column :volunteers, :cell_carrier_id
     remove_column :volunteers, :sms_too

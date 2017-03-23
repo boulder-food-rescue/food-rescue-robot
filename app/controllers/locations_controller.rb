@@ -51,8 +51,8 @@ class LocationsController < ApplicationController
   end
 
   def show
-    @loc = Location.find(params[:id])
-    unless current_volunteer.super_admin? or (current_volunteer.region_ids.include? @loc.region_id)
+    @location = Location.find(params[:id])
+    unless current_volunteer.super_admin? or (current_volunteer.region_ids.include? @location.region_id)
       flash[:notice] = "Can't view location for a region you're not assigned to..."
       respond_to do |format|
         format.html
@@ -62,7 +62,7 @@ class LocationsController < ApplicationController
     end
     respond_to do |format|
       format.html
-      format.json { render json: @loc.attributes }
+      format.json { render json: @location.attributes }
     end
   end
 

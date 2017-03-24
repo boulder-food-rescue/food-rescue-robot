@@ -10,10 +10,10 @@ class FoodTypesController < ApplicationController
   end
 
   def destroy
-    @food_type = FoodType.find(params[:id])
-    authorize! :destroy, @food_type
-    @food_type.active = false
-    @food_type.save
+    food_type = FoodType.find(params[:id])
+    authorize! :destroy, food_type
+    food_type.active = false
+    food_type.save
     redirect_to(request.referrer)
   end
 

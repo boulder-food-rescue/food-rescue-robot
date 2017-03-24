@@ -222,8 +222,7 @@ class VolunteersController < ApplicationController
     end
 
     volunteer = Volunteer.find(params[:volunteer_id])
-    volunteer.admin = !volunteer.admin
-    if volunteer.save
+    if ToggleSuperAdmin.call(volunteer: volunteer).success?
       flash[:notice] = "#{volunteer.name} Updated to Admin: #{volunteer.admin}"
     else
       flash[:error] = "#{volunteer.errors.full_messages}"

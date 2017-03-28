@@ -17,7 +17,7 @@ class SampleData
                   :number
 
       def admins
-        @admins ||= number.times.map do |i|
+        @admins ||= Array.new(number) do |i|
           Volunteer.new(
             email: "admin-#{region.name.parameterize}#{i + 1 > 1 ? "-#{i + 1}" : ''}@example.com",
             name: Faker::Name.name,

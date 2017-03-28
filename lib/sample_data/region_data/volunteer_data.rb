@@ -17,7 +17,7 @@ class SampleData
                   :number
 
       def volunteers
-        @volunteers ||= number.times.map do
+        @volunteers ||= Array.new(number) do
           name = "#{Faker::Name.first_name} #{Faker::Name.last_name}"
 
           Volunteer.new(

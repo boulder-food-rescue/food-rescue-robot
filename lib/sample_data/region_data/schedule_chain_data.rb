@@ -16,7 +16,7 @@ class SampleData
                   :number
 
       def schedule_chains
-        @schedule_chains ||= number.times.map do
+        @schedule_chains ||= Array.new(number) do
           times = random_start_stop_times
           frequency = %w(weekly one-time).sample
 
@@ -58,7 +58,7 @@ class SampleData
         sched_locations << active_record_random_from(region.locations.donors)
 
         # Select some random locations (donors or recipients)
-        rand(4).times.map do
+        Array.new(rand(4)) do
           sched_locations << active_record_random_from(region.locations.where('locations.id NOT IN (?)', sched_locations))
         end
 
@@ -76,7 +76,7 @@ class SampleData
       def random_volunteers
         volunteers = []
 
-        rand(3).times.map do
+        Array.new(rand(3)) do
           volunteers << active_record_random_from(
             volunteers.empty? ?
               region.volunteers :

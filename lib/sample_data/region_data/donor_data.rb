@@ -18,7 +18,7 @@ class SampleData
                   :number
 
       def donors
-        @donors ||= number.times.map do
+        @donors ||= Array.new(number) do
           Location.new(
             region_id: region.id,
             location_type: Location::LOCATION_TYPES.invert["Donor"],

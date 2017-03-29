@@ -232,16 +232,15 @@ class VolunteersController < ApplicationController
 
   def reactivate
     v = Volunteer.send(:with_exclusive_scope){ Volunteer.find(params[:id]) }
-    if (current_volunteer.admin_region_ids & v.region_ids).length > 0
-      v.active = true
-      v.save
-      inactive
-      return
-    else
+    if (current_volunteer.admin_region_ids & v.region_ids).length <= 0
       flash[:error] = "You're not permitted to do that!"
       redirect_to(root_path)
       return
     end
+    unless ReactivateVolunteer.call(volunteer: v).success?
+      flash[:error] = 'Update failed :('
+    end
+    inactive
   end
 
   def admin_only

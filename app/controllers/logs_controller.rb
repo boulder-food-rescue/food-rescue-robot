@@ -19,12 +19,12 @@ class LogsController < ApplicationController
 
   def by_day
     if params[:date].present?
-      d = Date.civil(*params[:date].sort.map(&:last).map(&:to_i))
+      date = Date.civil(*params[:date].sort.map(&:last).map(&:to_i))
     else
       n = params[:n].present? ? params[:n].to_i : 0
-      d = Time.zone.today+n
+      date = Time.zone.today+n
     end
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" = '#{d}'"), "Shifts on #{d.strftime('%A, %B %-d')}")
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" = '#{date}'"), "Shifts on #{date.strftime('%A, %B %-d')}")
   end
 
   def last_ten
@@ -94,24 +94,24 @@ class LogsController < ApplicationController
     case params[:what]
     when 'poundage'
       if params[:region_id].nil?
-        t = LogPart.sum(:weight) + Region.where('prior_lbs_rescued IS NOT NULL').sum('prior_lbs_rescued')
+        total = LogPart.sum(:weight) + Region.where('prior_lbs_rescued IS NOT NULL').sum('prior_lbs_rescued')
       else
-        r = params[:region_id]
-        @region = Region.find(r)
-        t = Log.joins(:log_parts).where('region_id = ? AND complete', r).sum('weight').to_f
-        t += @region.prior_lbs_rescued.to_f unless @region.nil? or @region.prior_lbs_rescued.nil?
+        region_id = params[:region_id]
+        @region = Region.find(region_id)
+        total = Log.joins(:log_parts).where('region_id = ? AND complete', region_id).sum('weight').to_f
+        total += @region.prior_lbs_rescued.to_f unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
-      render :text => t.to_s
+      render :text => total.to_s
     when 'wordcloud'
       words = {}
-      LogPart.select('description').where('description IS NOT NULL').each{ |l|
-        l.description.strip.split(/\s*\,\s*/).each{ |w|
-          w = w.strip.downcase.tr(',', '')
-          next if w =~ /(nothing|no |none)/ or w =~ /etc/ or w =~ /n\/a/ or w =~ /misc/
+      LogPart.select('description').where('description IS NOT NULL').each{ |log_part|
+        log_part.description.strip.split(/\s*\,\s*/).each{ |word|
+          word = word.strip.downcase.tr(',', '')
+          next if word =~ /(nothing|no |none)/ or word =~ /etc/ or word =~ /n\/a/ or word =~ /misc/
           # people cannot seem to spell the most delicious fruit correctly
-          w = 'avocados' if w == 'avacados' or w == 'avocadoes' or w == 'avocado'
-          words[w] = 0 if words[w].nil?
-          words[w] += 1
+          word = 'avocados' if %w(avacados avocadoes avocado).include?(word)
+          words[word] = 0 if words[word].nil?
+          words[word] += 1
         }
       }
       render :text => words.collect{ |k, v| (v >= 10) ? "#{k}:#{v}" : nil }.compact.join(',')
@@ -135,9 +135,9 @@ class LogsController < ApplicationController
   end
 
   def destroy
-    @l = Log.find(params[:id])
-    authorize! :destroy, @l
-    @l.destroy
+    @log = Log.find(params[:id])
+    authorize! :destroy, @log
+    @log.destroy
     redirect_to(request.referrer)
   end
 
@@ -282,19 +282,20 @@ class LogsController < ApplicationController
 
   # can be given a single id or a list of ids
   def leave
-    l = unless params[:ids].present?
-          [Log.find(params[:id])]
-        else
-          params[:ids].collect{ |i| Log.find(i) }
-        end
+    logs =
+      unless params[:ids].present?
+        [Log.find(params[:id])]
+      else
+        params[:ids].collect{ |id| Log.find(id) }
+      end
 
-    l.each { |log| authorize! :leave, log }
+    logs.each { |log| authorize! :leave, log }
 
-    l.each do |x|
-      if x.has_volunteer? current_volunteer
-        LogVolunteer.where(:volunteer_id=>current_volunteer.id, :log_id=>x.id).each{ |lv|
-          lv.active = false
-          lv.save
+    logs.each do |log|
+      if log.has_volunteer? current_volunteer
+        LogVolunteer.where(volunteer_id: current_volunteer.id, log_id: log.id).each{ |log_volunteer|
+          log_volunteer.active = false
+          log_volunteer.save
         }
       end
     end
@@ -317,45 +318,45 @@ class LogsController < ApplicationController
       return redirect_to(request.referer || root_path)
     end
 
-    @loc = Location.find(params[:location_id])
+    @location = Location.find(params[:location_id])
 
-    authorize! :receipt, @loc
+    authorize! :receipt, @location
 
-    @logs = Log.where('logs.when >= ? AND logs.when <= ? AND donor_id = ? AND complete', @start_date, @stop_date, @loc.id)
+    @logs = Log.where('logs.when >= ? AND logs.when <= ? AND donor_id = ? AND complete', @start_date, @stop_date, @location.id)
 
     respond_to do |format|
       format.html
       format.pdf do
         pdf = Prawn::Document.new
         pdf.font_size 20
-        pdf.text @loc.region.title, :align => :center
+        pdf.text @location.region.title, :align => :center
 
-        unless @loc.region.tagline.nil?
+        unless @location.region.tagline.nil?
           pdf.move_down 10
           pdf.font_size 12
-          pdf.text @loc.region.tagline, :align => :center
+          pdf.text @location.region.tagline, :align => :center
         end
 
-        unless @loc.region.address.nil?
+        unless @location.region.address.nil?
           pdf.font_size 10
           pdf.font 'Times-Roman'
           pdf.move_down 10
-          pdf.text "#{@loc.region.address.tr("\n", ', ')}", :align => :center
+          pdf.text "#{@location.region.address.tr("\n", ', ')}", :align => :center
         end
 
-        unless @loc.region.website.nil?
+        unless @location.region.website.nil?
           pdf.move_down 5
-          pdf.text "#{@loc.region.website}", :align => :center
+          pdf.text "#{@location.region.website}", :align => :center
         end
-        unless @loc.region.phone.nil?
+        unless @location.region.phone.nil?
           pdf.move_down 5
-          pdf.text "#{@loc.region.phone}", :align => :center
+          pdf.text "#{@location.region.phone}", :align => :center
         end
         pdf.move_down 10
-        pdf.text "Federal Tax-ID: #{@loc.region.tax_id}", :align => :right
+        pdf.text "Federal Tax-ID: #{@location.region.tax_id}", :align => :right
         pdf.text "Receipt period: #{@start_date} to #{@stop_date}", :align => :left
         pdf.move_down 5
-        pdf.text "Receipt for: #{@loc.name}", :align => :center
+        pdf.text "Receipt for: #{@location.name}", :align => :center
         pdf.move_down 10
         pdf.font 'Helvetica'
         sum = 0.0
@@ -398,14 +399,14 @@ class LogsController < ApplicationController
       lpdata['weight'] = nil if lpdata['weight'].strip == ''
       lpdata['count'] = nil if lpdata['count'].strip == ''
       next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?
-      lp = lpdata['id'].nil? ? LogPart.new : LogPart.find(lpdata['id'].to_i)
-      lp.count = lpdata['count']
-      lp.description = lpdata['description']
-      lp.food_type_id = lpdata['food_type_id'].to_i
-      lp.log_id = log.id
-      lp.weight = lpdata['weight'].to_f
-      ret.push lp
-      lp.save
+      log_part = lpdata['id'].nil? ? LogPart.new : LogPart.find(lpdata['id'].to_i)
+      log_part.count = lpdata['count']
+      log_part.description = lpdata['description']
+      log_part.food_type_id = lpdata['food_type_id'].to_i
+      log_part.log_id = log.id
+      log_part.weight = lpdata['weight'].to_f
+      ret.push log_part
+      log_part.save
     } unless params['log_parts'].nil?
     ret
   end
@@ -415,9 +416,9 @@ class LogsController < ApplicationController
     filled_count = 0
     required_unfilled = 0
 
-    log.log_parts.each{ |lp|
-      required_unfilled += 1 if lp.required && lp.weight.nil? && lp.count.nil?
-      filled_count += 1 unless lp.weight.nil? && lp.count.nil?
+    log.log_parts.each{ |log_part|
+      required_unfilled += 1 if log_part.required && log_part.weight.nil? && log_part.count.nil?
+      filled_count += 1 unless log_part.weight.nil? && log_part.count.nil?
     }
     log.complete = filled_count > 0 && required_unfilled == 0
   end

@@ -140,18 +140,16 @@ class Log < ActiveRecord::Base
   end
 
   def self.needing_coverage(region_id_list=nil, days_away=nil, limit=nil)
-    unless region_id_list.nil?
-      if days_away.nil?
-        Log.where('"when" >= ?', Time.zone.today).where(:region_id=>region_id_list).order('logs.when').limit(limit).reject{ |l| l.covered? }
-      else
+    if region_id_list
+      if days_away
         Log.where('"when" >= ? AND "when" <= ?', Time.zone.today, Time.zone.today+days_away).where(:region_id=>region_id_list).order('logs.when').limit(limit).reject{ |l| l.covered? }
-      end
-    else
-      if days_away.nil?
-        Log.where('"when" >= ?', Time.zone.today).order('logs.when').limit(limit).reject{ |l| l.covered? }
       else
-        Log.where('"when" >= ? AND "when" <= ?', Time.zone.today, Time.zone.today+days_away).order('logs.when').limit(limit).reject{ |l| l.covered? }
+        Log.where('"when" >= ?', Time.zone.today).where(:region_id=>region_id_list).order('logs.when').limit(limit).reject{ |l| l.covered? }
       end
+    elsif days_away
+      Log.where('"when" >= ? AND "when" <= ?', Time.zone.today, Time.zone.today+days_away).order('logs.when').limit(limit).reject{ |l| l.covered? }
+    else
+      Log.where('"when" >= ?', Time.zone.today).order('logs.when').limit(limit).reject{ |l| l.covered? }
     end
   end
 

@@ -256,8 +256,8 @@ class VolunteersController < ApplicationController
 
     #Upcoming pickup list
     @upcoming_pickups = Shift.build_shifts(Log.upcoming_for(current_volunteer.id))
-    @sncs_pickups = Shift.build_shifts(Log.needing_coverage(current_volunteer.region_ids, 7, 10))
-    @sncs_count = Log.needing_coverage(current_volunteer.region_ids, 7).length
+    @shifts_needing_cov = Shift.build_shifts(Log.needing_coverage(current_volunteer.region_ids, 7, 10))
+    @total_shifts_needing_cov= Log.needing_coverage(current_volunteer.region_ids, 7).length
 
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id, false)

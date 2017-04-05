@@ -2,46 +2,49 @@
 
 <% if current_volunteer.any_admin? %>
 <div style="text-align: right;">
-<%= form_tag("/food_types/new", :method => "get") do %>
-New Food Type For <%= select_tag(:region_id, options_for_select(Region.all_admin(current_volunteer).collect{ |r| [r.name,r.id] })) %>
-<%= submit_tag("Go") %>
+  <%= form_tag("/food_types/new", :method => "get") do %>
+    New Food Type For <%= select_tag(:region_id, options_for_select(Region.all_admin(current_volunteer).collect{ |r| [r.name,r.id] })) %>
+  <%= submit_tag("Go") %>
 <% end %>
 </div>
 <% end %>
 
 <% if @food_types.length == 0 %>
-<p> 
-No food types.
-</p>
+  <p>No food types.</p>
 <% else %>
-<table id="data_table">
-  <thead>
-  <tr>
-    <th> Name </th>
-    <th> Region </th>
-    <th> Link </th>
-  </tr>
-  </thead>
-  <tbody>
-  <%
-  @food_types.each do |ft|
-  %>
-  <tr>
-    <td> <%= ft.name %>
-    <td> <%= ft.region.name %>
-    <td><%= link_to 'edit', :controller => "food_types", :action => "edit", :id => ft %><br>
-         <%= link_to "delete", ft, :confirm => "Are you sure?", :method => :delete %> </td>
-  </tr>
-  <% end %>
-  </tbody>
-</table>
+  <table id="data_table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Region</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @food_types.each do |food_type| %>
+      <tr>
+        <td>
+          <%= food_type.name %>
+        </td>
+        <td>
+          <%= food_type.region.try(:name) %>
+        </td>
+        <td>
+          <%= link_to 'edit', controller: "food_types", action: "edit", id: food_type %><br />
+          <%= link_to "delete", food_type, confirm: "Are you sure?", method: :delete %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
 <% end %>
+
 <% content_for :scripts do %>
-<script type="text/javascript">
-$(function () { 
-  $('#data_table').dataTable( {
-    'iDisplayLength' : 50,
-  });
-});
-</script>
+  <script type="text/javascript">
+    $(function () {
+      $('#data_table').dataTable( {
+        'iDisplayLength' : 50,
+      });
+    });
+  </script>
 <% end %>

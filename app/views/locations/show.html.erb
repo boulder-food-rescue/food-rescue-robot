@@ -1,59 +1,59 @@
-<h2><%= @loc.name %>
+<h2><%= @location.name %>
 <% if current_volunteer.any_admin? %>
-	<small>( <%= link_to 'edit', :controller => "locations", :action => "edit", :id => @loc.id %> )</small>
+  <small>( <%= link_to 'edit', :controller => "locations", :action => "edit", :id => @location.id %> )</small>
 <% end %>
 </h2>
 
 <div class="row">
-	<div class="col-sm-6">
+  <div class="col-sm-6">
 
-		<h3>Address</h3>
-		<p>
-		<%= @loc.address.gsub("\n","<br>").html_safe unless @loc.address.nil? %><br>
-		</p>
+    <h3>Address</h3>
+    <p>
+      <%= @location.address.gsub("\n","<br>").html_safe unless @location.address.nil? %><br>
+    </p>
 
-		<h3>Contact Info</h3>
-		<p>
-		<%= @loc.contact.gsub("\n","<br>").html_safe unless @loc.contact.nil? %>
-		<% unless @loc.website.nil? %><br/><br/>Website: <a href="<%= @loc.website %>"><%= @loc.website %></a><% else %><%= @loc.name %><% end %>
-		<br />
-		<%= @loc.phone %>
-		<br />
-		<%= @loc.email %>
-		</p>
+    <h3>Contact Info</h3>
+    <p>
+      <%= @location.contact.gsub("\n","<br>").html_safe unless @location.contact.nil? %>
+      <% unless @location.website.nil? %><br/><br/>Website: <a href="<%= @location.website %>"><%= @location.website %></a><% else %><%= @location.name %><% end %>
+      <br />
+      <%= @location.phone %>
+      <br />
+      <%= @location.email %>
+    </p>
 
-		<% unless readable_hours(@loc).blank? %>
-			<h3>Hours</h3>
-			<p>
-			<%= readable_hours @loc %>
-			</p>
-		<% end %>
+    <% unless readable_hours(@location).blank? %>
+      <h3>Hours</h3>
+      <p>
+      <%= readable_hours @location %>
+      </p>
+    <% end %>
 
-		<h3>Pickup/Drop Logistics</h3>
-		<% unless @loc.entry_info.blank? %>
-			<p><strong>Entry:</strong> <%= @loc.entry_info.gsub("\n","<br>").html_safe %></p>
-		<% end %>
-		<% unless @loc.equipment_storage_info.blank? %>
-			<p><strong>Equipment:</strong> <%= @loc.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
-		<% end %>
-		<% unless @loc.food_storage_info.blank? %>
-			<p><strong>Food:</strong> <%= @loc.food_storage_info.gsub("\n","<br>").html_safe %><br /></p>
-		<% end %>
-		<% unless @loc.onsite_contact_info.blank? %>
-			<p><strong>Contact:</strong> <%= @loc.onsite_contact_info.gsub("\n","<br>").html_safe %><br /></p>
-		<% end %>
-		<% unless @loc.exit_info.blank? %>
-			<p><strong>Exit:</strong> <%= @loc.exit_info.gsub("\n","<br>").html_safe %><br /></p>
-		<% end %>
+    <h3>Pickup/Drop Logistics</h3>
+    <% unless @location.entry_info.blank? %>
+      <p><strong>Entry:</strong> <%= @location.entry_info.gsub("\n","<br>").html_safe %></p>
+    <% end %>
+    <% unless @location.equipment_storage_info.blank? %>
+      <p><strong>Equipment:</strong> <%= @location.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+    <% end %>
+    <% unless @location.food_storage_info.blank? %>
+      <p><strong>Food:</strong> <%= @location.food_storage_info.gsub("\n","<br>").html_safe %><br /></p>
+    <% end %>
+    <% unless @location.onsite_contact_info.blank? %>
+      <p><strong>Contact:</strong> <%= @location.onsite_contact_info.gsub("\n","<br>").html_safe %><br /></p>
+    <% end %>
+    <% unless @location.exit_info.blank? %>
+      <p><strong>Exit:</strong> <%= @location.exit_info.gsub("\n","<br>").html_safe %><br /></p>
+    <% end %>
 
-		<h3>Notes</h3>
-		<p>
-		<%= @loc.public_notes.gsub("\n","<br>").html_safe unless @loc.public_notes.nil? %>
-		<br />
-		<%= @loc.admin_notes.gsub("\n","<br>").html_safe unless @loc.admin_notes.nil? or !(current_volunteer.region_admin? @loc.region or current_volunteer.super_admin?) %>
-		</p>
+    <h3>Notes</h3>
+    <p>
+    <%= @location.public_notes.gsub("\n","<br>").html_safe unless @location.public_notes.nil? %>
+    <br />
+    <%= @location.admin_notes.gsub("\n","<br>").html_safe unless @location.admin_notes.nil? or !(current_volunteer.region_admin? @location.region or current_volunteer.super_admin?) %>
+    </p>
     <br/>
 
-	</div>
+  </div>
 
 </div>

@@ -1,4 +1,4 @@
-<%= form_for @location, :url => {:action => @action } do |f| %>
+<%= form_for @location, url: {action: @action } do |f| %>
 
 <%= hidden_field_tag "location[region_id]", @location.region_id %>
 
@@ -50,17 +50,17 @@
       </small>
     </td>
       <td>
-      <% Date::DAYNAMES.each_with_index do |day_name, index| 
+      <% Date::DAYNAMES.each_with_index do |day_name, index|
           day_html_prefix = "day"+index.to_s
       %>
         <div id="<%=day_html_prefix%>" data-day="<%=index%>" class="day-wrapper">
-          <%=day_name%>: 
-          <%=select_tag( day_html_prefix+"[status]", options_for_select([["closed",0],["open",1]], 
+          <%=day_name%>:
+          <%=select_tag( day_html_prefix+"[status]", options_for_select([["closed",0],["open",1]],
             @location.read_day_info(day_html_prefix+"_status")) )%>
           <span id="<%=day_html_prefix%>-times">
-            from 
+            from
             <%= select_time @location.read_day_info(day_html_prefix+"_start"),:minute_step=>30, :ampm=>true, :prefix=>day_html_prefix+"[start]" %>
-            to 
+            to
             <%= select_time @location.read_day_info(day_html_prefix+"_end"),:minute_step=>30, :ampm=>true, :prefix=>day_html_prefix+"[end]" %>
           </span>
         </div>

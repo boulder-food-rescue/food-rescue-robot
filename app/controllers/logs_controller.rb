@@ -299,7 +299,7 @@ class LogsController < ApplicationController
         }
       end
     end
-    flash[:notice] = "You left a pickup with #{l.length} donor(s)."
+    flash[:notice] = "You left a pickup with #{logs.length} donor(s)."
     redirect_to :back
   end
 

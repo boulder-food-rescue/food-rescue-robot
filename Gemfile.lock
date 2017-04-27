@@ -87,6 +87,9 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    capybara-screenshot (1.0.14)
+      capybara (>= 1.0, < 3)
+      launchy
     choice (0.2.0)
     climate_control (0.0.3)
       activesupport (>= 3.0)
@@ -163,6 +166,8 @@ GEM
     json_pure (1.8.3)
     jstz-rails (1.0.4.1)
       railties (~> 3.1)
+    launchy (2.4.3)
+      addressable (~> 2.3)
     less (2.6.0)
       commonjs (~> 0.2.7)
     less-rails (2.6.0)
@@ -360,6 +365,7 @@ DEPENDENCIES
   browser-timezone-rails
   cancancan
   capybara
+  capybara-screenshot
   cocoon
   coffee-rails (~> 3.2.1)
   devise (~> 3.2.0)

@@ -39,6 +39,7 @@ end
 
 group :test do
   gem 'capybara'
+  gem 'capybara-screenshot'
   gem 'factory_girl_rails'
   gem 'poltergeist', '~> 1.12'
   gem 'rack-test'

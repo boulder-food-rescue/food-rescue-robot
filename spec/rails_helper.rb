@@ -11,6 +11,7 @@ require 'rspec/rails'
 require 'capybara/rails'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
+require 'capybara-screenshot/rspec'
 require 'devise'
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }

@@ -257,16 +257,16 @@ class VolunteersController < ApplicationController
     #Upcoming pickup list
     @upcoming_pickups = Shift.build_shifts(Log.upcoming_for(current_volunteer.id))
     @shifts_needing_cov = Shift.build_shifts(Log.needing_coverage(current_volunteer.region_ids, 7, 10))
-    @total_shifts_needing_cov= Log.needing_coverage(current_volunteer.region_ids, 7).length
+    @total_shifts_needing_cov = Log.needing_coverage(current_volunteer.region_ids, 7).length
 
     #To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id, false)
 
     @by_month = {}
-    Log.picked_up_by(current_volunteer.id).each{ |l|
-      yrmo = l.when.strftime('%Y-%m')
-      @by_month[yrmo] = 0.0 if @by_month[yrmo].nil?
-      @by_month[yrmo] += l.summed_weight unless l.summed_weight.nil?
+    Log.picked_up_by(current_volunteer.id).each{ |log|
+      year_month = log.when.strftime('%Y-%m')
+      @by_month[year_month] = 0.0 if @by_month[year_month].nil?
+      @by_month[year_month] += log.summed_weight unless log.summed_weight.nil?
     }
 
     @volunteer_stats_presenter = VolunteerStatsPresenter.new(current_volunteer)

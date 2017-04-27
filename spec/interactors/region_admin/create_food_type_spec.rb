@@ -1,11 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe RegionAdmin::CreateFoodType do
-
-  describe ".call" do
+  describe '.call' do
     let(:boulder) { create(:region, name: 'Boulder') }
 
-    context "on success" do
+    context 'on success' do
       let(:volunteer) { create(:volunteer, active: true) }
 
       subject do
@@ -17,8 +16,8 @@ RSpec.describe RegionAdmin::CreateFoodType do
           }
         )
       end
-      
-      context "as a region admin" do
+
+      context 'as a region admin' do
         before do
           create(
             :assignment,
@@ -28,11 +27,11 @@ RSpec.describe RegionAdmin::CreateFoodType do
           )
         end
 
-        it "returns success" do
+        it 'returns success' do
           expect(subject.success?).to eq(true)
         end
 
-        it "creates a new food type" do
+        it 'creates a new food type' do
           expect{
             subject
           }.to change {
@@ -41,17 +40,17 @@ RSpec.describe RegionAdmin::CreateFoodType do
         end
       end
 
-      context "as a super admin" do
+      context 'as a super admin' do
         before do
           volunteer.admin = true
           volunteer.save
         end
 
-        it "returns success" do
+        it 'returns success' do
           expect(subject.success?).to eq(true)
         end
 
-        it "creates a new food type" do
+        it 'creates a new food type' do
           expect{
             subject
           }.to change {
@@ -61,8 +60,8 @@ RSpec.describe RegionAdmin::CreateFoodType do
       end
     end
 
-    context "on failure" do
-      context "with invalid authorization" do
+    context 'on failure' do
+      context 'with invalid authorization' do
         let(:denver) { create(:region, name: 'Denver') }
 
         let(:volunteer) { create(:volunteer, active: true) }
@@ -86,12 +85,12 @@ RSpec.describe RegionAdmin::CreateFoodType do
           )
         end
 
-        it "returns failure" do
+        it 'returns failure' do
           expect(subject.failure?).to eq(true)
         end
       end
 
-      context "with invalid params" do
+      context 'with invalid params' do
         let(:volunteer) { create(:volunteer, active: true) }
 
         subject do
@@ -104,11 +103,11 @@ RSpec.describe RegionAdmin::CreateFoodType do
           )
         end
 
-        it "returns failure" do
+        it 'returns failure' do
           expect(subject.failure?).to eq(true)
         end
 
-        it "does not create a food type" do
+        it 'does not create a food type' do
           expect{
             subject
           }.to_not change {
@@ -116,7 +115,7 @@ RSpec.describe RegionAdmin::CreateFoodType do
           }
         end
 
-        it "sets the food type" do
+        it 'sets the food type' do
           expect(subject.food_type).to_not be_nil
         end
       end

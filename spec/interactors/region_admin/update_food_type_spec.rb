@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe RegionAdmin::UpdateFoodType do
-
-  describe ".call" do
+  describe '.call' do
     let(:boulder) { create(:region, name: 'Boulder') }
 
     let(:food_type) do
@@ -13,7 +12,7 @@ RSpec.describe RegionAdmin::UpdateFoodType do
       )
     end
 
-    context "on success" do
+    context 'on success' do
       let(:volunteer) { create(:volunteer, active: true) }
 
       subject do
@@ -26,7 +25,7 @@ RSpec.describe RegionAdmin::UpdateFoodType do
         )
       end
 
-      context "as a region admin" do
+      context 'as a region admin' do
         before do
           create(
             :assignment,
@@ -36,43 +35,43 @@ RSpec.describe RegionAdmin::UpdateFoodType do
           )
         end
 
-        it "returns success" do
+        it 'returns success' do
           expect(subject.success?).to eq(true)
         end
-        
-        it "updates the food type" do
+
+        it 'updates the food type' do
           expect{
             subject
           }.to change{
             food_type.reload.name
           }.from('Produce')
-          .to('Canned')
+            .to('Canned')
         end
       end
 
-      context "as a super admin" do
+      context 'as a super admin' do
         before do
           volunteer.admin = true
           volunteer.save
         end
 
-        it "returns success" do
+        it 'returns success' do
           expect(subject.success?).to eq(true)
         end
-        
-        it "updates the food type" do
+
+        it 'updates the food type' do
           expect{
             subject
           }.to change{
             food_type.reload.name
           }.from('Produce')
-          .to('Canned')
+            .to('Canned')
         end
       end
     end
 
-    context "on failure" do
-      context "with invalid authorization" do
+    context 'on failure' do
+      context 'with invalid authorization' do
         let(:volunteer) { create(:volunteer, active: true) }
 
         subject do
@@ -85,7 +84,7 @@ RSpec.describe RegionAdmin::UpdateFoodType do
           )
         end
 
-        it "returns failure" do
+        it 'returns failure' do
           expect(subject.failure?).to eq(true)
         end
       end

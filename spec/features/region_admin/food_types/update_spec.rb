@@ -25,7 +25,7 @@ RSpec.describe 'Region Admin Food Types' do
 
       context 'on success' do
         it 'updates the food type' do
-          visit '/region_admin/food_types/#{food_type.id}/edit'
+          visit edit_region_admin_food_type_path(food_type.id)
 
           fill_in :food_type_name, with: 'Frozen'
           click_on 'Update Food type'
@@ -49,7 +49,7 @@ RSpec.describe 'Region Admin Food Types' do
       end
 
       it 'updates the food type' do
-        visit '/region_admin/food_types/#{food_type.id}/edit'
+        visit edit_region_admin_food_type_path(food_type.id)
 
         fill_in :food_type_name, with: 'Frozen'
         click_on 'Update Food type'
@@ -60,7 +60,7 @@ RSpec.describe 'Region Admin Food Types' do
 
     context 'as a visitor' do
       it 'redirects to sign in' do
-        visit '/region_admin/food_types/#{food_type.id}/edit'
+        visit edit_region_admin_food_type_path(food_type.id)
 
         expect(page.current_path).to eq('/volunteers/sign_in')
       end
@@ -74,7 +74,7 @@ RSpec.describe 'Region Admin Food Types' do
       end
 
       it 'redirects to home' do
-        visit '/region_admin/food_types/#{food_type.id}/edit'
+        visit edit_region_admin_food_type_path(food_type.id)
 
         expect(page.current_path).to eq('/')
       end

@@ -88,39 +88,24 @@ can see the routes with ```rake routes```;
   $ exit
   ```
 
-3. **Copy `database.yml.dist`**
+3. **Create a `.env` file from `.env.example`**
 
   ```
-  cp config/database.yml.dist config/database.yml
+  cp .env.example .env
   ```
 
-4. **Setup `config/database.yml` to look like:**
+4. **Set local environment variables in your `.env` file:**
+
+  Run `rake secret` from the command line to generate a secret key base for your app.
 
   ```
-  test:
-    adapter: postgresql
-    database: bfr_webapp_db_test
-    host: localhost
-    pool: 5
-    timeout: 5000
-
-  development:
-    adapter: postgresql
-    database: bfr_webapp_db
-    host: localhost
-    pool: 5
-    timeout: 5000
-
-  production:
-    adapter: postgresql
-    database: bfr_webapp_db
-    username: bfr_webapp_user
-    password: CHANGEME
-    host: localhost
-    pool: 5
-    timeout: 5000
+  SECRET_KEY_BASE=[Paste your secret key base here]
+  GMAPS_API_KEY=[Use your own Google maps API key (optional)]
+  DB_DEV_USER=bfr_webapp_user
+  DB_DEV_PASSWORD=[Use your local Postgres password, if any, for bfr_webapp_user]
+  DB_TEST_USER=bfr_webapp_user
+  DB_TEST_PASSWORD=[Use your local Postgres password, if any, for bfr_webapp_user]
   ```
-  **Warning:** _The database defined as "test" will be erased and re-generated from your  development database when you run "rake". Do not set this db to the same as development or  production._
 
 5. **Create database:**
 

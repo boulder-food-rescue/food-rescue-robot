@@ -13,3 +13,4 @@ log/*.log.*
 .bundle/*
 .byebug_history
 bfr-data/**/*
+.env

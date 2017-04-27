@@ -1,27 +1,22 @@
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
+
+# Set database user names and passwords in your .env file in the root directory.
 test:
-  adapter: sqlite3
-  database: db/test.sqlite3
+  adapter: postgresql
+  database: bfr_webapp_db_test
+  username: <%= ENV['DB_TEST_USER'] %>
+  password: <%= ENV['DB_TEST_PASSWORD'] %>
+  host: localhost
   pool: 5
   timeout: 5000
 
 development:
   adapter: postgresql
   database: bfr_webapp_db
-  username: bfr_webapp_user
-  password: CHANGEME
+  username: <%= ENV['DB_DEV_USER'] %>
+  password: <%= ENV['DB_DEV_PASSWORD'] %>
   host: localhost
   pool: 5
   timeout: 5000
-
-production:
-  adapter: postgresql
-  database: bfr_webapp_db
-  username: bfr_webapp_user
-  password: CHANGEME
-  host: localhost
-  pool: 5
-  timeout: 5000
-

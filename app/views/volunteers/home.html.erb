@@ -122,27 +122,32 @@
           </tr>
         </thead>
         <tbody>
-          <% n = 0
-          @shifts_needing_cov.each do |shift|
-            next if shift.logs.all? {|log| log.donor.nil? or log.recipients.empty? }
-            %>
+          <% @shifts_needing_cov.each do |shift| %>
+
+            <% next if shift.logs.all? { |log| log.donor.nil? || log.recipients.empty? } %>
+
             <tr class="bordered">
               <td>
-                <% shift.logs.each{ |log| %>
-                <% next if log.donor.nil? or log.recipients.empty? %>
-                <%= link_to log.donor.name, log.donor %> -&gt; <% log.recipients.each do |recip| %> <%=link_to recip.name, recip %> <% end %>
-                <% unless log.food_types.empty? %>
-                <br />
-                <em>(<%= log.food_types.collect{ |type| type.name }.join(",") %>)</em>
+                <% shift.logs.each do |log| %>
+                  <% next if log.donor.nil? || log.recipients.empty? %>
+
+                  <%= link_to log.donor.name, log.donor %> -&gt;
+                  <% log.recipients.each do |recip| %>
+                    <%=link_to recip.name, recip %>
+                  <% end %>
+
+                  <% unless log.food_types.empty? %>
+                    <br />
+                    <em>(<%= log.food_types.collect{ |type| type.name }.join(",") %>)</em>
+                  <% end %>
+                  <br />
                 <% end %>
-                <br />
-                <% } %>
               </td>
               <td>
                 <%= readable_time_until shift.first_log %>
               </td>
               <td>
-                <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(shift.first_log,:ids => shift.log_ids) %>';">
+                <button class="btn btn-primary take" onclick="window.location='<%= take_log_path(shift.first_log, ids: shift.log_ids) %>';">
                   <i class="fa fa-hand-rock-o"></i>
                   Take
                 </button>

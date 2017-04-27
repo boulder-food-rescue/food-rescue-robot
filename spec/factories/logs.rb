@@ -7,10 +7,10 @@ FactoryGirl.define do
     donor { Location.donors.count >= 5 ? Location.donors.sort_by{ rand }.first : create(:donor) }
 
     after(:create) do |d|
-      rand(3).times{
+      rand(1..3).times{
         d.recipients << (Location.recipients.count >= 5 ? Location.recipients.sort_by{ rand }.first : create(:recipient))
       }
-      rand(3).times{
+      rand(1..3).times{
         d.log_parts << create(:log_part)
       }
       d.scale_type = (ScaleType.all.count >= 5 ? ScaleType.all.sort_by{ rand }.first : create(:scale_type, region: d.region))

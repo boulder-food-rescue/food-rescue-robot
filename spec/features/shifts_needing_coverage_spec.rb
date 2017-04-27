@@ -15,7 +15,7 @@ RSpec.describe 'Shifts needing coverage' do
     it 'they see the shifts in their region that need covering' do
       visit root_path
 
-      within page.find('h2', text: 'Shifts Needing Covering').find('+table') do
+      within page.find('h2', text: 'Shifts Needing Covering').find('+ table') do
         expect(page).to have_link(log.donor.name, href: location_path(log.donor))
         expect(page).to have_button('Take')
         log.food_types.each do |type|
@@ -29,7 +29,7 @@ RSpec.describe 'Shifts needing coverage' do
 
       visit root_path
 
-      within page.find('h2', text: 'Shifts Needing Covering').find('+table') do
+      within page.find('h2', text: 'Shifts Needing Covering').find('+ table') do
         expect(page).to_not have_link(other_region_log.donor.name, href: location_path(other_region_log.donor))
       end
     end

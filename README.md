@@ -149,6 +149,11 @@ can see the routes with ```rake routes```;
   ```
   **Note:** _This creates an admin volunteer and other required bits. You should look it over._
 
+9. **Prepare Testing:**
+
+  ```
+  bundle exec rake db:test:prepare
+  ```
 
 ## Running It
 

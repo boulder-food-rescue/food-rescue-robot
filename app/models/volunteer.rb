@@ -109,10 +109,10 @@ class Volunteer < ActiveRecord::Base
   def region_admin?(region = nil, strict = true)
     return true if !strict && super_admin?
 
-    admin_regions = admin_region_ids(strict)
+    admin_regions_ids = admin_region_ids(strict)
     if region.nil?
-      return true unless admin_regions.empty?
-    elsif admin_regions.include?(region.id)
+      return true unless admin_regions_ids.empty?
+    elsif admin_regions_ids.include?(region.id)
       return true
     end
 

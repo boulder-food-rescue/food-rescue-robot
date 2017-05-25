@@ -202,16 +202,43 @@ class VolunteersController < ApplicationController
     end
   end
 
+  # Admin only view, hence use of #admin_regions for region lookup
   def stats
-    @regions = current_volunteer.admin_regions(true)
-    @regions = Region.all if current_volunteer.admin? and @regions.empty?
-    @per_volunteer = Log.joins(:log_parts, :volunteers).select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?", Date.today-12.months).group('volunteers.id, volunteers.name').order('sum DESC')
-    @per_volunteer2 = Log.joins(:log_parts, :volunteers).select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').where("complete AND region_id IN (#{@regions.collect{ |x| x.id }.join(',')}) and logs.when>?", Date.today-1.month).group('volunteers.id, volunteers.name').order('sum DESC')
-    @lazy_volunteers = Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
-            joins(:logs, :log_volunteers).where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(',')})").
-            group('volunteers.id, name, email')
+    @regions = current_volunteer.admin_regions
+    region_ids = @regions.collect{ |x| x.id }.join(',')
+    @logs_per_volunteer_year =
+      Log.joins(:log_parts, :volunteers).
+        select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').
+        where("complete AND region_id IN (#{region_ids}) and logs.when > ?", Date.today-12.months).
+        group('volunteers.id, volunteers.name').order('sum DESC')
+    @logs_per_volunteer_month =
+      Log.joins(:log_parts, :volunteers).
+        select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').
+        where("complete AND region_id IN (#{region_ids}) and logs.when > ?", Date.today-1.month).
+        group('volunteers.id, volunteers.name').order('sum DESC')
 
-    @region_locations = Location.where(:region_id=>current_volunteer.admin_region_ids)
+    @lazy_volunteers =
+      Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
+            joins(:logs, :log_volunteers).
+            where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(',')})").
+            group('volunteers.id, name, email')
+  end
+
+  def shift_stats
+    @region = Region.where(id: params[:region_id]).first
+    @regions = current_volunteer.admin_regions
+
+    # Only if they have selected from dropdown and GET-ed back to here
+    if @region.present?
+      @volunteers = Volunteer.includes(:logs).joins(:logs).where("logs.complete = true AND logs.region_id IN (#{@region.id})")
+      @shifts_by_volunteer =
+        @volunteers.map do |vol|
+          # vol.logs prevents add'l DB lookup as complete logs eager loaded
+          [vol, Shift.build_shifts_eagerly(vol.logs.map(&:id))]
+        end.to_h
+    else # Need to select a region
+      @shifts_by_volunteer = []
+    end
   end
 
   def knight
@@ -254,20 +281,20 @@ class VolunteersController < ApplicationController
 
     @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length
 
-    #Upcoming pickup list
+    # Upcoming pickup list
     @upcoming_pickups = Shift.build_shifts(Log.upcoming_for(current_volunteer.id))
     @shifts_needing_cov = Shift.build_shifts(Log.needing_coverage(current_volunteer.region_ids, 7, 10))
     @total_shifts_needing_cov = Log.needing_coverage(current_volunteer.region_ids, 7).length
 
-    #To Do Pickup Reports
+    # To Do Pickup Reports
     @to_do_reports = Log.picked_up_by(current_volunteer.id, false)
 
     @by_month = {}
-    Log.picked_up_by(current_volunteer.id).each{ |log|
+    Log.picked_up_by(current_volunteer.id).each do |log|
       year_month = log.when.strftime('%Y-%m')
       @by_month[year_month] = 0.0 if @by_month[year_month].nil?
       @by_month[year_month] += log.summed_weight unless log.summed_weight.nil?
-    }
+    end
 
     @volunteer_stats_presenter = VolunteerStatsPresenter.new(current_volunteer)
 

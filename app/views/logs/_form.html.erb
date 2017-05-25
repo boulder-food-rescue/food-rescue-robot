@@ -99,7 +99,7 @@
                   <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
                     <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
                       <td>
-                        <%= f2.select(:food_type_id, @food_types,{:include_blank => true}, {class: "form-control"}) %>
+                        <%= f2.select(:food_type_id, @food_types,{include_blank: true}, {class: "form-control"}) %>
                       </td>
                       <td>
                         <%= f2.text_field(:weight, size: 5, class: "form-control") %>

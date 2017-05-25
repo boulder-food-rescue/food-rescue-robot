@@ -101,6 +101,7 @@ Webapp::Application.routes.draw do
       get :super_admin
       get :region_admin
       get :stats
+      get :shift_stats
       get :switch_user
       get :knight
       get :index

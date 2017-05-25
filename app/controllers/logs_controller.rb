@@ -62,32 +62,35 @@ class LogsController < ApplicationController
   end
 
   def stats
-    @regions = current_volunteer.admin_regions(true)
-    @regions = Region.all if current_volunteer.admin? and @regions.empty?
+    @regions = current_volunteer.admin_regions
+
     @first_recorded_pickup = Log.where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
       order('logs.when ASC').limit(1)
+
     @pounds_per_year = Log.joins(:log_parts).select('extract(YEAR from logs.when) as year, sum(weight)').
       where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
       group('year').order('year ASC').collect{ |l| [l.year, l.sum] }
+
     @pounds_per_month = Log.joins(:log_parts).select("date_trunc('month',logs.when) as month, sum(weight)").
       where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
       group('month').order('month ASC').collect{ |l| [Date.parse(l.month).strftime('%Y-%m'), l.sum] }
+
     @transport_per_year = {}
     @transport_years = []
     @transport_data = Log.joins(:transport_type).select('extract(YEAR from logs.when) as year, transport_types.name, count(*)').
       where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
       group('name,year').order('name,year ASC')
     @transport_years.sort!
-    @transport_data.each{ |l|
+    @transport_data.each do |l|
       @transport_years << l.year unless @transport_years.include? l.year
       @transport_per_year[l.name] = [] if @transport_per_year[l.name].nil?
-    }
-    @transport_per_year.keys.each{ |k|
+    end
+    @transport_per_year.keys.each do |k|
       @transport_per_year[k] = @transport_years.collect{ |_y| 0 }
-    }
-    @transport_data.each{ |l|
+    end
+    @transport_data.each do |l|
       @transport_per_year[l.name][@transport_years.index(l.year)] = l.count.to_i
-    }
+    end
   end
 
   def stats_service

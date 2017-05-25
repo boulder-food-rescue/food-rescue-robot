@@ -32,21 +32,15 @@ class Region < ActiveRecord::Base
   end
 
   def has_sellers?
-    locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert['Seller']
-    end
+    locations.where(location_type: Location::LOCATION_TYPES.invert['Seller']).any?
   end
 
   def has_buyers?
-    locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert['Buyer']
-    end
+    locations.where(location_type: Location::LOCATION_TYPES.invert['Buyer']).any?
   end
 
   def has_hubs?
-    locations.any? do |location|
-      location.location_type == Location::LOCATION_TYPES.invert['Hub']
-    end
+    locations.where(location_type: Location::LOCATION_TYPES.invert['Hub']).any?
   end
 
   def has_handbook?

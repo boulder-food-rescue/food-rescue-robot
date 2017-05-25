@@ -1,11 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe LogVolunteer do
-  describe 'this file needs to be completed' do
-    let(:super_admin) { create(:volunteer, admin: true) }
+  let(:log_id) { 100 }
+  let(:volunteer_id) { 200 }
 
-    xit 'validates super_admin' do
-      expect(super_admin).to be_valid
-    end
+  it 'prevents active duplicate records' do
+    LogVolunteer.create!(log_id: log_id, volunteer_id: volunteer_id, active: true)
+
+    expect do
+      LogVolunteer.create!(log_id: log_id, volunteer_id: volunteer_id, active: true)
+    end.to raise_error(ActiveRecord::RecordInvalid)
+  end
+
+  it 'allows inactive duplicate records' do
+    LogVolunteer.create!(log_id: log_id, volunteer_id: volunteer_id, active: true)
+
+    expect do
+      LogVolunteer.create!(log_id: log_id, volunteer_id: volunteer_id, active: false)
+      LogVolunteer.create!(log_id: log_id, volunteer_id: volunteer_id, active: false)
+    end.not_to raise_error(ActiveRecord::RecordInvalid)
   end
 end

@@ -152,11 +152,11 @@
     <% end %>
 
     <!-- header -->
-    <% if @region or (volunteer_signed_in? and current_volunteer.has_main_region?) %>
+    <% if @region || (volunteer_signed_in? && current_volunteer.has_main_region?) %>
       <div class="subhead">
         <div class="container-fluid">
           <div class="page-header">
-            <% current_region = (volunteer_signed_in?) ? current_volunteer.main_region : @region %>
+            <% current_region = volunteer_signed_in? ? current_volunteer.main_region : @region %>
             <h1><%= current_region.title %> <small><%= current_region.tagline %></small></h1>
           </div>
         </div>

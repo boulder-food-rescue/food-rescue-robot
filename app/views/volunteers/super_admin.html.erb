@@ -12,50 +12,44 @@
       After switching you will have logout and login to get back to your
       real user.
     </p>
-    <%= form_tag("/volunteers/switch_user", :method => "get") do %>
-      <table class>
+    <%= form_tag("/volunteers/switch_user", method: "get", class: "form-inline") do %>
+      <table class="table">
         <tr>
-          <td>Volunteer:</td>
-          <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
-          if current_volunteer.super_admin? %>
-          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
-                    ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }),{:class => "select2"}) %></td>
-          <% else %>
-          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
-                    ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact),{:class => "select2"}) %></td>
-          <% end %>
+          <td>
+            <label for="volunteer_id">Volunteer:</label>
+            <% if current_volunteer.super_admin? %>
+              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+                      ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }),{class: "form-control select2"}) %>
+            <% else %>
+              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+                    ((v.regions.collect{ |r| r.id } & @admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact),{class: "form-control select2"}) %>
+            <% end %>
+          </td>
         </tr>
       </table>
-    <%= submit_tag "Switch" %>
+    <%= submit_tag "Switch", class: 'btn btn-default btn-lg' %>
     <% end %>
   </div>
   <div class="col-sm-6">
-    <h2> Toggle Super-Admin Priviledges </h2>
+    <h2>Toggle Super-Admin Priviledges</h2>
     <p>
-    Super-admins can do most anything for any region. This should only be given to site
-    administrators. Toggle below to assign super admins. Go to <%= link_to "Region Admin", "/volunteers/region_admin" %> to manage region admins.
+      Super-admins can do most anything for any region. This should only be given to site administrators. Toggle below to assign super admins. Go to <%= link_to "Region Admin", "/volunteers/region_admin" %> to manage region admins.
     </p>
-    <%= form_tag("/volunteers/knight", :method => "get") do %>
-      <table>
+    <%= form_tag("/volunteers/knight", method: "get", class: "form-inline") do %>
+      <table class="table">
         <tr>
-          <td>Volunteer:</td>
-          <td><%= select_tag(:volunteer_id, options_for_select(Volunteer.all.collect{ |v|
+          <td>
+            <label for="volunteer_id">Volunteer:</label>
+            <%= select_tag(:volunteer_id, options_for_select(Volunteer.all.collect{ |v|
                   name = v.name + " [" + v.assignments.collect{ |a| (a.admin ? "*" : "") + (a.region.nil? ? "" : a.region.name) }.join(",") + "]"
                   name = "*#{name}" if v.admin
                   [name,v.id]
-                  }),{:class => "select2"})
-              %></td>
+                  }),{class: "form-control select2"})
+              %>
+          </td>
         </tr>
      </table>
-      <%= submit_tag "Toggle" %>
+      <%= submit_tag "Toggle", class: 'btn btn-default btn-lg' %>
     <% end %>
   </div>
 </div>
-
-<% content_for :scripts do %>
-<script type="text/javascript" charset="utf-8">
-jQuery(document).ready(function(){
-  //jQuery('.select2').select2({width:'element'});
-});
-</script>
-<% end %>

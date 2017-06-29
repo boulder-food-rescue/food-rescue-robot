@@ -187,6 +187,7 @@ class VolunteersController < ApplicationController
 
   # special settings/stats page for admins only
   def super_admin
+    @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
   end
 
   def region_admin

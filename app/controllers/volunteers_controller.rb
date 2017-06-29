@@ -122,7 +122,7 @@ class VolunteersController < ApplicationController
 
     if @volunteer.save
       flash[:notice] = 'Created successfully.'
-      redirect_to(session[:my_return_to] || index)
+      session[:my_return_to].present? ? redirect_to(session[:my_return_to]) : index
     else
       flash[:error] = "Didn't save successfully :(. #{@volunteer.errors.full_messages.to_sentence}"
       render :new
@@ -145,7 +145,7 @@ class VolunteersController < ApplicationController
     # strong parameters will fix this, eventually?
     params[:volunteer].delete(:admin)
 
-    if params[:volunteer][:assignments].any?
+    if params[:volunteer][:assignments].present?
       params[:volunteer][:assignments].each { |assignment| assignment.delete(:admin) }
     end
 

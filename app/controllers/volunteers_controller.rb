@@ -131,7 +131,7 @@ class VolunteersController < ApplicationController
         index
       end
     else
-      flash[:error] = "Didn't save successfully :("
+      flash[:error] = "Didn't save successfully :(. #{@volunteer.errors.full_messages.to_sentence}"
       render :new
     end
   end
@@ -164,7 +164,7 @@ class VolunteersController < ApplicationController
         index
       end
     else
-      flash[:error] = 'Update failed :('
+      flash[:error] = "Didn't update successfully :(. #{@volunteer.errors.full_messages.to_sentence}"
       render :edit
     end
   end

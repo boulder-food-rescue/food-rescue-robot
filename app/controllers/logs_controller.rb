@@ -1,7 +1,6 @@
 require 'prawn/table'
 
 class LogsController < ApplicationController
-
   before_filter :authenticate_volunteer!, :except => :stats_service
   before_filter :admin_only, :only => [:today, :tomorrow, :yesterday, :being_covered, :tardy, :receipt, :new, :create, :stats, :export]
 
@@ -184,7 +183,7 @@ class LogsController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Didn't save successfully :(. #{@log.errors.full_messages.to_sentence}"
+      flash[:error] = "Didn't save successfully :(. #{@log.errors.full_messages.to_sentence}"
       render :new
     end
   end
@@ -256,7 +255,7 @@ class LogsController < ApplicationController
         end
       end
     else
-      flash[:error] = 'Update failed :('
+      flash[:error] = "Didn't update successfully :(. #{@log.errors.full_messages.to_sentence}"
       respond_to do |format|
         format.json { render json: {error: 1, message: flash[:notice] } }
         format.html { render :edit }

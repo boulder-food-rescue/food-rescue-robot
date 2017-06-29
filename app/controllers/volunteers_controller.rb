@@ -12,28 +12,28 @@ class VolunteersController < ApplicationController
   end
 
   def assign
-    v = Volunteer.find(params[:volunteer_id])
-    r = Region.find(params[:region_id])
+    volunteer = Volunteer.find(params[:volunteer_id])
+    region = Region.find(params[:region_id])
     if params[:unassign]
-      Assignment.where(:volunteer_id=>v.id, :region_id=>r.id).each{ |e| e.destroy }
-      if v.assignments.length == 0
-        v.assigned = false
-        v.save
+      Assignment.where(volunteer_id: volunteer.id, region_id: region.id).destroy_all
+      if volunteer.assignments.length == 0
+        volunteer.assigned = false
+        volunteer.save
       end
     else
-      Assignment.add_volunteer_to_region v, r
-      unless params[:send_welcome_email].nil? or params[:send_welcome_email].to_i != 1
-        m = Notifier.region_welcome_email(r, v)
-        m.deliver unless m.nil?
+      Assignment.add_volunteer_to_region(volunteer, region)
+      unless params[:send_welcome_email].nil? || params[:send_welcome_email].to_i != 1
+        message = Notifier.region_welcome_email(region, volunteer)
+        message.deliver unless message.nil?
       end
-      v.save
+      volunteer.save
     end
-    redirect_to :action => 'unassigned', :alert => 'Assignment worked'
+    redirect_to action: 'unassigned', alert: 'Assignment worked'
   end
 
   def shiftless
-    @volunteers = Volunteer.all.keep_if do |v|
-      ((v.region_ids & current_volunteer.region_ids).length > 0) and v.schedule_chains.length == 0
+    @volunteers = Volunteer.all.keep_if do |volunteer|
+      ((volunteer.region_ids & current_volunteer.region_ids).length > 0) && volunteer.schedule_chains.length == 0
     end
     @header = 'Shiftless Volunteers'
     render :index
@@ -52,9 +52,9 @@ class VolunteersController < ApplicationController
   end
 
   def need_training
-    @volunteers = Volunteer.all.keep_if{ |v|
-      ((v.region_ids & current_volunteer.region_ids).length > 0) and v.needs_training?
-    }
+    @volunteers = Volunteer.all.keep_if do |volunteer|
+      ((volunteer.region_ids & current_volunteer.region_ids).length > 0) && volunteer.needs_training?
+    end
     @header = 'Volunteers Needing Training'
     render :index
   end
@@ -63,53 +63,49 @@ class VolunteersController < ApplicationController
     @header = 'All Volunteers'
     respond_to do |format|
       format.json {
-        @volunteers = Volunteer.select('email,id,name,phone').collect{ |v| (v.regions.collect{ |r| r.id } & current_volunteer.region_ids).length > 0 ? v : nil }.compact
+        @volunteers = Volunteer.select('email,id,name,phone').collect do |volunteer|
+          (volunteer.regions.collect{ |region| region.id } &
+            current_volunteer.region_ids).length > 0 ? volunteer : nil
+        end.compact
         render json: @volunteers.to_json
       }
       format.html {
-        @volunteers = Volunteer.includes(:regions).
-                        all.collect { |volunteer|
-                          (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0 ? volunteer : nil
-                        }.compact
+        @volunteers = Volunteer.includes(:regions).all.collect do |volunteer|
+          (volunteer.regions.collect { |region| region.id } &
+            current_volunteer.region_ids).length > 0 ? volunteer : nil
+        end.compact
         render :index
       }
     end
   end
 
   def show
-    @v = Volunteer.find(params[:id])
-    unless current_volunteer.super_admin? or (current_volunteer.region_ids & @v.region_ids).length > 0
+    @volunteer = Volunteer.find(params[:id])
+    unless current_volunteer.super_admin? || (current_volunteer.region_ids & @volunteer.region_ids).length > 0
       flash[:error] = "Can't view volunteer for a region you're not assigned to..."
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
   end
 
   def destroy
-    @v = Volunteer.find(params[:id])
-    return unless check_permissions(@v)
-    @v.active = false
-    @v.save
+    @volunteer = Volunteer.find(params[:id])
+    return unless check_permissions(@volunteer)
+    @volunteer.active = false
+    @volunteer.save
     redirect_to(request.referrer)
   end
 
   def new
     @volunteer = Volunteer.new
-    @action = 'create'
     @regions = Region.all
-    @my_admin_regions = if current_volunteer.super_admin?
-                          @regions
-                        else
-                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-                        end
+    @my_admin_regions = current_volunteer.admin_regions
     session[:my_return_to] = request.referer
     flash[:notice] = 'Thanks for signing up! You will recieve an email shortly when a regional admin approves your registration.'
     render :new
   end
 
-  def check_permissions(v)
-    unless current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 or
-           current_volunteer == v
+  def check_permissions(volunteer)
+    unless current_volunteer.super_admin? || (current_volunteer.admin_region_ids & volunteer.region_ids).length > 0 || current_volunteer == volunteer
       flash[:error] = 'Not authorized to create/edit volunteers for that region'
       redirect_to(root_path)
       return false
@@ -122,14 +118,11 @@ class VolunteersController < ApplicationController
     return unless check_permissions(@volunteer)
     # can't set admin bits from CRUD controls
     @volunteer.admin = false
-    @volunteer.assignments.each{ |r| r.admin = false }
+    @volunteer.assignments.each { |assignment| assignment.admin = false }
+
     if @volunteer.save
       flash[:notice] = 'Created successfully.'
-      unless session[:my_return_to].nil?
-        redirect_to(session[:my_return_to])
-      else
-        index
-      end
+      redirect_to(session[:my_return_to] || index)
     else
       flash[:error] = "Didn't save successfully :(. #{@volunteer.errors.full_messages.to_sentence}"
       render :new
@@ -140,12 +133,7 @@ class VolunteersController < ApplicationController
     @volunteer = Volunteer.find(params[:id])
     return unless check_permissions(@volunteer)
     @regions = Region.all
-    @my_admin_regions = if current_volunteer.super_admin?
-                          @regions
-                        else
-                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-                        end
-    @action = 'update'
+    @my_admin_regions = current_volunteer.admin_regions
     session[:my_return_to] = request.referer
     render :edit
   end
@@ -154,8 +142,13 @@ class VolunteersController < ApplicationController
     @volunteer = Volunteer.find(params[:id])
     return unless check_permissions(@volunteer)
     # can't set admin bits from CRUD controls
+    # strong parameters will fix this, eventually?
     params[:volunteer].delete(:admin)
-    params[:volunteer][:assignments].each{ |a| a.delete(:admin) } unless params[:volunteer][:assignments].nil?
+
+    if params[:volunteer][:assignments].any?
+      params[:volunteer][:assignments].each { |assignment| assignment.delete(:admin) }
+    end
+
     if @volunteer.update_attributes(params[:volunteer])
       flash[:notice] = "Updated #{@volunteer.name} Successfully."
       unless session[:my_return_to].nil?
@@ -171,16 +164,20 @@ class VolunteersController < ApplicationController
 
   # switch to a particular user
   def switch_user
-    v = Volunteer.find(params[:volunteer_id].to_i)
-    vrids = v.regions.collect{ |r| r.id }
-    adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
-    unless current_volunteer.super_admin? or (vrids & adminrids).length > 0
+    volunteer = Volunteer.find(params[:volunteer_id].to_i)
+    volunteer_region_ids = volunteer.regions.pluck(:id)
+    admin_region_ids =
+      current_volunteer.assignments.collect do |assignment|
+        assignment.admin ? assignment.region.id : nil
+      end.compact
+
+    unless current_volunteer.super_admin? || (volunteer_region_ids & admin_region_ids).length > 0
       flash[:error] = "You're not authorized to switch to that user!"
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
+
     sign_out(current_volunteer)
-    sign_in(v)
+    sign_in(volunteer)
     flash[:notice] = "Successfully switched to user #{current_volunteer.name}."
     home
   end
@@ -196,10 +193,17 @@ class VolunteersController < ApplicationController
       @my_admin_regions = @regions
       @my_admin_volunteers = Volunteer.all
     else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-      adminrids = @my_admin_regions.collect{ |m| m.id }
-      @my_admin_volunteers = Volunteer.all.collect{ |v|
-        ((v.regions.length == 0) || (adminrids & v.regions.collect{ |r| r.id }).length > 0) ? v : nil }.compact
+      @my_admin_regions = current_volunteer.assignments.collect do |assignment|
+         assignment.admin ? assignment.region : nil
+      end.compact
+
+      admin_region_ids = @my_admin_regions.collect { |my_admin_region| my_admin_region.id }
+
+      @my_admin_volunteers = Volunteer.all.collect do |volunteer|
+        ((volunteer.regions.length == 0) ||
+        (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0) ? volunteer : nil
+      end.compact
+
     end
 
     @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
@@ -208,7 +212,7 @@ class VolunteersController < ApplicationController
   # Admin only view, hence use of #admin_regions for region lookup
   def stats
     @regions = current_volunteer.admin_regions
-    region_ids = @regions.collect{ |x| x.id }.join(',')
+    region_ids = @regions.collect{ |region| region.id }.join(',')
     @logs_per_volunteer_year =
       Log.joins(:log_parts, :volunteers).
         select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').
@@ -261,13 +265,13 @@ class VolunteersController < ApplicationController
   end
 
   def reactivate
-    v = Volunteer.send(:with_exclusive_scope){ Volunteer.find(params[:id]) }
-    if (current_volunteer.admin_region_ids & v.region_ids).length <= 0
+    volunteer = Volunteer.send(:with_exclusive_scope){ Volunteer.find(params[:id]) }
+    if (current_volunteer.admin_region_ids & volunteer.region_ids).empty?
       flash[:error] = "You're not permitted to do that!"
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
-    unless ReactivateVolunteer.call(volunteer: v).success?
+
+    unless ReactivateVolunteer.call(volunteer: volunteer).success?
       flash[:error] = 'Update failed :('
     end
     inactive

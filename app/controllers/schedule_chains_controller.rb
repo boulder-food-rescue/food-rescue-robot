@@ -127,7 +127,7 @@ class ScheduleChainsController < ApplicationController
       flash[:notice] = 'Created successfully'
       index
     else
-      flash[:error] = "Didn't save successfully :("
+      flash[:error] = "Didn't save successfully :(. #{@schedule.errors.full_messages.to_sentence}"
       render :new
     end
   end
@@ -180,7 +180,7 @@ class ScheduleChainsController < ApplicationController
       flash[:notice] = 'Updated Successfully'
       index
     else
-      flash[:error] = 'Update failed :('
+      flash[:error] = "Didn't update successfully :(. #{@schedule.errors.full_messages.to_sentence}"
       render :edit
     end
   end

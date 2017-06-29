@@ -21,7 +21,6 @@ class ScaleTypesController < ApplicationController
     @scale_type = ScaleType.new
     @scale_type.region_id = params[:region_id]
     @scale_type.weight_unit = 1
-    @action = 'create'
     authorize! :create, @scale_type
     session[:my_return_to] = request.referrer
     render :new
@@ -46,7 +45,6 @@ class ScaleTypesController < ApplicationController
   def edit
     @scale_type = ScaleType.find(params[:id])
     authorize! :update, @scale_type
-    @action = 'update'
     session[:my_return_to] = request.referrer
     render :edit
   end

@@ -140,7 +140,7 @@ class Location < ActiveRecord::Base
     (0..6).each do |index|
       if open_on_day? index
         prefix = 'day'+index.to_s
-        if read_day_info(prefix+'_start') > read_day_info(prefix+'_start')
+        if read_day_info(prefix + '_start') > read_day_info(prefix + '_end')
           errors.add(prefix+'_status', 'must have an end time AFTER the start time')
         end
       end

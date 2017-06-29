@@ -4,7 +4,7 @@
   <% if current_volunteer.any_admin? %>
     <div class="col-sm-6 text-left">
       <%= form_tag("/logs/new", method: "get", class: "form-inline") do %>
-        <%= label_tag :region_id, 'New Item For:' %>
+        <%= label_tag :region_id, 'New Log For:' %>
         <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] }), {class: 'form-control'} ) %>
         <%= submit_tag("Go") %>
       <% end %>
@@ -138,8 +138,12 @@
                 <% if current_volunteer.any_admin?(shift.region) %>
                   <td>
                     <% shift.logs.each{ |shift_group| %>
-                      <%= link_to "edit", edit_log_path(shift_group), class: 'btn btn-primary' %>
-                      <%= link_to "delete", shift_group, class: 'btn btn-danger', confirm: "Are you sure?", method: :delete %>
+                      <%= link_to edit_log_path(shift_group), class: 'btn btn-primary pull-left' do %>
+                        <i class="fa fa-pencil"></i>
+                      <% end %>
+                      <%= link_to shift_group, class: 'btn btn-danger', confirm: "Are you sure?", method: :delete do %>
+                        <i class="fa fa-trash-o"></i>
+                      <% end %>
                     <% } %>
                   </td>
               <% end %>

@@ -1,7 +1,6 @@
 require 'prawn/table'
 
 class LogsController < ApplicationController
-
   before_filter :authenticate_volunteer!, :except => :stats_service
   before_filter :admin_only, :only => [:today, :tomorrow, :yesterday, :being_covered, :tardy, :receipt, :new, :create, :stats, :export]
 
@@ -161,12 +160,21 @@ class LogsController < ApplicationController
     @food_types = @region.food_types.collect{ |e| [e.name, e.id] }
     @scale_types = @region.scale_types.collect{ |e| [e.name, e.id] }
     @transport_types = TransportType.all.collect{ |e| [e.name, e.id] }
-    if @scale_types.length<2 and @log.scale_type_id.nil?
+
+
+    if @scale_types.length == 0
+      flash[:error] = "You have no scale types for the 'Weighed With' field for #{@region.name}. Please get this set up for your region."
+      render :new and return
+    end
+
+    if @scale_types.any? && @log.scale_type_id.nil?
       @log.scale_type_id = @region.scale_types.first.id
     end
+
     authorize! :create, @log
     parse_and_create_log_parts(params, @log)
     finalize_log(@log)
+
     if @log.save
       flash[:notice] = 'Created successfully.'
       unless session[:my_return_to].nil?
@@ -175,7 +183,7 @@ class LogsController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Didn't save successfully :("
+      flash[:error] = "Didn't save successfully :(. #{@log.errors.full_messages.to_sentence}"
       render :new
     end
   end
@@ -247,7 +255,7 @@ class LogsController < ApplicationController
         end
       end
     else
-      flash[:error] = 'Update failed :('
+      flash[:error] = "Didn't update successfully :(. #{@log.errors.full_messages.to_sentence}"
       respond_to do |format|
         format.json { render json: {error: 1, message: flash[:notice] } }
         format.html { render :edit }

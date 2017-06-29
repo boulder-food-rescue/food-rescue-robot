@@ -1,8 +1,18 @@
-  <%= form_for @scale_type, :url => {:action => @action } do |s| %>
-<table>
-<%= hidden_field_tag "scale_type[region_id]", @scale_type.region_id %>
-<tr><td>Name<td><%= s.text_field(:name) %>
-<tr><td>Units<td><%= s.select(:weight_unit, options_for_select(['lb','kg','st'])) %>
-</table>
-<%= submit_tag %>
+<%= form_for @scale_type, html: {class: 'form-inline'} do |scale_type| %>
+  <table class="table">
+    <%= hidden_field_tag "scale_type[region_id]", @scale_type.region_id %>
+    <tr>
+      <td>
+        <label for="scale_type_name">Name</label>
+        <%= scale_type.text_field(:name, class: 'form-control') %>
+      <td>
+    </td>
+    <tr>
+      <td>
+        <label for="scale_type_weight_unit">Units</label>
+        <%= scale_type.select(:weight_unit, options_for_select(['lb','kg','st']), {}, {class: 'form-control'}) %>
+      </td>
+    </tr>
+  </table>
+  <%= submit_tag %>
 <% end %>

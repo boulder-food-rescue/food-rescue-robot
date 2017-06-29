@@ -96,7 +96,7 @@ class LocationsController < ApplicationController
         index
       end
     else
-      flash[:notice] = "Didn't save successfully :("
+      flash[:error] = "Didn't save successfully :(. #{@location.errors.full_messages.to_sentence}"
       render :new
     end
   end
@@ -122,9 +122,8 @@ class LocationsController < ApplicationController
         index
       end
     else
-      flash[:error] = 'Update failed :('
+      flash[:error] = "Didn't update successfully :(. #{@location.errors.full_messages.to_sentence}"
       render :edit
     end
   end
-
 end

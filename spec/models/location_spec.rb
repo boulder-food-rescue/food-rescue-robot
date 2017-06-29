@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Location do
-
   describe 'is_donor' do
     let(:donor_type) do
       described_class::LOCATION_TYPES.invert['Donor']

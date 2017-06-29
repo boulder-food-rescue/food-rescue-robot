@@ -15,7 +15,7 @@ class VolunteersController < ApplicationController
     volunteer = Volunteer.find(params[:volunteer_id])
     region = Region.find(params[:region_id])
     if params[:unassign]
-      assignments = Assignment.where(:volunteer_id=>volunteer.id, :region_id=>region.id)
+      assignments = Assignment.where(volunteer_id: volunteer.id, region_id: region.id)
       assignments.each { |assignment| assignment.destroy }
       if volunteer.assignments.length == 0
         volunteer.assigned = false
@@ -29,7 +29,7 @@ class VolunteersController < ApplicationController
       end
       volunteer.save
     end
-    redirect_to :action => 'unassigned', :alert => 'Assignment worked'
+    redirect_to action: 'unassigned', alert: 'Assignment worked'
   end
 
   def shiftless
@@ -65,17 +65,15 @@ class VolunteersController < ApplicationController
     respond_to do |format|
       format.json {
         @volunteers = Volunteer.select('email,id,name,phone').collect do |volunteer|
-          (volunteer.regions.collect do |region|
-             region.id
-           end & current_volunteer.region_ids).length > 0 ? v : nil
+          (volunteer.regions.collect{ |region| region.id } &
+            current_volunteer.region_ids).length > 0 ? volunteer : nil
         end.compact
         render json: @volunteers.to_json
       }
       format.html {
         @volunteers = Volunteer.includes(:regions).all.collect do |volunteer|
-          (volunteer.regions.collect do |region|
-            region.id
-          end & current_volunteer.region_ids).length > 0 ? volunteer : nil
+          (volunteer.regions.collect { |region| region.id } &
+            current_volunteer.region_ids).length > 0 ? volunteer : nil
         end.compact
         render :index
       }

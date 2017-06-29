@@ -84,16 +84,15 @@ class VolunteersController < ApplicationController
 
   def show
     @volunteer = Volunteer.find(params[:id])
-    unless current_volunteer.super_admin? or (current_volunteer.region_ids & @volunteer.region_ids).length > 0
+    unless current_volunteer.super_admin? || (current_volunteer.region_ids & @volunteer.region_ids).length > 0
       flash[:error] = "Can't view volunteer for a region you're not assigned to..."
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
   end
 
   def destroy
     @volunteer = Volunteer.find(params[:id])
-    return unless check_permissions(@v)
+    return unless check_permissions(@volunteer)
     @volunteer.active = false
     @volunteer.save
     redirect_to(request.referrer)
@@ -101,15 +100,8 @@ class VolunteersController < ApplicationController
 
   def new
     @volunteer = Volunteer.new
-    @action = 'create'
     @regions = Region.all
-    @my_admin_regions = if current_volunteer.super_admin?
-                          @regions
-                        else
-                          current_volunteer.assignments.collect do |assingment|
-                             assingment.admin ? assingment.region : nil
-                          end.compact
-                        end
+    @my_admin_regions = current_volunteer.admin_regions
     session[:my_return_to] = request.referer
     flash[:notice] = 'Thanks for signing up! You will recieve an email shortly when a regional admin approves your registration.'
     render :new
@@ -129,14 +121,11 @@ class VolunteersController < ApplicationController
     return unless check_permissions(@volunteer)
     # can't set admin bits from CRUD controls
     @volunteer.admin = false
-    @volunteer.assignments.each{ |assingment| assingment.admin = false }
+    @volunteer.assignments.each { |assignment| assignment.admin = false }
+
     if @volunteer.save
       flash[:notice] = 'Created successfully.'
-      unless session[:my_return_to].nil?
-        redirect_to(session[:my_return_to])
-      else
-        index
-      end
+      redirect_to(session[:my_return_to] || index)
     else
       flash[:error] = "Didn't save successfully :(. #{@volunteer.errors.full_messages.to_sentence}"
       render :new
@@ -147,14 +136,7 @@ class VolunteersController < ApplicationController
     @volunteer = Volunteer.find(params[:id])
     return unless check_permissions(@volunteer)
     @regions = Region.all
-    @my_admin_regions = if current_volunteer.super_admin?
-                          @regions
-                        else
-                          current_volunteer.assignments.collect do |assingment|
-                            assingment.admin ? assingment.region : nil
-                          end.compact
-                        end
-    @action = 'update'
+    @my_admin_regions = current_volunteer.admin_regions
     session[:my_return_to] = request.referer
     render :edit
   end
@@ -163,12 +145,13 @@ class VolunteersController < ApplicationController
     @volunteer = Volunteer.find(params[:id])
     return unless check_permissions(@volunteer)
     # can't set admin bits from CRUD controls
+    # strong parameters will fix this, eventually?
     params[:volunteer].delete(:admin)
-    if !params[:volunteer][:assignments].nil?
-      params[:volunteer][:assignments].each do |assingment|
-        assingment.delete(:admin)
-      end
+
+    if params[:volunteer][:assignments].any?
+      params[:volunteer][:assignments].each { |assignment| assignment.delete(:admin) }
     end
+
     if @volunteer.update_attributes(params[:volunteer])
       flash[:notice] = "Updated #{@volunteer.name} Successfully."
       unless session[:my_return_to].nil?
@@ -188,12 +171,13 @@ class VolunteersController < ApplicationController
     volunteer_region_ids = volunteer.regions.collect{ |region| region.id }
     admin_region_ids = current_volunteer.assignments.collect do
        |assignment| assignment.admin ? assignment.region.id : nil
-     end.compact
+    end.compact
+
     unless current_volunteer.super_admin? || (volunteer_region_ids & admin_region_ids).length > 0
       flash[:error] = "You're not authorized to switch to that user!"
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
+
     sign_out(current_volunteer)
     sign_in(volunteer)
     flash[:notice] = "Successfully switched to user #{current_volunteer.name}."
@@ -212,9 +196,10 @@ class VolunteersController < ApplicationController
       @my_admin_volunteers = Volunteer.all
     else
       @my_admin_regions = current_volunteer.assignments.collect do |assignment|
-         assignment.assignmentdmin ? assignment.region : nil
-       end.compact
-      admin_region_ids = @my_admin_regions.collect{ |my_admin_region| my_admin_region.id }
+         assignment.admin ? assignment.region : nil
+      end.compact
+
+      admin_region_ids = @my_admin_regions.collect { |my_admin_region| my_admin_region.id }
 
       @my_admin_volunteers = Volunteer.all.collect do |volunteer|
         ((volunteer.regions.length == 0) ||
@@ -285,9 +270,9 @@ class VolunteersController < ApplicationController
     volunteer = Volunteer.send(:with_exclusive_scope){ Volunteer.find(params[:id]) }
     if (current_volunteer.admin_region_ids & volunteer.region_ids).empty?
       flash[:error] = "You're not permitted to do that!"
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
+
     unless ReactivateVolunteer.call(volunteer: volunteer).success?
       flash[:error] = 'Update failed :('
     end

@@ -198,8 +198,10 @@ class VolunteersController < ApplicationController
       @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
       adminrids = @my_admin_regions.collect{ |m| m.id }
       @my_admin_volunteers = Volunteer.all.collect{ |v|
-        ((v.regions.length == 0) or (adminrids & v.regions.collect{ |r| r.id }).length > 0) ? v : nil }.compact
+        ((v.regions.length == 0) || (adminrids & v.regions.collect{ |r| r.id }).length > 0) ? v : nil }.compact
     end
+
+    @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
   end
 
   # Admin only view, hence use of #admin_regions for region lookup

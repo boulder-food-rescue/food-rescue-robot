@@ -18,7 +18,6 @@
           <td>
             <label for="volunteer_id">Volunteer:</label>
           </td>
-          <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact %>
 
           <% if current_volunteer.super_admin? %>
             <td>
@@ -27,7 +26,7 @@
           <% else %>
             <td>
               <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
-                    ((v.regions.collect{ |r| r.id } & adminrids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact), {class: "form-control select2"}) %>
+                    ((v.regions.collect{ |r| r.id } & @admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact), {class: "form-control select2"}) %>
             </td>
           <% end %>
         </tr>
@@ -43,15 +42,14 @@
           <td>
             <label for="location_id">Donor:</label>
           </td>
-          <% adminrids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
-          if current_volunteer.super_admin? %>
+          <% if current_volunteer.super_admin? %>
             <td>
               <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r|
                      r.id }.join(",")})").collect{ |v| [v.name,v.id] }),{class: "form-control select2"}) %>
             </td>
           <% else %>
           <td>
-            <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{adminrids.join(",")})").collect{ |l|
+            <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{@admin_region_ids.join(",")})").collect{ |l|
                     [l.name,l.id] })) %>
           </td>
           <% end %>

@@ -15,8 +15,7 @@ class VolunteersController < ApplicationController
     volunteer = Volunteer.find(params[:volunteer_id])
     region = Region.find(params[:region_id])
     if params[:unassign]
-      assignments = Assignment.where(volunteer_id: volunteer.id, region_id: region.id)
-      assignments.each { |assignment| assignment.destroy }
+      Assignment.where(volunteer_id: volunteer.id, region_id: region.id).destroy_all
       if volunteer.assignments.length == 0
         volunteer.assigned = false
         volunteer.save

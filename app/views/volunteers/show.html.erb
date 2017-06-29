@@ -1,9 +1,9 @@
-<h2><%= @v.name %></h2>
-<% unless @v.photo_file_name.nil? %><br><img src="<%= @v.photo(:medium) %>"><% end %>
+<h2><%= @volunteer.name %></h2>
+<% unless @volunteer.photo_file_name.nil? %><br><img src="<%= @volunteer.photo(:medium) %>"><% end %>
 <table>
-<tr><td>Phone<td><%= @v.phone %>
-<tr><td>Email<td><a href="mailto:<%= @v.email %>"><%= @v.email %></a>
-<tr><td>Preferred Contact<td><%= @v.preferred_contact %>
-<tr><td>Transport<td><%= @v.transport_type.nil? ? "?" : @v.transport_type.name %> <%= "(has car)" if @v.has_car %>
-<tr><td>Region(s)<td> <%= @v.regions.collect{ |r| r.name }.join(", ") %>
+<tr><td>Phone<td><%= @volunteer.phone %>
+<tr><td>Email<td><a href="mailto:<%= @volunteer.email %>"><%= @volunteer.email %></a>
+<tr><td>Preferred Contact<td><%= @volunteer.preferred_contact %>
+<tr><td>Transport<td><%= @volunteer.transport_type.nil? ? "?" : @volunteer.transport_type.name %> <%= "(has car)" if @volunteer.has_car %>
+<tr><td>Region(s)<td> <%= @volunteer.regions.collect{ |r| r.name }.join(", ") %>
 </table>

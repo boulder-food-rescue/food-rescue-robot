@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.5'
+ruby '2.2.6'
 
 # the base rails libraries
 gem 'pg'
@@ -26,6 +26,8 @@ group :development do
   gem 'faker', '~> 1.7.3'
   gem 'rails-erd'
   gem 'rubocop', require: false
+  gem 'rb-fsevent', '~> 0.9.0', require: false # latest 0.10.x seems to be incompatible with listen gem
+  gem 'guard-rspec', require: false
 end
 
 group :development, :test do

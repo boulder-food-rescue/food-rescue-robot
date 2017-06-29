@@ -165,10 +165,11 @@ class VolunteersController < ApplicationController
   # switch to a particular user
   def switch_user
     volunteer = Volunteer.find(params[:volunteer_id].to_i)
-    volunteer_region_ids = volunteer.regions.collect{ |region| region.id }
-    admin_region_ids = current_volunteer.assignments.collect do
-       |assignment| assignment.admin ? assignment.region.id : nil
-    end.compact
+    volunteer_region_ids = volunteer.regions.pluck(:id)
+    admin_region_ids =
+      current_volunteer.assignments.collect do |assignment|
+        assignment.admin ? assignment.region.id : nil
+      end.compact
 
     unless current_volunteer.super_admin? || (volunteer_region_ids & admin_region_ids).length > 0
       flash[:error] = "You're not authorized to switch to that user!"

@@ -285,7 +285,7 @@ class LogsController < ApplicationController
         render json: {error: 0, message: flash[:notice]}
       }
       format.html {
-        redirect_to :back
+        request.env["HTTP_REFERER"].present? ? redirect_to(:back) : redirect_to(open_logs_path)
       }
     end
 

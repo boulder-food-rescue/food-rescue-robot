@@ -62,10 +62,10 @@
     %>
     <tr style="<%= "background-color: #{row_bgcolor};" if row_bgcolor.present? %>">
       <td>
-        <button class="btn btn-info info" onclick="window.location='/schedule_chains/<%= schedule.id %>';">
+        <a class="btn btn-info info" href="/schedule_chains/<%= schedule.id %>">
           <i class="fa fa-info-circle"></i>
           Info
-        </button>
+        </a>
       </td>
       <td style="font-weight: bold;">
         <% if schedule.one_time? %>
@@ -90,10 +90,10 @@
       </td>
       <td>
         <% if schedule.no_volunteers? or schedule.temporary %>
-          <button class="btn btn-primary take" onclick="window.location='/schedule_chains/take?id=<%= schedule.id %>';">
+          <a class="btn btn-primary take" href="/schedule_chains/take?id=<%= schedule.id %>">
             <i class="fa fa-hand-rock-o"></i>
             Take Weekly Shift
-          </button>
+          </a>
         <% else %>
           <% schedule.volunteers.each do |volunteer| %>
             <%= link_to volunteer.name, volunteer %><br />
@@ -132,8 +132,8 @@
            </ul>
       <td>
         <% if current_volunteer.any_admin? %>
-          <%= link_to 'edit', :controller => "schedule_chains", :action => "edit", :id => schedule %><br>
-          <%= link_to "delete", schedule, :confirm => "Are you sure?", :method => :delete %>
+          <%= link_to 'edit', edit_schedule_chain_path(schedule) %><br>
+          <%= link_to "delete", schedule, confirm: "Are you sure?", method: :delete %>
         <% end %>
       </td>
     </tr>

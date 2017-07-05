@@ -48,7 +48,7 @@
             <th>Notes</th>
 
             <% if current_volunteer.any_admin? %>
-              <th>Admin</th>
+              <th>Shift Logs Admin</th>
             <% end %>
           </tr>
         </thead>
@@ -57,7 +57,7 @@
             @shifts.each do |shift|
               row_bgcolor = nil
 
-              if shift.volunteers_needed? and not current_page?(controller: "logs", action: "open")
+              if shift.volunteers_needed? && !current_page?(controller: "logs", action: "open")
                 row_bgcolor = "pink"
               elsif shift.volunteers_need_training?
                 row_bgcolor = "lightgreen"
@@ -95,7 +95,7 @@
 
                 <% unless shift.absences.empty? %>
                   <small>
-                    <br>
+                    <br />
                       (normally:
                         <% shift.absences.each do |absence| %>
                           <% if absence.volunteer.present? %>
@@ -109,10 +109,15 @@
               </td>
 
               <td>
-                <% shift.donors.each do |donor| %> <%= link_to donor.name, donor %><br> <% end %>
+                <% shift.donors.each do |donor| %>
+                  <%= link_to donor.name, donor %><br />
+                <% end %>
               </td>
+
               <td>
-                <% shift.recipients.each do |recip| %> <%= link_to recip.name, recip %> <br> <% end %>
+                <% shift.recipients.each do |recip| %>
+                  <%= link_to recip.name, recip %> <br />
+                <% end %>
               </td>
 
               <% unless current_page?(controller: "logs", action: "open") %>
@@ -120,7 +125,8 @@
                   <%= shift.complete? ? shift.summed_weight.round : "?" %> lbs.
                 </td>
                 <td>
-                  <% shift.transport_types.each{ |transport_type| %> <%= transport_type.name %><br> <% } %>
+                  <% shift.transport_types.each do |transport_type| %> <%= transport_type.name %><br />
+                  <% end %>
                 </td>
                 <td>
                   <% shift.food_types_by_log.each do |types| %>
@@ -130,22 +136,18 @@
               <% end %>
 
               <td style="font-size: 10pt;">
-                <% shift.logs.each{ |shift|
-                  next if shift.notes.nil?
-                %>
-                  <%= word_wrap(shift.notes, line_width: 20).gsub("\n","<br>").html_safe %><hr>
-                <% } %>
-                <% if current_volunteer.any_admin?(shift.region) %>
-                  <td>
-                    <% shift.logs.each{ |shift_group| %>
-                      <%= link_to edit_log_path(shift_group), class: 'btn btn-primary pull-left' do %>
-                        <i class="fa fa-pencil"></i>
-                      <% end %>
-                      <%= link_to shift_group, class: 'btn btn-danger', confirm: "Are you sure?", method: :delete do %>
-                        <i class="fa fa-trash-o"></i>
-                      <% end %>
-                    <% } %>
-                  </td>
+                <% shift.logs.each do |shift| %>
+                  <%= word_wrap(shift.notes, line_width: 20).gsub("\n","<br />").html_safe unless shift.notes.nil? %>
+                  <hr />
+                <% end %>
+              </td>
+              <% if current_volunteer.any_admin?(shift.region) %>
+                <td>
+                  <% shift.logs.each do |log| %>
+                    <%= link_to "edit log #{log.id}", edit_log_path(log), class: 'btn btn-primary' %><br />
+                   <%= link_to "delete log #{log.id}", log, class: 'btn btn-danger', confirm: "Are you sure you want to delete this shift's log?", method: :delete %><br />
+                  <% end %>
+                </td>
               <% end %>
             </tr>
           <% end %>

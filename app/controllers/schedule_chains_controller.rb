@@ -90,23 +90,21 @@ class ScheduleChainsController < ApplicationController
   end
 
   def destroy
-    @s = ScheduleChain.find(params[:id])
-    unless current_volunteer.any_admin? @s.region
+    schedule_chain = ScheduleChain.find(params[:id])
+    unless current_volunteer.any_admin?(schedule_chain.region)
       flash[:error] = 'Not authorized to delete schedule items for that region'
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
-    @s.active = false
-    @s.save
-    redirect_to(request.referrer)
+    schedule_chain.active = false
+    schedule_chain.save
+    redirect_to(request.referrer || schedule_chains_path)
   end
 
   def new
     @region = Region.find(params[:region_id])
     unless current_volunteer.any_admin? @region
       flash[:error] = 'Not authorized to create schedule items for that region'
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
     @schedule = ScheduleChain.new
     @schedule.volunteers.build

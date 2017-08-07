@@ -28,6 +28,10 @@ development on the master branch and we are growing a small team of hackers to m
 If you want to help with development, feel free to fork the project. If you have something
 to submit upstream, send a pull request from your fork. If you're trying to setup a dev environment, keep reading.
 
+Alternatively, if your OSS time is limited, you can [donate to Boulder Food Rescue](https://www.boulderfoodrescue.org/donate/) via several options. _Please include a note that indicates you are donating for Robot Development in the notes._
+
+[<img src="https://www.boulderfoodrescue.org/wp-content/uploads/2011/09/partnership_donatebutton.jpg">](https://www.coloradogives.org/index.php?section=organizations&action=newDonation&fwID=37126)
+
 # General Tech Overview
 
 The software's main goal is to keep a record of what food got picked up, when, and by

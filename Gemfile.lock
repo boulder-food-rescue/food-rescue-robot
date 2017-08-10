@@ -106,7 +106,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     commonjs (0.2.7)
-    daemons (1.2.3)
+    daemons (1.2.4)
     debug_inspector (0.0.2)
     devise (3.2.4)
       bcrypt (~> 3.0)
@@ -123,7 +123,7 @@ GEM
       railties (>= 3.2, < 5.1)
     equalizer (0.0.10)
     erubis (2.7.0)
-    eventmachine (1.2.0.1)
+    eventmachine (1.2.3)
     exception_notification (3.0.1)
       actionmailer (>= 3.0.4)
     exception_notification-rake (0.0.6)
@@ -344,7 +344,7 @@ GEM
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
-    thin (1.7.0)
+    thin (1.7.2)
       daemons (~> 1.0, >= 1.0.9)
       eventmachine (~> 1.0, >= 1.0.4)
       rack (>= 1, < 3)

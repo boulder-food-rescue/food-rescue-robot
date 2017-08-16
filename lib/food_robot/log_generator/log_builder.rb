@@ -1,3 +1,8 @@
+# Run manually with:
+# schedule_chain = ScheduleChain.find()
+# chain = FoodRobot::LogGenerator::ScheduleChainDecorator.new(schedule_chain)
+# donor = chain.donors.first
+# FoodRobot::LogGenerator::LogBuilder.new(date, donor, absence).log.save
 module FoodRobot
   class LogGenerator
     class LogBuilder

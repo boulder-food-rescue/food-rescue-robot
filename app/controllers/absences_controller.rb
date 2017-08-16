@@ -66,17 +66,15 @@ class AbsencesController < ApplicationController
     vrids = volunteer.regions.collect{ |r| r.id }
     adminrids = current_volunteer.admin_region_ids
 
-    unless volunteer.id == current_volunteer.id or current_volunteer.super_admin? or (vrids & adminrids).length > 0
+    unless volunteer.id == current_volunteer.id || current_volunteer.super_admin? || (vrids & adminrids).length > 0
       flash[:warning] = 'Cannot schedule an absence for that person, mmmmk.'
-      redirect_to(root_path)
-      return
+      return redirect_to(root_path)
     end
 
-    if (@absence.start_date <= Date.today+2) and (not current_volunteer.any_admin?)
+    if (@absence.start_date <= Date.today+2) && !current_volunteer.any_admin?
       emails = current_volunteer.admin_regions.collect{ |r| r.volunteer_coordinator_email }.compact
       flash[:warning] = "You cannot schedule an absence within 48 hours. If you will be unable to do your shift, please contact your volunteer coordinator(s)#{emails.empty? ? '' : ': '+emails.join(', ')}."
-      redirect_to :back
-      return
+      return redirect_to :back
     end
 
     from = @absence.start_date
@@ -90,6 +88,7 @@ class AbsencesController < ApplicationController
       break if n >= 12
       from += 1
     end
+
     if (n+ns) == 0
       flash[:notice] = nil
       flash[:warning] = "No shifts of yours was found in that timeframe, so I couldn't schedule an absence. If you think this is an error, please contact the volunteer coordinator to ensure your absence is scheduled properly. Thanks!"

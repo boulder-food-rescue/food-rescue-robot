@@ -64,7 +64,7 @@ class ScheduleChain < ActiveRecord::Base
     end
   end
 
-  # list all the schedules that don't have active volunteers
+  # list all the schedules that don't have enough active volunteers
   # clarification: (in my regions) and (temporary or (no volunteers and last stop is dropoff))
   def self.open_in_regions(region_id_list)
     schedules = ScheduleChain.where(irregular: false).where(region_id: region_id_list) if region_id_list.length > 0

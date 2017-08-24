@@ -18,7 +18,7 @@ class Location < ActiveRecord::Base
   geocoded_by :address, latitude: :lat, longitude: :lng   # can also be an IP address
   acts_as_gmappable process_geocoding: false, lat: 'lat', lng: 'lng', address: 'address'
 
-  after_initialize :init_detailed_hours
+  after_initialize :init_detailed_hours_json
   before_save :populate_detailed_hours_json_before_save
   before_save :populate_receipt_key
   after_validation :geocode
@@ -90,16 +90,17 @@ class Location < ActiveRecord::Base
   end
 
   def populate_detailed_hours_from_form(params)
+    detailed_hours = day_info
+
     (0..6).each do |index|
-      prefix = 'day'+index.to_s
-      write_day_info(prefix+'_status', params[prefix]['status'].to_i)
-      write_day_info(prefix+'_start',
-        Time.find_zone(self.time_zone).parse( params[prefix]['start']['hour']+':'+params[prefix]['start']['minute'] )
-      )
-      write_day_info(prefix+'_end',
-        Time.find_zone(self.time_zone).parse( params[prefix]['end']['hour']+':'+params[prefix]['end']['minute'] )
-      )
+      prefix = "day#{index}"
+      original_day_info["#{prefix}_status"] = params[prefix]['status'].to_i
+      original_day_info["#{prefix}_start"] = Time.find_zone(time_zone).parse("#{params[prefix]['start']['hour']}:#{params[prefix]['start']['minute']}")
+      original_day_info["#{prefix}_end"] = Time.find_zone(time_zone).parse("#{params[prefix]['end']['hour']}:#{params[prefix]['end']['minute']}")
     end
+
+    self.detailed_hours_json = detailed_hours.to_json
+
     populate_detailed_hours_json_before_save
   end
 
@@ -122,8 +123,26 @@ class Location < ActiveRecord::Base
   end
 
   def day_info
-    @day_info = {} if @day_info.nil?
-    @day_info
+    {}.tap do |day_info|
+      detailed_hours = JSON.parse(detailed_hours_json) rescue {}
+      return if detailed_hours.empty?
+      now = Time.new
+
+      (0..6).each do |index|
+        value = detailed_hours[index.to_s]
+        next if value.nil?
+
+        start = value['start']
+        stop = value['end']
+        next if start.nil? or stop.nil?
+
+        time_in_zone = Time.find_zone(time_zone)
+
+        day_info["day#{index}_status"] = value['status'].to_i
+        day_info["day#{index}_start"] = time_in_zone.parse(start).change(year: now.year, month: now.month, day: now.day)
+        day_info["day#{index}_end"] = time_in_zone.parse(stop).change(year: now.year, month: now.month, day: now.day)
+      end
+    end
   end
 
   def clean_address
@@ -140,8 +159,8 @@ class Location < ActiveRecord::Base
     (0..6).each do |index|
       if open_on_day? index
         prefix = 'day'+index.to_s
-        if read_day_info(prefix + '_start') > read_day_info(prefix + '_end')
-          errors.add(prefix+'_status', 'must have an end time AFTER the start time')
+        if read_day_info("#{prefix}_start") > read_day_info("#{prefix}_end")
+          errors.add("#{prefix}_status", 'must have an end time AFTER the start time')
         end
       end
     end
@@ -154,49 +173,21 @@ class Location < ActiveRecord::Base
   def populate_detailed_hours_json_before_save
     hours_info = {}
     (0..6).each do |index|
-      prefix = 'day'+index.to_s+'_'
-      start = read_day_info(prefix+'start')
-      stop = read_day_info(prefix+'end')
+      start = read_day_info("day#{index}_start")
+      stop = read_day_info("day#{index}_end")
       next if start.nil? or stop.nil?
+
       hours_info[index] = {
-        :status => read_day_info(prefix+'status').to_s,
+        status: read_day_info("day#{index}_status").to_s,
         # save these with the timezone on them!
-        :start => start.to_formatted_s(:rfc822),
-        :end => stop.to_formatted_s(:rfc822)
+        start: start.to_formatted_s(:rfc822),
+        end: stop.to_formatted_s(:rfc822)
       }
     end
     self.detailed_hours_json = hours_info.to_json
   end
 
-  def init_detailed_hours
-    begin
-      return if self.detailed_hours_json.nil?
-    rescue ActiveModel::MissingAttributeError
-      return
-    end
-    detailed_hours = JSON.parse(self.detailed_hours_json)
-    return if detailed_hours.empty?
-    now = Time.new
-    @day_info = {}
-    (0..6).each do |index|
-      prefix = 'day'+index.to_s+'_'
-      next if detailed_hours[index.to_s].nil?
-      start = detailed_hours[index.to_s]['start']
-      stop = detailed_hours[index.to_s]['end']
-      next if start.nil? or stop.nil?
-      write_day_info( prefix+'status', detailed_hours[index.to_s]['status'].to_i )
-      # carefully set start time
-      time = Time.find_zone(self.time_zone).parse( start )
-      time = time.change(:year=>now.year, :month=>now.month, :day=>now.day)
-      write_day_info( prefix+'start', time)
-      # carefully set end time
-      time = Time.find_zone(self.time_zone).parse( stop )
-      time = time.change(:year=>now.year, :month=>now.month, :day=>now.day)
-      write_day_info( prefix+'end', time )
-    end
-  end
-
-  def write_day_info(key, value)
-    self.day_info[key] = value
+  def init_detailed_hours_json
+    self.detailed_hours_json ||= {}
   end
 end

@@ -75,9 +75,9 @@ volunteer.waiver_signed_at = DateTime.now
 volunteer.active = true
 volunteer.save!
 
-assignment = Assignment.new({
-  'admin'=>false
-})
+# Create volunteer assignment
+assignment = Assignment.new({admin: false})
+
 assignment.volunteer_id = volunteer.id
 assignment.region_id = region.id
 assignment.save!
@@ -125,17 +125,15 @@ region_admin = Volunteer.create({
    'assigned'=>true
 })
 
-
 region_admin.admin = false
 region_admin.waiver_signed = true
 region_admin.waiver_signed_at = DateTime.now
 region_admin.active = true
 region_admin.save
 
-Assignment.new({
-  'admin'=>true
-})
+# Create region admin assignment
+admin_assignment = Assignment.new({admin: true})
 
-assignment.volunteer_id = region_admin.id
-assignment.region_id = region.id
-assignment.save!
+admin_assignment.volunteer_id = region_admin.id
+admin_assignment.region_id = region.id
+admin_assignment.save!

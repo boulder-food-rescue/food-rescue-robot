@@ -29,7 +29,7 @@ class ScheduleChainsController < ApplicationController
   end
 
   def show
-    @schedule = ScheduleChain.find(params[:id])
+    @schedule = ScheduleChain.includes(:schedules).find(params[:id])
     schedules = @schedule.schedules
 
     # prep the google maps embed request
@@ -56,11 +56,10 @@ class ScheduleChainsController < ApplicationController
       end
     end
 
-
     embed_parameters += '&mode=bicycling'
     @embed_request_url = ('https://www.google.com/maps/embed/v1/directions' + '?key=' + api_key + embed_parameters)
 
-    #This can apparently be nil, so have to do a funky sort fix
+    # This can apparently be nil, so have to do a funky sort fix
     @sorted_related_shifts = @schedule.related_shifts.sort{ |x, y|
       x.schedule_chain.day_of_week && y.schedule_chain.day_of_week ?
         x.schedule_chain.day_of_week <=> y.schedule_chain.day_of_week : x.schedule_chain.day_of_week ? -1 : 1

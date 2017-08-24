@@ -2,7 +2,9 @@
 
   <div class="col-sm-6">
 
-    <h2><%= if @schedule.functional?
+    <h2>
+      <i class='fa fa-location-arrow'></i>
+      <%= if @schedule.functional?
               if @schedule.recipient_stops.length == 1
 			    "Delivery to " + @schedule.schedules.last.location.name
               else
@@ -52,7 +54,10 @@
       <p><b>Overall Difficulty:</b> <%= ScheduleChain::DIFFICULTY_OPTIONS[@schedule.difficulty_rating] %></p>
     <% end %>
 
-    <h3>Current Volunteers</h3>
+    <h3>
+      <i class="fa fa-users"></i>
+      Current Volunteers
+    </h3>
     <p>
       <% if @schedule.volunteers.count == 0 %>
         No volunteers yet...
@@ -78,9 +83,16 @@
         %>
           <li>
             <% if shift.schedule_chain.day_of_week.present? %>
-              <%= Date::DAYNAMES[shift.schedule_chain.day_of_week] %>
+              <p>
+                <strong>
+                  <%= Date::DAYNAMES[shift.schedule_chain.day_of_week] %>
+                </strong>
+              </p>
             <% else %>
-              <p>Schedule Chain Day of Week is Empty. Shift:<%= shift.id %> for schedule_chain: <%= shift.schedule_chain.id %>. Please fix.</p>
+              <p>
+                <strong>Unknown/Varies.</strong>
+              </p>
+              <p>Day of Week is empty for Shift <%= shift.id %> for <%= link_to "schedule chain #{shift.schedule_chain.id}", edit_schedule_chain_path('schedule chain') %>, this may be incorrect. Email volunteer or your region admin if you're concerned.</p>
             <% end %>
             <ul>
               <% shift.schedule_chain.volunteers.each do |volunteer| %>
@@ -91,43 +103,15 @@
         <% } %>
       </ul>
     <% end %>
-
-    <% if @schedule.functional? %>
-      <h3>Stops:</h3>
-      <p>
-		  <% @schedule.schedules.each do |stop|
-        next if stop.nil? or stop.location.nil? %>
-
-          <h4><%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %> </h4>
-          <blockquote><%= stop.location.address %></blockquote>
-
-          <% unless stop.location.entry_info.blank? %>
-              <p><strong>Entry:</strong> <%= stop.location.entry_info.gsub("\n","<br>").html_safe %></p>
-          <% end %>
-
-          <% unless stop.location.equipment_storage_info.blank? %>
-              <p><strong>Equipment:</strong> <%= stop.location.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
-          <% end %>
-
-          <% unless stop.location.food_storage_info.blank? %>
-              <p><strong>Food:</strong> <%= stop.location.food_storage_info.gsub("\n","<br>").html_safe %></p>
-          <% end %>
-
-          <% unless stop.location.onsite_contact_info.blank? %>
-              <p><strong>Contact:</strong> <%= stop.location.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
-          <% end %>
-
-          <% unless stop.location.exit_info.blank? %>
-              <p><strong>Exit:</strong> <%= stop.location.exit_info.gsub("\n","<br>").html_safe %></p>
-          <% end %>
-      <% end %>
-    <% end %>
-
   </div>
+
   <div class="col-sm-6">
 
     <% if @schedule.mappable? %>
-      <h2>Bicycling Directions</h2>
+      <h2>
+        <i class='fa fa-bicycle'></i>
+        Bicycling Directions
+      </h2>
       <br/>
       <div style="width: 465px;">
         <iframe
@@ -140,5 +124,49 @@
     <% end %>
 
   </div>
+</div>
 
+<div class="row">
+  <div class="col-sm-12">
+    <% if @schedule.functional? %>
+      <h3>Stops:</h3>
+      <p>
+  	  <% @schedule.schedules.each do |stop|
+        next if stop.nil? or stop.location.nil? %>
+
+        <div class="col-sm-6">
+          <div class="well">
+            <h4>
+              <i class='fa fa-building'></i>
+              <%= stop.location.name %> <%= stop.is_pickup_stop? ? " (Donor)" : "(Recipient)" %>
+            </h4>
+            <blockquote>
+              <i class='fa fa-map-marker'></i>
+              <%= stop.location.address %>
+            </blockquote>
+
+            <% unless stop.location.entry_info.blank? %>
+                <p><strong>Entry:</strong> <%= stop.location.entry_info.gsub("\n","<br />").html_safe %></p>
+            <% end %>
+
+            <% unless stop.location.equipment_storage_info.blank? %>
+                <p><strong>Equipment:</strong> <%= stop.location.equipment_storage_info.gsub("\n","<br>").html_safe %></p>
+            <% end %>
+
+            <% unless stop.location.food_storage_info.blank? %>
+                <p><strong>Food:</strong> <%= stop.location.food_storage_info.gsub("\n","<br>").html_safe %></p>
+            <% end %>
+
+            <% unless stop.location.onsite_contact_info.blank? %>
+                <p><strong>Contact:</strong> <%= stop.location.onsite_contact_info.gsub("\n","<br>").html_safe %></p>
+            <% end %>
+
+            <% unless stop.location.exit_info.blank? %>
+                <p><strong>Exit:</strong> <%= stop.location.exit_info.gsub("\n","<br>").html_safe %></p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 </div>

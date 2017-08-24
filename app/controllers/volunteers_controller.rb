@@ -32,9 +32,7 @@ class VolunteersController < ApplicationController
   end
 
   def shiftless
-    @volunteers = Volunteer.all.keep_if do |volunteer|
-      ((volunteer.region_ids & current_volunteer.region_ids).length > 0) && volunteer.schedule_chains.length == 0
-    end
+    @volunteers = Volunteer.active_but_shiftless(current_volunteer.region_ids)
     @header = 'Shiftless Volunteers'
     render :index
   end

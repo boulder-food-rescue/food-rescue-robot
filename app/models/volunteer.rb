@@ -185,6 +185,18 @@ class Volunteer < ActiveRecord::Base
       compact
   end
 
+  def self.active_but_shiftless(region_ids)
+    includes(:regions)
+      .where(regions: { id: region_ids })
+      .where('regions.id' => region_ids)
+      .where('(SELECT COUNT(*) FROM schedule_chains ' \
+            'INNER JOIN schedule_volunteers ON ' \
+            'schedule_chains.id = schedule_volunteers.schedule_chain_id ' \
+            "WHERE schedule_chains.active = 't' " \
+            'AND schedule_volunteers.volunteer_id = volunteers.id ' \
+            "AND schedule_volunteers.active = 't') = 0")
+  end
+
   private
 
   # better first-time experience: if there is only one region, add the user to

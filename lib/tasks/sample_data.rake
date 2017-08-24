@@ -11,7 +11,7 @@ namespace :db do
       Created region ##{region.id}: '#{region.name}'"
         with admin(s): #{region.volunteers.where(assignments: { admin: true }).map(&:email).join(', ')}"
 
-      Run `rake foodrobot:generate_log_entries` to generate log records for the newly created schedule chains.
+      Run `rake foodrobot:generate_logs` to generate log records for the newly created schedule chains.
     EOF
   end
 end

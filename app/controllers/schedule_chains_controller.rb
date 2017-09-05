@@ -1,6 +1,6 @@
 class ScheduleChainsController < ApplicationController
   before_filter :authenticate_volunteer!
-  before_filter :admin_only, :only => [:fast_schedule, :today, :tomorrow, :yesterday, :edit, :update, :create, :new]
+  before_filter :admin_only, :only => [:today, :tomorrow, :yesterday]
 
   def open
     @schedules = ScheduleChain.open_in_regions current_volunteer.region_ids
@@ -90,24 +90,21 @@ class ScheduleChainsController < ApplicationController
 
   def destroy
     schedule_chain = ScheduleChain.find(params[:id])
-    unless current_volunteer.any_admin?(schedule_chain.region)
-      flash[:error] = 'Not authorized to delete schedule items for that region'
-      return redirect_to(root_path)
-    end
+    authorize! :destroy, schedule_chain
+
     schedule_chain.active = false
     schedule_chain.save
+
     redirect_to(request.referrer || schedule_chains_path)
   end
 
   def new
     @region = Region.find(params[:region_id])
-    unless current_volunteer.any_admin? @region
-      flash[:error] = 'Not authorized to create schedule items for that region'
-      return redirect_to(root_path)
-    end
     @schedule = ScheduleChain.new
     @schedule.volunteers.build
     @schedule.region = @region
+    authorize! :create, @schedule
+
     set_vars_for_form @region
     @action = 'create'
     render :new
@@ -115,11 +112,8 @@ class ScheduleChainsController < ApplicationController
 
   def create
     @schedule = ScheduleChain.new(params[:schedule_chain])
-    unless current_volunteer.any_admin? @schedule.region
-      flash[:error] = 'Not authorized to create schedule items for that region'
-      redirect_to(root_path)
-      return
-    end
+    authorize! :create, @schedule
+
     if @schedule.save
       flash[:notice] = 'Created successfully'
       index
@@ -131,11 +125,7 @@ class ScheduleChainsController < ApplicationController
 
   def edit
     @schedule = ScheduleChain.find(params[:id])
-
-    unless current_volunteer.any_admin? @schedule.region
-      flash[:error] = 'Not authorized to edit schedule items for that region'
-      return redirect_to(root_path)
-    end
+    authorize! :update, @schedule
 
     @region = @schedule.region
     set_vars_for_form @region
@@ -145,11 +135,7 @@ class ScheduleChainsController < ApplicationController
 
   def update
     @schedule = ScheduleChain.find(params[:id])
-
-    unless current_volunteer.any_admin? @schedule.region
-      flash[:error] = 'Not authorized to edit schedule items for that region'
-      return redirect_to(root_path)
-    end
+    authorize! :update, @schedule
 
     delete_schedules = []
     unless params[:schedule_chain]['schedules_attributes'].nil?

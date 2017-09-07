@@ -31,6 +31,7 @@ class Ability
     can :manage, FoodType, region_id: admin_region_ids
     can :manage, ScaleType, region_id: admin_region_ids
     can :manage, Log, region_id: admin_region_ids
+    can :manage, ScheduleChain, region_id: admin_region_ids
   end
 
   def volunteer_permissions

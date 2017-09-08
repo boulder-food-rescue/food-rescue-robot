@@ -47,12 +47,11 @@ module FoodRobot
                  ScheduleChain.where(irregular: false)
                end
 
-      chains.
-        includes(schedules: :location).
-        select(&:functional?).
-        reject { |sc| sc.one_time? && sc.detailed_date != date }.
-        reject { |sc| sc.weekly? && sc.day_of_week != date.wday }.
-        map { |sc| ScheduleChainDecorator.new(sc) }
+      chains.includes(schedules: :location)
+            .select(&:functional?)
+            .reject { |sc| sc.one_time? && sc.detailed_date != date }
+            .reject { |sc| sc.weekly? && sc.day_of_week != date.wday }
+            .map { |sc| ScheduleChainDecorator.new(sc) }
     end
 
     def existing_logs

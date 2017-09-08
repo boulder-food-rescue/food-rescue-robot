@@ -207,3 +207,10 @@ $ heroku pg:backups capture
 $ curl -o latest.dump `heroku pg:backups public-url`
 $ pg_restore --verbose --clean --no-acl --no-owner -h localhost -U robot_user -d robot_db latest.dump
 ```
+
+## Troubleshooting
+
+### Logs
+
+Having trouble with logs not being generated for schedule chains?
+  - Check that ALL locations (also called donors) are valid. Often times this causes logs to not be created for current shifts/schedule chains being run.

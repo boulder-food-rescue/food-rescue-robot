@@ -62,15 +62,19 @@ class VolunteersController < ApplicationController
     respond_to do |format|
       format.json {
         @volunteers = Volunteer.select('email,id,name,phone').collect do |volunteer|
-          (volunteer.regions.collect{ |region| region.id } &
-            current_volunteer.region_ids).length > 0 ? volunteer : nil
+          volunteer_region_matches = (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0 
+          if volunteer_region_matches 
+            volunteer
+          end
         end.compact
         render json: @volunteers.to_json
       }
       format.html {
         @volunteers = Volunteer.includes(:regions).all.collect do |volunteer|
-          (volunteer.regions.collect { |region| region.id } &
-            current_volunteer.region_ids).length > 0 ? volunteer : nil
+          volunteer_region_matches = (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0 
+          if volunteer_region_matches 
+            volunteer
+          end
         end.compact
         render :index
       }

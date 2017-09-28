@@ -334,13 +334,41 @@ RSpec.describe VolunteersController do
     end
   end
 
-  describe 'GET #region_admin' do
+  describe 'GET #region_admin as volunteer' do
     subject { get :region_admin }
 
     before { sign_in volunteer }
 
     it 'renders the region_admin template' do
       expect(subject).to render_template :region_admin
+    end
+    it 'adds regions' do
+      subject
+      expect(assigns(:regions)).to_not be_nil
+      expect(assigns(:regions).count).to eq(1)
+    end
+    it 'my_admin_volunteers is empty by default' do
+      subject
+      expect(assigns(:my_admin_volunteers)).to eq([])
+    end
+  end
+
+  describe 'GET #region_admin as admin' do
+    subject { get :region_admin }
+
+    before { sign_in admin }
+
+    it 'renders the region_admin template' do
+      expect(subject).to render_template :region_admin
+    end
+    it 'adds regions' do
+      subject
+      expect(assigns(:regions)).to_not be_nil
+      expect(assigns(:regions).count).to eq(1)
+    end
+    it 'my_admin_volunteers is empty by default' do
+      subject
+      expect(assigns(:my_admin_volunteers)).to eq([admin])
     end
   end
 

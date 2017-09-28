@@ -62,8 +62,8 @@ class VolunteersController < ApplicationController
     respond_to do |format|
       format.json {
         @volunteers = Volunteer.select('email,id,name,phone').collect do |volunteer|
-          volunteer_region_matches = (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0 
-          if volunteer_region_matches 
+          volunteer_region_matches = (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0
+          if volunteer_region_matches
             volunteer
           end
         end.compact
@@ -71,8 +71,8 @@ class VolunteersController < ApplicationController
       }
       format.html {
         @volunteers = Volunteer.includes(:regions).all.collect do |volunteer|
-          volunteer_region_matches = (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0 
-          if volunteer_region_matches 
+          volunteer_region_matches = (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0
+          if volunteer_region_matches
             volunteer
           end
         end.compact
@@ -311,7 +311,7 @@ class VolunteersController < ApplicationController
   def my_admin_volunteers(admin_region_ids)
     Volunteer.all.collect do |volunteer|
       regions_length_empty = (volunteer.regions.length == 0)
-      admin_regions_contained_in_my_regions = (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0 
+      admin_regions_contained_in_my_regions = (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0
       if regions_length_empty || admin_regions_contained_in_my_regions
         volunteer
       end

@@ -230,9 +230,9 @@ RSpec.describe VolunteersController do
       get :index, format: :json
       expect(assigns(:volunteers)).to eq([volunteer])
       expect(JSON.parse(response.body).length).to eq(1)
-      expect(JSON.parse(response.body)[0]["email"]).to eq(volunteer.email)
-      expect(JSON.parse(response.body)[0]["name"]).to eq(volunteer.name)
-      expect(JSON.parse(response.body)[0]["phone"]).to eq(volunteer.phone)
+      expect(JSON.parse(response.body)[0]['email']).to eq(volunteer.email)
+      expect(JSON.parse(response.body)[0]['name']).to eq(volunteer.name)
+      expect(JSON.parse(response.body)[0]['phone']).to eq(volunteer.phone)
     end
   end
 

@@ -1,61 +1,65 @@
 <h2><%= @header %></h2>
+
 <% if @volunteers.length == 0 %>
-<p> 
-No unassigned volunteers...
-</p>
+  <p>
+    No unassigned volunteers...
+  </p>
 <% else %>
-<table id="data_table">
-  <thead>
-  <tr>
-    <th> Name </th>
-    <th> Email </th>
-    <th> Phone </th>
-    <th> Requested Region </th>
-    <th> Days Waiting </th>
-    <th> Region </th>
-    <th> Send<br>Welcome<br>Email </th>
-    <th> Assign</th>
-    <th> Delete</th>
-  </tr>
-  </thead>
-  <tbody>
-  <%
-  @volunteers.each do |v|
-    row_bgcolor = nil
-    if v.super_admin?
-      row_bgcolor = "red"
-    elsif v.any_admin?
-      row_bgcolor = "pink"
-    end
-  %>
-  <tr<% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
-    <td> <%= link_to v.name, v unless v.name.nil? %>
-    <td> <a href="mailto:<%= v.email %>"><%= v.email %></a>
-    <td> <%= v.phone %>
-    <td> <%= v.requested_region.nil? ? "?" : v.requested_region.name %>
-    <td> <%= (Time.zone.today - v.created_at.to_date).to_i  %>
-    <td>
-       <%= form_tag("/volunteers/assign", :method => "get") do %>
-        <%= hidden_field_tag(:volunteer_id,v.id) %>
-        <%= select_tag(:region_id, options_for_select(Region.all_admin(current_volunteer).collect{ |r| [r.name,r.id] })) %>
-    <td>
-        <%= check_box_tag(:send_welcome_email,1,:checked=>true) %>
-    <td>
-        <%= submit_tag("Assign") %>
-    <td>
-        <%= link_to "Delete", v, :confirm => "Are you sure?", :method => :delete %>
-        <% end %></td>
-  </tr>
-  <% end %>
-  </tbody>
-</table>
-<% end %>
-<% content_for :scripts do %>
-<script type="text/javascript">
-$(function () { 
-  $('#data_table').dataTable( {
-    'iDisplayLength' : 50,
-  });
-});
-</script>
+  <table id="data_table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Requested Region</th>
+        <th>Days Waiting</th>
+        <th>Region</th>
+        <th>Send<br>Welcome<br>Email</th>
+        <th>Assign</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @volunteers.each do |volunteer|
+        row_bgcolor = nil
+        if volunteer.super_admin?
+          row_bgcolor = "red"
+        elsif volunteer.any_admin?
+          row_bgcolor = "pink"
+        end
+      %>
+        <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+          <td>
+            <%= link_to volunteer.name, volunteer unless volunteer.name.nil? %>
+          </td>
+          <td>
+            <a href="mailto:<%= volunteer.email %>"><%= volunteer.email %></a>
+          </td>
+          <td>
+            <%= volunteer.phone %>
+          </td>
+          <td>
+            <%= volunteer.requested_region.nil? ? "?" : volunteer.requested_region.name %>
+          </td>
+          <td>
+            <%= (Time.zone.today - volunteer.created_at.to_date).to_i  %>
+          </td>
+          <td>
+            <%= form_tag("/volunteers/assign", :method => "get") do %>
+              <%= hidden_field_tag(:volunteer_id, volunteer.id) %>
+              <%= select_tag(:region_id, options_for_select(Region.all_admin(current_volunteer).collect{ |region| [region.name,region.id] })) %>
+          </td>
+          <td>
+            <%= check_box_tag(:send_welcome_email,1, checked: true) %>
+          </td>
+          <td>
+            <%= submit_tag("Assign") %>
+          <td>
+            <%= link_to "Delete", volunteer, confirm: "Are you sure?", method: :delete %>
+            <% end # form end tag %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>

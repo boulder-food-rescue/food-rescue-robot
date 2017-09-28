@@ -45,17 +45,17 @@
             <%= (Time.zone.today - volunteer.created_at.to_date).to_i  %>
           </td>
           <td>
-            <%= form_tag("/volunteers/assign", :method => "get") do %>
+            <%= form_tag("/volunteers/assign", method: "get", class: 'form-inline') do %>
               <%= hidden_field_tag(:volunteer_id, volunteer.id) %>
-              <%= select_tag(:region_id, options_for_select(Region.all_admin(current_volunteer).collect{ |region| [region.name,region.id] })) %>
+              <%= select_tag(:region_id, options_for_select(Region.all_admin(current_volunteer).collect{ |region| [region.name,region.id] }), {class: 'form-control'}) %>
           </td>
           <td>
             <%= check_box_tag(:send_welcome_email,1, checked: true) %>
           </td>
           <td>
-            <%= submit_tag("Assign") %>
+            <%= submit_tag("Assign", class: 'btn btn-primary') %>
           <td>
-            <%= link_to "Delete", volunteer, confirm: "Are you sure?", method: :delete %>
+              <%= link_to "Delete", volunteer, confirm: "Are you sure?", method: :delete, class: 'btn btn-danger' %>
             <% end # form end tag %>
           </td>
         </tr>

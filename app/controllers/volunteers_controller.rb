@@ -164,11 +164,7 @@ class VolunteersController < ApplicationController
   def switch_user
     volunteer = Volunteer.find(params[:volunteer_id].to_i)
     volunteer_region_ids = volunteer.regions.pluck(:id)
-    admin_region_ids =
-      current_volunteer.assignments.collect do |assignment|
-        assignment.admin ? assignment.region.id : nil
-      end.compact
-
+    admin_region_ids = volunteer.admin_region_ids
     unless current_volunteer.super_admin? || (volunteer_region_ids & admin_region_ids).length > 0
       flash[:error] = "You're not authorized to switch to that user!"
       return redirect_to(root_path)
@@ -187,24 +183,17 @@ class VolunteersController < ApplicationController
 
   def region_admin
     @regions = Region.all
+    @admin_region_ids = current_volunteer.admin_region_ids
     if current_volunteer.super_admin?
       @my_admin_regions = @regions
       @my_admin_volunteers = Volunteer.all
     else
-      @my_admin_regions = current_volunteer.assignments.collect do |assignment|
-         assignment.admin ? assignment.region : nil
-      end.compact
-
-      admin_region_ids = @my_admin_regions.collect { |my_admin_region| my_admin_region.id }
-
       @my_admin_volunteers = Volunteer.all.collect do |volunteer|
         ((volunteer.regions.length == 0) ||
-        (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0) ? volunteer : nil
+        (@admin_region_ids & volunteer.regions.pluck(:id)).length > 0) ? volunteer : nil
       end.compact
-
     end
 
-    @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
   end
 
   # Admin only view, hence use of #admin_regions for region lookup

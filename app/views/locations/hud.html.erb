@@ -67,10 +67,8 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
 <% content_for :scripts do %>
 <script type="text/javascript">
 $(function () {
-  $('#data_table').dataTable( {
-    'iDisplayLength' : 50,
-    "aaSorting": [[ 0, "desc" ]]
-  });
+  // Update the sort for the data table
+  window.BFRDataTable.fnSort([[ 0, "desc" ]]);
 });
 </script>
 <% end %>

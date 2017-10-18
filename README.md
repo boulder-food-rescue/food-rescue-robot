@@ -135,14 +135,6 @@ can see the routes with ```rake routes```;
   bundle exec rake db:schema:load RAILS_ENV=test
   ```
 
-8. **Seed Test Database**
-
-  ```
-  bundle exec rake db:seed RAILS_ENV=test
-  ```
-
-
-
 ## Running It
 
 You should be able to simply:

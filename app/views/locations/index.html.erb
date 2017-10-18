@@ -16,7 +16,7 @@
 <% else %>
 
   <table id="data_table">
-    
+
     <thead>
       <tr>
         <th> Name </th>
@@ -35,23 +35,40 @@
     <tbody>
     <% @locations.each do |loc| %>
       <tr>
-        <td> <%= loc.name.nil? ? loc.name : (link_to loc.name, loc) %> <% unless loc.website.nil? %><%= link_to "(website)", loc.website %><% end %></td>
-        <td> <%= loc.address.gsub("\n","<br>").html_safe unless loc.address.nil? %></td>
         <td>
-          <%= loc.contact.gsub("\n","<br>").html_safe unless loc.contact.nil? %>
+          <%= loc.name.nil? ? loc.name : (link_to loc.name, loc) %>
+          <% unless loc.website.nil? %>
+            <%= link_to "(website)", loc.website %>
+          <% end %>
+        </td>
+        <td> <%= loc.address.gsub("\n","<br />").html_safe unless loc.address.nil? %></td>
+        <td>
+          <%= loc.contact.gsub("\n","<br />").html_safe unless loc.contact.nil? %>
           <%= "<br />".html_safe+loc.phone unless loc.phone.nil? %>
           <%= "<br />".html_safe+loc.email unless loc.email.nil? %>
         </td>
         <td><%= readable_hours loc %></td>
         <td> <%= loc.is_donor ? loc.donor_type : loc.recip_category %>
-        <td><small><%= word_wrap(loc.public_notes,:line_width => 30).gsub("\n","<br>").html_safe unless loc.public_notes.nil? %></small></td>
+        <td><small><%= word_wrap(loc.public_notes,:line_width => 30).gsub("\n","<br />").html_safe unless loc.public_notes.nil? %></small></td>
         <% if current_volunteer.any_admin? %>
-          <td><small><%= word_wrap(loc.admin_notes,:line_width => 30).gsub("\n","<br>").html_safe unless loc.admin_notes.nil? or !(current_volunteer.any_admin?) %></small></td>
-          <td><% unless loc.receipt_key.nil?%>
-              <%= link_to 'hud', hud_location_path(loc, key: loc.receipt_key) %><br>
+          <td><small><%= word_wrap(loc.admin_notes,:line_width => 30).gsub("\n","<br />").html_safe unless loc.admin_notes.nil? or !(current_volunteer.any_admin?) %></small></td>
+          <td>
+            <% unless loc.receipt_key.nil?%>
+              <%= link_to hud_location_path(loc, key: loc.receipt_key), class: 'btn btn-info' do %>
+                <i class="fa fa-info-circle"></i>
+                hud
+              <% end %>
+              <br />
+              <br />
             <% end %>
-            <%= link_to 'edit', :controller => "locations", :action => "edit", :id => loc %><br>
-            <%= link_to "delete", loc, :confirm => "Are you sure?", :method => :delete %>
+            <%= link_to edit_locations_path(loc), class: 'btn btn-primary' do %>
+              <i class="fa fa-pencil"></i>
+              edit
+            <% end %><br /><br />
+            <%= link_to loc, confirm: "Are you sure?", method: :delete, class: 'btn btn-danger' do %>
+              <i class="fa fa-trash-o"></i>
+              delete
+            <% end %>
           </td>
         <% end %>
       </tr>
@@ -60,13 +77,4 @@
 
   </table>
 
-<% end %>
-<% content_for :scripts do %>
-<script type="text/javascript">
-$(function () { 
-  $('#data_table').dataTable( {
-    'iDisplayLength' : 50,
-  });
-});
-</script>
 <% end %>

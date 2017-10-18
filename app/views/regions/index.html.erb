@@ -73,10 +73,8 @@
 <% content_for :scripts do %>
   <script type="text/javascript">
     $(function () {
-      $('#data_table').dataTable( {
-        'iDisplayLength' : 50,
-         "aaSorting": [[ 1, "asc" ]]
-      });
+      // Update the sort for the data table
+      window.BFRDataTable.fnSort([[ 1, "asc" ]]);
     });
   </script>
 <% end %>

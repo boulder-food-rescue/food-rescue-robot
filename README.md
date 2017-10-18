@@ -146,9 +146,9 @@ can see the routes with ```rake routes```;
 ## Running It
 
 You should be able to simply:
-
+```
   $ bundle exec rails server
-
+```
 
 This starts a thin server on localhost:3000, which you can get at with your browser.
 

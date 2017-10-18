@@ -179,7 +179,9 @@ volunteer.save!
 
 Run:
 
-  bundle exec rake db:sample_region
+  ```
+  $ bundle exec rake db:sample_region
+  ```
 
 **Note:** _Running the `db:sample_region` rake task will create a new `Region` in your database and populate it with a bunch of random data (volunteers, donors, recipients, schedule chains, etc.). For more info on what exactly is created, see `lib/sample_data/region_data.rb`._
 

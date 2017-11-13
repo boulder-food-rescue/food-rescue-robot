@@ -135,20 +135,12 @@ can see the routes with ```rake routes```;
   bundle exec rake db:schema:load RAILS_ENV=test
   ```
 
-8. **Seed Test Database**
-
-  ```
-  bundle exec rake db:seed RAILS_ENV=test
-  ```
-
-
-
 ## Running It
 
 You should be able to simply:
-
+```
   $ bundle exec rails server
-
+```
 
 This starts a thin server on localhost:3000, which you can get at with your browser.
 
@@ -179,7 +171,9 @@ volunteer.save!
 
 Run:
 
-  bundle exec rake db:sample_region
+  ```
+  $ bundle exec rake db:sample_region
+  ```
 
 **Note:** _Running the `db:sample_region` rake task will create a new `Region` in your database and populate it with a bunch of random data (volunteers, donors, recipients, schedule chains, etc.). For more info on what exactly is created, see `lib/sample_data/region_data.rb`._
 

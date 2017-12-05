@@ -31,7 +31,7 @@ module FoodRobot
     pre_reminder_list = {}
     c = 0
 
-    Log.where('NOT complete').each{ |log|
+    Log.where('NOT complete AND created_at > ?', DateTime.now - 6.months).each do |log|
       # FUTURE reminders...
       days_future = (log.when - Time.zone.today).to_i
 
@@ -55,7 +55,7 @@ module FoodRobot
       log.num_reminders += 1
       log.save
 
-      log.volunteers.each{ |v|
+      log.volunteers.each do |v|
         reminder_list[v] = [] if reminder_list[v].nil?
         reminder_list[v].push(log)
 
@@ -63,12 +63,12 @@ module FoodRobot
           naughty_list[log.region] = [] if naughty_list[log.region].nil?
           naughty_list[log.region].push(log)
         end
-      }
-    }
+      end
+    end
 
     # Send reminders to enter data for PAST pickups
-    reminder_list.each{ |v, logs|
-      m = Notifier.volunteer_log_reminder(v, logs)
+    reminder_list.each{ |volunteer, logs|
+      m = Notifier.volunteer_log_reminder(volunteer, logs)
       if @@DontDeliverEmails
         puts m
       else
@@ -76,8 +76,8 @@ module FoodRobot
       end
       c += 1
 
-      if v.sms_too and !v.sms_email.nil?
-        m = Notifier.volunteer_log_sms_reminder(v, logs)
+      if volunteer.sms_too and !volunteer.sms_email.nil?
+        m = Notifier.volunteer_log_sms_reminder(volunteer, logs)
         if @@DontDeliverEmails
           puts m
         else
@@ -87,8 +87,8 @@ module FoodRobot
     }
 
     # Send reminders to do FUTURE pickups
-    pre_reminder_list.each{ |v, logs|
-      m = Notifier.volunteer_log_pre_reminder(v, logs)
+    pre_reminder_list.each do |volunteer, logs|
+      m = Notifier.volunteer_log_pre_reminder(volunteer, logs)
       if @@DontDeliverEmails
         puts m
       else
@@ -96,44 +96,44 @@ module FoodRobot
       end
       c += 1
 
-      if v.sms_too and !v.sms_email.nil?
-        m = Notifier.volunteer_log_sms_pre_reminder(v, logs)
+      if volunteer.sms_too and !volunteer.sms_email.nil?
+        m = Notifier.volunteer_log_sms_pre_reminder(volunteer, logs)
         if @@DontDeliverEmails
           puts m
         else
           m.deliver
         end
       end
-    }
+    end
 
     # Remind the admins to cover things without a volunteer...
     if short_term_cover_list.length > 0
-      short_term_cover_list.each{ |region, logs|
-        m = Notifier.admin_short_term_cover_summary(region, logs)
+      short_term_cover_list.each do |region, logs|
+        m = Notifier.admin_short_term_cover_summary(region, logs) if region.present?
         if @@DontDeliverEmails
           puts m
         else
           m.deliver
         end
-      }
+      end
     end
 
     # Let the admin know about tardy data entry
     if naughty_list.length > 0
-      naughty_list.each{ |region, logs|
-        m = Notifier.admin_reminder_summary(region, logs)
+      naughty_list.each do |region, logs|
+        m = Notifier.admin_reminder_summary(region, logs) if region.present?
         if @@DontDeliverEmails
           puts m
         else
           m.deliver
         end
-      }
+      end
     end
     return c
   end
 
   def self.send_weekly_pickup_summary
-    Region.all.each{ |r|
+    Region.all.each do |r|
       puts r.name
       lbs = 0.0
       flagged_logs = []
@@ -161,7 +161,7 @@ module FoodRobot
       else
         m.deliver
       end
-    }
+    end
   end
 
 end

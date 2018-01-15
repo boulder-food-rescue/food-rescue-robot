@@ -190,16 +190,18 @@
       </thead>
       <tbody>
         <% if current_volunteer.region_admin? %>
-        <tr>
-          <td> Admin For: </td>
-          <td> <%= current_volunteer.assignments.collect{ |a| a.admin ? a.region.name : nil }.compact.join(", ") %> </td>
-        </tr>
+          <tr>
+            <td> Admin For: </td>
+            <td>
+              <%= @assigment_names %>
+            </td>
+          </tr>
         <% end %>
         <% if current_volunteer.super_admin? %>
-        <tr>
-          <td> Superpowers: </td>
-          <td> You are omnipotent. Your power is without parallel. </td>
-        </tr>
+          <tr>
+            <td> Superpowers: </td>
+            <td> You are omnipotent. Your power is without parallel. </td>
+          </tr>
         <% end %>
         <tr>
           <td> Region(s): </td>

@@ -301,6 +301,10 @@ class VolunteersController < ApplicationController
       @by_month[year_month] += log.summed_weight unless log.summed_weight.nil?
     end
 
+    @assigment_names = current_volunteer.assignments.includes(:region).collect do |assignment|
+      assignment.admin? && assignment.region.present? ? assignment.region.name : nil
+    end.compact.join(", ")
+
     @volunteer_stats_presenter = VolunteerStatsPresenter.new(current_volunteer)
 
     render :home

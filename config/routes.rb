@@ -117,8 +117,8 @@ Webapp::Application.routes.draw do
   end
 
   resource :waiver, only: [:new, :create]
-  get "waiver/driver-new", to: "waivers#new_driver_waiver"
-  post "waiver/driver-new", to: "waiver#createdriver"
+  get "/waiver/driver-new", to: "waivers#new_driver_waiver"
+  post "/waiver/driver-new", to: "waivers#create_driver"
 
   namespace :region_admin do
     resources :donors, only: [:index]

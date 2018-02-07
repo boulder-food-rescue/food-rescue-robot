@@ -70,7 +70,7 @@
       <%= @region.title %> business, suspension and/or termination of employment or volunteer assignment.
     </p>
   </div>
-  <% unless current_volunteer.waiver_signed %>
+  <% unless current_volunteer.driver_waiver_signed %>
     <%= form_tag("/waiver/driver-new") do %>
       Check to sign electronically: <%= check_box_tag 'accept', 1 %>
       <br/>
@@ -81,7 +81,7 @@
     <% end %>
   <% else %>
     <span style="font-weight: bold; color: orange;">
-      You signed the waiver at <%= current_volunteer.waiver_signed_at.to_s %>.
+      You signed the waiver at <%= current_volunteer.driver_waiver_signed_at.to_s %>.
     </span>
   <% end %>
 <% else %>

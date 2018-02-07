@@ -15,6 +15,13 @@ class WaiversController < ApplicationController
     end
   end
 
+  def new_driver_waiver
+    @region = current_volunteer.main_region
+  end
+
+  def create_driver
+
+  end
   private
 
   def accepted_waiver?

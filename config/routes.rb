@@ -124,7 +124,7 @@ Webapp::Application.routes.draw do
     resources :donors, only: [:index]
 
     resources :food_types, only: [:index, :new, :create, :edit, :update, :destroy]
-    root to: 'volunteers#home'
+
   end
 
   devise_scope :volunteer do

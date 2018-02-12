@@ -15,6 +15,19 @@ class WaiversController < ApplicationController
     end
   end
 
+  def new_driver_waiver
+    @region = current_volunteer.main_region
+  end
+
+  def create_driver
+    if !accepted_waiver?
+      redirect_to driver_waiver_path, alert: "Accept the waiver by checking 'Check to sign electronically'"
+    elsif SignDriverWaiver.call(volunteer: current_volunteer, signed_at: Time.zone.now).success?
+      redirect_to root_url, notice: 'Waiver signed!'
+    else
+      redirect_to driver_waiver_path, alert: 'There was an error signing the waiver'
+    end
+  end
   private
 
   def accepted_waiver?

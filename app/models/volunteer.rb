@@ -194,6 +194,13 @@ class Volunteer < ActiveRecord::Base
             "AND schedule_volunteers.active = 't') = 0")
   end
 
+  def self.need_driver_waiver_signed_by_admin(region_ids)
+    includes(:regions)
+        .where(regions: { id: region_ids })
+        .where(driver_waiver_signed: true)
+        .where(driver_waiver_signed_by_admin_id: nil)
+  end
+
   private
 
   # better first-time experience: if there is only one region, add the user to

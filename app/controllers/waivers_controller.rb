@@ -1,5 +1,6 @@
 class WaiversController < ApplicationController
   before_filter :authenticate_volunteer!
+  before_filter :get_volunteer_signee
 
   def new
     @region = current_volunteer.main_region
@@ -16,14 +17,15 @@ class WaiversController < ApplicationController
   end
 
   def new_driver_waiver
-    @region = current_volunteer.main_region
+    @volunteer_signee = @volunteer_signee
+    @volunteer_region = @volunteer_region
   end
 
   def create_driver
     if !accepted_waiver?
       redirect_to driver_waiver_path, alert: "Accept the waiver by checking 'Check to sign electronically'"
-    elsif SignDriverWaiver.call(volunteer: current_volunteer, signed_at: Time.zone.now).success?
-      redirect_to driver_waiver_path, notice: 'Waiver signed!'
+    elsif signed_waiver_success?
+      redirect_to root_url, notice: 'Waiver signed!'
     else
       redirect_to driver_waiver_path, alert: 'There was an error signing the waiver'
     end
@@ -32,6 +34,27 @@ class WaiversController < ApplicationController
   private
 
   def accepted_waiver?
-    params[:accept].present?
+    params[:accept].present? || params[:admin_accept].present?
+  end
+
+  def signed_waiver_success?
+    puts params[:volunteer_id]
+    if @volunteer_signee.blank?
+      puts @volunteer_signee.blank?
+      SignDriverWaiver.call(volunteer_signee: current_volunteer, signed_at: Time.zone.now).success?
+    else
+      puts @volunteer_signee.nil?
+      SignDriverWaiver.call(volunteer_signee: @volunteer_signee, signed_at: Time.zone.now, admin_signee: current_volunteer).success?
+    end
+  end
+
+  def get_volunteer_signee
+    if params[:volunteer_id].present?
+      @volunteer_signee = Volunteer.find(params[:volunteer_id])
+      @volunteer_region = @volunteer_signee.main_region
+  else
+    @volunteer_signee = current_volunteer
+    @volunteer_region = current_volunteer.main_region
+    end
   end
 end

@@ -1,89 +1,140 @@
 <h2>PERSONAL VEHICLE USE POLICY</h2>
 
-<% if @region.present? %>
+<% if @volunteer_region.present? %>
+ 
   <div class="well" style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;">
     <p>The purpose of this policy is to promote the safety of employees and volunteers when using personal vehicles
-      for <%= @region.title %>.
-      All staff or volunteers driving a personal vehicle for any <%= @region.title %> related business shall maintain a valid
+      for <%= @volunteer_region.title %>.
+      All staff or volunteers driving a personal vehicle for any <%= @volunteer_region.title %> related business shall maintain a
+      valid
       driver’s license,
       insurance, and must operate the vehicle in a safe manner at all times. </p>
     <p><strong>Standards:</strong></p>
     <ol>
       <li>
-        Driving records must remain within the insurance carrier’s guidelines for continued employment or assignment in positions with
-        driving duties. Employees and volunteers who do not maintain acceptable records will not be allowed to drive their personal vehicle
-        on <%= @region.title %> business.
+        Driving records must remain within the insurance carrier’s guidelines for continued employment or assignment in
+        positions with
+        driving duties. Employees and volunteers who do not maintain acceptable records will not be allowed to drive
+        their personal vehicle
+        on <%= @volunteer_region.title %> business.
       </li>
       <li>
-        All employees and volunteers driving on <%= @region.title %> business must maintain a valid driver’s license and insurance on all
-        vehicles they drive. Any change in the status of their driver’s license or insurance must be reported to their Executive Director
+        All employees and volunteers driving on <%= @volunteer_region.title %> business must maintain a valid driver’s license and
+        insurance on all
+        vehicles they drive. Any change in the status of their driver’s license or insurance must be reported to their
+        Executive Director
         immediately and prior to driving
       </li>
       <li>
-        Employee/volunteer insurance serves as primary coverage with <%= @region.title %>’s insurance being secondary. <%= @region.title %>’s
-        insurance would be excess only for liability. Physical damage to an employee/volunteer vehicle while driving on official <%= @region.title %>
-        business, is not covered by <%= @region.title %>’s auto insurance.
+        Employee/volunteer insurance serves as primary coverage with <%= @volunteer_region.title %>’s insurance being
+        secondary. <%= @volunteer_region.title %>’s
+        insurance would be excess only for liability. Physical damage to an employee/volunteer vehicle while driving on
+        official <%= @volunteer_region.title %>
+        business, is not covered by <%= @volunteer_region.title %>’s auto insurance.
       </li>
       <li>
         The personal vehicle used must be properly maintained and in safe mechanical condition as required by law.
       </li>
       <li>
-        The driver and all passengers must wear seat belts at all times .No vehicle should be operated when the number of occupants
+        The driver and all passengers must wear seat belts at all times .No vehicle should be operated when the number
+        of occupants
         exceeds the number of passenger restraints available.
       </li>
       <li>
         Drivers shall obey all applicable traffic and parking regulations, ordinances, and laws.
         <ol type="a">
           <li>
-            Employees and volunteers who incur parking or other fines while on <%= @region.title %> business are personally responsible for
+            Employees and volunteers who incur parking or other fines while on <%= @volunteer_region.title %> business are
+            personally responsible for
             payment of such fines.
           </li>
           <li>
-            Employees and volunteers who are issued citations for any offense while driving on <%= @region.title %> business must notify the
-            Executive Director immediately when practicable, but in no case later than 24 hours. Failure to provide such notice may be
+            Employees and volunteers who are issued citations for any offense while driving on <%= @volunteer_region.title %>
+            business must notify the
+            Executive Director immediately when practicable, but in no case later than 24 hours. Failure to provide such
+            notice may be
             grounds for disciplinary action.
           </li>
           <li>
-            An employee or volunteer who is arrested for or charged with a motor vehicle offense for which the punishment includes
-            suspension or revocation of the motor vehicle license while on <%= @region.title %> business, must notify the Executive Director
-            immediately when practicable, but in no case later than 24 hours. Conviction for such offense may be grounds for loss of
-            privilege to transport <%= @region.title %> clients/produce and/or further disciplinary action.
+            An employee or volunteer who is arrested for or charged with a motor vehicle offense for which the
+            punishment includes
+            suspension or revocation of the motor vehicle license while on <%= @volunteer_region.title %> business, must notify
+            the Executive Director
+            immediately when practicable, but in no case later than 24 hours. Conviction for such offense may be grounds
+            for loss of
+            privilege to transport <%= @volunteer_region.title %> clients/produce and/or further disciplinary action.
           </li>
 
         </ol>
       </li>
       <li>
-        Any driver who is involved in a motor vehicle accident while on agency business involving personal injury to any party shall notify
-        the Executive Director immediately. If the accident involves property damage only, the driver shall notify the Executive Director
+        Any driver who is involved in a motor vehicle accident while on agency business involving personal injury to any
+        party shall notify
+        the Executive Director immediately. If the accident involves property damage only, the driver shall notify the
+        Executive Director
         within 24 hours.
       </li>
       <li>
-        The driver shall use hand’s free equipment when necessary to talk on a cell phone when driving. In no event shall the driver text
-        message or operate any other electronic equipment while driving the vehicle. It is always preferred that the driver park the car in a
+        The driver shall use hand’s free equipment when necessary to talk on a cell phone when driving. In no event
+        shall the driver text
+        message or operate any other electronic equipment while driving the vehicle. It is always preferred that the
+        driver park the car in a
         safe location to receive or make cell phone calls.
       </li>
     </ol>
     <p>
-      I, <%= current_volunteer.name %>, have read and understand the Personal Vehicle Use
-      Policy established by <%= @region.title %>. I agree to abide by the provisions of this policy. I understand that failure to comply with any and
-      all provisions of this policy may result in disciplinary action up to and including removal of authorization to drive my personal vehicle on
-      <%= @region.title %> business, suspension and/or termination of employment or volunteer assignment.
+      I, <%= @volunteer_signee.name %>, have read and understand the Personal Vehicle Use
+      Policy established by <%= @volunteer_region.title %>. I agree to abide by the provisions of this policy. I understand that
+      failure to comply with any and
+      all provisions of this policy may result in disciplinary action up to and including removal of authorization to
+      drive my personal vehicle on
+      <%= @volunteer_region.title %> business, suspension and/or termination of employment or volunteer assignment.
     </p>
   </div>
-  <% unless current_volunteer.driver_waiver_signed %>
-    <%= form_tag("/waiver/driver-new") do %>
-      Check to sign electronically: <%= check_box_tag 'accept', 1 %>
-      <br/>
-      Date: <%= Time.zone.today.to_s %>
-      <br/>
-      <br/>
-      <%= submit_tag 'Sign', class: "form-control" %>
-    <% end %>
-  <% else %>
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-sm-6">
+        <% unless @volunteer_signee.driver_waiver_signed %>
+          <%= form_tag("/waiver/driver-new") do %>
+            Volunteer signature: <br/>
+            Check to sign electronically: <%= check_box_tag 'accept', 1 %>
+            <br/>
+            Date: <%= Time.zone.today.to_s %>
+            <br/>
+            <br/>
+            <%= submit_tag 'Sign', class: "form-control" %>
+          <% end %>
+        <% else %>
     <span style="font-weight: bold; color: orange;">
-      You signed the waiver at <%= current_volunteer.driver_waiver_signed_at.to_s %>.
+      Volunteer signature: <br/>
+      <%= @volunteer_signee.name %> signed the waiver at <%= @volunteer_signee.driver_waiver_signed_at.to_s %>.
     </span>
-  <% end %>
+        <% end %>
+      </div>
+      <div class="col-sm-6">
+        <% if current_volunteer.region_admin?(@volunteer_region) && !@volunteer_signee.driver_waiver_signed_by_admin_name %>
+          <%= form_tag("/waiver/driver-new/?volunteer_id=" + @volunteer_signee.id.to_s) do %>
+            Staff signature: <br/>
+            <%= current_volunteer.name %>, check to sign electronically: <%= check_box_tag 'admin_accept', 1 %>
+            <br/>
+            Date: <%= Time.zone.today.to_s %>
+            <br/>
+            <br/>
+            <% params[:volunteer_id] = @volunteer_signee.id %>
+            <%= submit_tag 'Sign', class: "form-control" %>
+          <% end %>
+        <% end %>
+        <% if current_volunteer.region_admin?(@volunteer_region) && @volunteer_signee.driver_waiver_signed_by_admin_name %>
+    <span style="font-weight: bold; color: orange;">
+       Staff signature: <br/>
+      <%= @volunteer_signee.driver_waiver_signed_by_admin_name %>
+      signed the waiver at <%= @volunteer_signee.driver_waiver_signed_by_admin_at.to_s %>.
+         </span>
+        <% end %>
+      </div>
+    </div>
+  </div>
 <% else %>
   <p>You are not currently assigned to a region for volunteering. Please contact your regional volunteer coordinator to
     be assigned! If that fails to work, try Hana at

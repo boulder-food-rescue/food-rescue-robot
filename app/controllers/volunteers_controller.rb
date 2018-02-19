@@ -284,6 +284,12 @@ class VolunteersController < ApplicationController
       return redirect_to new_waiver_url
     end
 
+    if current_volunteer.region_admin?
+
+      @volunteers_need_signed_waiver = Volunteer.need_driver_waiver_signed_by_admin(current_volunteer.region_ids)
+
+    end
+
     @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length
 
     # Upcoming pickup list

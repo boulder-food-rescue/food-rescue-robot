@@ -38,12 +38,9 @@ class WaiversController < ApplicationController
   end
 
   def signed_waiver_success?
-    puts params[:volunteer_id]
     if @volunteer_signee.blank?
-      puts @volunteer_signee.blank?
       SignDriverWaiver.call(volunteer_signee: current_volunteer, signed_at: Time.zone.now).success?
     else
-      puts @volunteer_signee.nil?
       SignDriverWaiver.call(volunteer_signee: @volunteer_signee, signed_at: Time.zone.now, admin_signee: current_volunteer).success?
     end
   end
@@ -52,9 +49,9 @@ class WaiversController < ApplicationController
     if params[:volunteer_id].present?
       @volunteer_signee = Volunteer.find(params[:volunteer_id])
       @volunteer_region = @volunteer_signee.main_region
-  else
-    @volunteer_signee = current_volunteer
-    @volunteer_region = current_volunteer.main_region
+    else
+      @volunteer_signee = current_volunteer
+      @volunteer_region = current_volunteer.main_region
     end
   end
 end

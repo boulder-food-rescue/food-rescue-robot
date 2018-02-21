@@ -6,6 +6,8 @@ FactoryGirl.define do
     password 'SomePassword'
     waiver_signed true
     waiver_signed_at Time.zone.now
+    driver_waiver_signed true
+    driver_waiver_signed_at Time.zone.now
 
     factory :volunteer_with_assignment do
       after(:create) do |v|
@@ -19,6 +21,11 @@ FactoryGirl.define do
     trait :not_waived do
       waiver_signed false
       waiver_signed_at nil
+    end
+
+    trait :driver_waiver_not_signed do
+      driver_waiver_signed false
+      driver_waiver_signed_at nil
     end
   end
 end

@@ -141,49 +141,48 @@ admin_assignment.save!
 
 #Create donor location
 donor = Location.create({
-                            'location_type' => 1,
-                            'name' => "Test Donor",
-                            'active' => true,
-                            'region_id' => region.id,
-                            'address' => "123 Side St."
-
-                        })
+     'location_type' => 1,
+     'name' => "Test Donor",
+     'active' => true,
+     'region_id' => region.id,
+     'address' => "123 Side St."
+})
 #Create recipient location
 
 recipient = Location.create({
-                                'location_type' => 0,
-                                'name' => "Test Recipient",
-                                'active' => true,
-                                'region_id' => region.id,
-                                'address' => "123 Main St."
+     'location_type' => 0,
+     'name' => "Test Recipient",
+     'active' => true,
+     'region_id' => region.id,
+     'address' => "123 Main St."
 
-                            })
+})
 
 #Create schedule chain
 
 schedule_chain = ScheduleChain.create({
-                                          'detailed_start_time' => "2000-01-01 08:00:00",
-                                          'detailed_stop_time' => "2000-01-01 11:00:00",
-                                          'detailed_date' => "2018-02-28",
-                                          'transport_type_id' => 2,
-                                          'region_id'=> region.id,
-                                          'frequency'=> 'weekly',
-                                          'day_of_week'=> 1
-                                      })
+     'detailed_start_time' => "2000-01-01 08:00:00",
+     'detailed_stop_time' => "2000-01-01 11:00:00",
+     'detailed_date' => "2018-02-28",
+     'transport_type_id' => 2,
+     'region_id'=> region.id,
+     'frequency'=> 'weekly',
+     'day_of_week'=> 1
+})
 
 #Assign donor location to schedule
 Schedule.create({
     'schedule_chain_id' => schedule_chain.id,
     'location_id' => donor.id,
     'position' => 1
-                 })
+})
 
 #Assign recipient location to schedule
 Schedule.create({
-                     'schedule_chain_id' => schedule_chain.id,
-                     'location_id' => recipient.id,
-                     'position' => 2
-                 })
+    'schedule_chain_id' => schedule_chain.id,
+    'location_id' => recipient.id,
+    'position' => 2
+})
 
 #Assign schedule to volunteer
 

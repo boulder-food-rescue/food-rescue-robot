@@ -18,8 +18,6 @@ class Region < ActiveRecord::Base
                   :twitter_token_secret, :weight_unit, :time_zone, :logo, :post_pickup_emails,
                   :unschedule_self, :volunteer_coordinator_email
 
-  validates_attachment_file_name :logo, matches: [/png\Z/, /jpe?g\Z/, /gif\Z/]
-
   def self.has_any_handbooks?(region_list)
     region_list.any?(&:has_handbook?)
   end

@@ -36,8 +36,6 @@ class Volunteer < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  validates_attachment_file_name :photo, matches: [/png\Z/, /jpe?g\Z/, /gif\Z/]
-
   before_save :ensure_authentication_token
   after_save :auto_assign_region
 

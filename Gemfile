@@ -24,7 +24,6 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'faker', '~> 1.7.3'
-  gem 'rails-erd'
   gem 'rubocop', require: false
   gem 'rb-fsevent', '~> 0.9.0', require: false # latest 0.10.x seems to be incompatible with listen gem
   gem 'guard-rspec', require: false
@@ -61,11 +60,6 @@ gem 'devise', '~> 3.2.0'
 # lets us post things to twitter programatically
 gem 'twitter'
 gem 'yaml_db'
-
-# smart image attachment management
-gem 'aws-sdk', '~> 2.3'
-gem 'paperclip', git: 'https://github.com/thoughtbot/paperclip',
-                 ref: '523bd46c768226893f23889079a7aa9c73b57d68'
 
 # generate pdfs
 gem 'prawn', '~> 2.1.0'

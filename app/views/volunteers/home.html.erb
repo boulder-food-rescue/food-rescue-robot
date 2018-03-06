@@ -23,6 +23,47 @@
 
 <div class="row bordered-bottom">
   <div class="col-sm-6">
+    <h2> To Do Pickup Reports </h2>
+    <% if @to_do_reports.length > 0 %>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Location</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+        </thead>
+        <% @to_do_reports.each do |report|
+          next if report.recipients.empty?
+        %>
+          <tr class="bordered">
+            <td>
+              <%= link_to report.donor.try(:name), report.donor if report.donor.present? %> -&gt;
+              <% report.recipients.each do |recip| %>
+                <%= link_to recip.try(:name), recip if recip.present? %>
+              <% end %>
+              <% unless report.food_types.empty? %>
+                <br />
+                <em>(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</em>
+              <% end %>
+            </td>
+            <td>
+              <%= readable_time_until report %>
+            </td>
+            <td>
+              <button class="btn btn-danger fill" onclick="window.location='<%= edit_log_path(report) %>';">
+                <i class="fa fa-star-half-o"></i>
+                Fill
+              </button>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <p>You are up to date on all your pickup reports - nice work!</p>
+    <% end %>
+  </div>
+  <div class="col-sm-6">
     <h2>Upcoming Pickups</h2>
     <% if @upcoming_pickups.length > 0 %>
       <table class="table table-striped">
@@ -65,47 +106,7 @@
     <% end %>
   </div>
 
-  <div class="col-sm-6">
-    <h2> To Do Pickup Reports </h2>
-    <% if @to_do_reports.length > 0 %>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Location</th>
-            <th>Date</th>
-            <th></th>
-          </tr>
-        </thead>
-        <% @to_do_reports.each do |report|
-          next if report.recipients.empty?
-        %>
-          <tr class="bordered">
-            <td>
-              <%= link_to report.donor.try(:name), report.donor if report.donor.present? %> -&gt;
-              <% report.recipients.each do |recip| %>
-                <%= link_to recip.try(:name), recip if recip.present? %>
-              <% end %>
-              <% unless report.food_types.empty? %>
-                <br />
-                <em>(<%= report.food_types.collect{ |ft| ft.name }.join(",") %>)</em>
-              <% end %>
-            </td>
-            <td>
-              <%= readable_time_until report %>
-            </td>
-            <td>
-              <button class="btn btn-danger fill" onclick="window.location='<%= edit_log_path(report) %>';">
-                <i class="fa fa-star-half-o"></i>
-                Fill
-              </button>
-            </td>
-          </tr>
-        <% end %>
-      </table>
-    <% else %>
-      <p>You are up to date on all your pickup reports - nice work!</p>
-    <% end %>
-  </div>
+
 </div><!-- /row -->
 
 <div class="row bordered-bottom">

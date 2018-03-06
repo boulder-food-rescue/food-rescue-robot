@@ -190,8 +190,20 @@ ScheduleVolunteer.create({
     'volunteer_id' => volunteer.id,
     'schedule_chain_id' => schedule_chain.id,
     'active' => true
-                         })
+})
 
+ScaleType.create({
+    'name' => 'Scale Test',
+    'weight_unit' => 'lb',
+    'region_id' => region.id
+})
+
+FoodType.create({
+    'name' => 'FoodType Test',
+    'region_id' => region.id
+})
+
+###TODO add scale and food types :)
 
 #Generate log of the schedule, instructions found in log_builder.rb
 

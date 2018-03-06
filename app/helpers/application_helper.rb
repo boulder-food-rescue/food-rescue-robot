@@ -9,17 +9,9 @@ module ApplicationHelper
   end
 
   def readable_time_until shift
-    ret = shift.when.strftime('%a %b %e') + ' ('
-    if shift.when == Time.zone.today
-      ret += 'today'
-    elsif shift.when < Time.zone.today
-      ret += (Time.zone.today - shift.when).to_i.to_s + ' days ago'
-    elsif shift.when > Time.zone.today
-      ret += (shift.when - Time.zone.today).to_i.to_s + ' days from now'
-    end
-    ret += ')'
+    ret = shift.when.strftime('%a %b %e') + ' -'
     unless shift.schedule_chain.nil?
-      ret += " <br>between #{readable_start_time(shift.schedule_chain)} and #{readable_stop_time(shift.schedule_chain)}"
+      ret += " #{readable_start_time(shift.schedule_chain)} to #{readable_stop_time(shift.schedule_chain)}"
     end
     ret.html_safe
   end

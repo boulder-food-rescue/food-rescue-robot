@@ -16,7 +16,11 @@ class WaiversController < ApplicationController
     end
   end
 
-  def new_driver_waiver; end
+  def new_driver_waiver
+    if admin_id = @volunteer_signee.driver_waiver_signed_by_admin_id
+      @admin_signee_name = Volunteer.find(admin_id).name
+    end
+  end
 
   def create_driver
     if !accepted_waiver?

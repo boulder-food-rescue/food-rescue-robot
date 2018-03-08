@@ -128,7 +128,7 @@
         <% if current_volunteer.region_admin?(@volunteer_region) && @volunteer_signee.driver_waiver_signed_by_admin_id %>
     <span style="font-weight: bold; color: orange;">
        Staff signature: <br/>
-      <%= @volunteer_signee.driver_waiver_signed_by_admin_id %>
+      <%= @admin_signee_name %>
       signed the waiver at <%= @volunteer_signee.driver_waiver_signed_by_admin_at.to_s %>.
          </span>
         <% end %>

@@ -18,20 +18,11 @@
       <%= hidden_field_tag "log[region_id]", @region.id %>
       <%= hidden_field_tag "log[schedule_chain_id]", @log.schedule_chain.nil? ? nil : @log.schedule_chain.id  %>
       <details>
-        <table class="table table-striped">
-          <tr>
-            <td>
               Date
-            </td>
-            <td>
               <div class="form-inline">
                 <%= f.date_select :when, {order: [:month, :day, :year]}, {class: 'form-control'} %>
               </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Volunteer</td>
-            <td>
+            <h5>Volunteer</h5>
               <div>
                 <%= f.simple_fields_for :log_volunteers do |log_volunteer| %>
                   <%= render 'log_volunteer_fields', :f => log_volunteer %>
@@ -39,152 +30,83 @@
                 <br />
                 <%= link_to_add_association 'add another volunteer', f, :log_volunteers, class: 'btn btn-primary' %>
               </div>
-            </td>
-          </tr>
           <% if current_volunteer.any_admin?(@log.region) %>
-            <tr>
-              <td>
                 Needed Volunteers<br/>
                 <span class="subtext">Default is the number required by the associated schedule, or at least one.</span>
-              </td>
-              <td>
                 <%= f.text_field(:num_volunteers, class: "form-control") %>
-              </td>
-            </tr>
           <% end %>
 
-          <tr>
-            <td>Recipients</td>
-            <td>
+            <h5>Recipients</h5>
               <div>
                 <%= f.simple_fields_for :log_recipients do |log_recipient| %>
                   <%= render 'log_recipient_fields', :f => log_recipient %>
                 <% end %>
                 <%= link_to_add_association 'add another recipient', f, :log_recipients, :class=>'btn' %>
               </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Donor</td>
-            <td>
+            <h5>Donor</h5>
               <%= f.select :donor_id, (@region.locations.donors + @region.locations.hubs + @region.locations.sellers).collect{ |d| [d.name,d.id] }, {include_blank: true}, {class: 'form-control select2'} %>
-            </td>
-          </tr>
-        </table>
       </details>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-sm-12">
-      <table class="table">
-        <tr>
-          <td>
-            Data<br />
-            <span class="subtext">Enter the weight and/or count for each food type.<br /><br />
-            If the pick-up was dropped, put zeroes for the weights, and please explain why using the notes field below.</span>
-          </td>
-          <td>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>What</th>
-                  <th>Weight<br />(<%= @log.weight_unit.nil? ? "in scale's units" : @log.weight_unit %>)</th>
-                  <th>Count</th>
-                  <th>Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @log.log_parts.each{ |lp| %>
-                  <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
-                    <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
-                      <td>
-                        <%= f2.select(:food_type_id, @food_types,{include_blank: true}, {class: "form-control"}) %>
-                      </td>
-                      <td>
-                        <%= f2.text_field(:weight, size: 5, class: "form-control") %>
-                      </td>
-                      <td>
-                        <%= f2.text_field(:count, size: 5, class: "form-control") %>
-                      </td>
-                      <td>
-                        <%= f2.text_field(:description, size: 20, class: "form-control") %>
-                        <%= f2.hidden_field(:id) %>
-                      </td>
-                    </tr>
-                  <% end %>
-                <% } %>
+<div class="mb-3">
+  <label for="username">How did you transport this food?</label>
+  <div class="input-group" style="width: 50%;">
+    <%= f.select(:transport_type_id, @transport_types,{:include_blank => true}, {class: "form-control"}) %>
+  </div>
+</div>
 
-                <%= fields_for :log_parts, LogPart.new, :index => "new_0" do |f2| %>
-                  <tr class="log_part">
-                    <td>
-                      <%= f2.select(:food_type_id, @food_types,{:include_blank => true}, {class: "form-control"}) %>
-                    </td>
-                    <td>
-                      <%= f2.text_field(:weight, size: 5, class: "form-control") %>
-                    </td>
-                    <td>
-                      <%= f2.text_field(:count, size: 5, class: "form-control") %>
-                    </td>
-                    <td>
-                      <%= f2.text_field(:description, size: 20, class: "form-control") %>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td>TOTAL: <span id="total_weight">0</span></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-            <%=
-              task = "<tr class=\"log_part\">"
-              fields_for :log_parts, LogPart.new, :index => "new_42" do |f2|
-                task += "<td>" + f2.select(:food_type_id, @food_types,{:include_blank => true}, {class: 'form-control'})
-                task += "<td>" + f2.text_field(:weight,size: 5, class: 'form-control')
-                task += "<td>" + f2.text_field(:count,size: 5, class: 'form-control')
-                task += "<td>" + f2.text_field(:description,size: 20, class: 'form-control')
-              end
-              task += "</tr>"
-              func_str =
-                "var new_id = 'new_' + new Date().getTime();
-                $('#{ escape_javascript task }'.replace(/new_\\d+/g, new_id)).insertAfter($('.log_part').last());
-                $('#'+new_id).on('change',function(){ update_total_weight(); });";
-                link_to_function "+ Add Another", func_str, class: "btn btn-info";
-             %>
-          </td>
-        </tr>
+<div class="mb-3">
+  <label for="email">Weight of food picked (lbs.)</label>
+  <% @log.log_parts.each{ |lp| %>
+    <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
+      <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
+        <td>
+          <%= f2.text_field(:weight, size: 5, class: "form-control") %>
+        </td>
+        <td>
+          <%= f2.text_field(:count, size: 5, class: "form-control") %>
+        </td>
+        <td>
+          <%= f2.text_field(:description, size: 20, class: "form-control") %>
+          <%= f2.hidden_field(:id) %>
+        </td>
+      </tr>
+    <% end %>
+  <% } %>
+
+  <%= fields_for :log_parts, LogPart.new, :index => "new_0" do |f2| %>
+    <tr class="log_part">
+      <td>
+        <%= f2.text_field(:weight, size: 5, class: "form-control") %>
+      </td>
+      <td>
+        <%= f2.text_field(:count, size: 5, class: "form-control") %>
+      </td>
+      <td>
+        <%= f2.text_field(:description, size: 20, class: "form-control") %>
       </td>
     </tr>
+    <tr>
+      <td></td>
+      <td>TOTAL: <span id="total_weight">0</span></td>
+    </tr>
+  <% end %>
+</div>
 
-    <% if @scale_types.length != 1 %>
-      <tr>
-        <td>Weighed With</td>
-        <td>
-          <%= f.select(:scale_type_id, @scale_types, {:include_blank => true}, {class: "form-control"}) %>
-        </td>
-    <% end %>
+<div class="mb-3">
+  <label for="address">Hours Spent</label>
+  <%= f.text_field(:hours_spent, :size => "3", class: "form-control") %>
+</div>
 
-  <tr>
-    <td>Transported With</td>
-    <td><%= f.select(:transport_type_id, @transport_types,{:include_blank => true}, {class: "form-control"}) %></td>
-  </tr>
-  <tr>
-    <td>
-      Time Spent<br />
-      <span class="subtext">Approximately how long did you spend doing this shift, in hours? (e.g., 0.5)</span>
-    </td>
-    <td>
-      <%= f.text_field(:hours_spent, :size => "3", class: "form-control") %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Notes<br />
-      <span class="subtext">Something to report? Any problems? e.g., trailer<br />in need of repair, issues with the scale, busted bin.</span><td><%= f.text_area(:notes, :size => "30x6") %>
-    </td>
-  </td>
-  <tr>
+<div class="mb-3">
+  <label for="address2">Any comments, concerns, notes?
+  </label>
+  <%= f.text_area(:notes, :size => "30x6", class: "form-control") %>
+</div>
+
+  <div class="row">
+    <div class="col-sm-12">
     <td>
       Flag For Admin<br />
       <span class="subtext">Check this if you want to make sure someone reads this.</span>
@@ -197,27 +119,6 @@
       </label>
     </td>
   </tr>
-
-  <tr id="zero_reason">
-    <td>
-      Why Zero?<br />
-      <span class="subtext">You're trying to save a log with zero weight. Please tell us what happened.</span>
-    </td>
-    <td>
-      <div class="radio">
-        <label for="log_why_zero_1">
-          <%= f.radio_button(:why_zero,1) %>
-          No Food At Donor
-        </label>
-      </div>
-      <div class="radio">
-        <label for="log_why_zero_2">
-          <%= f.radio_button(:why_zero,2) %>
-          Shift Didn't Happen
-        </label>
-      </div>
-    </td>
-  </tr>
 </table>
 </div>
 </div>
@@ -227,40 +128,4 @@
     <%= submit_tag %>
   </div>
 </div>
-<% end %>
-
-<% content_for :scripts do %>
-<script type="text/javascript" charset="utf-8">
-  function update_total_weight(){
-    t = 0.0
-    $( "input[id$='weight']").each(function(i){
-      v = $(this).val()
-      if(v != "" && v != undefined) {
-        t = t + parseFloat(v)
-      }
-    })
-    if(isNaN(t) || t <= 0){
-      $("#zero_reason").show();
-    }else{
-      $("#zero_reason").hide();
-    }
-    $("#total_weight").text(t)
-  }
-
-  jQuery(document).ready(function() {
-
-    //jQuery('.select2').select2({
-    //  width:'element',
-    //  placeholder:'',allowClear:true,
-    //  minimumResultsForSearch: -1
-    //});
-
-    update_total_weight();
-    $( "input[id$='weight']").each(function(i){
-      $(self).on("change",function(){
-        update_total_weight();
-      });
-    });
-  });
-</script>
 <% end %>

@@ -13,18 +13,6 @@
 
     <tr>
       <td>
-        <label for="volunteer_photo">
-          Photo
-        </label>
-      </td>
-      <td>
-        <%= image_tag @volunteer.photo.url(:thumb), alt: "#{@volunteer.name} Photo" %>
-        <%= f.file_field(:photo) %>
-      </td>
-    </tr>
-
-    <tr>
-      <td>
         <label for="volunteer_phone">Phone</label>
       </td>
       <td>

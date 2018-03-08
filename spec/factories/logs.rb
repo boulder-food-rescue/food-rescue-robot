@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :log do
-    notes 'testing 123'
+    notes 'Log Notes Testing123'
     weight_unit 'lb'
     region { (Region.all.count >= 5 ? Region.all.sort_by{ rand }.first : create(:region)) }
     self.when { Date.today + (rand > 0.5 ? -1 : 1)*rand(10) } # have to do self. since when is a reserved word in ruby

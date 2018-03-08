@@ -16,10 +16,7 @@ class WaiversController < ApplicationController
     end
   end
 
-  def new_driver_waiver
-    @volunteer_signee = @volunteer_signee
-    @volunteer_region = @volunteer_region
-  end
+  def new_driver_waiver; end
 
   def create_driver
     if !accepted_waiver?
@@ -38,7 +35,7 @@ class WaiversController < ApplicationController
   end
 
   def signed_waiver_success?
-    if @volunteer_signee.blank?
+    if @volunteer_signee == current_volunteer
       SignDriverWaiver.call(volunteer_signee: current_volunteer, signed_at: Time.zone.now).success?
     else
       SignDriverWaiver.call(volunteer_signee: @volunteer_signee, signed_at: Time.zone.now, admin_signee: current_volunteer).success?

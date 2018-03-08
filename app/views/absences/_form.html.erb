@@ -1,15 +1,19 @@
 You can use the form below to schedule an absence. Note that any shift occuring <strong>within the next three days</strong> cannot be deferred in this way. Instead, please contact the volunteer coordinator (and/or email list if one exists in your organization) to find a cover on short notice. Thanks!
 
-<%= form_for(@absence) do |f| %>
+<%= form_for(@absence, html: {class: 'form-inline'}) do |f| %>
   <table class="table absence_table">
 
     <% if current_volunteer.any_admin? %>
       <tr>
-        <td>Volunteer:</td>
+        <td>
+          <label for="absence_volunteer_id">
+            Volunteer:
+          </label>
+        </td>
         <% if current_volunteer.super_admin? %>
-          <td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| [v.name,v.id] }) %></td>
+          <td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| [v.name, v.id]}, {}, { class: 'form-control' } ) %></td>
         <% else %>
-          <td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| ((v.regions.collect{ |r| r.id } & current_volunteer.admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact,{:class => "select2"}) %></td>
+          <td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| ((v.regions.collect{ |r| r.id } & current_volunteer.admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact, {class: "form-control"}) %></td>
         <% end %>
       </tr>
     <% end %>
@@ -19,9 +23,7 @@ You can use the form below to schedule an absence. Note that any shift occuring 
         <label for="absence_start_date_1i">Starting On: </label>
       </td>
       <td class="form-fields">
-        <div class="form-inline">
-          <%= date_select(:absence, :start_date, {default: 3.days.from_now, order: [:month, :day, :year]}, {class: 'form-control'}) %>
-        </div>
+        <%= date_select(:absence, :start_date, {default: 3.days.from_now, order: [:month, :day, :year]}, {class: 'form-control'}) %>
       </td>
     </tr>
     <tr>
@@ -29,9 +31,7 @@ You can use the form below to schedule an absence. Note that any shift occuring 
         <label for="absence_stop_date_1i">Ending On: </label>
       </td>
       <td class="form-fields">
-        <div class="form-inline">
-          <%= date_select(:absence, :stop_date, {default: 3.days.from_now, order: [:month, :day, :year]}, {class: 'form-control'})%>
-        </div>
+        <%= date_select(:absence, :stop_date, {default: 3.days.from_now, order: [:month, :day, :year]}, {class: 'form-control'})%>
       </td>
     </tr>
     <tr>

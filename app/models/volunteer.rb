@@ -70,7 +70,7 @@ class Volunteer < ActiveRecord::Base
   def self.send_reset_password_instructions(attributes = {})
     recoverable = find_or_initialize_with_errors(reset_password_keys, attributes, :not_found)
     if !recoverable.assigned?
-      recoverable.errors[:base] << I18n.t("devise.failure.not_approved")
+      recoverable.errors[:base] << I18n.t('devise.failure.not_approved')
     elsif recoverable.persisted?
       recoverable.send_reset_password_instructions
     end
@@ -78,7 +78,7 @@ class Volunteer < ActiveRecord::Base
   end
 
   def sms_email
-    return nil if cell_carrier.nil? || phone.nil? || phone.strip == ""
+    return nil if cell_carrier.nil? || phone.nil? || phone.strip == ''
     return nil unless phone.tr('^0-9', '') =~ /^(\d{10})$/
     # a little scary that we're blindly assuming the format is reasonable, but only admin can edit it...
     sprintf(cell_carrier.format, $1)
@@ -106,13 +106,14 @@ class Volunteer < ActiveRecord::Base
   # if first argument is nil, checks if they're a region admin
   # of any kind. otherwise, tests if they're a admin for the given region
   # if strict is false, will not return true if they're a super admin
-  def region_admin?(r = nil, strict = true)
+  def region_admin?(region = nil, strict = true)
     return true if !strict && super_admin?
 
-    a = admin_region_ids(strict)
-    if r.nil?
-      return true unless a.empty?
-    elsif a.include? r.id
+    admin_regions_ids = admin_region_ids(strict)
+
+    if region.nil?
+      return true unless admin_regions_ids.empty?
+    elsif admin_regions_ids.include?(region.id)
       return true
     end
 
@@ -140,10 +141,11 @@ class Volunteer < ActiveRecord::Base
     if super_admin? && !strict
       Region.all
     else
-      assignments.
-        eager_load(:region).
-        where(admin: true).
-        collect(&:region)
+      assignments
+        .eager_load(:region)
+        .where(admin: true)
+        .collect(&:region)
+        .compact
     end
   end
 
@@ -183,6 +185,18 @@ class Volunteer < ActiveRecord::Base
     includes(:regions).
       where(regions: { id: region_id }).
       compact
+  end
+
+  def self.active_but_shiftless(region_ids)
+    includes(:regions)
+      .where(regions: { id: region_ids })
+      .where('regions.id' => region_ids)
+      .where('(SELECT COUNT(*) FROM schedule_chains ' \
+            'INNER JOIN schedule_volunteers ON ' \
+            'schedule_chains.id = schedule_volunteers.schedule_chain_id ' \
+            "WHERE schedule_chains.active = 't' " \
+            'AND schedule_volunteers.volunteer_id = volunteers.id ' \
+            "AND schedule_volunteers.active = 't') = 0")
   end
 
   private

@@ -10,13 +10,12 @@ class CreateLogParts < ActiveRecord::Migration
     end
     add_index :log_parts, :log_id
     add_index :log_parts, :food_type_id
- 
+
     change_table :logs do |t|
       t.boolean :complete, :default => 'f'
     end
     execute "UPDATE logs SET complete='t' WHERE weight IS NOT NULL;"
 
-    ft_merge = {}
     Log.all.each{ |l|
       lp = LogPart.new
       lp.log_id = l.id
@@ -28,6 +27,7 @@ class CreateLogParts < ActiveRecord::Migration
     remove_column :logs, :weight
     remove_column :logs, :food_type_id
   end
+
   def down
     change_table :logs do |t|
       t.decimal :weight

@@ -1,58 +1,57 @@
 class LocationsController < ApplicationController
-  before_filter :authenticate_volunteer!, :except => [:hud]
+  before_filter :authenticate_volunteer!, except: [:hud]
 
   def hud
-    @loc = Location.find(params[:id])
-    if (params[:key] == @loc.receipt_key) or (!current_volunteer.nil? and (current_volunteer.region_admin?(@loc.region) or current_volunteer.super_admin?))
-      @schedules = ScheduleChain.for_location(@loc)
-      if @loc.is_donor
-        @logs = Log.at(@loc)
-      else
-        @logs = Log.at(@loc).keep_if{ |x| x.weight_sum.to_f > 0 }
-      end
+    @location = Location.find(params[:id])
+    if params[:key] == @location.receipt_key || (!current_volunteer.nil? && (current_volunteer.region_admin?(@location.region) || current_volunteer.super_admin?))
+      @schedules = ScheduleChain.for_location(@location)
+      @logs = if @location.is_donor
+                Log.at(@location).last(500)
+              else
+                Log.at(@location).last(500).keep_if{ |x| x.weight_sum.to_f > 0 }
+              end
       render :hud
     else
-      flash[:notice] = "Sorry, the key you're using is expired or you're not authorized to do that"
-      redirect_to(root_path)
-      return
+      flash[:notice] = "Sorry, the key you are using is expired or you are not authorized to do that"
+      return redirect_to(root_path)
     end
   end
 
   def hubs
-    index(Location::LOCATION_TYPES.invert["Hub"],"Hubs")
+    index(Location::LOCATION_TYPES.invert['Hub'], 'Hubs')
   end
 
   def buyers
-    index(Location::LOCATION_TYPES.invert["Buyer"],"Buyers")
+    index(Location::LOCATION_TYPES.invert['Buyer'], 'Buyers')
   end
 
   def sellers
-    index(Location::LOCATION_TYPES.invert["Seller"],"Sellers")
+    index(Location::LOCATION_TYPES.invert['Seller'], 'Sellers')
   end
 
   def recipients
-    index(Location::LOCATION_TYPES.invert["Recipient"],"Recipients")
+    index(Location::LOCATION_TYPES.invert['Recipient'], 'Recipients')
   end
 
-  def index(location_type=nil,header="Locations")
-    unless location_type.nil?
-      @locations = Location.regional(current_volunteer.region_ids).where("location_type = ?",location_type)
-    else
-      @locations = Location.regional(current_volunteer.region_ids)
-    end
+  def index(location_type=nil, header='Locations')
+    @locations = unless location_type.nil?
+                   Location.regional(current_volunteer.region_ids).where('location_type = ?', location_type)
+                 else
+                   Location.regional(current_volunteer.region_ids)
+                 end
     @header = header
     @regions = Region.all
-    if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-    else
-      @my_admin_regions = current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-    end
+    @my_admin_regions = if current_volunteer.super_admin?
+                          @regions
+                        else
+                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
+                        end
     render :index
   end
 
   def show
-    @loc = Location.find(params[:id])
-    unless current_volunteer.super_admin? or (current_volunteer.region_ids.include? @loc.region_id)
+    @location = Location.find(params[:id])
+    unless current_volunteer.super_admin? or (current_volunteer.region_ids.include? @location.region_id)
       flash[:notice] = "Can't view location for a region you're not assigned to..."
       respond_to do |format|
         format.html
@@ -62,15 +61,15 @@ class LocationsController < ApplicationController
     end
     respond_to do |format|
       format.html
-      format.json { render json: @loc.attributes }
+      format.json { render json: @location.attributes }
     end
   end
 
   def destroy
-    @l = Location.find(params[:id])
-    authorize! :destroy, @l
-    @l.active = false
-    @l.save
+    location = Location.find(params[:id])
+    authorize! :destroy, location
+    location.active = false
+    location.save
     redirect_to(request.referrer)
   end
 
@@ -78,7 +77,7 @@ class LocationsController < ApplicationController
     @location = Location.new
     @location.region_id = params[:region_id]
     authorize! :create, @location
-    @action = "create"
+    @action = 'create'
     session[:my_return_to] = request.referer
     render :new
   end
@@ -89,14 +88,14 @@ class LocationsController < ApplicationController
     authorize! :create, @location
     # can't set admin bits from CRUD controls
     if @location.save
-      flash[:notice] = "Created successfully."
+      flash[:notice] = 'Created successfully.'
       unless session[:my_return_to].nil?
         redirect_to(session[:my_return_to])
       else
         index
       end
     else
-      flash[:notice] = "Didn't save successfully :("
+      flash[:error] = "Didn't save successfully :(. #{@location.errors.full_messages.to_sentence}"
       render :new
     end
   end
@@ -104,7 +103,7 @@ class LocationsController < ApplicationController
   def edit
     @location = Location.find(params[:id])
     authorize! :update, @location
-    @action = "update"
+    @action = 'update'
     session[:my_return_to] = request.referer
     render :edit
   end
@@ -115,16 +114,15 @@ class LocationsController < ApplicationController
     authorize! :update, @location
     # can't set admin bits from CRUD controls
     if @location.update_attributes(params[:location])
-      flash[:notice] = "Updated Successfully."
+      flash[:notice] = 'Updated Successfully.'
       unless session[:my_return_to].nil?
         redirect_to session[:my_return_to]
       else
         index
       end
     else
-      flash[:error] = "Update failed :("
+      flash[:error] = "Didn't update successfully :(. #{@location.errors.full_messages.to_sentence}"
       render :edit
     end
   end
-
 end

@@ -6,15 +6,11 @@ Webapp::Application.routes.draw do
     end
   end
 
-  resources :regions, except: [:show] do
-    get 'recipients', :on => :member
-    get 'request_rescue', :on => :member
-  end
+  resources :regions, except: [:show]
 
   resources :cell_carriers do as_routes end
   resources :transport_types do as_routes end
 
-  resources :food_types
   resources :scale_types
 
   resources :absences do
@@ -91,7 +87,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  devise_for :volunteers, :controllers => { :sessions => "sessions" }
+  devise_for :volunteers, :controllers => { :sessions => 'sessions' }
 
   resources :volunteers do
     collection do
@@ -105,6 +101,7 @@ Webapp::Application.routes.draw do
       get :super_admin
       get :region_admin
       get :stats
+      get :shift_stats
       get :switch_user
       get :knight
       get :index
@@ -123,6 +120,8 @@ Webapp::Application.routes.draw do
 
   namespace :region_admin do
     resources :donors, only: [:index]
+
+    resources :food_types, only: [:index, :new, :create, :edit, :update, :destroy]
   end
 
   devise_scope :volunteer do

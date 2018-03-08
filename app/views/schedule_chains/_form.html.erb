@@ -152,16 +152,16 @@
 <% end %>
 
 <% content_for :scripts do %>
-<script type="text/javascript" charset="utf-8">
-jQuery(document).ready(function(){
-  //$('.select2').select2({'width':'element'});
-  $('#schedule_chain_frequency').bind('change',function(){
-    $('.frequency-option').hide();
-    var selectedOption = $('#schedule_chain_frequency').find(':selected').val();
-    $('#frequency-option-'+selectedOption).show();
-  });
-  $('#schedule_chain_frequency').change();
-});
-document.activeElement.blur();
-</script>
+  <script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function(){
+      //$('.select2').select2({'width':'element'});
+      $('#schedule_chain_frequency').bind('change',function(){
+        $('.frequency-option').hide();
+        var selectedOption = $('#schedule_chain_frequency').find(':selected').val();
+        $('#frequency-option-'+selectedOption).show();
+      });
+      $('#schedule_chain_frequency').change();
+    });
+    document.activeElement.blur();
+  </script>
 <% end %>

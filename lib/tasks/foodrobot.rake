@@ -21,7 +21,7 @@ namespace :foodrobot do
   task(:send_weekly_summary => :environment) do
     if Date.today.sunday?
       Rails.logger = Logger.new(STDOUT)
-      FoodRobot::send_weekly_pickup_summary # email day-after-pickup
+      FoodRobot::send_weekly_pickup_summary # email pickup summary on sunday
     end
   end
 

@@ -48,9 +48,14 @@
           <td> <%= word_wrap(v.admin_notes,:line_width => 20).gsub("\n","<br>").html_safe unless v.admin_notes.nil? %>
           <% end %>
           <td> <%= Time.at(v.created_at).strftime('%Y-%m-%d') %>
-          <td> <% if current_volunteer.super_admin? or (current_volunteer.admin_region_ids & v.region_ids).length > 0 %>
-               <%= link_to 'edit', edit_volunteer_path(v) %><br>
-               <%= link_to "delete", v, :confirm => "Are you sure?", :method => :delete %>
+          <td>
+            <% if current_volunteer.super_admin? || (current_volunteer.admin_region_ids & v.region_ids).length > 0 %>
+              <%= link_to edit_volunteer_path(v), class: 'btn btn-primary' do %>
+                <i class="fa fa-pencil"></i>
+              <% end %>
+               <%= link_to v, confirm: "Are you sure?", method: :delete, class: 'btn btn-danger' do %>
+                <i class="fa fa-trash-o"></i>
+               <% end %>
                <% unless v.active %>
                 <br><%= link_to 'reactivate', reactivate_volunteer_path(v) %>
                <% end %>
@@ -70,14 +75,4 @@
     <blockquote><%= @volunteers.collect{ |v| v.email }.join(", ") %></blockquote>
   <% end %>
 
-<% end %>
-
-<% content_for :scripts do %>
-<script type="text/javascript">
-$(function () {
-  $('#data_table').dataTable( {
-    'iDisplayLength' : 50
-  });
-});
-</script>
 <% end %>

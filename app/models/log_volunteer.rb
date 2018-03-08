@@ -7,4 +7,10 @@ class LogVolunteer < ActiveRecord::Base
 
   accepts_nested_attributes_for :volunteer
 
+  validate :prevent_active_duplicates
+
+  def prevent_active_duplicates
+    existing_active = self.class.where(log_id: log_id, volunteer_id: volunteer_id, active: true)
+    errors.add(:base, "volunteer #{volunteer_id} is already assigned to log #{log_id}") if active && existing_active.any?
+  end
 end

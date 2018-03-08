@@ -1,7 +1,7 @@
-<h2><%= @loc.name %> Schedule</h2>
+<h2><%= @location.name %> Schedule</h2>
 
-<% unless @loc.receipt_key.nil? %>
-<br>Permanent link to this page: <%= link_to "click here", hud_location_path(@loc, key: @loc.receipt_key) %><br>
+<% unless @location.receipt_key.nil? %>
+<br>Permanent link to this page: <%= link_to "click here", hud_location_path(@location, key: @location.receipt_key) %><br>
 <% end %>
 
 <table>
@@ -32,7 +32,7 @@
   </tbody>
 </table>
 
-<h2><%= @loc.is_donor ? "Pick Up" : "Delivery" %> Log</h2>
+<h2><%= @location.is_donor ? "Pick Up" : "Delivery" %> Log</h2>
 <br>
 Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><br><br>
 
@@ -42,7 +42,7 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
   <tr>
     <th> When </th>
     <th> Volunteer </th>
-    <% unless @loc.is_donor %><th> Donor </th><% end %>
+    <% unless @location.is_donor %><th> Donor </th><% end %>
     <th> Weight </th>
     <th> Transport Type </th>
     <th> Food Type </th>
@@ -55,7 +55,7 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
   <tr>
     <td> <%= shift.when %> </td>
     <td> <%= shift.volunteers.empty? ? "Unknown" : shift.volunteers.collect{ |v| v.name }.join(" and ") %>
-    <% unless @loc.is_donor %><td> <%= shift.donor.nil? ? "Unknown" : shift.donor.name %><% end %>
+    <% unless @location.is_donor %><td> <%= shift.donor.nil? ? "Unknown" : shift.donor.name %><% end %>
     <td> <%= shift.weight_sum %> </td>
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.log_parts.collect{ |lp| (!lp.food_type.nil? and !lp.weight.nil? and lp.weight > 0) ? "#{lp.food_type.name} (#{lp.weight} lb)" : nil }.compact.join(", ") %>
@@ -66,11 +66,9 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
 
 <% content_for :scripts do %>
 <script type="text/javascript">
-$(function () { 
-  $('#data_table').dataTable( {
-    'iDisplayLength' : 50,
-    "aaSorting": [[ 0, "desc" ]]
-  });
+$(function () {
+  // Update the sort for the data table
+  window.BFRDataTable.fnSort([[ 0, "desc" ]]);
 });
 </script>
 <% end %>

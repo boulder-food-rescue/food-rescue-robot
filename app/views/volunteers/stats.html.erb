@@ -1,37 +1,82 @@
 <div class="row">
   <div class="col-sm-12">
-    <h2 class="section-head">Volunteer Statistics</h2>
+    <h2 class="section-head">
+      Volunteer Statistics
+      <%= link_to 'View Shift Stats', shift_stats_volunteers_path, class: 'pull-right btn btn-primary in-text-header' %>
+    </h2>
 
     <h2>Last 12 Months</h2>
-    <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count</thead><tbody>
-    <% @per_volunteer.each{ |v| %>
-      <tr><td><%= v.name %><td><%= v.sum %><td><%= v.count %>
-    <% } %>
-    </tbody></table>
+    <table class="data_table">
+      <thead>
+        <th>Volunteer</th>
+        <th>Weight of Food Picked Up</th>
+        <th># of Pickups</th>
+      </thead>
+      <tbody>
+        <% @logs_per_volunteer_year.each do |volunteer| %>
+          <tr>
+            <td>
+              <%= volunteer.name %>
+            </td>
+            <td>
+              <%= volunteer.sum %>
+            </td>
+            <td>
+              <%= volunteer.count %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
     <br><br>
 
     <h2>Last Month</h2>
-    <table class="datatable"><thead><th>Volunteer<th>Amount<th>Count</thead><tbody>
-    <% @per_volunteer2.each{ |v| %>
-      <tr><td><%= v.name %><td><%= v.sum %><td><%= v.count %>
-    <% } %>
-    </tbody></table>
+    <table class="data_table">
+      <thead>
+        <th>Volunteer</th>
+        <th>Weight of Food Picked Up</th>
+        <th># of Pickups</th>
+      </thead>
+      <tbody>
+        <% @logs_per_volunteer_month.each do |volunteer| %>
+          <tr>
+            <td>
+              <%= volunteer.name %>
+            </td>
+            <td>
+              <%= volunteer.sum %>
+            </td>
+            <td>
+              <%= volunteer.count %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
     <br><br>
 
     <h2>Attrition</h2>
-    Volunteers who have done pickups, but not for 90 days or more.
-    <table class="datatable"><thead><th>Volunteer<th>Email<th>Last Pickup<th>Num Pickups</thead><tbody>
-    <%
-       @lazy_volunteers.each{ |v|
-         next if Date.parse(v.last_date) > (Date.today - 90)
-    %>
-      <tr>
-        <td>
-          <%= [v.name,v.email,v.last_date,v.count].join("<td>").html_safe %>
-    <% }%>
-    </tbody>
+    <p>Volunteers who have done pickups, but not for 90 days or more.</p>
+    <table class="data_table">
+      <thead>
+        <th>Volunteer</th>
+        <th>Email</th>
+        <th>Last Pickup</th>
+        <th>Num Pickups</th>
+      </thead>
+      <tbody>
+        <% @lazy_volunteers.each{ |volunteer|
+            next if Date.parse(volunteer.last_date) > (Date.today - 90)
+        %>
+          <tr>
+            <td>
+              <%= [volunteer.name, volunteer.email, volunteer.last_date, volunteer.count].join("<td>").html_safe %>
+            </td>
+          </tr>
+        <% }%>
+      </tbody>
     </table>
   </div>
 </div>
@@ -39,9 +84,14 @@
 <% content_for :scripts do %>
   <script type="text/javascript">
     $(function () {
-      $('.datatable').dataTable( {
-        'iDisplayLength' : 10
+      $('.data_table').dataTable( {
+        'iDisplayLength' : 25
       });
+
+
+      $('.dataTables_filter').addClass('form-inline form-group')
+                             .find('input[type="search"]')
+                             .addClass('form-control');
     });
   </script>
 <% end %>

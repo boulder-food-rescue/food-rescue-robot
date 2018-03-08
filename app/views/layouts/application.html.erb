@@ -105,7 +105,7 @@
               <% if current_volunteer.main_region.has_hubs? %>
                 <%= menu_item "Hubs", hubs_locations_path %>
               <% end %>
-              <%= menu_item "Food Types", '/food_types' %>
+              <%= menu_item "Food Types", region_admin_food_types_url %>
 	      			<%= menu_item "Scale Types", '/scale_types' %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
               <%= menu_item "Absences", all_absences_path %>
@@ -152,11 +152,11 @@
     <% end %>
 
     <!-- header -->
-    <% if @region or (volunteer_signed_in? and current_volunteer.has_main_region?) %>
+    <% if @region || (volunteer_signed_in? && current_volunteer.has_main_region?) %>
       <div class="subhead">
         <div class="container-fluid">
           <div class="page-header">
-            <% current_region = (volunteer_signed_in?) ? current_volunteer.main_region : @region %>
+            <% current_region = volunteer_signed_in? ? current_volunteer.main_region : @region %>
             <h1><%= current_region.title %> <small><%= current_region.tagline %></small></h1>
           </div>
         </div>
@@ -183,6 +183,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "google_analytics" if Rails.env.production? %>
     <%= yield :scripts %>
 
   </body>

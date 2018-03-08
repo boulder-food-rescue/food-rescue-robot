@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Location do
-
-  describe "is_donor" do
+  describe 'is_donor' do
     let(:donor_type) do
       described_class::LOCATION_TYPES.invert['Donor']
     end
@@ -14,24 +13,24 @@ RSpec.describe Location do
       )
     end
 
-    context "for donor location types" do
+    context 'for donor location types' do
       before do
         subject.location_type = donor_type
       end
 
-      it "returns true" do
+      it 'returns true' do
         expect(subject.is_donor).to eq(true)
       end
     end
 
-    context "for other location types" do
-      it "returns false" do
+    context 'for other location types' do
+      it 'returns false' do
         expect(subject.is_donor).to eq(false)
       end
     end
   end
 
-  describe "is_hub" do
+  describe 'is_hub' do
     let(:hub_type) do
       described_class::LOCATION_TYPES.invert['Hub']
     end
@@ -43,18 +42,18 @@ RSpec.describe Location do
       )
     end
 
-    context "for hub location types" do
+    context 'for hub location types' do
       before do
         subject.location_type = hub_type
       end
 
-      it "returns true" do
+      it 'returns true' do
         expect(subject.is_hub).to eq(true)
       end
     end
 
-    context "for other location types" do
-      it "returns false" do
+    context 'for other location types' do
+      it 'returns false' do
         expect(subject.is_hub).to eq(false)
       end
     end

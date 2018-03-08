@@ -7,21 +7,26 @@ class Shift
            :schedule_chain,
            to: :first_log
 
+  def self.build_shifts_eagerly(log_ids)
+    logs = Log.includes(:schedule_chain).find(log_ids)
+    Shift.build_shifts(logs)
+  end
+
   def self.build_shifts(logs)
     shifts = []
     group = {}
-    logs.each { |log|
+    logs.each do |log|
       if log.schedule_chain.nil?
         shifts << [log]
       else
-        key = [log.when, log.schedule_chain_id].join(":")
+        key = [log.when, log.schedule_chain_id].join(':')
         if group[key].nil?
           group[key] = shifts.length
           shifts << []
         end
         shifts[group[key]] << log
       end
-    }
+    end
 
     shifts.map { |shift_logs| new(shift_logs) }
   end

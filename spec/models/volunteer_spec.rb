@@ -39,7 +39,7 @@ RSpec.describe Volunteer do
       before do
         log_volunteer.log.complete = true
         log_volunteer.log.hours_spent = 1
-        log_volunteer.log.why_zero = Log::WhyZero.invert["No Food"]
+        log_volunteer.log.why_zero = Log::WhyZero.invert['No Food']
         log_volunteer.log.save!
       end
 
@@ -111,6 +111,38 @@ RSpec.describe Volunteer do
       )
 
       expect(subject.current_absences).not_to include(absence_stopping_today)
+    end
+  end
+
+  describe '::active_but_shiftless' do
+    let(:boulder) { create(:region, name: 'Boulder') }
+    let(:denver) { create(:region, name: 'Denver') }
+
+    let(:shiftless_volunteer) { create(:volunteer, assigned: true) }
+    let(:shiftless_volunteer_denver) { create(:volunteer, regions: [denver], assigned: true) }
+    let(:volunteer_with_shifts) { create(:volunteer, assigned: true) }
+    let(:schedule_chain) { create(:schedule_chain, region: boulder) }
+
+    subject { described_class.active_but_shiftless([boulder.id]) }
+
+    before do
+      create(:assignment, volunteer: shiftless_volunteer, region: boulder)
+      create(:assignment, volunteer: shiftless_volunteer_denver, region: denver)
+      create(:assignment, volunteer: volunteer_with_shifts, region: boulder)
+
+      create(:schedule_volunteer, volunteer: volunteer_with_shifts, schedule_chain: schedule_chain)
+    end
+
+    it 'includes only volunteers active in that regions' do
+      expect(subject).to match_array([shiftless_volunteer])
+    end
+
+    context 'when multiple region ids are specified' do
+      subject { described_class.active_but_shiftless([boulder.id, denver.id]) }
+
+      it 'includes only shiftless volunteers active in those regions' do
+        expect(subject).to match_array([shiftless_volunteer_denver, shiftless_volunteer])
+      end
     end
   end
 

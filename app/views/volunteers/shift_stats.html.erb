@@ -1,0 +1,67 @@
+<div class="row">
+  <div class="col-sm-6">
+    <%= form_tag("/volunteers/shift_stats", method: "get") do %>
+      View For <%= select_tag("region_id", options_for_select(@regions.collect{ |region| [region.name, region.id] })) %>
+      <%= submit_tag("Go", class: 'btn btn-primary') %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h2 class="section-head">Shift Statistics</h2>
+
+    <h2><%= @region.try(:name) %> Shifts Completed - All Time</h2>
+    <table class="datatable">
+      <thead>
+        <th>Volunteer</th>
+        <th>Number of Shifts</th>
+      </thead>
+      <tbody>
+        <% @shifts_by_volunteer.each do |volunteer, shifts| %>
+          <tr>
+            <td>
+              <%= volunteer.name %>
+            </td>
+            <td>
+              <%= shifts.length %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <!-- <br><br>
+    <h2>Top 25 Shifts By Month</h2>
+    <table class="datatable">
+      <thead>
+        <th>Shift Month</th>
+        <th>Number of Shifts</th>
+      </thead>
+      <tbody>
+        < %#  @top_shifts.each do |month, shifts| %>
+          <tr>
+            <td>
+              < %= #month %>
+            </td>
+            <td>
+              < % = #shifts.length %>
+            </td>
+          </tr>
+        < % # end %>
+      </tbody>
+    </table> -->
+
+    <br><br>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $(function () {
+      $('.datatable').dataTable( {
+        'iDisplayLength' : 10
+      });
+    });
+  </script>
+<% end %>

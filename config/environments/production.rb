@@ -6,13 +6,13 @@ Webapp::Application.configure do
   config.action_mailer.asset_host = 'https://boulder-food-rescue-robot.herokuapp.com'
 
   config.action_mailer.smtp_settings = {
-    address: "smtp.sendgrid.net",
+    address: 'smtp.sendgrid.net',
     port: 587,
-    domain: ENV["DOMAIN_NAME"],
-    authentication: "plain",
+    domain: ENV['DOMAIN_NAME'],
+    authentication: 'plain',
     enable_starttls_auto: true,
-    user_name: ENV["SENDGRID_USERNAME"],
-    password: ENV["SENDGRID_PASSWORD"]
+    user_name: ENV['SENDGRID_USERNAME'],
+    password: ENV['SENDGRID_PASSWORD']
   }
   # ActionMailer Config
   #config.action_mailer.default_url_options = { :host => 'robot.boulderfoodrescue.org' }
@@ -67,7 +67,7 @@ Webapp::Application.configure do
   # config.action_controller.asset_host = "http://assets.example.com"
 
   # Precompile additional assets (application.*, and all non-JS/CSS are already added)
-  # config.assets.precompile += %w( search.js )
+  config.assets.precompile += %w( google_analytics.js )
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
@@ -89,7 +89,7 @@ Webapp::Application.configure do
   config.middleware.use ExceptionNotifier,
     email_prefix: '[BFR ROBOT ERROR] ',
     sender_address: %{"BFR Robot" <notifier@boulderfoodrescue.org>},
-    exception_recipients: ENV["ERROR_EMAILS"]
+    exception_recipients: ENV['ERROR_EMAILS']
 
   ExceptionNotifier::Rake.configure
 

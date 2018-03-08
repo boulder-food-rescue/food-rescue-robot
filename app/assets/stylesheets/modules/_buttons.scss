@@ -9,3 +9,13 @@ button.btn {
   &.fill{
   }
 }
+.btn {
+  &.in-text-header {
+    margin-bottom: 5px;
+  }
+  + .btn {
+    display: inline-block;
+    margin-top: 5px;
+  }
+}
+

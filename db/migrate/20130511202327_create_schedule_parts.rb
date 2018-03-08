@@ -10,10 +10,11 @@ class CreateScheduleParts < ActiveRecord::Migration
     add_index :schedule_parts, :schedule_id
     add_index :schedule_parts, :food_type_id
 
-    execute "INSERT INTO schedule_parts (food_type_id,schedule_id,created_at,updated_at) 
+    execute "INSERT INTO schedule_parts (food_type_id,schedule_id,created_at,updated_at)
              SELECT food_type_id,schedule_id,'now','now' FROM food_types_schedules;"
-    drop_table :food_types_schedules    
+    drop_table :food_types_schedules
   end
+
   def down
     create_table :food_types_schedules do |t|
       t.references :schedule

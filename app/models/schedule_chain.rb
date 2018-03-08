@@ -64,7 +64,7 @@ class ScheduleChain < ActiveRecord::Base
     end
   end
 
-  # list all the schedules that don't have active volunteers
+  # list all the schedules that don't have enough active volunteers
   # clarification: (in my regions) and (temporary or (no volunteers and last stop is dropoff))
   def self.open_in_regions(region_id_list)
     schedules = ScheduleChain.where(irregular: false).where(region_id: region_id_list) if region_id_list.length > 0
@@ -189,13 +189,13 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def related_shifts
-    lids = donors.collect { |d|
-      d.location_type == Location::LOCATION_TYPES.invert['Hub'] ? nil : d.id
+    location_ids = donors.collect { |donor|
+      donor.location_type == Location::LOCATION_TYPES.invert['Hub'] ? nil : donor.id
     }.compact
 
-    return [] if lids.empty?
+    return [] if location_ids.empty?
 
-    Schedule.where('schedule_chain_id != ?', id).where(location_id: lids).reject do |x|
+    Schedule.where('schedule_chain_id != ?', id).where(location_id: location_ids).reject do |x|
       x.schedule_chain.nil?
     end
   end

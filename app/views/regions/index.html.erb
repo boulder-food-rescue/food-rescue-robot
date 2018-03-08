@@ -44,7 +44,7 @@
           </td>
           <td>
             <%= region.address.gsub("\n","<br>").html_safe unless region.address.nil? %>
-          </td>    
+          </td>
           <td>
             <% if region.notes.present? %>
               <small>
@@ -53,13 +53,16 @@
             <% end %>
           </td>
           <td>
-            Completed Pickups: <%= Log.pickup_count region.id %>, 
+            Completed Pickups: <%= Log.pickup_count region.id %>,
             Active Volunteers: <%= region.active_volunteer_count %>
           </td>
           <td>
-            <%= link_to 'edit', edit_region_url(region) %>
-            <br>
-            <%= link_to "delete", region_url(region), :confirm => "Are you sure?", :method => :delete %>
+            <%= link_to edit_region_url(region), class: 'btn btn-primary' do %>
+              <i class="fa fa-pencil"></i>
+            <% end %>
+            <%= link_to region_url(region), class: 'btn btn-danger', confirm: "Are you sure?", method: :delete do %>
+              <i class="fa fa-trash-o"></i>
+            <% end %>
           </td>
         </tr>
       <% end %>
@@ -69,11 +72,9 @@
 
 <% content_for :scripts do %>
   <script type="text/javascript">
-    $(function () { 
-      $('#data_table').dataTable( {
-        'iDisplayLength' : 50,
-         "aaSorting": [[ 1, "asc" ]]
-      });
+    $(function () {
+      // Update the sort for the data table
+      window.BFRDataTable.fnSort([[ 1, "asc" ]]);
     });
   </script>
 <% end %>

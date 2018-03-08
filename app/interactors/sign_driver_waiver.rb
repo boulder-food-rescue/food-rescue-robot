@@ -16,7 +16,6 @@ class SignDriverWaiver
       volunteer_signee.driver_waiver_signed_by_admin_at = signed_at
     end
 
-
     fail! unless volunteer_signee.save
   end
 end

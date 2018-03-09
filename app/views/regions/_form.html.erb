@@ -1,14 +1,6 @@
 <%= form_for @region do |f| %>
   <table class="table table-striped">
     <tr>
-      <td width="400">
-        <label for="region_logo">Logo</label>
-      </td>
-      <td>
-        <%= image_tag @region.logo.url(:thumb, class: "form-control") %>
-        <%= f.file_field(:logo, class: "form-control") %>
-      </td>
-    <tr>
       <td>
         <label for="region_name">Short Name</label>
       </td>

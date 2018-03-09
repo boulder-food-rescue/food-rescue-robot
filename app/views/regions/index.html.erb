@@ -24,13 +24,6 @@
       <% @regions.each do |region| %>
         <tr>
           <td>
-            <% if region.logo.present? %>
-              <a href="<%= region.logo(:medium) %>">
-                <img src="<%= region.logo(:thumb) %>">
-              </a>
-            <% end %>
-          </td>
-          <td>
             <%= region.name %>:
             <% if region.website.present? %>
               <%= link_to "website", region.website %>

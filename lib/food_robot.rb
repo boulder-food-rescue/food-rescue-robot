@@ -59,7 +59,7 @@ module FoodRobot
         reminder_list[vol] = [] if reminder_list[vol].nil?
         reminder_list[vol].push(log)
 
-        if log.num_reminders || 0 >= r
+        if log.num_reminders >= r
           naughty_list[log.region] = [] if naughty_list[log.region].nil?
           naughty_list[log.region].push(log)
         end
@@ -121,11 +121,13 @@ module FoodRobot
     # Let the admin know about tardy data entry
     if naughty_list.length > 0
       naughty_list.each do |region, logs|
-        m = Notifier.admin_reminder_summary(region, logs) if region.present?
+        next unless region.present?
+
+        msg = Notifier.admin_reminder_summary(region, logs)
         if @@DontDeliverEmails
-          puts m
+          puts msg
         else
-          m.deliver
+          msg.deliver unless msg.nil?
         end
       end
     end

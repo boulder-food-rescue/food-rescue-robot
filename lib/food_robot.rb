@@ -36,9 +36,9 @@ module FoodRobot
       days_future = (log.when - Time.zone.today).to_i
 
       if days_future == 1 and !log.volunteers.empty?
-        log.volunteers.reject{ |v| not v.pre_reminders_too }.each{ |v|
-          pre_reminder_list[v] = [] if pre_reminder_list[v].nil?
-          pre_reminder_list[v].push(log)
+        log.volunteers.reject{ |vol| not vol.pre_reminders_too }.each{ |vol|
+          pre_reminder_list[vol] = [] if pre_reminder_list[vol].nil?
+          pre_reminder_list[vol].push(log)
         }
         next
       elsif (days_future == 1 or days_future == 2) and log.volunteers.empty?
@@ -55,11 +55,11 @@ module FoodRobot
       log.num_reminders += 1
       log.save
 
-      log.volunteers.each do |v|
-        reminder_list[v] = [] if reminder_list[v].nil?
-        reminder_list[v].push(log)
+      log.volunteers.each do |vol|
+        reminder_list[vol] = [] if reminder_list[vol].nil?
+        reminder_list[vol].push(log)
 
-        if log.num_reminders >= r
+        if log.num_reminders || 0 >= r
           naughty_list[log.region] = [] if naughty_list[log.region].nil?
           naughty_list[log.region].push(log)
         end
@@ -67,7 +67,7 @@ module FoodRobot
     end
 
     # Send reminders to enter data for PAST pickups
-    reminder_list.each{ |volunteer, logs|
+    reminder_list.each do |volunteer, logs|
       m = Notifier.volunteer_log_reminder(volunteer, logs)
       if @@DontDeliverEmails
         puts m
@@ -84,7 +84,7 @@ module FoodRobot
           m.deliver
         end
       end
-    }
+    end
 
     # Send reminders to do FUTURE pickups
     pre_reminder_list.each do |volunteer, logs|
@@ -109,11 +109,11 @@ module FoodRobot
     # Remind the admins to cover things without a volunteer...
     if short_term_cover_list.length > 0
       short_term_cover_list.each do |region, logs|
-        m = Notifier.admin_short_term_cover_summary(region, logs) if region.present?
+        msg = Notifier.admin_short_term_cover_summary(region, logs) if region.present?
         if @@DontDeliverEmails
-          puts m
+          puts msg
         else
-          m.deliver
+          msg.deliver
         end
       end
     end

@@ -137,3 +137,68 @@ admin_assignment = Assignment.new({admin: true})
 admin_assignment.volunteer_id = region_admin.id
 admin_assignment.region_id = region.id
 admin_assignment.save!
+
+
+#Create donor location
+donor = Location.create({
+     'location_type' => 1,
+     'name' => "Test Donor",
+     'active' => true,
+     'region_id' => region.id,
+     'address' => "123 Side St."
+})
+#Create recipient location
+
+recipient = Location.create({
+     'location_type' => 0,
+     'name' => "Test Recipient",
+     'active' => true,
+     'region_id' => region.id,
+     'address' => "123 Main St."
+
+})
+
+#Create schedule chain
+
+schedule_chain = ScheduleChain.create({
+     'detailed_start_time' => "2000-01-01 08:00:00",
+     'detailed_stop_time' => "2000-01-01 11:00:00",
+     'detailed_date' => "2018-02-28",
+     'transport_type_id' => 2,
+     'region_id'=> region.id,
+     'frequency'=> 'weekly',
+     'day_of_week'=> 1
+})
+
+#Assign donor location to schedule
+Schedule.create({
+    'schedule_chain_id' => schedule_chain.id,
+    'location_id' => donor.id,
+    'position' => 1
+})
+
+#Assign recipient location to schedule
+Schedule.create({
+    'schedule_chain_id' => schedule_chain.id,
+    'location_id' => recipient.id,
+    'position' => 2
+})
+
+#Assign schedule to volunteer
+
+ScheduleVolunteer.create({
+    'volunteer_id' => volunteer.id,
+    'schedule_chain_id' => schedule_chain.id,
+    'active' => true
+                         })
+
+
+#Generate log of the schedule, instructions found in log_builder.rb
+
+chain = FoodRobot::LogGenerator::ScheduleChainDecorator.new(schedule_chain)
+donor = chain.donors.first
+date = Date.today - 7
+FoodRobot::LogGenerator::LogBuilder.new(date, donor, nil).log.save #Log for past pick up
+
+date = Date.today + 100
+FoodRobot::LogGenerator::LogBuilder.new(date, donor, nil).log.save #Log for future pick up

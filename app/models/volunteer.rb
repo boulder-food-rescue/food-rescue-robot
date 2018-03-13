@@ -7,6 +7,10 @@ class Volunteer < ActiveRecord::Base
   belongs_to :requested_region, class_name: 'Region'
 
   has_many :absences
+  has_many :availabilities
+  accepts_nested_attributes_for :availabilities,
+    :allow_destroy => true,
+    :reject_if     => :all_blank
 
   has_many :assignments
   has_many :regions, through: :assignments

@@ -108,6 +108,7 @@
               <%= menu_item "Food Types", region_admin_food_types_url %>
 	      			<%= menu_item "Scale Types", '/scale_types' %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
+              <%= menu_item "Assign Roles", '/assignments/new' %>
               <%= menu_item "Absences", all_absences_path %>
               <% if not current_volunteer.super_admin? %>
                 <% current_volunteer.admin_regions(true).each do |r| %>

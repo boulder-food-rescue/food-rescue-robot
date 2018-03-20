@@ -5,39 +5,110 @@
 </div>
 
 <div class="row">
-
-
-</div>
-
-<div class="row">
-  <br />
-  <br />
-  
-
   <div class="col-sm-6">
-    <h2> Regional Admin Appointment</h2>
-    <p>Make a volunteer an admin for your region. Users that are asterisk-ed*, have admin powers already. You can remove those powers by toggling them.</p>
-
-    <%= form_tag("/assignments/knight", :method => "get") do %>
+    <h2> Switch to User </h2>
+    <p>
+      Select a volunteer from the list below to swtich to.
+      After switching you will have logout and login to get back to your
+      real user.
+    </p>
+    <%= form_tag("/volunteers/switch_user", method: "get") do %>
       <table class="table">
         <tr>
           <td>
             <label for="volunteer_id">Volunteer:</label>
           </td>
+
+          <% if current_volunteer.super_admin? %>
+            <td>
+              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+                    ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }), {class: "form-control select2"}) %></td>
+          <% else %>
+            <td>
+              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+                    ((v.regions.collect{ |r| r.id } & @admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact), {class: "form-control select2"}) %>
+            </td>
+          <% end %>
+        </tr>
+      </table>
+      <%= submit_tag "Switch" %>
+    <% end %>
+  </div>
+  <div class="col-sm-6">
+    <h2> Generate Receipts </h2>
+    <%= form_tag("/logs/receipt.pdf", method: "get") do %>
+      <table class="table">
+        <tr>
           <td>
-            <%= select_tag(:volunteer_id, options_for_select(@my_admin_volunteers.collect{ |v| [v.name+" ["+v.assignments.collect{ |a| ((a.region.nil?) ? "" : a.region.name) + (a.admin ? "*" : "") }.join(",")+"]",v.id] }), {class: "form-control select2"}) %>
+            <label for="location_id">Donor:</label>
+          </td>
+          <% if current_volunteer.super_admin? %>
+            <td>
+              <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r|
+                     r.id }.join(",")})").collect{ |v| [v.name,v.id] }),{class: "form-control select2"}) %>
+            </td>
+          <% else %>
+          <td>
+            <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{@admin_region_ids.join(",")})").collect{ |l|
+                    [l.name,l.id] })) %>
+          </td>
+          <% end %>
+        </tr>
+        <tr>
+          <td>
+            <label for="start_id">Starting On: </label>
+          </td>
+          <td>
+            <div class="form-inline">
+              <%= select_date Time.zone.today, {prefix: :start_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+            </div>
           </td>
         </tr>
         <tr>
           <td>
-            <label for="region_id">Region:</label>
+            <label for="stop_date">Ending On: </label>
           </td>
           <td>
-            <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name, r.id] }), {class: "form-control"}) %>
+            <div class="form-inline">
+              <%= select_date Time.zone.today, {prefix: :stop_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+            </div>
           </td>
         </tr>
       </table>
-      <%= submit_tag 'Toggle' %>
+      <%= submit_tag "Generate" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <br />
+  <br />
+  <div class="col-sm-6">
+    <h2> Export Data </h2>
+    <%= form_tag("/logs/export.csv", :method => "get") do %>
+      <table class="table">
+        <tr>
+          <td>
+            <label for="">Starting On: </label>
+          </td>
+          <td>
+            <div class="form-inline">
+              <%= select_date Time.zone.today, {prefix: :start_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="">Ending On: </label>
+          </td>
+          <td>
+            <div class="form-inline">
+              <%= select_date Time.zone.today, {prefix: :stop_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <%= submit_tag "Export" %>
     <% end %>
   </div>
 </div>

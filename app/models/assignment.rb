@@ -1,7 +1,7 @@
 class Assignment < ActiveRecord::Base
   belongs_to :volunteer
   belongs_to :region
-  attr_accessible :admin
+  attr_accessible :admin, :volunteer_id, :region_id
 
   # CRUD-level restrictions
   def authorized_for_update?

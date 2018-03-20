@@ -190,15 +190,36 @@ ScheduleVolunteer.create({
     'volunteer_id' => volunteer.id,
     'schedule_chain_id' => schedule_chain.id,
     'active' => true
-                         })
+})
 
 
 #Generate log of the schedule, instructions found in log_builder.rb
 
 chain = FoodRobot::LogGenerator::ScheduleChainDecorator.new(schedule_chain)
-donor = chain.donors.first
+d = chain.donors.first
 date = Date.today - 7
-FoodRobot::LogGenerator::LogBuilder.new(date, donor, nil).log.save #Log for past pick up
+FoodRobot::LogGenerator::LogBuilder.new(date, d, nil).log.save #Log for past pick up
 
 date = Date.today + 100
-FoodRobot::LogGenerator::LogBuilder.new(date, donor, nil).log.save #Log for future pick up
+FoodRobot::LogGenerator::LogBuilder.new(date, d, nil).log.save #Log for future pick up
+
+
+# Generate food type
+
+FoodType.create({
+    'name' => 'Food',
+    'region_id' => region.id
+})
+
+FoodType.create({
+    'name' => 'Compost',
+    'region_id' => region.id
+})
+
+# Generate scale type
+
+ScaleType.create({
+   'name' => 'Scale',
+   'weight_unit' => 'lbs',
+   'region_id' => region.id
+})

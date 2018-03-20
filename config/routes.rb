@@ -40,6 +40,8 @@ Webapp::Application.routes.draw do
       get :stats_service
       get :stats
       get :export
+      get :new_export_data
+      get :new_receipt
     end
     member do
       get :take
@@ -110,6 +112,7 @@ Webapp::Application.routes.draw do
       get :create
       get :destroy
       get :assign
+      get :new_switch_user
     end
     member do
       get :reactivate

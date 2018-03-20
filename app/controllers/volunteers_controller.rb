@@ -2,6 +2,10 @@ class VolunteersController < ApplicationController
   before_filter :authenticate_volunteer!
   before_filter :admin_only, :only => [:knight, :unassigned, :shiftless, :shiftless_old, :admin, :switch_user, :stats]
 
+  def new_switch_user
+    @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+  end
+
   def unassigned
     unassigned = Volunteer.where(assigned: false)
     no_assignments = Volunteer.where('((SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0)')

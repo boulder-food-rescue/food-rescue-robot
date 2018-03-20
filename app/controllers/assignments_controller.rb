@@ -3,9 +3,8 @@ class AssignmentsController < ApplicationController
   before_filter :admin_only
 
   def new
-    @regions = Region.all
     if current_volunteer.super_admin?
-      @my_admin_regions = @regions
+      @my_admin_regions = Region.all
       @my_admin_volunteers = Volunteer.all
     else
       @my_admin_regions = current_volunteer.assignments.collect do |assignment|
@@ -18,10 +17,7 @@ class AssignmentsController < ApplicationController
         ((volunteer.regions.length == 0) ||
         (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0) ? volunteer : nil
       end.compact
-
     end
-
-    @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
   end
 
   def knight

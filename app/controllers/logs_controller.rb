@@ -4,6 +4,10 @@ class LogsController < ApplicationController
   before_filter :authenticate_volunteer!, :except => :stats_service
   before_filter :admin_only, :only => [:today, :tomorrow, :yesterday, :being_covered, :tardy, :receipt, :new, :create, :stats, :export]
 
+  def new_receipt
+    @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
+  end
+
   def mine_past
     index(Log.past_for(current_volunteer.id), 'My Past Shifts')
   end

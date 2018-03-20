@@ -37,6 +37,16 @@ ActiveRecord::Schema.define(:version => 20180306171307) do
   add_index "assignments", ["region_id"], :name => "index_assignments_on_region_id"
   add_index "assignments", ["volunteer_id"], :name => "index_assignments_on_volunteer_id"
 
+  create_table "availabilities", :force => true do |t|
+    t.integer  "volunteer_id"
+    t.integer  "day"
+    t.integer  "time"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "availabilities", ["volunteer_id"], :name => "index_availabilities_on_volunteer_id"
+
   create_table "cell_carriers", :force => true do |t|
     t.string "name"
     t.string "format"

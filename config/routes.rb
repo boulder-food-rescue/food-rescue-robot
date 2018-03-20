@@ -114,6 +114,7 @@ Webapp::Application.routes.draw do
     member do
       get :reactivate
     end
+    resources :availabilities, except: [:show]
   end
 
   resource :waiver, only: [:new, :create]

@@ -1,30 +1,27 @@
 class AvailabilitiesController < ApplicationController
-  def index
-  end
-
   def new
     @volunteer = Volunteer.find(params[:volunteer_id])
-
-    @availability = Availability.new
-
+    @availability = Availability.new(params[:availability])
+    @weekdays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+    @timeslots = ["Morning","Afternoon","Evening"]
   end
 
   def create
-    # retreive the data from checkboxes
-    # send data to appropriate models and db
-# @user = User.new(params[:user])
-  #  params[:availabilities].each do |availability|
-      # grab the key of each availability, sned it to db
-      @availability = params[:availability]
-      #params.require(:availability).permit(:days:[])
+    params[:availability].each do |selection|
+      volunteer = Volunteer.find(params[:volunteer_id])
+      day = eval(selection)[:day]
+      time = eval(selection)[:time]
+      volunteer.availabilities << Availability.new(day: day, time: time)
+    end
+    redirect_to(root_path)
   end
 
   def destroy
   end
 
   def update
-    @availability = Availability.find(params[:id])
-
-
+    #@availability = Availability.find(params[:id])
   end
+
+  #params.require(:availability).permit(:days:[])
 end

@@ -1,6 +1,6 @@
 Webapp::Application.routes.draw do
 
-  resources :assignments, only: [] do
+  resources :assignments, only: [:new] do
     collection do
       get :knight
     end

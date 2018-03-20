@@ -111,31 +111,4 @@
       <%= submit_tag "Export" %>
     <% end %>
   </div>
-
-  <div class="col-sm-6">
-    <h2> Regional Admin Appointment</h2>
-    <p>Make a volunteer an admin for your region. Users that are asterisk-ed*, have admin powers already. You can remove those powers by toggling them.</p>
-
-    <%= form_tag("/assignments/knight", :method => "get") do %>
-      <table class="table">
-        <tr>
-          <td>
-            <label for="volunteer_id">Volunteer:</label>
-          </td>
-          <td>
-            <%= select_tag(:volunteer_id, options_for_select(@my_admin_volunteers.collect{ |v| [v.name+" ["+v.assignments.collect{ |a| ((a.region.nil?) ? "" : a.region.name) + (a.admin ? "*" : "") }.join(",")+"]",v.id] }), {class: "form-control select2"}) %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="region_id">Region:</label>
-          </td>
-          <td>
-            <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name, r.id] }), {class: "form-control"}) %>
-          </td>
-        </tr>
-      </table>
-      <%= submit_tag 'Toggle' %>
-    <% end %>
-  </div>
 </div>

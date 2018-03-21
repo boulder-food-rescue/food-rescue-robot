@@ -223,3 +223,4 @@ ScaleType.create({
    'weight_unit' => 'lbs',
    'region_id' => region.id
 })
+

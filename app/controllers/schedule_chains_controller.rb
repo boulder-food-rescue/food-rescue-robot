@@ -29,7 +29,6 @@ class ScheduleChainsController < ApplicationController
   end
 
   def show
-    #binding.pry
     @schedule = ScheduleChain.includes(:schedules).find(params[:id])
     schedules = @schedule.schedules
 

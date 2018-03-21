@@ -108,6 +108,7 @@
               <%= menu_item "Food Types", region_admin_food_types_url %>
 	      			<%= menu_item "Scale Types", '/scale_types' %>
               <%= menu_item "Controls", '/volunteers/region_admin' %>
+              <%= menu_item "Assign Roles", '/assignments/new' %>
               <%= menu_item "Absences", all_absences_path %>
               <% if not current_volunteer.super_admin? %>
                 <% current_volunteer.admin_regions(true).each do |r| %>
@@ -138,6 +139,7 @@
               <%= menu_item "<i class='fa fa-cog'></i> Settings".html_safe, edit_volunteer_path(current_volunteer.id) %>
               <%= menu_item "<i class='fa fa-file-o'></i> Waiver".html_safe, new_waiver_url %>
               <%= menu_item "<i class='fa fa-file-o'></i> Driver Waiver".html_safe, driver_waiver_path %>
+              <%= menu_item "<i class='fa fa-file-o'></i> Availability".html_safe, new_volunteer_availability_path(current_volunteer) %>
 
               <%= menu_divider %>
 

@@ -59,23 +59,13 @@ class VolunteersController < ApplicationController
 
   def index
     @header = 'All Volunteers'
+    @volunteers = Volunteer.joins(:assignments)
+                           .where(assignments: {region_id: current_volunteer.region_ids})
     respond_to do |format|
       format.json {
-        @volunteers = Volunteer.select('email,id,name,phone').collect do |volunteer|
-          volunteer_region_matches = (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0
-          if volunteer_region_matches
-            volunteer
-          end
-        end.compact
-        render json: @volunteers.to_json
+        render json: @volunteers.select('email,phone,volunteers.id id,name').to_json
       }
       format.html {
-        @volunteers = Volunteer.includes(:regions).all.collect do |volunteer|
-          volunteer_region_matches = (volunteer.regions.collect{ |region| region.id } & current_volunteer.region_ids).length > 0
-          if volunteer_region_matches
-            volunteer
-          end
-        end.compact
         render :index
       }
     end

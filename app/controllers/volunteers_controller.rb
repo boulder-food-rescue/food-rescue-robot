@@ -191,7 +191,7 @@ class VolunteersController < ApplicationController
 
       admin_region_ids = @my_admin_regions.collect { |my_admin_region| my_admin_region.id }
 
-      @my_admin_volunteers = my_admin_volunteers(admin_region_ids)
+      @my_admin_volunteers = unassigned_or_in_regions(admin_region_ids)
     end
 
     @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
@@ -298,14 +298,11 @@ class VolunteersController < ApplicationController
 
   private
 
-  def my_admin_volunteers(admin_region_ids)
-    Volunteer.all.collect do |volunteer|
-      regions_length_empty = (volunteer.regions.length == 0)
-      admin_regions_contained_in_my_regions = (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0
-      if regions_length_empty || admin_regions_contained_in_my_regions
-        volunteer
-      end
-    end.compact
+  def unassigned_or_in_regions(admin_region_ids)
+    unassigned = Volunteer.includes(:assignments).where( assignments: { volunteer_id: nil } )
+    volunteers_in_regions = Volunteer.joins(:assignments).where(assignments: {region_id: admin_region_ids})
+
+    volunteers_in_regions + unassigned
   end
 
 end

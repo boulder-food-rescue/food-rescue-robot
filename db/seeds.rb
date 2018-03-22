@@ -196,12 +196,12 @@ ScheduleVolunteer.create({
 #Generate log of the schedule, instructions found in log_builder.rb
 
 chain = FoodRobot::LogGenerator::ScheduleChainDecorator.new(schedule_chain)
-d = chain.donors.first
+donor_chain = chain.donors.first
 date = Date.today - 7
-FoodRobot::LogGenerator::LogBuilder.new(date, d, nil).log.save #Log for past pick up
+FoodRobot::LogGenerator::LogBuilder.new(date, donor_chain, nil).log.save #Log for past pick up
 
 date = Date.today + 100
-FoodRobot::LogGenerator::LogBuilder.new(date, d, nil).log.save #Log for future pick up
+FoodRobot::LogGenerator::LogBuilder.new(date, donor_chain, nil).log.save #Log for future pick up
 
 
 # Generate food type

@@ -1,0 +1,12 @@
+<h1> Here are the availabilities </h1>
+
+<ul>
+
+  <% @avails.each do |avail|  %>
+    <% vid = avail.volunteer.id %>
+    <li id="">
+      <%= link_to avail.volunteer.name, '#', id: "volunteer_#{vid}" %>
+    </li>
+  <% end %>
+
+</ul>

@@ -20,6 +20,8 @@
       </tr>
     </thead>
     <tbody>
+
+    <p><a href="?all=true">Show volunteers for all regions</a> |  <a href="/volunteers/unassigned"> Show volunteers for my region only</a></p>
       <% @volunteers.each do |volunteer|
         row_bgcolor = nil
         if volunteer.super_admin?

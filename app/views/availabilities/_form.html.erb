@@ -1,0 +1,25 @@
+ <%= form_for [@volunteer, @availability] do |f| =%>
+   <%= fields_for :availabilities do |ff| %>
+   <div>
+     <table width="80%" id="table_of_availabilities" class="table table-striped">
+       <td scope="col">Time of Day</td>
+         <% @weekdays.each do |day| %>
+         <th><%= day %></th>
+        <% end %>
+      <tr>
+        <% @timeslots.each_with_index do |time, time_index| %>
+        <th><%= time %></th>
+          <% @weekdays.each_with_index do |day, day_index| %>
+          <td>
+              <%= ff.check_box_tag 'availability[]', day: day_index, time: time_index =%>
+          </td>
+          <% end %>
+      </tr>
+        <% end %>
+     </table>
+   </div>
+   <div>
+     <%= ff.submit =%>
+ </div>
+ <% end %>
+<% end %>

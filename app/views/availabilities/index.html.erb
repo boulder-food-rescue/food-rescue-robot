@@ -1,12 +1,13 @@
 <h1> Here are the availabilities </h1>
 
-<ul>
+<button type="button" name="button" id="monday">Monday</button>
+<button type="button" name="button">Tuesday</button>
+<button type="button" name="button">Morning</button>
 
+<ul>
   <% @avails.each do |avail|  %>
-    <% vid = avail.volunteer.id %>
-    <li id="">
-      <%= link_to avail.volunteer.name, '#', id: "volunteer_#{vid}" %>
+    <li style="" id="volunteer_<%= avail.volunteer.id %>">
+      Day: <%= avail.day %>, Time: <%= avail.time %>, Name: <%= avail.volunteer.name %>, id: <%= avail.volunteer.id %>
     </li>
   <% end %>
-
 </ul>

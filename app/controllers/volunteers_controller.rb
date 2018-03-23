@@ -182,7 +182,7 @@ class VolunteersController < ApplicationController
     if current_volunteer.super_admin?
       @my_admin_volunteers = Volunteer.includes(:regions).all
     else
-      @my_admin_volunteers = unassigned_or_in_regions(admin_region_ids)
+      @my_admin_volunteers = unassigned_or_in_regions(@admin_region_ids)
     end
   end
 
@@ -298,7 +298,7 @@ class VolunteersController < ApplicationController
     volunteers_in_regions = Volunteer.joins(:assignments)
                                      .where(assignments: {region_id: admin_region_ids}) - [current_volunteer]
 
-    [volunteers_in_regions + unassigned]
+    volunteers_in_regions + unassigned
   end
 
 end

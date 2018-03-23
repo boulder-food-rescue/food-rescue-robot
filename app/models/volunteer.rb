@@ -44,6 +44,9 @@ class Volunteer < ActiveRecord::Base
   before_save :ensure_authentication_token
   after_save :auto_assign_region
 
+  scope :not_super_admin, -> { where(admin: false) }
+  scope :super_admin, -> { where(admin: true) }
+
   # more trustworthy and self.assigned? attribute?
   def unassigned?
     assignments.empty?

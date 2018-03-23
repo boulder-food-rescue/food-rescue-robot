@@ -162,7 +162,7 @@ class Volunteer < ActiveRecord::Base
   end
 
   def region_names
-    assignments.flat_map { |a| a.region.try(:name) }.uniq.join(",")
+    assignments.flat_map { |a| "#{a.region.try(:name)}#{a.admin ? '*' : ''}" }.uniq.join(",")
   end
 
   ### CLASS METHODS

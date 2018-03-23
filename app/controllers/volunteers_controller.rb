@@ -180,7 +180,7 @@ class VolunteersController < ApplicationController
     @my_admin_regions = current_volunteer.admin_regions
 
     if current_volunteer.super_admin?
-      @my_admin_volunteers = Volunteer.all
+      @my_admin_volunteers = Volunteer.includes(:regions).all
     else
       @my_admin_volunteers = unassigned_or_in_regions(admin_region_ids)
     end

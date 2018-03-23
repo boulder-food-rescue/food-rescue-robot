@@ -6,7 +6,7 @@
 
 <div class="row">
   <div class="col-sm-6">
-    <h2> Switch to User </h2>
+    <h2>Switch to User</h2>
     <p>
       Select a volunteer from the list below to swtich to.
       After switching you will have logout and login to get back to your
@@ -19,13 +19,7 @@
             <label for="volunteer_id">Volunteer:</label>
           </td>
           <td>
-            <% if current_volunteer.super_admin? %>
-              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
-                    ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }), {class: "form-control select2"}) %></td>
-            <% else %>
-              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
-                    ((v.regions.collect{ |r| r.id } & @admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact), {class: "form-control select2"}) %>
-            <% end %>
+            <%= select_tag(:volunteer_id, options_for_select(Volunteer.with_regions_for_select(@my_admin_volunteers)), { class: "form-control select2" }) %>
           </td>
         </tr>
       </table>
@@ -42,8 +36,7 @@
           </td>
           <td>
             <% if current_volunteer.super_admin? %>
-              <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r|
-                     r.id }.join(",")})").collect{ |v| [v.name,v.id] }),{class: "form-control select2"}) %>
+              <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r| r.id }.join(",")})").collect{ |v| [v.name, v.id] }), { class: "form-control select2" }) %>
             <% else %>
               <%= select_tag(:location_id, options_for_select(Location.where(region_id: @admin_region_ids).collect { |loc| [loc.name, loc.id] })) %>
             <% end %>
@@ -118,7 +111,7 @@
             <label for="volunteer_id">Volunteer:</label>
           </td>
           <td>
-            <%= select_tag(:volunteer_id, options_for_select(@my_admin_volunteers.collect{ |v| [v.name+" ["+v.assignments.collect{ |a| ((a.region.nil?) ? "" : a.region.name) + (a.admin ? "*" : "") }.join(",")+"]",v.id] }), {class: "form-control select2"}) %>
+            <%= select_tag(:volunteer_id, options_for_select(Volunteer.with_regions_for_select(@my_admin_volunteers)), {class: "form-control select2"}) %>
           </td>
         </tr>
         <tr>

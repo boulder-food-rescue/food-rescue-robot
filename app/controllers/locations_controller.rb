@@ -12,7 +12,7 @@ class LocationsController < ApplicationController
               end
       render :hud
     else
-      flash[:notice] = "Sorry, the key you are using is expired or you are not authorized to do that"
+      flash[:notice] = 'Sorry, the key you are using is expired or you are not authorized to do that'
       return redirect_to(root_path)
     end
   end

@@ -59,19 +59,13 @@ class VolunteersController < ApplicationController
 
   def index
     @header = 'All Volunteers'
+    @volunteers = Volunteer.joins(:assignments)
+                           .where(assignments: {region_id: current_volunteer.region_ids})
     respond_to do |format|
       format.json {
-        @volunteers = Volunteer.select('email,id,name,phone').collect do |volunteer|
-          (volunteer.regions.collect{ |region| region.id } &
-            current_volunteer.region_ids).length > 0 ? volunteer : nil
-        end.compact
-        render json: @volunteers.to_json
+        render json: @volunteers.select('email,phone,volunteers.id id,name').to_json
       }
       format.html {
-        @volunteers = Volunteer.includes(:regions).all.collect do |volunteer|
-          (volunteer.regions.collect { |region| region.id } &
-            current_volunteer.region_ids).length > 0 ? volunteer : nil
-        end.compact
         render :index
       }
     end
@@ -192,16 +186,12 @@ class VolunteersController < ApplicationController
       @my_admin_volunteers = Volunteer.all
     else
       @my_admin_regions = current_volunteer.assignments.collect do |assignment|
-         assignment.admin ? assignment.region : nil
+        assignment.admin ? assignment.region : nil
       end.compact
 
       admin_region_ids = @my_admin_regions.collect { |my_admin_region| my_admin_region.id }
 
-      @my_admin_volunteers = Volunteer.all.collect do |volunteer|
-        ((volunteer.regions.length == 0) ||
-        (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0) ? volunteer : nil
-      end.compact
-
+      @my_admin_volunteers = unassigned_or_in_regions(admin_region_ids)
     end
 
     @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
@@ -309,4 +299,14 @@ class VolunteersController < ApplicationController
 
     render :home
   end
+
+  private
+
+  def unassigned_or_in_regions(admin_region_ids)
+    unassigned = Volunteer.includes(:assignments).where( assignments: { volunteer_id: nil } )
+    volunteers_in_regions = Volunteer.joins(:assignments).where(assignments: {region_id: admin_region_ids})
+
+    volunteers_in_regions + unassigned
+  end
+
 end

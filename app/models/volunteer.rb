@@ -110,6 +110,7 @@ class Volunteer < ActiveRecord::Base
     return true if !strict && super_admin?
 
     admin_regions_ids = admin_region_ids(strict)
+
     if region.nil?
       return true unless admin_regions_ids.empty?
     elsif admin_regions_ids.include?(region.id)
@@ -140,10 +141,11 @@ class Volunteer < ActiveRecord::Base
     if super_admin? && !strict
       Region.all
     else
-      assignments.
-        eager_load(:region).
-        where(admin: true).
-        collect(&:region)
+      assignments
+        .eager_load(:region)
+        .where(admin: true)
+        .collect(&:region)
+        .compact
     end
   end
 

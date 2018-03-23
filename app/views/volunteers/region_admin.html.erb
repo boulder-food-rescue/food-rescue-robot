@@ -48,10 +48,9 @@
                      r.id }.join(",")})").collect{ |v| [v.name,v.id] }),{class: "form-control select2"}) %>
             </td>
           <% else %>
-          <td>
-            <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{@admin_region_ids.join(",")})").collect{ |l|
-                    [l.name,l.id] })) %>
-          </td>
+            <td>
+              <%= select_tag(:location_id, options_for_select(Location.where(region_id: @admin_region_ids).collect { |loc| [loc.name, loc.id] })) %>
+            </td>
           <% end %>
         </tr>
         <tr>

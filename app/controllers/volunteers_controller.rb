@@ -176,21 +176,14 @@ class VolunteersController < ApplicationController
   end
 
   def region_admin
-    @regions = Region.all
     @admin_region_ids = current_volunteer.admin_region_ids
+    @my_admin_regions = current_volunteer.admin_regions
+
     if current_volunteer.super_admin?
-      @my_admin_regions = @regions
       @my_admin_volunteers = Volunteer.all
     else
-      @my_admin_regions = current_volunteer.assignments.collect do |assignment|
-        assignment.admin ? assignment.region : nil
-      end.compact
-
-      admin_region_ids = @my_admin_regions.collect { |my_admin_region| my_admin_region.id }
-
       @my_admin_volunteers = unassigned_or_in_regions(admin_region_ids)
     end
-
   end
 
   # Admin only view, hence use of #admin_regions for region lookup

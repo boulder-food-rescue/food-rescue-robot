@@ -292,10 +292,13 @@ class VolunteersController < ApplicationController
   private
 
   def unassigned_or_in_regions(admin_region_ids)
-    unassigned = Volunteer.includes(:assignments).where( assignments: { volunteer_id: nil } )
-    volunteers_in_regions = Volunteer.joins(:assignments).where(assignments: {region_id: admin_region_ids})
+    unassigned = Volunteer.includes(:assignments)
+                          .where( assignments: { volunteer_id: nil } )
 
-    volunteers_in_regions + unassigned
+    volunteers_in_regions = Volunteer.joins(:assignments)
+                                     .where(assignments: {region_id: admin_region_ids}) - [current_volunteer]
+
+    [volunteers_in_regions + unassigned]
   end
 
 end

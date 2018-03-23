@@ -86,8 +86,10 @@ can see the routes with ```rake routes```;
   $ sudo su - postgres
   $ psql
   > CREATE DATABASE bfr_webapp_db;
+  > CREATE DATABASE bfr_webapp_db_test;
   > CREATE ROLE bfr_webapp_user WITH LOGIN PASSWORD 'changeme';
   > GRANT ALL ON DATABASE bfr_webapp_db TO bfr_webapp_user;
+  > GRANT ALL ON DATABASE bfr_webapp_db_test TO bfr_webapp_user;
   > \q
   $ exit
   ```
@@ -111,49 +113,34 @@ can see the routes with ```rake routes```;
   DB_TEST_PASSWORD=[Use your local Postgres password, if any, for bfr_webapp_user]
   ```
 
-5. **Create database:**
 
-  ```
-  bundle exec rake db:create
-  ```
-
-6. **If you receive an encoding error, go to db console and:**
-
-  ```
-  SET CLIENT_ENCODING TO 'WIN1252';
-  ```
-
-7. **Load Database Schema:**
+5. **Load Development Database Schema:**
 
   ```
   bundle exec rake db:schema:load
   ```
 
-  **Warning:** _`bundle exec rake db:migrate` currently does not work due to default scopes an improper order of columns added to the database with migrations._
+  **Warning:** _`bundle exec rake db:migrate` currently does not work due to default scopes an improper order of columns added to the database with migrations. `bundle exec rake db:schema:load` will build your tables instead._
 
-8. **Seed:**
+6. **Seed Development Database**
 
   ```
   bundle exec rake db:seed
   ```
   **Note:** _This creates an admin volunteer and other required bits. You should look it over._
 
-9. **Prepare Testing:**
+7. **Load Test Database Schema**
 
   ```
-  bundle exec rake db:test:prepare
+  bundle exec rake db:schema:load RAILS_ENV=test
   ```
 
 ## Running It
 
 You should be able to simply:
-
-  $ make devserver
-
-or
-
+```
   $ bundle exec rails server
-
+```
 
 This starts a thin server on localhost:3000, which you can get at with your browser.
 
@@ -184,7 +171,9 @@ volunteer.save!
 
 Run:
 
-  bundle exec rake db:sample_region
+  ```
+  $ bundle exec rake db:sample_region
+  ```
 
 **Note:** _Running the `db:sample_region` rake task will create a new `Region` in your database and populate it with a bunch of random data (volunteers, donors, recipients, schedule chains, etc.). For more info on what exactly is created, see `lib/sample_data/region_data.rb`._
 

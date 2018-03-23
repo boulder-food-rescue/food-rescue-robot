@@ -218,6 +218,23 @@ RSpec.describe VolunteersController do
     it 'renders the index template' do
       expect(subject).to render_template :index
     end
+    it 'assigns header' do
+      subject
+      expect(assigns(:header)).to_not be_nil
+    end
+    it 'assigns volunteer, html' do
+      subject
+      expect(assigns(:volunteers)).to eq([volunteer])
+    end
+    it 'assigns volunteer, json' do
+      get :index, format: :json
+      expect(assigns(:volunteers)).to eq([volunteer])
+      response_json = JSON.parse(response.body)
+      expect(response_json.length).to eq(1)
+      expect(response_json[0]['email']).to eq(volunteer.email)
+      expect(response_json[0]['name']).to eq(volunteer.name)
+      expect(response_json[0]['phone']).to eq(volunteer.phone)
+    end
   end
 
   describe 'GET #show' do
@@ -334,13 +351,41 @@ RSpec.describe VolunteersController do
     end
   end
 
-  describe 'GET #region_admin' do
+  describe 'GET #region_admin as volunteer' do
     subject { get :region_admin }
 
     before { sign_in volunteer }
 
     it 'renders the region_admin template' do
       expect(subject).to render_template :region_admin
+    end
+    it 'adds regions' do
+      subject
+      expect(assigns(:regions)).to_not be_nil
+      expect(assigns(:regions).count).to eq(1)
+    end
+    it 'my_admin_volunteers is empty by default' do
+      subject
+      expect(assigns(:my_admin_volunteers)).to eq([])
+    end
+  end
+
+  describe 'GET #region_admin as admin' do
+    subject { get :region_admin }
+
+    before { sign_in admin }
+
+    it 'renders the region_admin template' do
+      expect(subject).to render_template :region_admin
+    end
+    it 'adds regions' do
+      subject
+      expect(assigns(:regions)).to_not be_nil
+      expect(assigns(:regions).count).to eq(1)
+    end
+    it 'my_admin_volunteers is empty by default' do
+      subject
+      expect(assigns(:my_admin_volunteers)).to eq([admin])
     end
   end
 

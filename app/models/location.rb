@@ -113,7 +113,7 @@ class Location < ActiveRecord::Base
   end
 
   def time_zone
-    return 'UTC' if region.time_zone.nil? or Time.find_zone(region.time_zone).nil?
+    return 'UTC' if region.try(:time_zone).nil? || Time.find_zone(region.time_zone).nil?
     region.time_zone
   end
 

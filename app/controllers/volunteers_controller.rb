@@ -157,13 +157,9 @@ class VolunteersController < ApplicationController
   # switch to a particular user
   def switch_user
     volunteer = Volunteer.find(params[:volunteer_id].to_i)
-    volunteer_region_ids = volunteer.regions.pluck(:id)
-    admin_region_ids =
-      current_volunteer.assignments.collect do |assignment|
-        assignment.admin ? assignment.region.id : nil
-      end.compact
+    volunteer_region_ids = volunteer.admin_region_ids
 
-    unless current_volunteer.super_admin? || (volunteer_region_ids & admin_region_ids).length > 0
+    unless current_volunteer.super_admin? || (volunteer_region_ids & current_volunteer.admin_region_ids).any?
       flash[:error] = "You're not authorized to switch to that user!"
       return redirect_to(root_path)
     end
@@ -180,21 +176,14 @@ class VolunteersController < ApplicationController
   end
 
   def region_admin
-    @regions = Region.all
+    @admin_region_ids = current_volunteer.admin_region_ids
+    @my_admin_regions = current_volunteer.admin_regions
+
     if current_volunteer.super_admin?
-      @my_admin_regions = @regions
-      @my_admin_volunteers = Volunteer.all
+      @my_admin_volunteers = Volunteer.includes(:regions).all
     else
-      @my_admin_regions = current_volunteer.assignments.collect do |assignment|
-        assignment.admin ? assignment.region : nil
-      end.compact
-
-      admin_region_ids = @my_admin_regions.collect { |my_admin_region| my_admin_region.id }
-
-      @my_admin_volunteers = unassigned_or_in_regions(admin_region_ids)
+      @my_admin_volunteers = unassigned_or_in_regions(@admin_region_ids)
     end
-
-    @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
   end
 
   # Admin only view, hence use of #admin_regions for region lookup
@@ -302,9 +291,17 @@ class VolunteersController < ApplicationController
 
   private
 
+  # RB 3-23-2018: Return volunteers that are unassigned
+  # and only in the region ids that are passed in
+  # all super admins are filtered out for security purposes
   def unassigned_or_in_regions(admin_region_ids)
-    unassigned = Volunteer.includes(:assignments).where( assignments: { volunteer_id: nil } )
-    volunteers_in_regions = Volunteer.joins(:assignments).where(assignments: {region_id: admin_region_ids})
+    unassigned = Volunteer.not_super_admin
+                          .includes(:assignments)
+                          .where( assignments: { volunteer_id: nil } )
+
+    volunteers_in_regions = Volunteer.not_super_admin
+                                     .joins(:assignments)
+                                     .where(assignments: { region_id: admin_region_ids })
 
     volunteers_in_regions + unassigned
   end

@@ -114,6 +114,74 @@ RSpec.describe Volunteer do
     end
   end
 
+  describe '#region_names' do
+    let(:boulder) { create(:region, name: 'Boulder') }
+    let(:denver) { create(:region, name: 'Denver') }
+    let(:volunteer_boulder) { create(:volunteer, assigned: true) }
+    let(:schedule_chain) { create(:schedule_chain, region: boulder) }
+    let(:schedule_chain_denver) { create(:schedule_chain, region: denver) }
+    let(:volunteer_denver) { create(:volunteer, regions: [denver], assigned: true) }
+    let(:shiftless_volunteer) { create(:volunteer, assigned: true) }
+    let(:regionless_volunteer) { create(:volunteer) }
+
+    before do
+      create(:assignment, volunteer: volunteer_boulder, region: boulder)
+      create(:schedule_volunteer, volunteer: volunteer_boulder, schedule_chain: schedule_chain)
+      create(:assignment, volunteer: volunteer_denver, region: denver)
+    end
+
+    it 'returns region name' do
+      expect(volunteer_boulder.region_names).to eq('Boulder')
+      expect(volunteer_denver.region_names).to eq('Denver')
+    end
+
+    it 'returns region name when there are two regions' do
+      create(:schedule_volunteer, volunteer: volunteer_denver, schedule_chain: schedule_chain_denver)
+      create(:assignment, volunteer: volunteer_denver, region: boulder)
+      expect(volunteer_boulder.region_names).to eq('Boulder')
+      expect(volunteer_denver.region_names).to eq('Denver,Boulder')
+    end
+
+    it 'returns region name when there are no regions' do
+      expect(shiftless_volunteer.region_names).to eq('')
+    end
+  end
+
+  describe '::with_regions_for_select' do
+    let(:boulder) { create(:region, name: 'Boulder') }
+    let(:denver) { create(:region, name: 'Denver') }
+    let(:volunteer_with_shifts) { create(:volunteer, assigned: true) }
+    let(:schedule_chain) { create(:schedule_chain, region: boulder) }
+    let(:shiftless_volunteer) { create(:volunteer, assigned: true) }
+    let(:shiftless_volunteer_denver) { create(:volunteer, regions: [denver], assigned: true) }
+
+    before do
+      create(:assignment, volunteer: volunteer_with_shifts, region: boulder)
+      create(:schedule_volunteer, volunteer: volunteer_with_shifts, schedule_chain: schedule_chain)
+      create(:assignment, volunteer: shiftless_volunteer, region: boulder)
+      create(:assignment, volunteer: shiftless_volunteer_denver, region: denver)
+      @volunteers = [volunteer_with_shifts, shiftless_volunteer, shiftless_volunteer_denver]
+    end
+
+    it 'returns array of region names / ids' do
+      volunteers = Volunteer.with_regions_for_select(@volunteers)
+
+      expect(volunteers.length).to eq(3)
+
+      expect(volunteers.include?(
+        ["#{volunteer_with_shifts.name} ['#{boulder.name}']", volunteer_with_shifts.id]
+      )).to eq(true)
+
+      expect(volunteers.include?(
+        ["#{shiftless_volunteer_denver.name} ['#{denver.name}']", shiftless_volunteer_denver.id]
+      )).to eq(true)
+
+      expect(volunteers.include?(
+        ["#{shiftless_volunteer.name} ['#{boulder.name}']", shiftless_volunteer.id]
+      )).to eq(true)
+    end
+  end
+
   describe '::active_but_shiftless' do
     let(:boulder) { create(:region, name: 'Boulder') }
     let(:denver) { create(:region, name: 'Denver') }

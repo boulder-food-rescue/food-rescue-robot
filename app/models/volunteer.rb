@@ -44,6 +44,9 @@ class Volunteer < ActiveRecord::Base
   before_save :ensure_authentication_token
   after_save :auto_assign_region
 
+  scope :not_super_admin, -> { where(admin: false) }
+  scope :super_admin, -> { where(admin: true) }
+
   # more trustworthy and self.assigned? attribute?
   def unassigned?
     assignments.empty?
@@ -155,11 +158,18 @@ class Volunteer < ActiveRecord::Base
 
   def current_absences
     today = Date.today
-
     absences.where('start_date < ? AND stop_date > ?', today, today)
   end
 
+  def region_names
+    assignments.flat_map { |a| "#{a.region.try(:name)}#{a.admin ? '*' : ''}" }.uniq.join(",")
+  end
+
   ### CLASS METHODS
+
+  def self.with_regions_for_select(vols)
+    vols.collect { |v| ["#{v.name} ['#{v.region_names}']", v.id] }
+  end
 
   def self.active(region_ids = nil, ndays = 90)
     query = joins(:logs).group('volunteers.id').having('max(logs.when) > ?', Time.zone.today - ndays)

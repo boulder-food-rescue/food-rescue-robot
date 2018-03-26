@@ -373,11 +373,12 @@ RSpec.describe VolunteersController do
     it 'renders the region_admin template' do
       expect(subject).to render_template :region_admin
     end
-    it 'adds regions' do
+
+    it 'adds my_admin_regions' do
       subject
-      expect(assigns(:regions)).to_not be_nil
-      expect(assigns(:regions).count).to eq(1)
+      expect(assigns(:my_admin_regions)).to be_empty
     end
+
     it 'my_admin_volunteers is empty by default' do
       subject
       expect(assigns(:my_admin_volunteers)).to eq([])
@@ -392,11 +393,19 @@ RSpec.describe VolunteersController do
     it 'renders the region_admin template' do
       expect(subject).to render_template :region_admin
     end
-    it 'adds regions' do
+
+    it 'adds my_admin_regions' do
       subject
-      expect(assigns(:regions)).to_not be_nil
-      expect(assigns(:regions).count).to eq(1)
+      expect(assigns(:my_admin_regions)).to_not be_nil
+      expect(assigns(:my_admin_regions).count).to eq(1)
     end
+
+    it 'adds admin_region_ids' do
+      subject
+      expect(assigns(:admin_region_ids)).to_not be_nil
+      expect(assigns(:admin_region_ids).count).to eq(1)
+    end
+
     it 'my_admin_volunteers is empty by default' do
       subject
       expect(assigns(:my_admin_volunteers)).to eq([admin])

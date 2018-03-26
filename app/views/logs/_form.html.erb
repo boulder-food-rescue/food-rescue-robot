@@ -1,4 +1,4 @@
-<%= simple_form_for @log, url: {action: @action }, class: 'form-horizontal' do |f| %>
+<%= simple_form_for @log, url: {action: @action}, class: 'form-horizontal' do |f| %>
   <!-- Errors -->
   <% if @log.errors.any? %>
     <div class="row">
@@ -14,118 +14,139 @@
   <% end %>
 
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-6 col-sm-offset-3">
       <%= hidden_field_tag "log[region_id]", @region.id %>
       <%= hidden_field_tag "log[schedule_chain_id]", @log.schedule_chain.nil? ? nil : @log.schedule_chain.id  %>
       <details>
-              Date
-              <div class="form-inline">
-                <%= f.date_select :when, {order: [:month, :day, :year]}, {class: 'form-control'} %>
-              </div>
-            <h5>Volunteer</h5>
-              <div>
-                <%= f.simple_fields_for :log_volunteers do |log_volunteer| %>
-                  <%= render 'log_volunteer_fields', :f => log_volunteer %>
-                <% end %>
-                <br />
-                <%= link_to_add_association 'add another volunteer', f, :log_volunteers, class: 'btn btn-primary' %>
-              </div>
-          <% if current_volunteer.any_admin?(@log.region) %>
-                Needed Volunteers<br/>
-                <span class="subtext">Default is the number required by the associated schedule, or at least one.</span>
-                <%= f.text_field(:num_volunteers, class: "form-control") %>
+        Date of Food Rescue
+        <div class="form-inline">
+          <%= f.date_select :when, {order: [:month, :day, :year]}, {class: 'form-control'} %>
+        </div>
+        <h5>Name of Volunteers</h5>
+        <div>
+          <%= f.simple_fields_for :log_volunteers do |log_volunteer| %>
+            <%= render 'log_volunteer_fields', :f => log_volunteer %>
           <% end %>
+          <br/>
+          <%= link_to_add_association 'add another volunteer', f, :log_volunteers, class: 'btn btn-primary' %>
+        </div>
+        <% if current_volunteer.any_admin?(@log.region) %>
+          Needed Volunteers<br/>
+          <span class="subtext">Default is the number required by the associated schedule, or at least one.</span>
+          <%= f.text_field(:num_volunteers, class: "form-control") %>
+        <% end %>
+        <h5>Where are you picking up from?</h5>
+        <%= f.select :donor_id, (@region.locations.donors + @region.locations.hubs + @region.locations.sellers).collect {|d| [d.name, d.id]}, {include_blank: true}, {class: 'form-control select2'} %>
 
-            <h5>Recipients</h5>
-              <div>
-                <%= f.simple_fields_for :log_recipients do |log_recipient| %>
-                  <%= render 'log_recipient_fields', :f => log_recipient %>
-                <% end %>
-                <%= link_to_add_association 'add another recipient', f, :log_recipients, :class=>'btn' %>
-              </div>
-            <h5>Donor</h5>
-              <%= f.select :donor_id, (@region.locations.donors + @region.locations.hubs + @region.locations.sellers).collect{ |d| [d.name,d.id] }, {include_blank: true}, {class: 'form-control select2'} %>
-      </details>
+        <h5>What is the drop off location?</h5>
+        <div>
+          <%= f.simple_fields_for :log_recipients do |log_recipient| %>
+            <%= render 'log_recipient_fields', :f => log_recipient %>
+          <% end %>
+          <%= link_to_add_association 'add another recipient', f, :log_recipients, :class => 'btn' %>
+        </div>
+          </details>
     </div>
   </div>
 
-<div class="mb-3">
-  <label for="username">How did you transport this food?</label>
-  <div class="input-group" style="width: 50%;">
-    <%= f.select(:transport_type_id, @transport_types,{:include_blank => true}, {class: "form-control"}) %>
-  </div>
-</div>
-
-<div class="mb-3">
-  <label for="email">Weight of food picked (lbs.)</label>
-  <% @log.log_parts.each{ |lp| %>
-    <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
-      <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
-        <td>
-          <%= f2.text_field(:weight, size: 5, class: "form-control") %>
-        </td>
-        <td>
-          <%= f2.text_field(:count, size: 5, class: "form-control") %>
-        </td>
-        <td>
-          <%= f2.text_field(:description, size: 20, class: "form-control") %>
-          <%= f2.hidden_field(:id) %>
-        </td>
-      </tr>
-    <% end %>
-  <% } %>
-
-  <%= fields_for :log_parts, LogPart.new, :index => "new_0" do |f2| %>
-    <tr class="log_part">
-      <td>
-        <%= f2.text_field(:weight, size: 5, class: "form-control") %>
-      </td>
-      <td>
-        <%= f2.text_field(:count, size: 5, class: "form-control") %>
-      </td>
-      <td>
-        <%= f2.text_field(:description, size: 20, class: "form-control") %>
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-      <td>TOTAL: <span id="total_weight">0</span></td>
-    </tr>
-  <% end %>
-</div>
-
-<div class="mb-3">
-  <label for="address">Hours Spent</label>
-  <%= f.text_field(:hours_spent, :size => "3", class: "form-control") %>
-</div>
-
-<div class="mb-3">
-  <label for="address2">Any comments, concerns, notes?
-  </label>
-  <%= f.text_area(:notes, :size => "30x6", class: "form-control") %>
-</div>
 
   <div class="row">
-    <div class="col-sm-12">
-    <td>
-      Flag For Admin<br />
-      <span class="subtext">Check this if you want to make sure someone reads this.</span>
-    </td>
-    <td>
-      <div class="checkbox">
-      <label for="log_flag_for_admin">
-        <%= f.check_box(:flag_for_admin) %>
-        Flag
-      </label>
-    </td>
-  </tr>
-</table>
-</div>
-</div>
+    <div class="col-sm-6 col-sm-offset-3">
+      <div class="mb-3">
+        <label for="username">How did you transport this food?</label>
+        <div class="input-group" style="width: 50%;">
+          <%= f.select(:transport_type_id, @transport_types, {:include_blank => true}, {class: "form-control"}) %>
+        </div>
+      </div>
 
-<div class="row">
-  <div class="col-sm-6">
-    <%= submit_tag %>
+      <div class="mb-3">
+        <% @log.log_parts.each_with_index {|lp, index| %>
+          <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
+            <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
+              <td>
+                <%= f2.label_tag(:weight, 'Weight of ' + @food_types[index][0].downcase + " (lbs.)") %>
+                <%= f2.number_field(:weight, size: 5, class: "form-control") %>
+              </td>
+              <td>
+                <% if @food_types[index][0] == "Food" %>
+                  <%= label_tag(:description, "Summary of food types:") %>
+                  <%= f2.text_field(:description, size: 20, class: "form-control") %>
+                <% end %>
+                <%= f2.hidden_field(:id) %>
+                <%= f2.hidden_field(:food_type_id) %>
+              </td>
+            </tr>
+          <% end %>
+        <% } %>
+
+          <td>TOTAL: <span id="total_weight">0</span></td>
+          </tr>
+      </div>
+
+      <div class="mb-3">
+        <label for=:hours_spent>Length of shift (in hours)</label>
+        <%= f.text_field(:hours_spent, :size => "3", class: "form-control") %>
+      </div>
+
+      <div class="mb-3">
+        <label for=:notes>Any comments, concerns, notes?
+        </label>
+        <%= f.text_area(:notes, :size => "30x6", class: "form-control") %>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12">
+          <td>
+            Flag For Admin<br/>
+            <span class="subtext">Check this if you want to make sure someone reads this.</span>
+          </td>
+          <td>
+            <div class="checkbox">
+              <label for="log_flag_for_admin">
+                <%= f.check_box(:flag_for_admin) %>
+                Flag
+              </label>
+            </div>
+          </td>
+          </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+          <%= submit_tag %>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+<% end %>
+<% content_for :scripts do %>
+  <script type="text/javascript" charset="utf-8">
+      function update_total_weight(){
+          t = 0.0
+          $( "input[id$='weight']").each(function(i){
+              v = $(this).val()
+              if(v != "" && v != undefined) {
+                  t = t + parseFloat(v)
+              }
+          })
+          if(isNaN(t) || t <= 0){
+              $("#zero_reason").show();
+          }else{
+              $("#zero_reason").hide();
+          }
+          $("#total_weight").text(t)
+      }
+
+      jQuery(document).ready(function() {
+
+          update_total_weight();
+          $( "input[id$='weight']").each(function(i){
+              $(self).on("change",function(){
+                  update_total_weight();
+              });
+          });
+      });
+  </script>
 <% end %>

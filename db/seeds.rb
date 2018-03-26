@@ -8,7 +8,7 @@
 
 # Create global transport types
 [
-  {name: 'Bike'},
+  {name: 'Bicycle'},
   {name: 'Car'},
   {name: 'Foot'}
 ].each do |attrs|

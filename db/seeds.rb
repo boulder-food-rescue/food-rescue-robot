@@ -8,7 +8,7 @@
 
 # Create global transport types
 [
-  {name: 'Bike'},
+  {name: 'Bicycle'},
   {name: 'Car'},
   {name: 'Foot'}
 ].each do |attrs|
@@ -202,3 +202,25 @@ FoodRobot::LogGenerator::LogBuilder.new(date, donor_chain, nil).log.save #Log fo
 
 date = Date.today + 100
 FoodRobot::LogGenerator::LogBuilder.new(date, donor_chain, nil).log.save #Log for future pick up
+
+
+# Generate food type
+
+FoodType.create({
+    'name' => 'Food',
+    'region_id' => region.id
+})
+
+FoodType.create({
+    'name' => 'Compost',
+    'region_id' => region.id
+})
+
+# Generate scale type
+
+ScaleType.create({
+   'name' => 'Scale',
+   'weight_unit' => 'lbs',
+   'region_id' => region.id
+})
+

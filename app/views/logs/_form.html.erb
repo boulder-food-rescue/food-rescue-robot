@@ -65,6 +65,9 @@
             <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
               <td>
                 <%= f2.label_tag(:weight, 'Weight of ' + @food_types[index][0].downcase + " (lbs.)") %>
+                <% if @food_types[index][0] == "Food" %>
+                  <p>Compost weight should be subtracted from this value.</p>
+                <% end %>
                 <%= f2.number_field(:weight, size: 5, class: "form-control") %>
               </td>
               <td>

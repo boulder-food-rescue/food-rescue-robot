@@ -157,16 +157,15 @@ class VolunteersController < ApplicationController
   # switch to a particular user
   def switch_user
     volunteer = Volunteer.find(params[:volunteer_id].to_i)
-    volunteer_region_ids = volunteer.admin_region_ids
 
-    unless current_volunteer.super_admin? || (volunteer_region_ids & current_volunteer.admin_region_ids).any?
-      flash[:error] = "You're not authorized to switch to that user!"
+    unless current_volunteer.super_admin? || (volunteer.region_ids & current_volunteer.admin_region_ids).any?
+      flash[:error] = 'You are not authorized to switch to that user!'
       return redirect_to(root_path)
     end
 
     sign_out(current_volunteer)
     sign_in(volunteer)
-    flash[:notice] = "Successfully switched to user #{current_volunteer.name}."
+    flash[:notice] = "Successfully switched to user: #{current_volunteer.name}."
     home
   end
 

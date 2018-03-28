@@ -294,13 +294,10 @@ class VolunteersController < ApplicationController
   # and only in the region ids that are passed in
   # all super admins are filtered out for security purposes
   def unassigned_or_in_regions(admin_region_ids)
-    unassigned = Volunteer.not_super_admin
-                          .includes(:assignments)
-                          .where( assignments: { volunteer_id: nil } )
+    unassigned = Volunteer.not_super_admin.unassigned
 
     volunteers_in_regions = Volunteer.not_super_admin
-                                     .joins(:assignments)
-                                     .where(assignments: { region_id: admin_region_ids })
+                                     .assigned_to_regions(admin_region_ids)
 
     volunteers_in_regions + unassigned
   end

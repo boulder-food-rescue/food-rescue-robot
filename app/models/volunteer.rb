@@ -46,6 +46,8 @@ class Volunteer < ActiveRecord::Base
 
   scope :not_super_admin, -> { where(admin: false) }
   scope :super_admin, -> { where(admin: true) }
+  scope :unassigned, -> { includes(:assignments).where( assignments: { volunteer_id: nil }) }
+  scope :assigned_to_regions, -> (admin_region_ids) { joins(:assignments).where(assignments: { region_id: admin_region_ids }) }
 
   # more trustworthy and self.assigned? attribute?
   def unassigned?

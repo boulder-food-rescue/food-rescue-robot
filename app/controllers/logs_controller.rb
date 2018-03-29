@@ -48,7 +48,7 @@ class LogsController < ApplicationController
   def index(logs=nil, header='Entire Log')
     @shifts = []
     if current_volunteer.region_ids.length > 0
-      @shifts = Shift.build_shifts(logs.nil? ? Log.where("region_id IN (?)", current_volunteer.region_ids.join(',')) : logs)
+      @shifts = Shift.build_shifts(logs.nil? ? Log.where(region_id: current_volunteer.region_ids) : logs)
     end
 
     respond_to do |format|

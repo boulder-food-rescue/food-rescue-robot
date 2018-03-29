@@ -735,12 +735,6 @@ Style/RegexpLiteral:
 Style/SymbolArray:
   EnforcedStyle: brackets
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/SymbolLiteral:
-  Exclude:
-    - 'config/initializers/food_rescue_robot.rb'
-
 # Offense count: 36
 # Cop supports --auto-correct.
 # Configuration parameters: IgnoredMethods.

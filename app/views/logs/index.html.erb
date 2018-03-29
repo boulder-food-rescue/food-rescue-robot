@@ -5,13 +5,13 @@
     <div class="col-sm-6 text-left">
       <%= form_tag("/logs/new", method: "get", class: "form-inline") do %>
         <%= label_tag :region_id, 'New Log For:' %>
-        <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] }), {class: 'form-control'} ) %>
+        <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name, r.id] }), { class: 'form-control' } ) %>
         <%= submit_tag("Go") %>
       <% end %>
     </div>
     <div class="col-sm-6">
       <%= form_tag("/logs/by_day", method: "get", class: "form-inline") do %>
-        Jump to <%= date_select("date",:d, {order: [:day, :month, :year], start_year: 1920, end_year: DateTime.now.year}, {class: 'form-control'}) %>
+        Jump to <%= date_select("date", :d, {order: [:day, :month, :year], start_year: 1920, end_year: DateTime.now.year}, { class: 'form-control' }) %>
         <%= submit_tag("Go") %>
       <% end %>
     </div>
@@ -25,9 +25,7 @@
     <% if current_volunteer.assignments.length == 0 %>
       <p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
     <% elsif @shifts.length == 0 %>
-      <p>
-        No shifts found.
-      </p>
+      <p>No shifts found.</p>
     <% else %>
       <table class="table" id="data_table">
         <thead>
@@ -55,20 +53,21 @@
         <tbody>
           <%
             @shifts.each do |shift|
-              row_bgcolor = nil
-
-              if shift.volunteers_needed? && !current_page?(controller: "logs", action: "open")
-                row_bgcolor = "pink"
-              elsif shift.volunteers_need_training?
-                row_bgcolor = "lightgreen"
+              row_bgcolor =
+                if shift.volunteers_needed? && !current_page?(controller: "logs", action: "open")
+                 'pink'
+                elsif shift.volunteers_need_training?
+                  'lightgreen'
+                else
+                  'white'
               end
           %>
-            <tr <% unless row_bgcolor.nil? %>style="background: <%= row_bgcolor %>;"<% end %>>
+            <tr style="background: <%= row_bgcolor %>;">
               <td>
                 <%= shift.when.strftime("%Y-%m-%d") %>
               </td>
               <td>
-                <% unless shift.schedule_chain.nil? %>
+                <% if shift.schedule_chain.present? %>
                   <%= link_to schedule_chain_path(shift.schedule_chain.id), class: 'btn btn-info info' do %>
                     <i class="fa fa-info-circle"></i>
                     Info
@@ -78,7 +77,7 @@
                 <% end %>
               </td>
               <td>
-                <%= readable_time_until shift.first_log %>
+                <%= readable_time_until(shift.first_log) %>
               </td>
               <td>
                 <% if shift.volunteers_needed? %>
@@ -96,15 +95,12 @@
                 <% unless shift.absences.empty? %>
                   <small>
                     <br />
-                      (normally:
-                        <% shift.absences.each do |absence| %>
-                          <% if absence.volunteer.present? %>
-                            <%= absence.volunteer.name %>,
-                          <% else %>
-                            Volunteer was Deleted,
-                          <% end %>
-                        <% end %>
-                      )</small>
+                    (normally:
+                      <% shift.absences.each do |absence| %>
+                        <% absence.volunteer.present? ? absence.volunteer.name : 'Volunteer Deleted' %>,
+                      <% end %>
+                    )
+                  </small>
                 <% end %>
               </td>
 
@@ -116,7 +112,7 @@
 
               <td>
                 <% shift.recipients.each do |recip| %>
-                  <%= link_to recip.name, recip %> <br />
+                  <%= link_to recip.name, recip %><br />
                 <% end %>
               </td>
 

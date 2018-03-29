@@ -17,7 +17,7 @@ class Notifier < ActionMailer::Base
   end
 
   def region_welcome_email(region, volunteer)
-    return nil if region.welcome_email_text.nil? or region.welcome_email_text.strip.length == 0
+    return nil if region.welcome_email_text.nil? or region.welcome_email_text.strip.empty?
     @welcome_email_text = region.welcome_email_text
     to = ForceTo.nil? ? volunteer.email : ForceTo
     mail(to: to, subject: '[FoodRobot] Welcome to the Food Rescue Robot!'){ |format| format.html }

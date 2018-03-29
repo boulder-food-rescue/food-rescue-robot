@@ -16,7 +16,7 @@ class VolunteersController < ApplicationController
     region = Region.find(params[:region_id])
     if params[:unassign]
       Assignment.where(volunteer_id: volunteer.id, region_id: region.id).destroy_all
-      if volunteer.assignments.length == 0
+      if volunteer.assignments.empty?
         volunteer.assigned = false
         volunteer.save
       end
@@ -51,7 +51,7 @@ class VolunteersController < ApplicationController
 
   def need_training
     @volunteers = Volunteer.all.keep_if do |volunteer|
-      ((volunteer.region_ids & current_volunteer.region_ids).length > 0) && volunteer.needs_training?
+      !(volunteer.region_ids & current_volunteer.region_ids).empty? && volunteer.needs_training?
     end
     @header = 'Volunteers Needing Training'
     render :index
@@ -73,7 +73,7 @@ class VolunteersController < ApplicationController
 
   def show
     @volunteer = Volunteer.find(params[:id])
-    unless current_volunteer.super_admin? || (current_volunteer.region_ids & @volunteer.region_ids).length > 0
+    unless current_volunteer.super_admin? || !(current_volunteer.region_ids & @volunteer.region_ids).empty?
       flash[:error] = "Can't view volunteer for a region you're not assigned to..."
       return redirect_to(root_path)
     end
@@ -97,7 +97,7 @@ class VolunteersController < ApplicationController
   end
 
   def check_permissions(volunteer)
-    unless current_volunteer.super_admin? || (current_volunteer.admin_region_ids & volunteer.region_ids).length > 0 || current_volunteer == volunteer
+    unless current_volunteer.super_admin? || !(current_volunteer.admin_region_ids & volunteer.region_ids).empty? || current_volunteer == volunteer
       flash[:error] = 'Not authorized to create/edit volunteers for that region'
       redirect_to(root_path)
       return false

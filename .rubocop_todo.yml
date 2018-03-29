@@ -797,17 +797,3 @@ Style/UnneededInterpolation:
 Style/WhileUntilModifier:
   Exclude:
     - 'app/models/schedule_chain.rb'
-
-# Offense count: 16
-# Cop supports --auto-correct.
-Style/ZeroLengthPredicate:
-  Exclude:
-    - 'app/controllers/absences_controller.rb'
-    - 'app/controllers/assignments_controller.rb'
-    - 'app/controllers/logs_controller.rb'
-    - 'app/controllers/schedule_chains_controller.rb'
-    - 'app/controllers/volunteers_controller.rb'
-    - 'app/helpers/application_helper.rb'
-    - 'app/mailers/notifier.rb'
-    - 'app/models/schedule_chain.rb'
-    - 'lib/food_robot.rb'

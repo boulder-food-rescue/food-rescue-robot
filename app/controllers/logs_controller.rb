@@ -40,8 +40,7 @@ class LogsController < ApplicationController
   end
 
   def tardy
-    regon_ids = current_volunteer.region_ids.join(',')
-    index(Log.where("region_id IN (?) AND \"when\" < current_date AND NOT complete and num_reminders >= 3", 'Missing Data (>= 3 Reminders)', regon_ids), 'Missing Data (>= 3 Reminders)')
+    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" < current_date AND NOT complete and num_reminders >= 3", 'Missing Data (>= 3 Reminders)'), 'Missing Data (>= 3 Reminders)')
   end
 
   def index(logs=nil, header='Entire Log')

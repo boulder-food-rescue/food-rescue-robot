@@ -27,8 +27,10 @@ class LogsController < ApplicationController
   end
 
   def last_ten
-    region_ids = current_volunteer.region_ids.join(',')
-    index(Log.where("region_id IN (?) AND \"when\" >= '#{(Time.zone.today-10)}'", region_ids), 'Last 10 Days of Shifts')
+    logs = Log.where(region_id: current_volunteer.region_ids)
+              .where('"when" >= ?', Time.zone.today - 10)
+              .complete
+    index(logs, 'Last 10 Days of Shifts')
   end
 
   def being_covered
@@ -63,8 +65,10 @@ class LogsController < ApplicationController
     @regions = current_volunteer.admin_regions
     region_ids = current_volunteer.admin_regions_ids
 
-    @first_recorded_pickup = Log.where("complete AND region_id in (?)", region_ids).
-      order('logs.when ASC').limit(1)
+    @first_recorded_pickup = Log.where(region_id: region_ids)
+                                .complete
+                                .order('logs.when ASC')
+                                .limit(1)
 
     @pounds_per_year = Log.joins(:log_parts)
                           .select('extract(YEAR from logs.when) as year, sum(weight)')

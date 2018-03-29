@@ -17,8 +17,9 @@ class WaiversController < ApplicationController
   end
 
   def new_driver_waiver
-    @volunteer_signee = @volunteer_signee
-    @volunteer_region = @volunteer_region
+    if admin_id = @volunteer_signee.driver_waiver_signed_by_admin_id
+      @admin_signee_name = Volunteer.find(admin_id).name
+    end
   end
 
   def create_driver
@@ -30,6 +31,7 @@ class WaiversController < ApplicationController
       redirect_to driver_waiver_path, alert: 'There was an error signing the waiver'
     end
   end
+
   private
 
   def accepted_waiver?
@@ -37,7 +39,7 @@ class WaiversController < ApplicationController
   end
 
   def signed_waiver_success?
-    if @volunteer_signee.blank?
+    if @volunteer_signee == current_volunteer
       SignDriverWaiver.call(volunteer_signee: current_volunteer, signed_at: Time.zone.now).success?
     else
       SignDriverWaiver.call(volunteer_signee: @volunteer_signee, signed_at: Time.zone.now, admin_signee: current_volunteer).success?

@@ -7,6 +7,10 @@ class Volunteer < ActiveRecord::Base
   belongs_to :requested_region, class_name: 'Region'
 
   has_many :absences
+  has_many :availabilities
+  accepts_nested_attributes_for :availabilities,
+    :allow_destroy => true,
+    :reject_if     => :all_blank
 
   has_many :assignments
   has_many :regions, through: :assignments
@@ -35,11 +39,6 @@ class Volunteer < ActiveRecord::Base
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-
-  has_attached_file :photo,
-                    styles: { thumb: '50x50', small: '200x200', medium: '500x500' },
-                    s3_credentials: { bucket: 'boulder-food-rescue-robot-volunteer-photo' }
-  validates_attachment_file_name :photo, matches: [/png\Z/, /jpe?g\Z/, /gif\Z/]
 
   before_save :ensure_authentication_token
   after_save :auto_assign_region
@@ -203,7 +202,7 @@ class Volunteer < ActiveRecord::Base
     includes(:regions)
         .where(regions: { id: region_ids })
         .where(driver_waiver_signed: true)
-        .where(driver_waiver_signed_by_admin_name: nil)
+        .where(driver_waiver_signed_by_admin_id: nil)
   end
 
   private

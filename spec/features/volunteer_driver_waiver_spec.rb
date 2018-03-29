@@ -68,7 +68,7 @@ RSpec.describe 'Volunteer waivers' do
 
     feature 'A region admin has already signed the driver waiver' do
       before do
-        volunteer.driver_waiver_signed_by_admin_name = region_admin.name
+        volunteer.driver_waiver_signed_by_admin_id = region_admin.id
         volunteer.driver_waiver_signed_by_admin_at = Time.zone.now
         volunteer.save
       end

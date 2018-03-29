@@ -1,6 +1,6 @@
 Webapp::Application.routes.draw do
 
-  resources :assignments, only: [] do
+  resources :assignments, only: [:new] do
     collection do
       get :knight
     end
@@ -114,6 +114,7 @@ Webapp::Application.routes.draw do
     member do
       get :reactivate
     end
+    resources :availabilities, except: [:show]
   end
 
   resource :waiver, only: [:new, :create]
@@ -124,7 +125,6 @@ Webapp::Application.routes.draw do
     resources :donors, only: [:index]
 
     resources :food_types, only: [:index, :new, :create, :edit, :update, :destroy]
-
   end
 
   devise_scope :volunteer do

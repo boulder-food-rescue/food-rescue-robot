@@ -1,7 +1,7 @@
 <h2>PERSONAL VEHICLE USE POLICY</h2>
 
 <% if @volunteer_region.present? %>
- 
+
   <div class="well" style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;">
     <p>The purpose of this policy is to promote the safety of employees and volunteers when using personal vehicles
       for <%= @volunteer_region.title %>.
@@ -42,7 +42,7 @@
       </li>
       <li>
         Drivers shall obey all applicable traffic and parking regulations, ordinances, and laws.
-        <ol type="a">
+        <ol type='a'>
           <li>
             Employees and volunteers who incur parking or other fines while on <%= @volunteer_region.title %> business are
             personally responsible for
@@ -113,7 +113,7 @@
         <% end %>
       </div>
       <div class="col-sm-6">
-        <% if current_volunteer.region_admin?(@volunteer_region) && !@volunteer_signee.driver_waiver_signed_by_admin_name %>
+        <% if current_volunteer.region_admin?(@volunteer_region) && !@volunteer_signee.driver_waiver_signed_by_admin_id %>
           <%= form_tag("/waiver/driver-new/?volunteer_id=" + @volunteer_signee.id.to_s) do %>
             Staff signature: <br/>
             <%= current_volunteer.name %>, check to sign electronically: <%= check_box_tag 'admin_accept', 1 %>
@@ -125,10 +125,10 @@
             <%= submit_tag 'Sign', class: "form-control" %>
           <% end %>
         <% end %>
-        <% if current_volunteer.region_admin?(@volunteer_region) && @volunteer_signee.driver_waiver_signed_by_admin_name %>
+        <% if current_volunteer.region_admin?(@volunteer_region) && @volunteer_signee.driver_waiver_signed_by_admin_id %>
     <span style="font-weight: bold; color: orange;">
        Staff signature: <br/>
-      <%= @volunteer_signee.driver_waiver_signed_by_admin_name %>
+      <%= @admin_signee_name %>
       signed the waiver at <%= @volunteer_signee.driver_waiver_signed_by_admin_at.to_s %>.
          </span>
         <% end %>
@@ -138,9 +138,8 @@
 <% else %>
   <p>You are not currently assigned to a region for volunteering. Please contact your regional volunteer coordinator to
     be assigned! If that fails to work, try Hana at
-    <a href="mailto:hana@boulderfoodrescue.org?subject=Robot Volunteer Assignment for ...">hana@boulderfoodrescue.org</a>
+    <a href='mailto:hana@boulderfoodrescue.org?subject=Robot Volunteer Assignment for ...'>hana@boulderfoodrescue.org</a>
     to be assigned to your region. Thanks for joining!</p>
 
 <% end %>
 <br/>
-

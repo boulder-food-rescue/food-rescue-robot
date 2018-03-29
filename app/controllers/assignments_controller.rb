@@ -2,6 +2,24 @@ class AssignmentsController < ApplicationController
   before_filter :authenticate_volunteer!
   before_filter :admin_only
 
+  def new
+    if current_volunteer.super_admin?
+      @my_admin_regions = Region.all
+      @my_admin_volunteers = Volunteer.all
+    else
+      @my_admin_regions = current_volunteer.assignments.collect do |assignment|
+         assignment.admin ? assignment.region : nil
+      end.compact
+
+      admin_region_ids = @my_admin_regions.collect { |my_admin_region| my_admin_region.id }
+
+      @my_admin_volunteers = Volunteer.all.collect do |volunteer|
+        ((volunteer.regions.length == 0) ||
+        (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0) ? volunteer : nil
+      end.compact
+    end
+  end
+
   def knight
     volunteer = Volunteer.find(params[:volunteer_id])
     region = Region.find(params[:region_id])

@@ -8,7 +8,7 @@
 
 # Create global transport types
 [
-  {name: 'Bike'},
+  {name: 'Bicycle'},
   {name: 'Car'},
   {name: 'Foot'}
 ].each do |attrs|
@@ -171,7 +171,8 @@ schedule_chain = ScheduleChain.create({
 })
 
 #Assign donor location to schedule
-Schedule.create({
+
+schedule = Schedule.create({
     'schedule_chain_id' => schedule_chain.id,
     'location_id' => donor.id,
     'position' => 1
@@ -192,25 +193,45 @@ ScheduleVolunteer.create({
     'active' => true
 })
 
+
+# Generate food type
+
+food = FoodType.create({
+    'name' => 'Food',
+    'region_id' => region.id
+})
+
+compost = FoodType.create({
+    'name' => 'Compost',
+    'region_id' => region.id
+})
+
+# Generate scale type
+
 ScaleType.create({
-    'name' => 'Scale Test',
-    'weight_unit' => 'lb',
+    'name' => 'Scale',
+    'weight_unit' => 'lbs',
     'region_id' => region.id
 })
 
-FoodType.create({
-    'name' => 'FoodType Test',
-    'region_id' => region.id
+SchedulePart.create({
+    'schedule_id' => schedule.id,
+    'food_type_id' => food.id
 })
 
-###TODO add scale and food types :)
+SchedulePart.create({
+   'schedule_id' => schedule.id,
+   'food_type_id' => compost.id
+})
+
 
 #Generate log of the schedule, instructions found in log_builder.rb
 
 chain = FoodRobot::LogGenerator::ScheduleChainDecorator.new(schedule_chain)
-donor = chain.donors.first
+donor_chain = chain.donors.first
 date = Date.today - 7
-FoodRobot::LogGenerator::LogBuilder.new(date, donor, nil).log.save #Log for past pick up
+FoodRobot::LogGenerator::LogBuilder.new(date, donor_chain, nil).log.save #Log for past pick up
 
 date = Date.today + 100
-FoodRobot::LogGenerator::LogBuilder.new(date, donor, nil).log.save #Log for future pick up
+FoodRobot::LogGenerator::LogBuilder.new(date, donor_chain, nil).log.save #Log for future pick up
+

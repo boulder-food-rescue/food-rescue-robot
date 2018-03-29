@@ -7,7 +7,12 @@ class VolunteersController < ApplicationController
     no_assignments = Volunteer.where('((SELECT COUNT(*) FROM assignments a WHERE a.volunteer_id=volunteers.id)=0)')
     unrequested = Volunteer.where(requested_region_id: nil)
     requested_my_region = Volunteer.where(requested_region_id: current_volunteer.admin_region_ids)
-    @volunteers = unassigned | (no_assignments & (unrequested | requested_my_region))
+    @volunteers = (no_assignments & requested_my_region)
+    if params[:all]
+      @volunteers = unassigned | (no_assignments & (unrequested | requested_my_region))
+    end
+
+
     @header = 'Unassigned Volunteers'
   end
 

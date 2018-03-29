@@ -87,7 +87,7 @@ class LogsController < ApplicationController
     @transport_per_year = {}
     @transport_years = []
     @transport_data = Log.joins(:transport_type)
-                         .select('extract(YEAR from logs.when) as year, transport_types.name, count(*)').
+                         .select('extract(YEAR from logs.when) as year, transport_types.name, count(*)')
                          .where(region_id: region_ids)
                          .complete
                          .group('name, year')

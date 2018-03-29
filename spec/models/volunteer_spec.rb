@@ -307,6 +307,7 @@ RSpec.describe Volunteer do
   describe 'scope in regions' do
     let(:region1) { create :region }
     let(:region2) { create :region }
+
     let(:volunteer1) do
       volunteer = create :volunteer, name: 'a'
       volunteer.regions << region1
@@ -329,11 +330,15 @@ RSpec.describe Volunteer do
   end
 
   describe 'scope needing training' do
+    let(:region) { create :region }
     let(:log1) { (create :log_volunteer).log }
     let(:log2) { (create :log_volunteer).log }
     let!(:volunteer1) { log1.volunteers.first }
 
     before do
+      volunteer1.regions << region
+      volunteer2.regions << region
+
       log1.update_attribute(:complete, true)
     end
 
@@ -341,8 +346,22 @@ RSpec.describe Volunteer do
       let!(:volunteer2) { create :volunteer }
 
       it 'returns volunteer not needing training' do
-        expect(described_class.needing_training).to include(volunteer2)
-        expect(described_class.needing_training).not_to include(volunteer1)
+        expect(described_class.needing_training(region)).to include(volunteer2)
+        expect(described_class.needing_training(region)).not_to include(volunteer1)
+      end
+    end
+
+    context 'none complete' do
+      before do
+        log1.update_attribute(:complete, false)
+        volunteer3.regions << region
+      end
+
+      let(:volunteer2) { create :volunteer }
+      let(:volunteer3) { create :volunteer }
+
+      it 'returns all volunteers' do
+        expect(described_class.needing_training(region)).to match_array([volunteer1, volunteer2, volunteer3])
       end
     end
 
@@ -350,8 +369,8 @@ RSpec.describe Volunteer do
       let!(:volunteer2) { log2.volunteers.first }
 
       it 'returns volunteer not needing training when log is not complete' do
-        expect(described_class.needing_training).to include(volunteer2)
-        expect(described_class.needing_training).not_to include(volunteer1)
+        expect(described_class.needing_training(region)).to include(volunteer2)
+        expect(described_class.needing_training(region)).not_to include(volunteer1)
       end
     end
   end

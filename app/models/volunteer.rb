@@ -2,14 +2,18 @@
 class Volunteer < ActiveRecord::Base
   default_scope { order('volunteers.name ASC').where(active: true) }
 
-  scope :in_regions, ->(regions) { joins(:regions).where('regions.id IN (?)', Array.wrap(regions)).uniq }
+  scope :in_regions, ->(regions) { joins(:regions).where(regions: { id: Array.wrap(regions) }).uniq }
+  scope :completed_any, -> { joins(log_volunteers: [:log]).where(logs: { complete: true }) }
 
-  scope :needing_training, lambda {
-    joins('LEFT JOIN log_volunteers ON log_volunteers.volunteer_id = volunteers.id')
-    .joins('LEFT JOIN logs ON logs.id = log_volunteers.log_id AND logs.complete = TRUE')
-    .where('logs.id IS NULL')
-    .uniq
-  }
+  # Return all voluneers in specified regions that do not have completed logs
+  scope :needing_training, (lambda do |regions|
+    completed_logs_in_region = Volunteer.in_regions(regions).completed_any
+
+    in_regions(regions).where(
+      'volunteers.id NOT IN (?)',
+      completed_logs_in_region.count.zero? ? [0] : completed_logs_in_region
+    )
+  end)
 
   belongs_to :transport_type
   belongs_to :cell_carrier

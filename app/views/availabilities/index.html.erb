@@ -1,13 +1,55 @@
 <h1> Here are the availabilities </h1>
 
-<button type="button" name="button" id="monday">Monday</button>
-<button type="button" name="button">Tuesday</button>
-<button type="button" name="button">Morning</button>
+<div class="container">
+  <!-- <button type="button" class="btn btn-success">Monday</button>
+  <button type="button" class="btn btn-success">Tuesday</button>
+  <button type="button" class="btn btn-success">Morning</button>
 
-<ul>
+
+  <button type="button" class="btn btn-success">Wednesday</button>
+  <button type="button" class="btn btn-success">Thursday</button>
+  <button type="button" class="btn btn-success">Afternoon</button>
+
+
+  <button type="button" class="btn btn-success">Friday</button>
+  <button type="button" class="btn btn-success">Saturday</button>
+  <button type="button" class="btn btn-success">Evening</button> -->
+
+  <button type="button" class="btn btn-success">Monday</button>
+  <button type="button" class="btn btn-success">Tuesday</button>
+  <button type="button" class="btn btn-success">Wednesday</button>
+  <button type="button" class="btn btn-success">Thursday</button>
+  <button type="button" class="btn btn-success">Friday</button>
+  <button type="button" class="btn btn-success">Saturday</button>
+  <button type="button" class="btn btn-success">Sunday</button>
+
+  <button type="button" class="btn btn-success">Afternoon</button>
+  <button type="button" class="btn btn-success">Evening</button>
+
+
+<div>
+<button type="button" class="submit btn btn-primary btn-lg" value="Submit Button">Submit</button>
+</div>
+<!-- #this is a drop down -->
+<!-- <select class="" name="">
+  <option value="[object Object]">Monday</option>
+</select> -->
+<!-- <ul>
   <% @avails.each do |avail|  %>
-    <li style="" id="volunteer_<%= avail.volunteer.id %>">
+    <li style="" id="volunteer_<%= avail.volunteer.id %>" data-day="monday" data-time="0">
       Day: <%= avail.day %>, Time: <%= avail.time %>, Name: <%= avail.volunteer.name %>, id: <%= avail.volunteer.id %>
     </li>
   <% end %>
-</ul>
+</ul> -->
+<div>
+   <table width="50%" id="table_of_volunteers">
+     <% @vols.each do |vol|  %>
+    <tr>
+      <td><%= vol.id %></td>
+      <td><%= vol.name %></td>
+      <td><%= vol.email %></td>
+    </tr>
+
+    <% end %>
+  </table>
+</div>

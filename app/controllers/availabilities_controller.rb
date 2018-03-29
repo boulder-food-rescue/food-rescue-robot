@@ -4,6 +4,7 @@ class AvailabilitiesController < ApplicationController
 
   def index
     @avails = Availability.all
+    @vols = Volunteer.all
     # Monday Mornings: .....
     # Tues mornigns ...
   end

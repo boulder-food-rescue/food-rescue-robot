@@ -2,6 +2,15 @@
 class Volunteer < ActiveRecord::Base
   default_scope { order('volunteers.name ASC').where(active: true) }
 
+  scope :in_regions, ->(regions) { joins(:regions).where('regions.id IN (?)', Array.wrap(regions)).uniq }
+
+  scope :needing_training, lambda {
+    joins('LEFT JOIN log_volunteers ON log_volunteers.volunteer_id = volunteers.id')
+    .joins('LEFT JOIN logs ON logs.id = log_volunteers.log_id AND logs.complete = TRUE')
+    .where('logs.id IS NULL')
+    .uniq
+  }
+
   belongs_to :transport_type
   belongs_to :cell_carrier
   belongs_to :requested_region, class_name: 'Region'

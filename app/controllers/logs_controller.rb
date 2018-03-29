@@ -67,19 +67,28 @@ class LogsController < ApplicationController
     @first_recorded_pickup = Log.where("complete AND region_id in (?)", region_ids).
       order('logs.when ASC').limit(1)
 
-    @pounds_per_year = Log.joins(:log_parts).select('extract(YEAR from logs.when) as year, sum(weight)').
-      where("complete AND region_id in (?)", region_ids).
-      group('year').order('year ASC').collect{ |l| [l.year, l.sum] }
+    @pounds_per_year = Log.joins(:log_parts)
+                          .select('extract(YEAR from logs.when) as year, sum(weight)')
+                          .where(region_id: region_ids)
+                          .complete
+                          .group('year').order('year ASC').collect{ |l| [l.year, l.sum] }
 
-    @pounds_per_month = Log.joins(:log_parts).select("date_trunc('month',logs.when) as month, sum(weight)").
-      where("complete AND region_id in (?)", region_ids).
-      group('month').order('month ASC').collect{ |l| [Date.parse(l.month).strftime('%Y-%m'), l.sum] }
+    @pounds_per_month = Log.joins(:log_parts)
+                           .select("date_trunc('month',logs.when) as month, sum(weight)")
+                           .where(region_id: region_ids)
+                           .complete
+                           .group('month')
+                           .order('month ASC')
+                           .collect{ |log| [Date.parse(log.month).strftime('%Y-%m'), log.sum] }
 
     @transport_per_year = {}
     @transport_years = []
-    @transport_data = Log.joins(:transport_type).select('extract(YEAR from logs.when) as year, transport_types.name, count(*)').
-      where("complete AND region_id in (?)", region_ids).
-      group('name, year').order('name, year ASC')
+    @transport_data = Log.joins(:transport_type)
+                         .select('extract(YEAR from logs.when) as year, transport_types.name, count(*)').
+                         .where(region_id: region_ids)
+                         .complete
+                         .group('name, year')
+                         .order('name, year ASC')
 
     @transport_data.each do |log|
       @transport_years << log.year unless @transport_years.include?(log.year)

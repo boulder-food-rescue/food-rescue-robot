@@ -107,7 +107,7 @@ module FoodRobot
     end
 
     # Remind the admins to cover things without a volunteer...
-    if short_term_cover_list.length > 0
+    unless short_term_cover_list.empty?
       short_term_cover_list.each do |region, logs|
         msg = Notifier.admin_short_term_cover_summary(region, logs) if region.present?
         if @@DontDeliverEmails
@@ -119,7 +119,7 @@ module FoodRobot
     end
 
     # Let the admin know about tardy data entry
-    if naughty_list.length > 0
+    unless naughty_list.empty?
       naughty_list.each do |region, logs|
         next unless region.present?
 

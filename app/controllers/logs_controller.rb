@@ -44,7 +44,7 @@ class LogsController < ApplicationController
 
   def index(logs=nil, header='Entire Log')
     @shifts = []
-    if current_volunteer.region_ids.length > 0
+    unless current_volunteer.region_ids.empty?
       @shifts = Shift.build_shifts(logs.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(',')})"): logs)
     end
     @header = header
@@ -162,7 +162,7 @@ class LogsController < ApplicationController
     @transport_types = TransportType.all.collect{ |e| [e.name, e.id] }
 
 
-    if @scale_types.length == 0
+    if @scale_types.empty?
       flash[:error] = "You have no scale types for the 'Weighed With' field for #{@region.name}. Please get this set up for your region."
       render :new and return
     end
@@ -285,7 +285,7 @@ class LogsController < ApplicationController
         render json: {error: 0, message: flash[:notice]}
       }
       format.html {
-        request.env["HTTP_REFERER"].present? ? redirect_to(:back) : redirect_to(open_logs_path)
+        request.env['HTTP_REFERER'].present? ? redirect_to(:back) : redirect_to(open_logs_path)
       }
     end
 

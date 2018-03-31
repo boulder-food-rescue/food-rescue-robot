@@ -1,7 +1,7 @@
 require 'sample_data'
 
 namespace :db do
-  desc "Create a sample region in the database"
+  desc 'Create a sample region in the database'
   task :sample_region => :environment do
     Faker::Config.locale = 'en-US'
     region = SampleData.create_region

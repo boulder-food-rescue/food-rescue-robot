@@ -62,7 +62,7 @@ class LogsController < ApplicationController
 
   def stats
     @regions = current_volunteer.admin_regions
-    region_ids = current_volunteer.admin_regions_ids
+    region_ids = current_volunteer.admin_region_ids
 
     @first_recorded_pickup = Log.where(region_id: region_ids)
                                 .complete

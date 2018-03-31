@@ -73,7 +73,9 @@ class LogsController < ApplicationController
                           .select('extract(YEAR from logs.when) as year, sum(weight)')
                           .where(region_id: region_ids)
                           .complete
-                          .group('year').order('year ASC').collect{ |l| [l.year, l.sum] }
+                          .group('year')
+                          .order('year ASC')
+                          .collect{ |l| [l.year, l.sum] }
 
     @pounds_per_month = Log.joins(:log_parts)
                            .select("date_trunc('month',logs.when) as month, sum(weight)")

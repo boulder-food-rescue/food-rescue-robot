@@ -29,7 +29,6 @@ class LogsController < ApplicationController
   def last_ten
     logs = Log.where(region_id: current_volunteer.region_ids)
               .where('"when" >= ?', Time.zone.today - 10)
-              .complete
     index(logs, 'Last 10 Days of Shifts')
   end
 

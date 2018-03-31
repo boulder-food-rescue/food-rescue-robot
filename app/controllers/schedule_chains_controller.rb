@@ -202,12 +202,12 @@ class ScheduleChainsController < ApplicationController
               collided_shifts.push(l)
             end
           }
-          if collided_shifts.length > 0
+          unless collided_shifts.empty?
             m = Notifier.schedule_collision_warning(schedule, collided_shifts)
             m.deliver
           end
           notice = 'You have '
-          notice += if schedule.volunteers.length == 0
+          notice += if schedule.volunteers.empty?
                       'taken'
                     else
                       'joined'

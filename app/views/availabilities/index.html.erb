@@ -1,55 +1,50 @@
 <h1> Here are the availabilities </h1>
+<!-- <div class="container">
 
-<div class="container">
-  <!-- <button type="button" class="btn btn-success">Monday</button>
-  <button type="button" class="btn btn-success">Tuesday</button>
-  <button type="button" class="btn btn-success">Morning</button>
+  <% @weekdays.each_with_index do |day, day_index| %>
+  <button type="button" class="btn btn-success"><%= day %></button>
+  <% end %>
+  <% @timeslots.each_with_index do |time, time_index| %>
+  <button type="button" class="btn btn-success"><%= time %></button>
+  <% end %>
+</div> -->
 
+  <select id="days">
+    <% @weekdays.each_with_index do |day, day_index| %>
+    <option value= "<%= day_index+1 %>" ><%= day %></option>
+    <% end %>
+  </select>
 
-  <button type="button" class="btn btn-success">Wednesday</button>
-  <button type="button" class="btn btn-success">Thursday</button>
-  <button type="button" class="btn btn-success">Afternoon</button>
+  <select id="times">
+    <% @timeslots.each_with_index do |time, time_index| %>
+    <option value= "<%=time_index+1 %>" ><%= time %></option>
+    <% end %>
+  </select>
 
-
-  <button type="button" class="btn btn-success">Friday</button>
-  <button type="button" class="btn btn-success">Saturday</button>
-  <button type="button" class="btn btn-success">Evening</button> -->
-
-  <button type="button" class="btn btn-success">Monday</button>
-  <button type="button" class="btn btn-success">Tuesday</button>
-  <button type="button" class="btn btn-success">Wednesday</button>
-  <button type="button" class="btn btn-success">Thursday</button>
-  <button type="button" class="btn btn-success">Friday</button>
-  <button type="button" class="btn btn-success">Saturday</button>
-  <button type="button" class="btn btn-success">Sunday</button>
-
-  <button type="button" class="btn btn-success">Afternoon</button>
-  <button type="button" class="btn btn-success">Evening</button>
-
+  <div>
+<input id="submit">
+  </div>
 
 <div>
-<button type="button" class="submit btn btn-primary btn-lg" value="Submit Button">Submit</button>
-</div>
-<!-- #this is a drop down -->
-<!-- <select class="" name="">
-  <option value="[object Object]">Monday</option>
-</select> -->
-<!-- <ul>
-  <% @avails.each do |avail|  %>
-    <li style="" id="volunteer_<%= avail.volunteer.id %>" data-day="monday" data-time="0">
-      Day: <%= avail.day %>, Time: <%= avail.time %>, Name: <%= avail.volunteer.name %>, id: <%= avail.volunteer.id %>
-    </li>
+   <table width="50%" id="table_of_availabilities">
+       <% @avails.each do |avail|  %>
+      <tr>
+        <td><% avail.volunteer.id %></td>
+        <td><% avail.volunteer.name %></td>
+      </tr>
   <% end %>
-</ul> -->
+  </table>
+</div>
+
 <div>
    <table width="50%" id="table_of_volunteers">
-     <% @vols.each do |vol|  %>
-    <tr>
-      <td><%= vol.id %></td>
-      <td><%= vol.name %></td>
-      <td><%= vol.email %></td>
-    </tr>
+       <% @vols.each do |vol|  %>
+      <tr>
+        <td><%= vol.id %></td>
+        <td><%= vol.name %></td>
+        <td><%= vol.email %></td>
+      </tr>
+  <% end %>
 
-    <% end %>
   </table>
 </div>

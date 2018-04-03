@@ -15,7 +15,7 @@
                 <% avail.day == day_index && avail.time == time_index %>
               <% end %>
               <% selected_time == true ? {checked: true} : nil  %>
-              <%= ff.check_box_tag 'availability[]', {day: day_index, time: time_index}, selected_time %>
+              <%= ff.check_box_tag 'availability[]', {day: day_index+1, time: time_index+1}, selected_time %>
           </td>
           <% end %>
       </tr>

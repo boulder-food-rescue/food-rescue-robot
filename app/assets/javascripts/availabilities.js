@@ -1,17 +1,32 @@
-$("#table_of_volunteers").css("display", "none");
+// $("#table_of_volunteers").css("display", "none");
 $(document).ready(function(){
-    $(".submit").click(function(){
-      $("button").removeClass('disabled');
-        $("#table_of_volunteers").toggle(1000);
+    $("#submit").click(function(){
+        $("#table_of_volunteers").toggle();
     });
 });
+
 $(document).ready(function(){
-  $("button").click(function() {
-    $(".submit").removeClass('disabled');
-    // $("#table_of_volunteers").hide(1000);
-    $(this).addClass('disabled');
+  $('#days').change(function() {
+    var day = $("#days option:selected").val();
+    alert(day);
   });
 });
+
+$(document).ready(function(){
+    $('#times').change(function() {
+    var time = $("#times option:selected").val();
+      alert(time);
+  });
+});
+
+// Submit button listener
+  // $("#submit_button").click(function() {
+  //   var day = $('#dropdown_day').val();
+  //   var time = $('#dropdown_day').val();
+  //
+  //
+  // })
+
 //$(document).ready(function(){
   //$("button").click(function() {
     //$("button").removeClass('disabled');

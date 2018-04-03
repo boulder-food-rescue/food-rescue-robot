@@ -290,9 +290,7 @@ class VolunteersController < ApplicationController
     end
 
     if current_volunteer.region_admin?
-
       @volunteers_need_signed_waiver = Volunteer.need_driver_waiver_signed_by_admin(current_volunteer.region_ids)
-
     end
 
     @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length
@@ -303,16 +301,7 @@ class VolunteersController < ApplicationController
     @total_shifts_needing_cov = Log.needing_coverage(current_volunteer.region_ids, 7).length
 
     # To Do Pickup Reports
-    to_do_reports = Log.picked_up_by(current_volunteer.id, false)
-    puts to_do_reports.size
-    @to_do_reports = Array.new()
-    for to_do in to_do_reports
-      if to_do.when <= Date.today
-        @to_do_reports.push(to_do)
-      end
-      puts @to_do_reports.size
-    end
-
+    @to_do_reports = Log.get_to_do_pick_up_reports(current_volunteer.id)
 
     @by_month = {}
     Log.picked_up_by(current_volunteer.id).each do |log|

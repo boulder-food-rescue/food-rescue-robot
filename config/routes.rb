@@ -5,7 +5,7 @@ Webapp::Application.routes.draw do
       get :knight
     end
   end
-
+  devise_for :donors, path: 'donors', controllers: { sessions: "donors/sessions"}
   resources :regions, except: [:show]
 
   resources :cell_carriers do as_routes end
@@ -87,7 +87,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  devise_for :volunteers, :controllers => { :sessions => 'sessions' }
+  devise_for :volunteers, :controllers => { :sessions => 'volunteers/sessions' }
 
   resources :volunteers do
     collection do

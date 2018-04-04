@@ -1,50 +1,26 @@
 <h1> Here are the availabilities </h1>
-<!-- <div class="container">
-
-  <% @weekdays.each_with_index do |day, day_index| %>
-  <button type="button" class="btn btn-success"><%= day %></button>
+<select id="days">
+  <% @weekdays.each_with_index do |day| %>
+  <option value= "<%= day %>" ><%= day %></option>
   <% end %>
-  <% @timeslots.each_with_index do |time, time_index| %>
-  <button type="button" class="btn btn-success"><%= time %></button>
+</select>
+
+<select id="times">
+  <% @timeslots.each_with_index do |time| %>
+  <option value= "<%= time %>" ><%= time %></option>
   <% end %>
-</div> -->
-
-  <select id="days">
-    <% @weekdays.each_with_index do |day, day_index| %>
-    <option value= "<%= day_index+1 %>" ><%= day %></option>
-    <% end %>
-  </select>
-
-  <select id="times">
-    <% @timeslots.each_with_index do |time, time_index| %>
-    <option value= "<%=time_index+1 %>" ><%= time %></option>
-    <% end %>
-  </select>
-
-  <div>
-<input id="submit">
-  </div>
+</select>
 
 <div>
-   <table width="50%" id="table_of_availabilities">
-       <% @avails.each do |avail|  %>
-      <tr>
-        <td><% avail.volunteer.id %></td>
-        <td><% avail.volunteer.name %></td>
-      </tr>
-  <% end %>
-  </table>
-</div>
-
-<div>
-   <table width="50%" id="table_of_volunteers">
-       <% @vols.each do |vol|  %>
-      <tr>
-        <td><%= vol.id %></td>
-        <td><%= vol.name %></td>
-        <td><%= vol.email %></td>
-      </tr>
-  <% end %>
-
-  </table>
+ <table width="50%" id="table_of_availabilities">
+     <% @avails.each do |avail|  %>
+    <tr class="availability <%= @weekdays[avail.day - 1] %> <%= @timeslots[avail.time - 1] %>">
+      <td><% avail.volunteer.id %></td>
+      <td> Name: <%= avail.volunteer.name %></td>
+      <td> Email: <%= avail.volunteer.email %></td>
+      <td> Day: <%= avail.day %></td>
+      <td> Time: <%= avail.time %></td>
+    </tr>
+<% end %>
+</table>
 </div>

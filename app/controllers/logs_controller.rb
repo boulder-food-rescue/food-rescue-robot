@@ -157,19 +157,7 @@ class LogsController < ApplicationController
   def create
     @log = Log.new(params[:log])
     @region = @log.region
-    @food_types = @region.food_types.collect{ |e| [e.name, e.id] }
-    @scale_types = @region.scale_types.collect{ |e| [e.name, e.id] }
     @transport_types = TransportType.all.collect{ |e| [e.name, e.id] }
-
-
-    if @scale_types.length == 0
-      flash[:error] = "You have no scale types for the 'Weighed With' field for #{@region.name}. Please get this set up for your region."
-      render :new and return
-    end
-
-    if @scale_types.any? && @log.scale_type_id.nil?
-      @log.scale_type_id = @region.scale_types.first.id
-    end
 
     authorize! :create, @log
     parse_and_create_log_parts(params, @log)
@@ -408,12 +396,9 @@ class LogsController < ApplicationController
     ret = []
     params['log_parts'].each{ |_dc, lpdata|
       lpdata['weight'] = nil if lpdata['weight'].strip == ''
-      lpdata['count'] = nil if lpdata['count'].strip == ''
       next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?
       log_part = lpdata['id'].nil? ? LogPart.new : LogPart.find(lpdata['id'].to_i)
-      log_part.count = lpdata['count']
       log_part.description = lpdata['description']
-      log_part.food_type_id = lpdata['food_type_id'].to_i
       log_part.log_id = log.id
       log_part.weight = lpdata['weight'].to_f
       ret.push log_part

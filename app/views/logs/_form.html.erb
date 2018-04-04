@@ -68,7 +68,7 @@
                 <% if @food_types[index][0] == "Food" %>
                   <p>Compost weight should be subtracted from this value.</p>
                 <% end %>
-                <%= f2.number_field(:weight, size: 5, class: "form-control") %>
+                <input class="form-control" id=<%=@food_types[index][0].downcase + "_weight"%> min="0" size="5" type="number">
               </td>
               <td>
                 <% if @food_types[index][0] == "Food" %>
@@ -77,6 +77,7 @@
                 <% end %>
                 <%= f2.hidden_field(:id) %>
                 <%= f2.hidden_field(:food_type_id) %>
+                <%= f2.hidden_field(:weight, class: @food_types[index][0].downcase + "_weight") %>
               </td>
             </tr>
           <% end %>
@@ -88,7 +89,7 @@
 
       <div class="mb-3">
         <label for=:hours_spent>Length of shift (in hours)</label>
-        <%= f.text_field(:hours_spent, :size => "3", class: "form-control") %>
+        <%= f.number_field(:hours_spent, :size => "3", class: "form-control", min: 0) %>
       </div>
 
       <div class="mb-3">
@@ -141,7 +142,12 @@
           }
           $("#total_weight").text(t)
       }
-
+      function update_food_weight(){
+          food_weight = parseFloat($("#food_weight").val());
+          compost_weight = parseFloat($("#compost_weight").val());
+          $(".food_weight").val(food_weight-compost_weight);
+          $(".compost_weight").val(compost_weight);
+      }
       jQuery(document).ready(function() {
 
           update_total_weight();

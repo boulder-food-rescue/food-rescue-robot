@@ -1,23 +1,18 @@
-// $("#table_of_volunteers").css("display", "none");
-$(document).ready(function(){
-    $("#submit").click(function(){
-        $("#table_of_volunteers").toggle();
-    });
-});
+$("#table_of_volunteers").css("display", "none");
+  $("#submit").click(function(){
+      $("#table_of_volunteers").toggle();
+  });
 
-$(document).ready(function(){
   $('#days').change(function() {
     var day = $("#days option:selected").val();
     alert(day);
   });
-});
 
-$(document).ready(function(){
-    $('#times').change(function() {
+  $('#times').change(function() {
     var time = $("#times option:selected").val();
       alert(time);
   });
-});
+
 
 // Submit button listener
   // $("#submit_button").click(function() {

@@ -29,22 +29,10 @@
    <table width="50%" id="table_of_availabilities">
        <% @avails.each do |avail|  %>
       <tr>
-        <td><% avail.volunteer.id %></td>
-        <td><% avail.volunteer.name %></td>
+        <td><%= avail.volunteer.id %></td>
+        <td><%= avail.volunteer.name %></td>
+        <td><%= avail.volunteer.email %></td>
       </tr>
   <% end %>
-  </table>
-</div>
-
-<div>
-   <table width="50%" id="table_of_volunteers">
-       <% @vols.each do |vol|  %>
-      <tr>
-        <td><%= vol.id %></td>
-        <td><%= vol.name %></td>
-        <td><%= vol.email %></td>
-      </tr>
-  <% end %>
-
   </table>
 </div>

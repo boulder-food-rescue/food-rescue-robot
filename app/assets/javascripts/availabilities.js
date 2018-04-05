@@ -1,39 +1,16 @@
-$("#table_of_volunteers").css("display", "none");
-  $("#submit").click(function(){
-      $("#table_of_volunteers").toggle();
-  });
+$(".availability").css("display", "none");
 
-  $('#days').change(function() {
-    var day = $("#days option:selected").val();
-    alert(day);
-  });
+$('#days').change(function() {
+  toggleAvailabilities()
+});
 
-  $('#times').change(function() {
-    var time = $("#times option:selected").val();
-      alert(time);
-  });
+$('#times').change(function() {
+  toggleAvailabilities()
+});
 
-
-// Submit button listener
-  // $("#submit_button").click(function() {
-  //   var day = $('#dropdown_day').val();
-  //   var time = $('#dropdown_day').val();
-  //
-  //
-  // })
-
-//$(document).ready(function(){
-  //$("button").click(function() {
-    //$("button").removeClass('disabled');
-//  });
-//});
-//console.log('test');
-
-// $('button#monday').onChange(function(e) {
-
-
-
-//$('button#monday').click(function(e) {
-
-  // search for li elements with relevant data
-  // .toggle();
+function toggleAvailabilities(){
+  var day = $("#days option:selected").val();
+  var time = $("#times option:selected").val();
+  $(".availability").css("display", "none");
+  $('.' + day + '.' + time + '').css("display", "inline");
+}

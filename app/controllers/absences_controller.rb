@@ -4,7 +4,7 @@ class AbsencesController < ApplicationController
 
   def all
     absences = Absence.where('stop_date >= ?', Date.today).keep_if{ |a|
-      (a.volunteer.region_ids & current_volunteer.admin_region_ids).length > 0
+      !(a.volunteer.region_ids & current_volunteer.admin_region_ids).empty?
     }
     index(absences, 'All Absences')
   end
@@ -67,7 +67,7 @@ class AbsencesController < ApplicationController
     vrids = volunteer.regions.collect{ |r| r.id }
     adminrids = current_volunteer.admin_region_ids
 
-    unless volunteer.id == current_volunteer.id || current_volunteer.super_admin? || (vrids & adminrids).length > 0
+    unless volunteer.id == current_volunteer.id || current_volunteer.super_admin? || !(vrids & adminrids).empty?
       flash[:warning] = 'Cannot schedule an absence for that person, mmmmk.'
       return redirect_to(root_path)
     end

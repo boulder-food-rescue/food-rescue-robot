@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe "Volunteer takes One-Time Shifts" do
-  let(:donor) { create(:donor, name: "This is a name") }
+RSpec.describe 'Volunteer takes One-Time Shifts' do
+  let(:donor) { create(:donor, name: 'This is a name') }
   let(:volunteer) { create(:volunteer, :not_waived, regions: [log.region], assigned: true) }
   let!(:location) { create(:location) }
   let!(:recipient) { create(:recipient, name: 'Donor Recipient Name')}
@@ -19,7 +19,7 @@ RSpec.describe "Volunteer takes One-Time Shifts" do
       # Log notes
       expect(page).to have_content('Log Notes Testing123')
       # When
-      expect(page).to have_content(log_date.strftime("%a %b %e"))
+      expect(page).to have_content(log_date.strftime('%a %b %e'))
       # Volunteer name
       expect(page).to have_content('John Doe')
       # Region tagline

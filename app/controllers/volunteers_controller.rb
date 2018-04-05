@@ -16,7 +16,7 @@ class VolunteersController < ApplicationController
     region = Region.find(params[:region_id])
     if params[:unassign]
       Assignment.where(volunteer_id: volunteer.id, region_id: region.id).destroy_all
-      if volunteer.assignments.length == 0
+      if volunteer.assignments.empty?
         volunteer.assigned = false
         volunteer.save
       end
@@ -72,7 +72,7 @@ class VolunteersController < ApplicationController
 
   def show
     @volunteer = Volunteer.find(params[:id])
-    unless current_volunteer.super_admin? || (current_volunteer.region_ids & @volunteer.region_ids).length > 0
+    unless current_volunteer.super_admin? || !(current_volunteer.region_ids & @volunteer.region_ids).empty?
       flash[:error] = "Can't view volunteer for a region you're not assigned to..."
       return redirect_to(root_path)
     end
@@ -96,7 +96,7 @@ class VolunteersController < ApplicationController
   end
 
   def check_permissions(volunteer)
-    unless current_volunteer.super_admin? || (current_volunteer.admin_region_ids & volunteer.region_ids).length > 0 || current_volunteer == volunteer
+    unless current_volunteer.super_admin? || !(current_volunteer.admin_region_ids & volunteer.region_ids).empty? || current_volunteer == volunteer
       flash[:error] = 'Not authorized to create/edit volunteers for that region'
       redirect_to(root_path)
       return false
@@ -156,16 +156,15 @@ class VolunteersController < ApplicationController
   # switch to a particular user
   def switch_user
     volunteer = Volunteer.find(params[:volunteer_id].to_i)
-    volunteer_region_ids = volunteer.admin_region_ids
 
-    unless current_volunteer.super_admin? || (volunteer_region_ids & current_volunteer.admin_region_ids).any?
-      flash[:error] = "You're not authorized to switch to that user!"
+    unless current_volunteer.super_admin? || (volunteer.region_ids & current_volunteer.admin_region_ids).any?
+      flash[:error] = 'You are not authorized to switch to that user!'
       return redirect_to(root_path)
     end
 
     sign_out(current_volunteer)
     sign_in(volunteer)
-    flash[:notice] = "Successfully switched to user #{current_volunteer.name}."
+    flash[:notice] = "Successfully switched to user: #{current_volunteer.name}."
     home
   end
 
@@ -281,7 +280,7 @@ class VolunteersController < ApplicationController
 
     @assigment_names = current_volunteer.assignments.includes(:region).collect do |assignment|
       assignment.admin? && assignment.region.present? ? assignment.region.name : nil
-    end.compact.join(", ")
+    end.compact.join(', ')
 
     @volunteer_stats_presenter = VolunteerStatsPresenter.new(current_volunteer)
 
@@ -294,17 +293,14 @@ class VolunteersController < ApplicationController
   # and only in the region ids that are passed in
   # all super admins are filtered out for security purposes
   def unassigned_or_in_regions(admin_region_ids)
-    unassigned = Volunteer.not_super_admin
-                          .includes(:assignments)
-                          .where( assignments: { volunteer_id: nil } )
+    unassigned = Volunteer.not_super_admin.unassigned
 
     volunteers_in_regions(admin_region_ids) + unassigned
   end
 
   def volunteers_in_regions(admin_region_ids)
     Volunteer.not_super_admin
-             .joins(:assignments)
-             .where(assignments: { region_id: admin_region_ids })
+             .assigned_to_regions(admin_region_ids)
   end
 
 end

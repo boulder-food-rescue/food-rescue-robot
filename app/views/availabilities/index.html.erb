@@ -12,14 +12,14 @@
 </select>
 
 <div>
- <table width="50%" id="table_of_availabilities">
+ <table class="table table-striped" cellspacing="8" width="50%" id="table_of_availabilities">
      <% @avails.each do |avail|  %>
-    <tr class="availability <%= @weekdays[avail.day - 1] %> <%= @timeslots[avail.time - 1] %>">
+    <tr class="availability <%= @weekdays[avail.day - 1] %> <%= @timeslots[avail.time - 1] %>" >
       <td><% avail.volunteer.id %></td>
       <td> Name: <%= avail.volunteer.name %></td>
       <td> Email: <%= avail.volunteer.email %></td>
-      <td> Day: <%= avail.day %></td>
-      <td> Time: <%= avail.time %></td>
+      <!-- <td> Day: <% avail.day %></td>
+      <td> Time: <% avail.time %></td> -->
     </tr>
 <% end %>
 </table>

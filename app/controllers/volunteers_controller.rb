@@ -290,9 +290,7 @@ class VolunteersController < ApplicationController
     end
 
     if current_volunteer.region_admin?
-
       @volunteers_need_signed_waiver = Volunteer.need_driver_waiver_signed_by_admin(current_volunteer.region_ids)
-
     end
 
     @open_shift_count = ScheduleChain.open_in_regions(current_volunteer.region_ids).length
@@ -303,21 +301,32 @@ class VolunteersController < ApplicationController
     @total_shifts_needing_cov = Log.needing_coverage(current_volunteer.region_ids, 7).length
 
     # To Do Pickup Reports
-    @to_do_reports = Log.picked_up_by(current_volunteer.id, false)
+    @to_do_reports = Log.get_to_do_pick_up_reports(current_volunteer.id)
 
-    @by_month = {}
-    Log.picked_up_by(current_volunteer.id).each do |log|
-      year_month = log.when.strftime('%Y-%m')
-      @by_month[year_month] = 0.0 if @by_month[year_month].nil?
-      @by_month[year_month] += log.summed_weight unless log.summed_weight.nil?
-    end
+    @by_month = get_reports_by_month
 
-    @assigment_names = current_volunteer.assignments.includes(:region).collect do |assignment|
-      assignment.admin? && assignment.region.present? ? assignment.region.name : nil
-    end.compact.join(", ")
+    @assignment_names = get_assignment_names
 
     @volunteer_stats_presenter = VolunteerStatsPresenter.new(current_volunteer)
 
     render :home
+  end
+
+  private
+  def get_reports_by_month
+    by_month = {}
+    Log.picked_up_by(current_volunteer.id).each do |log|
+      year_month = log.when.strftime('%Y-%m')
+      by_month[year_month] = 0.0 if by_month[year_month].nil?
+      by_month[year_month] += log.summed_weight unless log.summed_weight.nil?
+    end
+    by_month
+  end
+
+  def get_assignment_names
+    assignment_names = current_volunteer.assignments.includes(:region).collect do |assignment|
+      assignment.admin? && assignment.region.present? ? assignment.region.name : nil
+    end.compact.join(", ")
+    assignment_names
   end
 end

@@ -52,23 +52,38 @@ region = Region.create({
 #volunteer.attributes.slice('email', 'name', 'phone', 'preferred_contact', 'has_car', 'admin_notes', 'pickup_prefs', 'is_disabled', 'on_email_list', 'admin', 'transport_type_id', 'cell_carrier_id', 'sms_too', 'pre_reminders_too', 'get_sncs_email', 'waiver_signed', 'waiver_signed_at', 'assigned', 'requested_region_id', 'active')
 #assignment.attributes.slice('volunteer_id', 'region_id', 'admin')
 
-volunteer = Volunteer.create({
-  'email'=>'volunteer.bfr@gmail.com',
-   'name'=>'Volunteer',
-   'phone'=>'760-815-5555',
-   'password' => 'changeme!',
-   'password_confirmation' => 'changeme!',
-   'preferred_contact'=>'Text',
-   'has_car'=>true,
-   'is_disabled'=>false,
-   'on_email_list'=>true,
-   'transport_type_id'=>1,
-   'cell_carrier_id'=>6,
-   'sms_too'=>false,
-   'pre_reminders_too'=>false,
-   'get_sncs_email'=>true,
-   'assigned'=>true
-})
+20.times do |time|
+  volunteer = Volunteer.create({
+    'email'=>"volunteer#{time}.bfr@gmail.com",
+     'name'=>"Volunteer#{time}",
+     'phone'=>"760-815-555#{time}",
+     'password' => 'changeme!',
+     'password_confirmation' => 'changeme!',
+     'preferred_contact'=>'Text',
+     'has_car'=>true,
+     'is_disabled'=>false,
+     'on_email_list'=>true,
+     'transport_type_id'=>1,
+     'cell_carrier_id'=>6,
+     'sms_too'=>false,
+     'pre_reminders_too'=>false,
+     'get_sncs_email'=>true,
+     'assigned'=>true
+  })
+end
+
+Availability.destroy_all
+
+for vol in Volunteer.all
+  6.times do |time|
+    availability = Availability.create({
+      'volunteer_id'=>"#{time+1})",
+       'day'=>"#{time+1})",
+       'time'=>"[1,2,3].sample",
+    })
+  end
+end
+
 
 volunteer.waiver_signed = true
 volunteer.waiver_signed_at = DateTime.now

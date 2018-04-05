@@ -4,7 +4,9 @@ class AvailabilitiesController < ApplicationController
 
   def index
     @avails = Availability.all
-
+    @vols = Volunteer.all
+    @weekdays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+    @timeslots = ["Morning","Afternoon","Evening"]
   end
 
   def new
@@ -25,5 +27,4 @@ class AvailabilitiesController < ApplicationController
     end
     redirect_to(root_path)
   end
-
 end

@@ -171,6 +171,7 @@ schedule_chain = ScheduleChain.create({
 })
 
 #Assign donor location to schedule
+
 schedule = Schedule.create({
     'schedule_chain_id' => schedule_chain.id,
     'location_id' => donor.id,
@@ -191,7 +192,6 @@ ScheduleVolunteer.create({
     'schedule_chain_id' => schedule_chain.id,
     'active' => true
 })
-
 
 
 # Generate food type
@@ -223,6 +223,7 @@ SchedulePart.create({
    'schedule_id' => schedule.id,
    'food_type_id' => compost.id
 })
+
 
 #Generate log of the schedule, instructions found in log_builder.rb
 

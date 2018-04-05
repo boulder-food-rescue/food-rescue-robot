@@ -113,6 +113,22 @@ class Log < ActiveRecord::Base
     end
   end
 
+  def self.get_to_do_pick_up_reports(volunteer_id, limit=nil)
+    to_do_reports = picked_up_by(volunteer_id, false)
+    reports = Array.new()
+    for to_do in to_do_reports
+      if to_do.when <= Date.today
+        reports.push(to_do)
+      end
+    end
+
+    if limit.present?
+      reports.limit(limit.to_i)
+    else
+      reports
+    end
+  end
+
   def self.at(loc)
     if loc.is_donor
       return Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where('donor_id = ?', loc.id).group('logs.id, logs.transport_type_id, logs.when').order('logs.when ASC')

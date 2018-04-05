@@ -11,7 +11,11 @@
         <th><%= time %></th>
           <% @weekdays.each_with_index do |day, day_index| %>
           <td>
-              <%= ff.check_box_tag 'availability[]', day: day_index, time: time_index =%>
+              <% selected_time = @volunteer.availabilities.any? do |avail| %>
+                <% avail.day == day_index && avail.time == time_index %>
+              <% end %>
+              <% selected_time == true ? {checked: true} : nil  %>
+              <%= ff.check_box_tag 'availability[]', {day: day_index+1, time: time_index+1}, selected_time %>
           </td>
           <% end %>
       </tr>

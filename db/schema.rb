@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180306171307) do
+ActiveRecord::Schema.define(:version => 20180404161115) do
 
   create_table "absences", :force => true do |t|
     t.integer "volunteer_id"
@@ -51,6 +51,27 @@ ActiveRecord::Schema.define(:version => 20180306171307) do
     t.string "name"
     t.string "format"
   end
+
+  create_table "donors", :force => true do |t|
+    t.string   "email",                  :default => "",  :null => false
+    t.string   "encrypted_password",     :default => "",  :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0,   :null => false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at",                              :null => false
+    t.datetime "updated_at",                              :null => false
+    t.string   "name",                   :default => "f"
+    t.string   "phone"
+    t.integer  "region_id"
+  end
+
+  add_index "donors", ["email"], :name => "index_donors_on_email", :unique => true
+  add_index "donors", ["reset_password_token"], :name => "index_donors_on_reset_password_token", :unique => true
 
   create_table "food_types", :force => true do |t|
     t.string   "name"
@@ -94,10 +115,11 @@ ActiveRecord::Schema.define(:version => 20180306171307) do
     t.integer  "food_type_id"
     t.boolean  "required"
     t.decimal  "weight"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
     t.integer  "count"
     t.text     "description"
+    t.decimal  "compost_weight", :default => 0.0
   end
 
   add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"

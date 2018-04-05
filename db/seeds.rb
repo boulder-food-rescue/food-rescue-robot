@@ -201,10 +201,6 @@ food = FoodType.create({
     'region_id' => region.id
 })
 
-compost = FoodType.create({
-    'name' => 'Compost',
-    'region_id' => region.id
-})
 
 # Generate scale type
 
@@ -219,10 +215,6 @@ SchedulePart.create({
     'food_type_id' => food.id
 })
 
-SchedulePart.create({
-   'schedule_id' => schedule.id,
-   'food_type_id' => compost.id
-})
 
 #Generate log of the schedule, instructions found in log_builder.rb
 

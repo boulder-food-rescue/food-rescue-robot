@@ -79,7 +79,7 @@ for vol in Volunteer.all
     availability = Availability.create({
       'volunteer_id'=>"#{time+1})",
        'day'=>"#{time+1})",
-       'time'=>"{1,2,3}.sample",
+       'time'=>"[1,2,3].sample",
     })
   end
 end

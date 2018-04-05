@@ -7,8 +7,6 @@ class AvailabilitiesController < ApplicationController
     @vols = Volunteer.all
     @weekdays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     @timeslots = ["Morning","Afternoon","Evening"]
-    # Monday Mornings: .....
-    # Tues mornigns ...
   end
 
   def new
@@ -29,6 +27,4 @@ class AvailabilitiesController < ApplicationController
     end
     redirect_to(root_path)
   end
-
-  #params.require(:availability).permit(:days:[])
 end

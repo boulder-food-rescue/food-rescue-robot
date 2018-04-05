@@ -112,16 +112,9 @@ class AbsencesController < ApplicationController
 
   private
 
-  # TODO make duplicate code with volunteer controller
+  # TODO remote duplicate code with volunteer controller
   def unassigned_or_in_regions(admin_region_ids)
-    unassigned = Volunteer.includes(:assignments).where( assignments: { volunteer_id: nil } )
-
-    volunteers_in_regions(admin_region_ids) + unassigned
-  end
-
-  # TODO make duplicate code with volunteer controller
-  def volunteers_in_regions(admin_region_ids)
-    Volunteer.joins(:assignments).where(assignments: {region_id: admin_region_ids})
+    Volunteer.not_super_admin.assigned_to_regions(admin_region_ids) + Volunteer.not_super_admin.unassigned
   end
 
   def my_admin_volunteers(current_volunteer)

@@ -4,8 +4,7 @@ class AvailabilitiesController < ApplicationController
 
   def index
     @avails = Availability.all
-    # Monday Mornings: .....
-    # Tues mornigns ...
+
   end
 
   def new
@@ -27,5 +26,4 @@ class AvailabilitiesController < ApplicationController
     redirect_to(root_path)
   end
 
-  #params.require(:availability).permit(:days:[])
 end

@@ -4,9 +4,9 @@
     (<%= f.object.is_pickup_stop? ? "Donor" : "Recipient" %>)
   <% end %>
   </div>
-  <div style="display:table-cell"><%= f.text_field(:position, size:4, class: "form-control") %></div>
-  <div style="display:table-cell"><%= f.select :food_type_ids, @region.food_types.collect {|x| [x.name, x.id]}, {}, :multiple => true, :class => 'form-control' %></div>
-  <button onclick="$(this).parent().remove();" class="btn btn-sm btn-danger">
+  <div style="display:table-cell;margin:50px"><%= f.text_field(:position, size:4, class: "form-control") %></div>
+  <%= f.hidden_field(:food_type_ids, value: @region.food_types.where('name'=>"Food")[0].id) %>
+  <button style="display:table-cell;margin:15px" onclick="$(this).parent().remove();" class="btn btn-sm btn-danger">
     <i class="fa fa-remove"></i>
     Remove
   </button>

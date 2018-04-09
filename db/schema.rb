@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180306171307) do
+ActiveRecord::Schema.define(:version => 20180404161115) do
 
   create_table "absences", :force => true do |t|
     t.integer "volunteer_id"
@@ -94,10 +94,11 @@ ActiveRecord::Schema.define(:version => 20180306171307) do
     t.integer  "food_type_id"
     t.boolean  "required"
     t.decimal  "weight"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
     t.integer  "count"
     t.text     "description"
+    t.decimal  "compost_weight", :default => 0.0
   end
 
   add_index "log_parts", ["food_type_id"], :name => "index_log_parts_on_food_type_id"

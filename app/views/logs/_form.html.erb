@@ -58,18 +58,16 @@
           <%= f.select(:transport_type_id, @transport_types, {:include_blank => true}, {class: "form-control"}) %>
         </div>
       </div>
-
+      <br>
       <div class="mb-3">
-        <% @log.log_parts.each_with_index {|lp, index| %>
+        <% @log_parts.each_with_index {|lp, index| %>
           <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
             <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
               <td>
-                <%= f2.label_tag(:weight, 'Weight of ' + @food_types[index][0].downcase + " (lbs.)") %>
-                <% if @food_types[index][0] == "Food" %>
-                  <p>Compost weight should be subtracted from this value.</p>
-                <% end %>
-                <%= f2.number_field(:weight, size: 5, class: "form-control") %>
+                <%= f2.label_tag(:weight, 'Weight of ' + @food_types[index][0].downcase + " (lbs.):") %>
+                <%= f2.number_field(:weight, size: 5, class: "form-control", min: 0) %>
               </td>
+              <br>
               <td>
                 <% if @food_types[index][0] == "Food" %>
                   <%= label_tag(:description, "Summary of food types:") %>
@@ -78,25 +76,30 @@
                 <%= f2.hidden_field(:id) %>
                 <%= f2.hidden_field(:food_type_id) %>
               </td>
+              <br>
+              <td>
+                <%= f2.label_tag(:compost_weight, 'Weight of Compost (lbs.):') %>
+                <%= f2.number_field(:compost_weight, size: 5, class: "form-control", min: 0) %>
+              </td>
+              <br>
             </tr>
           <% end %>
         <% } %>
 
-          <td>TOTAL: <span id="total_weight">0</span></td>
           </tr>
       </div>
-
+      <br>
       <div class="mb-3">
-        <label for=:hours_spent>Length of shift (in hours)</label>
-        <%= f.text_field(:hours_spent, :size => "3", class: "form-control") %>
+        <label for=:hours_spent>Length of shift (in hours):</label>
+        <%= f.number_field(:hours_spent, :size => "3", class: "form-control", min: 0) %>
       </div>
-
+      <br>
       <div class="mb-3">
         <label for=:notes>Any comments, concerns, notes?
         </label>
         <%= f.text_area(:notes, :size => "30x6", class: "form-control") %>
       </div>
-
+      <br>
       <div class="row">
         <div class="col-sm-12">
           <td>

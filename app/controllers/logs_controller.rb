@@ -146,6 +146,8 @@ class LogsController < ApplicationController
   def new
     @region = Region.find(params[:region_id])
     @log = Log.new
+    food_type_id = @region.food_types.where('name'=>"Food")[0].id
+    @log_parts = [LogPart.new( 'food_type_id' => food_type_id)]
     @log.region = @region
     @action = 'create'
     authorize! :create, @log
@@ -160,7 +162,9 @@ class LogsController < ApplicationController
     @transport_types = TransportType.all.collect{ |e| [e.name, e.id] }
 
     authorize! :create, @log
+    @log.save
     parse_and_create_log_parts(params, @log)
+    @log = Log.find(@log.id)
     finalize_log(@log)
 
     if @log.save
@@ -198,6 +202,7 @@ class LogsController < ApplicationController
   def edit
     @log = Log.find(params[:id])
     authorize! :update, @log
+    @log_parts = @log.log_parts
     @region = @log.region
     @action = 'update'
     session[:my_return_to] = request.referer
@@ -208,6 +213,7 @@ class LogsController < ApplicationController
   def update
     @log = Log.find(params[:id])
     @region = @log.region
+    @log_parts = @log.log_parts
     @action = 'update'
     set_vars_for_form @region
 
@@ -397,10 +403,12 @@ class LogsController < ApplicationController
     params['log_parts'].each{ |_dc, lpdata|
       lpdata['weight'] = nil if lpdata['weight'].strip == ''
       next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?
-      log_part = lpdata['id'].nil? ? LogPart.new : LogPart.find(lpdata['id'].to_i)
+      log_part = lpdata['id'].blank? ? LogPart.new : LogPart.find(lpdata['id'].to_i)
       log_part.description = lpdata['description']
       log_part.log_id = log.id
       log_part.weight = lpdata['weight'].to_f
+      log_part.food_type_id = lpdata['food_type_id'].to_i
+      log_part.compost_weight = lpdata['compost_weight'].to_f
       ret.push log_part
       log_part.save
     } unless params['log_parts'].nil?

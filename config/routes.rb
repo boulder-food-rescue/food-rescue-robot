@@ -114,8 +114,10 @@ Webapp::Application.routes.draw do
     member do
       get :reactivate
     end
-    resources :availabilities, except: [:show]
+    resources :availabilities, only: [:create, :new]
   end
+
+  resources :availabilities, only: [:index]
 
   resource :waiver, only: [:new, :create]
   get "/waiver/driver-new", to: "waivers#new_driver_waiver", as: "driver_waiver"

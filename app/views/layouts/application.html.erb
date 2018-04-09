@@ -67,6 +67,7 @@
               <%= menu_item "Inactive (Deleted)", inactive_volunteers_path %>
               <%= menu_item "Full List", volunteers_path %>
               <%= menu_item "Stats+Charts", stats_volunteers_path %>
+              <%= menu_item "Availability", availabilities_path %>
             <% else %>
               <%= menu_item "Contact List", active_volunteers_path %>
             <% end %>
@@ -140,6 +141,7 @@
               <%= menu_item "<i class='fa fa-file-o'></i> Driver Waiver".html_safe, driver_waiver_path %>
               <%= menu_item "<i class='fa fa-file-o'></i> Availability".html_safe, new_volunteer_availability_path(current_volunteer) %>
 
+
               <%= menu_divider %>
 
               <%= menu_item "<i class='fa fa-sign-out'></i> Logout".html_safe, destroy_volunteer_session_path, {}, {:"data-method" => :delete } %>
@@ -185,6 +187,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "availabilities" %>
     <%= javascript_include_tag "google_analytics" if Rails.env.production? %>
     <%= yield :scripts %>
 

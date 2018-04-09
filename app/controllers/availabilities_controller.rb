@@ -1,4 +1,14 @@
 class AvailabilitiesController < ApplicationController
+  before_filter :authenticate_volunteer!
+  before_filter :admin_only, only: :index
+
+  def index
+    @avails = Availability.all
+    @vols = Volunteer.all
+    @weekdays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+    @timeslots = ["Morning","Afternoon","Evening"]
+  end
+
   def new
     @volunteer = Volunteer.find(params[:volunteer_id])
     @availability = Availability.new(params[:availability])
@@ -7,21 +17,14 @@ class AvailabilitiesController < ApplicationController
   end
 
   def create
+    v = Volunteer.find(params[:volunteer_id])
+    v.availabilities.destroy_all
+    saved = v.availabilities
     params[:availability].each do |selection|
-      volunteer = Volunteer.find(params[:volunteer_id])
       day = eval(selection)[:day]
       time = eval(selection)[:time]
-      volunteer.availabilities << Availability.new(day: day, time: time)
+      v.availabilities << Availability.new(day: day, time: time)
     end
     redirect_to(root_path)
   end
-
-  def destroy
-  end
-
-  def update
-    #@availability = Availability.find(params[:id])
-  end
-
-  #params.require(:availability).permit(:days:[])
 end

@@ -1,0 +1,24 @@
+<h1> Here are the availabilities </h1>
+<select id="days">
+  <% @weekdays.each_with_index do |day| %>
+  <option value= "<%= day %>" ><%= day %></option>
+  <% end %>
+</select>
+
+<select id="times">
+  <% @timeslots.each_with_index do |time| %>
+  <option value= "<%= time %>" ><%= time %></option>
+  <% end %>
+</select>
+
+<div>
+ <table class="table table-striped" cellspacing="8" width="50%" id="table_of_availabilities">
+     <% @avails.each do |avail|  %>
+    <tr class="availability <%= @weekdays[avail.day - 1] %> <%= @timeslots[avail.time - 1] %>" >
+      <td><% avail.volunteer.id %></td>
+      <td> Name: <%= avail.volunteer.name %></td>
+      <td> Email: <%= avail.volunteer.email %></td>
+    </tr>
+<% end %>
+</table>
+</div>

@@ -38,6 +38,10 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
 
+  def admin_only
+    redirect_to(root_path) unless current_volunteer.any_admin?
+  end
+
   protected
 
   def layout_by_resource

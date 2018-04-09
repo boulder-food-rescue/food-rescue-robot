@@ -175,7 +175,7 @@ class Log < ActiveRecord::Base
 
   def self.to_csv
     CSV.generate do |csv|
-      csv << ['id', 'date', 'item types', 'item weights', 'item descriptions', 'composted weight', 'donor', 'recipients', 'volunteers', 'scale', 'transport', 'hours spent', 'reminders sent', 'volunteer notes']
+      csv << ['id', 'Date', 'Item Types', 'Item Weights', 'Item Descriptions', 'Weight of Composted Food', 'Donor', 'Recipients', 'Volunteers', 'Scale', 'Transport', 'Hours Spent', 'Reminders Sent', 'Volunteer Notes']
       all.each do |log|
         lps = log.log_parts
         csv << [log.id, log.when, lps.collect{ |lp| lp.food_type.nil? ? 'Unknown' : lp.food_type.name }.join(':'),

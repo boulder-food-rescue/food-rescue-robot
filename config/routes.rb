@@ -126,7 +126,6 @@ Webapp::Application.routes.draw do
   namespace :region_admin do
     resources :donors, only: [:index]
 
-    resources :food_types, only: [:index, :new, :create, :edit, :update, :destroy]
   end
 
   devise_scope :volunteer do

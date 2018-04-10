@@ -9,17 +9,16 @@ namespace :past_data do
     skipped = {} #keeps track of which rows were skipped due to missing info in the DB
     completed = JSON.parse(completed_file) #keeps track of which rows were successfully added to the db
     index = 1
-    compost = FoodType.where('name':'Compost')[0]
     food = FoodType.where('name':'Food')[0]
     scale = ScaleType.find(1)
-    if compost.blank? || food.blank? || scale.blank?
+    if food.blank? || scale.blank?
       puts "ERROR! MISSING FOOD TYPES OR SCALE IN DATABASE"
       return
     end
     csv.each do |row|
       index += 1
       next if completed.key?(index.to_s)
-      volunteers = get_volunteers(row['2. Names of Volunteers (first and last)'])
+      volunteers = get_volunteers(row['2. Names of Volunteers (first, last)'])
       if volunteers.nil?
         skipped[index] = "missing volunteer"
         next
@@ -45,16 +44,14 @@ namespace :past_data do
       schedule_donor = create_schedule_location(schedule_chain, donor)
       create_schedule_location(schedule_chain, recipient)
       create_schedule_parts(schedule_donor, food)
-      create_schedule_parts(schedule_donor, compost)
       create_schedule_volunteers(schedule_chain, volunteers)
       log_id = create_log(schedule_chain, date)
       compost_weight = row['10. Weight of food composted (lbs)'].nil? ? 0 : row['10. Weight of food composted (lbs)'].to_d
-      food_weight = row['7. Weight of food picked up (lbs)'].nil? ? 0 : row['7. Weight of food picked up (lbs)'].to_d - compost_weight
+      food_weight = row['7. Weight of food picked up (lbs)'].nil? ? 0 : row['7. Weight of food picked up (lbs)']
       description = row['9. Summary of food types']
       notes = row['11. Any comments, concerns, notes?']
       hours_spent = row['8. Length of shift (in hours)']
-      update_log_parts(log_id, food, food_weight,description)
-      update_log_parts(log_id, compost, compost_weight)
+      update_log_parts(log_id, food, food_weight,compost_weight, description)
       populate_log_with_data(log_id, hours_spent, notes, transportation )
 
     end
@@ -66,7 +63,7 @@ namespace :past_data do
     end
   end
   def get_volunteers(volunteers_names)
-    volunteers = volunteers_names.split(/[,]|and/)
+    volunteers = volunteers_names.split(/[,]/)
     volunteer_list = []
     volunteers.each do |vol|
       volunteer = Volunteer.where('name':vol.strip)[0]
@@ -136,11 +133,12 @@ namespace :past_data do
 
   end
 
-  def update_log_parts(log_id, food_type, food_weight, description = nil)
+  def update_log_parts(log_id, food_type, food_weight, compost_weight, description = nil)
     logPart = LogPart.where('log_id':log_id, 'food_type_id': food_type.id)[0]
     logPart.weight = food_weight
     logPart.description = description
     logPart.count = 1
+    logPart.compost_weight = compost_weight
     logPart.save
   end
 
@@ -148,7 +146,7 @@ namespace :past_data do
     csv_text = File.read('./lib/tasks/data/TC Food Justice Rescue Log (Responses) For Real - Form Responses 1.csv')
     csv = CSV.parse(csv_text, :headers => true)
     csv.each do |row|
-      volunteers = row['2. Names of Volunteers (first and last)'].split(/[,]|and/)
+      volunteers = row['2. Names of Volunteers (first, last)'].split(/[,]/)
       volunteers.each do |vol|
         volunteer = Volunteer.where('name':vol.strip)[0]
         next unless volunteer.nil?

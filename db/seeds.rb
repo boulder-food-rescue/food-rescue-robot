@@ -31,12 +31,12 @@ end
 region = Region.create({
   'lat'=> 41.5409097,
   'lng'=> -72.9990631,
-  'name'=>'Boulder Food Rescue',
+  'name'=>'TC Food Justice',
   'website'=>'',
   'address'=>'Hana Danksy',
   'notes'=>'',
   'handbook_url'=>'',
-  'title'=>'Boulder Food Rescue',
+  'title'=>'TC Food Justice',
   'tagline'=>'',
   'phone'=>'208-123-5354',
   'tax_id'=>'',
@@ -51,7 +51,7 @@ region = Region.create({
 
 #volunteer.attributes.slice('email', 'name', 'phone', 'preferred_contact', 'has_car', 'admin_notes', 'pickup_prefs', 'is_disabled', 'on_email_list', 'admin', 'transport_type_id', 'cell_carrier_id', 'sms_too', 'pre_reminders_too', 'get_sncs_email', 'waiver_signed', 'waiver_signed_at', 'assigned', 'requested_region_id', 'active')
 #assignment.attributes.slice('volunteer_id', 'region_id', 'admin')
-
+volunteer = nil
 20.times do |time|
   volunteer = Volunteer.create({
     'email'=>"volunteer#{time}.bfr@gmail.com",
@@ -216,10 +216,6 @@ food = FoodType.create({
     'region_id' => region.id
 })
 
-compost = FoodType.create({
-    'name' => 'Compost',
-    'region_id' => region.id
-})
 
 # Generate scale type
 
@@ -234,10 +230,6 @@ SchedulePart.create({
     'food_type_id' => food.id
 })
 
-SchedulePart.create({
-   'schedule_id' => schedule.id,
-   'food_type_id' => compost.id
-})
 
 
 #Generate log of the schedule, instructions found in log_builder.rb

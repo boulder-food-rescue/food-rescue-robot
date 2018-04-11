@@ -10,7 +10,7 @@ class AssignmentsController < ApplicationController
       return redirect_to(root_path)
     end
     assignments = Assignment.where('volunteer_id = ? and region_id = ?', volunteer.id, region.id)
-    if assignments.length == 0
+    if assignments.empty?
       new_assignment = Assignment.new
       new_assignment.volunteer = volunteer
       new_assignment.region = region

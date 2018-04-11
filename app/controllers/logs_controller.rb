@@ -27,7 +27,9 @@ class LogsController < ApplicationController
   end
 
   def last_ten
-    index(Log.where("region_id IN (#{current_volunteer.region_ids.join(',')}) AND \"when\" >= '#{(Time.zone.today-10)}'"), 'Last 10 Days of Shifts')
+    logs = Log.where(region_id: current_volunteer.region_ids)
+              .where('"when" >= ?', Time.zone.today - 10)
+    index(logs, 'Last 10 Days of Shifts')
   end
 
   def being_covered
@@ -44,51 +46,63 @@ class LogsController < ApplicationController
 
   def index(logs=nil, header='Entire Log')
     @shifts = []
-    if current_volunteer.region_ids.length > 0
-      @shifts = Shift.build_shifts(logs.nil? ? Log.where("region_id IN (#{current_volunteer.region_ids.join(',')})"): logs)
+    unless current_volunteer.region_ids.empty?
+      @shifts = Shift.build_shifts(logs.nil? ? Log.where(region_id: current_volunteer.region_ids) : logs)
     end
-    @header = header
-    @regions = Region.all
-    @my_admin_regions = if current_volunteer.super_admin?
-                          @regions
-                        else
-                          current_volunteer.assignments.collect{ |a| a.admin ? a.region : nil }.compact
-                        end
+
     respond_to do |format|
       format.json { render json: @shifts }
-      format.html { render :index }
+      format.html {
+        @header = header
+        @my_admin_regions = current_volunteer.admin_regions
+        render :index
+      }
     end
   end
 
   def stats
     @regions = current_volunteer.admin_regions
+    region_ids = current_volunteer.admin_region_ids
 
-    @first_recorded_pickup = Log.where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
-      order('logs.when ASC').limit(1)
+    @first_recorded_pickup = Log.where(region_id: region_ids)
+                                .complete
+                                .order('logs.when ASC')
+                                .limit(1)
 
-    @pounds_per_year = Log.joins(:log_parts).select('extract(YEAR from logs.when) as year, sum(weight)').
-      where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
-      group('year').order('year ASC').collect{ |l| [l.year, l.sum] }
+    @pounds_per_year = Log.joins(:log_parts)
+                          .select('extract(YEAR from logs.when) as year, sum(weight)')
+                          .where(region_id: region_ids)
+                          .complete
+                          .group('year')
+                          .order('year ASC')
+                          .collect{ |l| [l.year, l.sum] }
 
-    @pounds_per_month = Log.joins(:log_parts).select("date_trunc('month',logs.when) as month, sum(weight)").
-      where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
-      group('month').order('month ASC').collect{ |l| [Date.parse(l.month).strftime('%Y-%m'), l.sum] }
+    @pounds_per_month = Log.joins(:log_parts)
+                           .select("date_trunc('month',logs.when) as month, sum(weight)")
+                           .where(region_id: region_ids)
+                           .complete
+                           .group('month')
+                           .order('month ASC')
+                           .collect{ |log| [Date.parse(log.month).strftime('%Y-%m'), log.sum] }
 
     @transport_per_year = {}
     @transport_years = []
-    @transport_data = Log.joins(:transport_type).select('extract(YEAR from logs.when) as year, transport_types.name, count(*)').
-      where("complete AND region_id in (#{@regions.collect{ |r| r.id }.join(',')})").
-      group('name,year').order('name,year ASC')
-    @transport_years.sort!
-    @transport_data.each do |l|
-      @transport_years << l.year unless @transport_years.include? l.year
-      @transport_per_year[l.name] = [] if @transport_per_year[l.name].nil?
+    @transport_data = Log.joins(:transport_type)
+                         .select('extract(YEAR from logs.when) as year, transport_types.name, count(*)')
+                         .where(region_id: region_ids)
+                         .complete
+                         .group('name, year')
+                         .order('name, year ASC')
+
+    @transport_data.each do |log|
+      @transport_years << log.year unless @transport_years.include?(log.year)
+      @transport_per_year[log.name] = [] if @transport_per_year[log.name].nil?
     end
-    @transport_per_year.keys.each do |k|
-      @transport_per_year[k] = @transport_years.collect{ |_y| 0 }
+    @transport_per_year.keys.each do |key|
+      @transport_per_year[key] = @transport_years.collect{ |_y| 0 }
     end
-    @transport_data.each do |l|
-      @transport_per_year[l.name][@transport_years.index(l.year)] = l.count.to_i
+    @transport_data.each do |log|
+      @transport_per_year[log.name][@transport_years.index(log.year)] = log.count.to_i
     end
   end
 
@@ -162,7 +176,7 @@ class LogsController < ApplicationController
     @transport_types = TransportType.all.collect{ |e| [e.name, e.id] }
 
 
-    if @scale_types.length == 0
+    if @scale_types.empty?
       flash[:error] = "You have no scale types for the 'Weighed With' field for #{@region.name}. Please get this set up for your region."
       render :new and return
     end
@@ -285,7 +299,7 @@ class LogsController < ApplicationController
         render json: {error: 0, message: flash[:notice]}
       }
       format.html {
-        request.env["HTTP_REFERER"].present? ? redirect_to(:back) : redirect_to(open_logs_path)
+        request.env['HTTP_REFERER'].present? ? redirect_to(:back) : redirect_to(open_logs_path)
       }
     end
 

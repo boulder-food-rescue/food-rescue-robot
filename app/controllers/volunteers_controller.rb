@@ -122,7 +122,10 @@ class VolunteersController < ApplicationController
   end
 
   def edit
-    @volunteer = Volunteer.find(params[:id])
+    @volunteer = Volunteer.includes(:logs)
+                           .joins(:logs)
+                           .where("logs.complete = true")
+                           .find(params[:id])
     return unless check_permissions(@volunteer)
     @regions = Region.all
     @my_admin_regions = current_volunteer.admin_regions

@@ -20,10 +20,12 @@ class AvailabilitiesController < ApplicationController
     v = Volunteer.find(params[:volunteer_id])
     v.availabilities.destroy_all
     saved = v.availabilities
-    params[:availability].each do |selection|
-      day = eval(selection)[:day]
-      time = eval(selection)[:time]
-      v.availabilities << Availability.new(day: day, time: time)
+    if params[:availability]
+      params[:availability].each do |selection|
+        day = eval(selection)[:day]
+        time = eval(selection)[:time]
+        v.availabilities << Availability.new(day: day, time: time)
+      end
     end
     redirect_to(root_path)
   end

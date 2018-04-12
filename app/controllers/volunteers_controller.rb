@@ -50,9 +50,8 @@ class VolunteersController < ApplicationController
   end
 
   def need_training
-    @volunteers = Volunteer.all.keep_if do |volunteer|
-      !(volunteer.region_ids & current_volunteer.region_ids).empty? && volunteer.needs_training?
-    end
+    @volunteers = Volunteer.not_super_admin.assigned_to_regions(current_volunteer.region_ids).select { |v| v.needs_training? }
+      
     @header = 'Volunteers Needing Training'
     render :index
   end
@@ -297,12 +296,7 @@ class VolunteersController < ApplicationController
   # and only in the region ids that are passed in
   # all super admins are filtered out for security purposes
   def unassigned_or_in_regions(admin_region_ids)
-    unassigned = Volunteer.not_super_admin.unassigned
-
-    volunteers_in_regions = Volunteer.not_super_admin
-                                     .assigned_to_regions(admin_region_ids)
-
-    volunteers_in_regions + unassigned
+    Volunteer.not_super_admin.assigned_to_regions(admin_region_ids) + Volunteer.not_super_admin.unassigned
   end
 
 end

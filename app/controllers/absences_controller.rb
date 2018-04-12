@@ -18,6 +18,7 @@ class AbsencesController < ApplicationController
   end
 
   def new
+    @my_admin_volunteers = my_admin_volunteers(current_volunteer)
     @absence = Absence.new
     respond_to do |format|
       format.html # new.html.erb
@@ -107,6 +108,22 @@ class AbsencesController < ApplicationController
 
   def admin_only
     redirect_to(root_path) unless current_volunteer.any_admin?
+  end
+
+  private
+
+  # TODO remote duplicate code with volunteer controller
+  def unassigned_or_in_regions(admin_region_ids)
+    Volunteer.not_super_admin.assigned_to_regions(admin_region_ids) + Volunteer.not_super_admin.unassigned
+  end
+
+  def my_admin_volunteers(current_volunteer)
+    if current_volunteer.super_admin?
+      my_admin_volunteers = Volunteer.all
+    else
+      my_admin_volunteers = unassigned_or_in_regions(current_volunteer.admin_region_ids).select { |v| !v.admin }
+    end
+    my_admin_volunteers
   end
 
 end

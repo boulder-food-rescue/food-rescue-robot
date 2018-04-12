@@ -77,9 +77,9 @@ Availability.destroy_all
 for vol in Volunteer.all
   6.times do |time|
     availability = Availability.create({
-      'volunteer_id'=>"#{time+1})",
-       'day'=>"#{time+1})",
-       'time'=>"[1,2,3].sample",
+      volunteer_id: vol.id,
+      day: [0,1,2,4,5,6].sample,
+      time: [0,1,2].sample,
     })
   end
 end
@@ -241,4 +241,3 @@ FoodRobot::LogGenerator::LogBuilder.new(date, donor_chain, nil).log.save #Log fo
 
 date = Date.today + 100
 FoodRobot::LogGenerator::LogBuilder.new(date, donor_chain, nil).log.save #Log for future pick up
-

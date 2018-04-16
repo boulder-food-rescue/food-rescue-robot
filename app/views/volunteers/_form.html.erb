@@ -25,6 +25,49 @@
 
     <tr>
       <td>
+        <label for="">
+          Pickup Stats
+        </label>
+      </td>
+      <td>
+        <details>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Donor</th>
+                <th>Transported With</th>
+                <th>Time Spent</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @volunteer.logs.each do |log| %>
+                <tr>
+                  <td><%= log.when %></td>
+                  <td><%= log.donor.name %></td>
+                  <td><%= log.transport_type.name %></td>
+                  <td><%= log.hours_spent %></td>
+                  <td>
+                    <%= link_to edit_log_path(log.id), class: 'btn btn-primary' do %>
+                      <i class="fa fa-pencil"></i>
+                      Edit
+                    <% end %>&nbsp;
+                    <%= link_to log_path(log.id), class: 'btn btn-info info' do %>
+                      <i class="fa fa-info-circle"></i>
+                      Info
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </details>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
         <label for="volunteer_phone">Phone</label>
       </td>
       <td>

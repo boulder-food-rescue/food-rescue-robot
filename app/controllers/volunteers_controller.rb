@@ -16,7 +16,7 @@ class VolunteersController < ApplicationController
     region = Region.find(params[:region_id])
     if params[:unassign]
       Assignment.where(volunteer_id: volunteer.id, region_id: region.id).destroy_all
-      if volunteer.assignments.length == 0
+      if volunteer.assignments.empty?
         volunteer.assigned = false
         volunteer.save
       end
@@ -71,7 +71,7 @@ class VolunteersController < ApplicationController
 
   def show
     @volunteer = Volunteer.find(params[:id])
-    unless current_volunteer.super_admin? || (current_volunteer.region_ids & @volunteer.region_ids).length > 0
+    unless current_volunteer.super_admin? || !(current_volunteer.region_ids & @volunteer.region_ids).empty?
       flash[:error] = "Can't view volunteer for a region you're not assigned to..."
       return redirect_to(root_path)
     end
@@ -95,7 +95,7 @@ class VolunteersController < ApplicationController
   end
 
   def check_permissions(volunteer)
-    unless current_volunteer.super_admin? || (current_volunteer.admin_region_ids & volunteer.region_ids).length > 0 || current_volunteer == volunteer
+    unless current_volunteer.super_admin? || !(current_volunteer.admin_region_ids & volunteer.region_ids).empty? || current_volunteer == volunteer
       flash[:error] = 'Not authorized to create/edit volunteers for that region'
       redirect_to(root_path)
       return false
@@ -120,7 +120,10 @@ class VolunteersController < ApplicationController
   end
 
   def edit
-    @volunteer = Volunteer.find(params[:id])
+    @volunteer = Volunteer.includes(:logs)
+                           .joins(:logs)
+                           .where("logs.complete = true")
+                           .find(params[:id])
     return unless check_permissions(@volunteer)
     @regions = Region.all
     @my_admin_regions = current_volunteer.admin_regions
@@ -279,7 +282,7 @@ class VolunteersController < ApplicationController
 
     @assigment_names = current_volunteer.assignments.includes(:region).collect do |assignment|
       assignment.admin? && assignment.region.present? ? assignment.region.name : nil
-    end.compact.join(", ")
+    end.compact.join(', ')
 
     @volunteer_stats_presenter = VolunteerStatsPresenter.new(current_volunteer)
 

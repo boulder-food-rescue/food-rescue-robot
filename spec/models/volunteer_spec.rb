@@ -303,4 +303,75 @@ RSpec.describe Volunteer do
       end
     end
   end
+
+  describe 'scope in regions' do
+    let(:region1) { create :region }
+    let(:region2) { create :region }
+
+    let(:volunteer1) do
+      volunteer = create :volunteer, name: 'a'
+      volunteer.regions << region1
+      volunteer
+    end
+
+    let(:volunteer2) do
+      volunteer = create :volunteer, name: 'b'
+      volunteer.regions << region2
+      volunteer
+    end
+
+    it 'returns the volunteer by region' do
+      expect(described_class.in_regions(region1.id)).to eq([volunteer1])
+    end
+
+    it 'returns the volunteers in multiple regions' do
+      expect(described_class.in_regions([region1.id, region2.id])).to eq([volunteer1, volunteer2])
+    end
+  end
+
+  describe 'scope needing training' do
+    let(:region) { create :region }
+    let(:log1) { (create :log_volunteer).log }
+    let(:log2) { (create :log_volunteer).log }
+    let!(:volunteer1) { log1.volunteers.first }
+
+    before do
+      volunteer1.regions << region
+      volunteer2.regions << region
+
+      log1.update_attribute(:complete, true)
+    end
+
+    context 'missing log entry' do
+      let!(:volunteer2) { create :volunteer }
+
+      it 'returns volunteer not needing training' do
+        expect(described_class.needing_training(region)).to include(volunteer2)
+        expect(described_class.needing_training(region)).not_to include(volunteer1)
+      end
+    end
+
+    context 'none complete' do
+      before do
+        log1.update_attribute(:complete, false)
+        volunteer3.regions << region
+      end
+
+      let(:volunteer2) { create :volunteer }
+      let(:volunteer3) { create :volunteer }
+
+      it 'returns all volunteers' do
+        expect(described_class.needing_training(region)).to match_array([volunteer1, volunteer2, volunteer3])
+      end
+    end
+
+    context 'log entry where complete is false' do
+      let!(:volunteer2) { log2.volunteers.first }
+
+      it 'returns volunteer not needing training when log is not complete' do
+        expect(described_class.needing_training(region)).to include(volunteer2)
+        expect(described_class.needing_training(region)).not_to include(volunteer1)
+      end
+    end
+  end
 end

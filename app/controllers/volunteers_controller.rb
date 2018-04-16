@@ -50,9 +50,7 @@ class VolunteersController < ApplicationController
   end
 
   def need_training
-    @volunteers = Volunteer.all.keep_if do |volunteer|
-      !(volunteer.region_ids & current_volunteer.region_ids).empty? && volunteer.needs_training?
-    end
+    @volunteers =  Volunteer.needing_training(current_volunteer.region_ids)
     @header = 'Volunteers Needing Training'
     render :index
   end

@@ -1,6 +1,18 @@
 # Volunteer is the god object for BFR Robot
 class Volunteer < ActiveRecord::Base
   default_scope { order('volunteers.name ASC').where(active: true) }
+  scope :in_regions, ->(region_ids) { joins(:regions).where(regions: { id: region_ids }) }
+  scope :completed_any, -> { joins(log_volunteers: [:log]).where(logs: { complete: true }) }
+
+  # Return all voluneers in specified regions that do not have completed logs
+  scope :needing_training, (lambda do |regions|
+    completed_logs_in_region = Volunteer.in_regions(regions).completed_any
+
+    in_regions(regions).where(
+      'volunteers.id NOT IN (?)',
+      completed_logs_in_region.count.zero? ? [0] : completed_logs_in_region
+    )
+  end)
 
   belongs_to :transport_type
   belongs_to :cell_carrier

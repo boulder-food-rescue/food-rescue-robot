@@ -288,7 +288,6 @@ class VolunteersController < ApplicationController
     unless current_volunteer.waiver_signed?
       return redirect_to new_waiver_url
     end
-
     if current_volunteer.region_admin?
       @volunteers_need_signed_waiver = Volunteer.need_driver_waiver_signed_by_admin(current_volunteer.region_ids)
     end

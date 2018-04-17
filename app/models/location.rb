@@ -1,4 +1,10 @@
+require 'securerandom'
 class Location < ActiveRecord::Base
+  has_many :location_associations
+  has_many :location_admins, through: :location_associations
+
+  accepts_nested_attributes_for :location_admins
+  accepts_nested_attributes_for :location_associations
 
   # MOVE TO ENUM
   LOCATION_TYPES = {
@@ -36,7 +42,8 @@ class Location < ActiveRecord::Base
   attr_accessible :region_id, :address, :twitter_handle, :admin_notes, :contact, :donor_type, :hours,
                   :lat, :lng, :name, :public_notes, :recip_category, :website, :receipt_key,
                   :email, :phone, :equipment_storage_info, :food_storage_info, :entry_info, :exit_info,
-                  :onsite_contact_info, :active, :location_type
+                  :onsite_contact_info, :active, :location_type, :is_farmer_market, :location_admins_attributes,
+                  :location_admin_ids, :location_associations_attributes
 
   def is_donor
     location_type == LOCATION_TYPES.invert['Donor']

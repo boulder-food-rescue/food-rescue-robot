@@ -1,6 +1,6 @@
-class DeviseCreateDonors < ActiveRecord::Migration
+class DeviseCreateLocationAdmins < ActiveRecord::Migration
   def change
-    create_table(:donors) do |t|
+    create_table(:location_admins) do |t|
       ## Database authenticatable
       t.string :email,              null: false, default: ""
       t.string :encrypted_password, null: false, default: ""
@@ -34,9 +34,9 @@ class DeviseCreateDonors < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :donors, :email,                unique: true
-    add_index :donors, :reset_password_token, unique: true
-    # add_index :donors, :confirmation_token,   unique: true
-    # add_index :donors, :unlock_token,         unique: true
+    add_index :location_admins, :email,                unique: true
+    add_index :location_admins, :reset_password_token, unique: true
+    # add_index :location_admins, :confirmation_token,   unique: true
+    # add_index :location_admins, :unlock_token,         unique: true
   end
 end

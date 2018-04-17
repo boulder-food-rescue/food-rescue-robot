@@ -1,0 +1,26 @@
+<div class="nested-fields">
+  <table class="table">
+    <tr>
+  <td>
+    <%= f.label :name, "Vendor name" %><br />
+  </td>
+  <td>
+    <%= f.text_field :name %>
+  </td>
+
+
+
+    <td>
+      <%= f.label :email,  "Vendor email" %><br />
+    </td>
+    <td>
+      <%= f.email_field :email %>
+    </td>
+      <td> <%= link_to_remove_association "Remove", f %></td>
+
+    </tr>
+  <%= f.hidden_field :region_id, :value => @location.region_id %>
+  <%= f.hidden_field :password, :value => SecureRandom.hex %>
+
+  </table>
+</div>

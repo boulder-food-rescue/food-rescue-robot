@@ -1,11 +1,12 @@
 Webapp::Application.routes.draw do
 
+
   resources :assignments, only: [:new] do
     collection do
       get :knight
     end
   end
-  devise_for :donors, path: 'donors', controllers: { sessions: "donors/sessions"}
+
   resources :regions, except: [:show]
 
   resources :cell_carriers do as_routes end
@@ -137,5 +138,4 @@ Webapp::Application.routes.draw do
       root to: 'sessions#new', as: :unauthenticated_root
     end
   end
-
 end

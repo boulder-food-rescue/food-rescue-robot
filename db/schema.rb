@@ -11,8 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20180409162023) do
+ActiveRecord::Schema.define(:version => 20180412144109) do
 
   create_table "absences", :force => true do |t|
     t.integer "volunteer_id"
@@ -61,7 +60,7 @@ ActiveRecord::Schema.define(:version => 20180409162023) do
     t.boolean  "active",     :default => true, :null => false
   end
 
-  create_table "location_admin", :force => true do |t|
+  create_table "location_admins", :force => true do |t|
     t.string   "email",                  :default => "",  :null => false
     t.string   "encrypted_password",     :default => "",  :null => false
     t.string   "reset_password_token"
@@ -74,13 +73,22 @@ ActiveRecord::Schema.define(:version => 20180409162023) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at",                              :null => false
     t.datetime "updated_at",                              :null => false
-    t.string   "name",                   :default => "f"
-    t.string   "phone"
     t.integer  "region_id"
+    t.string   "name",                   :default => "f"
   end
 
-  add_index "location_admin", ["email"], :name => "index_donors_on_email", :unique => true
-  add_index "location_admin", ["reset_password_token"], :name => "index_donors_on_reset_password_token", :unique => true
+  add_index "location_admins", ["email"], :name => "index_location_admins_on_email", :unique => true
+  add_index "location_admins", ["reset_password_token"], :name => "index_location_admins_on_reset_password_token", :unique => true
+
+  create_table "location_associations", :force => true do |t|
+    t.integer  "location_admin_id"
+    t.integer  "location_id"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  add_index "location_associations", ["location_admin_id"], :name => "index_location_associations_on_location_admin_id"
+  add_index "location_associations", ["location_id"], :name => "index_location_associations_on_location_id"
 
   create_table "locations", :force => true do |t|
     t.string   "recip_category"
@@ -94,8 +102,8 @@ ActiveRecord::Schema.define(:version => 20180409162023) do
     t.text     "admin_notes"
     t.text     "public_notes"
     t.text     "hours"
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.integer  "region_id"
     t.string   "twitter_handle"
     t.string   "receipt_key"
@@ -107,8 +115,9 @@ ActiveRecord::Schema.define(:version => 20180409162023) do
     t.text     "entry_info"
     t.text     "exit_info"
     t.text     "onsite_contact_info"
-    t.boolean  "active",                 :default => true, :null => false
+    t.boolean  "active",                 :default => true,  :null => false
     t.integer  "location_type",          :default => 0
+    t.boolean  "is_farmer_market",       :default => false
   end
 
   create_table "log_parts", :force => true do |t|

@@ -39,7 +39,7 @@
 
   <body>
 
-    <%= nav_bar brand: 'The Food Rescue Robot', responsive: true, fluid: true do %>
+    <%= nav_bar brand: 'Veggietables by TCFJ', responsive: true, fluid: true do %>
       <%= menu_group do %>
         <%= menu_item "Home", root_path %>
 
@@ -161,9 +161,11 @@
     <% if @region || (volunteer_signed_in? && current_volunteer.has_main_region?) %>
       <div class="subhead">
         <div class="container-fluid">
-          <div class="page-header">
+          <div class="page-header" id = "img">
             <% current_region = volunteer_signed_in? ? current_volunteer.main_region : @region %>
-            <h1><%= current_region.title %> <small><%= current_region.tagline %></small></h1>
+            <div class="logo-wrap">
+              <%= image_tag "Logo - No background.png" %>
+            </div>
           </div>
         </div>
       </div>

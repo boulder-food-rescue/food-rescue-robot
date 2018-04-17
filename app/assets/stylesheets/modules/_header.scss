@@ -11,11 +11,33 @@
   height: 50px;
 }
 
-#bfr_title{
-  font-size: 1.5em;
-  color: #0E30B7;
+#TCFJ_title{
+  color: #72a20b;
   padding: 0px;
-  font-weight: bold;
+  text-align: center;
+  font-family: "jaf-facitweb-1","jaf-facitweb-2",sans-serif;
+}
+
+.page-header{
+  display: flex;
+  justify-content: center;
+  .logo-wrap {
+    img {
+      width: 100%;
+    }
+    @media (max-width: $screen-md-max ){
+        width: 400px;
+    }
+    @media (max-width: $screen-sm-max ){
+        width: 300px;
+    }
+    @media (max-width: $screen-xs-max ){
+        width: 200px;
+    }
+
+    max-width: 500px;
+  }
+
 }
 
 .header div{

@@ -88,7 +88,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  devise_for :volunteers, :controllers => { :sessions => 'volunteers/sessions' }
+  devise_for :volunteers, :controllers => { :sessions => 'sessions' }
 
   resources :volunteers do
     collection do

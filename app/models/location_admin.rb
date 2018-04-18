@@ -1,6 +1,9 @@
 class LocationAdmin < ActiveRecord::Base
   has_many :location_associations
   has_many :locations, through: :location_associations
+  has_many :log_parts
+  has_many :schedule_parts
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,

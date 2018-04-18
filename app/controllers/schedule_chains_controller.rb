@@ -112,6 +112,20 @@ class ScheduleChainsController < ApplicationController
 
   def create
     @schedule = ScheduleChain.new(params[:schedule_chain])
+    if @schedule.donors.first.is_farmer_market
+      donor_market =   @schedule.donors.first
+      food_type_id = FoodType.where('name'=>"Food")[0].id
+      @schedule.schedules.each do |sch|
+        if sch.location.location_type == 1 && sch.location.is_farmer_market
+          sch.schedule_parts.destroy_all
+          donor_market.location_admins.each do |vendor|
+            sch.schedule_parts.build(food_type_id: food_type_id, location_admin_id: vendor.id).save
+          end
+        end
+
+      end
+
+    end
     authorize! :create, @schedule
 
     if @schedule.save

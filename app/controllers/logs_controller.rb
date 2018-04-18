@@ -207,7 +207,11 @@ class LogsController < ApplicationController
     @action = 'update'
     session[:my_return_to] = request.referer
     set_vars_for_form @region
-    render :edit
+    if @log.donor.is_farmer_market
+      render 'logs/edit_farmers_market'
+    else
+      render :edit
+    end
   end
 
   def update
@@ -239,20 +243,36 @@ class LogsController < ApplicationController
         end
         respond_to do |format|
           format.json { render json: {error: 0, message: flash[:notice] } }
-          format.html { render :edit }
+          format.html { if @log.donor.is_farmer_market
+                          render 'logs/edit_farmers_market'
+                        else
+                          render :edit
+                        end }
         end
       else
         flash[:error] = 'Failed to mark as complete.'
         respond_to do |format|
           format.json { render json: {error: 2, message: flash[:notice] } }
-          format.html { render :edit }
+          format.html {
+            if @log.donor.is_farmer_market
+              render 'logs/edit_farmers_market'
+            else
+              render :edit
+            end
+          }
         end
       end
     else
       flash[:error] = "Didn't update successfully :(. #{@log.errors.full_messages.to_sentence}"
       respond_to do |format|
         format.json { render json: {error: 1, message: flash[:notice] } }
-        format.html { render :edit }
+        format.html {
+          if @log.donor.is_farmer_market
+            render 'logs/edit_farmers_market'
+          else
+            render :edit
+          end
+        }
       end
     end
   end

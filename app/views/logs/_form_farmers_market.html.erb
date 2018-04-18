@@ -1,0 +1,156 @@
+<%= simple_form_for @log, url: {action: @action}, class: 'form-horizontal' do |f| %>
+  <!-- Errors -->
+  <% if @log.errors.any? %>
+    <div class="row">
+      <div id="error_explanation">
+        <strong><%= pluralize(@log.errors.count, "error") %> prohibited this log from being saved:</strong>
+        <ul>
+          <% @log.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <%= hidden_field_tag "log[region_id]", @region.id %>
+      <%= hidden_field_tag "log[schedule_chain_id]", @log.schedule_chain.nil? ? nil : @log.schedule_chain.id  %>
+      <details>
+        Date of Food Rescue
+        <div class="form-inline">
+          <%= f.date_select :when, {order: [:month, :day, :year]}, {class: 'form-control'} %>
+        </div>
+        <h5>Name of Volunteers</h5>
+        <div>
+          <%= f.simple_fields_for :log_volunteers do |log_volunteer| %>
+            <%= render 'log_volunteer_fields', :f => log_volunteer %>
+          <% end %>
+          <br/>
+          <%= link_to_add_association 'add another volunteer', f, :log_volunteers, class: 'btn btn-primary' %>
+        </div>
+        <% if current_volunteer.any_admin?(@log.region) %>
+          Needed Volunteers<br/>
+          <span class="subtext">Default is the number required by the associated schedule, or at least one.</span>
+          <%= f.text_field(:num_volunteers, class: "form-control") %>
+        <% end %>
+        <h5>Where are you picking up from?</h5>
+        <%= f.select :donor_id, (@region.locations.donors + @region.locations.hubs + @region.locations.sellers).collect {|d| [d.name, d.id]}, {include_blank: true}, {class: 'form-control select2'} %>
+
+        <h5>What is the drop off location?</h5>
+        <div>
+          <%= f.simple_fields_for :log_recipients do |log_recipient| %>
+            <%= render 'log_recipient_fields', :f => log_recipient %>
+          <% end %>
+          <%= link_to_add_association 'add another recipient', f, :log_recipients, :class => 'btn' %>
+        </div>
+          </details>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <div class="mb-3">
+        <label for="username">How did you transport this food?</label>
+        <div class="input-group" style="width: 50%;">
+          <%= f.select(:transport_type_id, @transport_types, {:include_blank => true}, {class: "form-control"}) %>
+        </div>
+      </div>
+      <br>
+      <div class="mb-3">
+        <% @log_parts.each {|lp| %>
+          <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
+            <h4>Vendor <%= LocationAdmin.find(lp.location_admin_id).name %>: </h4>
+            <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
+              <td>
+                <%= f2.label_tag(:weight, 'Weight of ' + @food_types[0][0].downcase + " (lbs.):") %>
+                <%= f2.number_field(:weight, size: 5, class: "form-control", min: 0) %>
+              </td>
+              <br>
+              <td>
+                <% if @food_types[0][0] == "Food" %>
+                  <%= label_tag(:description, "Summary of food types:") %>
+                  <%= f2.text_field(:description, size: 20, class: "form-control") %>
+                <% end %>
+                <%= f2.hidden_field(:id) %>
+                <%= f2.hidden_field(:food_type_id) %>
+              </td>
+              <br>
+              <td>
+                <%= f2.hidden_field(:compost_weight, min: 0) %>
+              </td>
+              <br>
+            </tr>
+          <% end %>
+        <% } %>
+
+
+          </tr>
+        <div class="mb-3">
+          <label for=total_compost_w>Total Weight of Compost (lbs.)</label> <br>
+          <input id="total_compost_w" class = "form-control" type="number" min = "0" >
+        </div>
+
+      </div>
+      <br>
+      <div class="mb-3">
+        <label for=:hours_spent>Length of shift (in hours):</label>
+        <%= f.number_field(:hours_spent, :size => "3", class: "form-control", min: 0) %>
+      </div>
+      <br>
+      <div class="mb-3">
+        <label for=:notes>Any comments, concerns, notes?
+        </label>
+        <%= f.text_area(:notes, :size => "30x6", class: "form-control") %>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-12">
+          <td>
+            Flag For Admin<br/>
+            <span class="subtext">Check this if you want to make sure someone reads this.</span>
+          </td>
+          <td>
+            <div class="checkbox">
+              <label for="log_flag_for_admin">
+                <%= f.check_box(:flag_for_admin) %>
+                Flag
+              </label>
+            </div>
+          </td>
+          </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+          <%= submit_tag %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<% content_for :scripts do %>
+  <script type="text/javascript" charset="utf-8">
+      function update_compost_weight(){
+          var t = $('#total_compost_w').val();
+          var compost_for_vendors = $( "input[id$='compost_weight']");
+          compost_for_vendors.each(function(i){
+              $(this).val(t/compost_for_vendors.size())
+          });
+      }
+
+      jQuery(document).ready(function() {
+
+          update_compost_weight();
+
+          $("#total_compost_w").on("change",function(){
+              update_compost_weight();
+          });
+
+      });
+  </script>
+<% end %>

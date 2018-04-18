@@ -85,11 +85,11 @@ Webapp::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  config.middleware.use ExceptionNotifier,
-    email_prefix: '[BFR ROBOT ERROR] ',
-    sender_address: %{"BFR Robot" <notifier@boulderfoodrescue.org>},
-    exception_recipients: ENV['ERROR_EMAILS']
-
-  ExceptionNotifier::Rake.configure
+  # config.middleware.use ExceptionNotifier,
+  #   email_prefix: '[BFR ROBOT ERROR] ',
+  #   sender_address: %{"BFR Robot" <notifier@boulderfoodrescue.org>},
+  #   exception_recipients: ENV['ERROR_EMAILS']
+  #
+  # ExceptionNotifier::Rake.configure
 
 end

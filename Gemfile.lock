@@ -187,7 +187,6 @@ GEM
     multipart-post (2.0.0)
     naught (1.1.0)
     nenv (0.3.0)
-    newrelic_rpm (3.18.0.329)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     notiffany (0.1.1)
@@ -392,7 +391,6 @@ DEPENDENCIES
   jquery-datatables-rails!
   jquery-rails (= 2.1.4)
   json
-  newrelic_rpm
   pg
   poltergeist (~> 1.12)
   prawn (~> 2.1.0)

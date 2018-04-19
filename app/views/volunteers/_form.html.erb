@@ -45,8 +45,8 @@
               <% @volunteer.logs.each do |log| %>
                 <tr>
                   <td><%= log.when %></td>
-                  <td><%= log.donor.name %></td>
-                  <td><%= log.transport_type.name %></td>
+                  <td><%= log.donor.try(:name) %></td>
+                  <td><%= log.transport_type.try(:name) %></td>
                   <td><%= log.hours_spent %></td>
                   <td>
                     <%= link_to edit_log_path(log.id), class: 'btn btn-primary' do %>

@@ -26,7 +26,7 @@
       <div class="pull-right">
         <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=
             <%=u "Food Rescue: #{(@schedule.schedules.empty? or @schedule.schedules.first.location.nil?) ? "Unknown" : @schedule.schedules.first.location.name} -> #{(@schedule.schedules.empty? or @schedule.schedules.last.location.nil?) ? "Unknown" : @schedule.schedules.last.location.name}" %>
-            &dates=<%=u @schedule.next_pickup_time[:start].gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @schedule.next_pickup_time[:stop].gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @schedule.public_notes%>&location=<%=u @schedule.schedules.first.location.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
+            &dates=<%=u @schedule.next_pickup_time[:start].gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @schedule.next_pickup_time[:stop].gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @schedule.public_notes%>&location=<%=u @schedule.schedules.first.location.address%>&trp=true&sprop=http%3A%2F%2Ftcfoodjustice.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
       </div>
     <% end %>
 

@@ -3,7 +3,7 @@ Webapp::Application.configure do
   config.time_zone = 'Mountain Time (US & Canada)'
 
   #Asset Mailer Host!
-  config.action_mailer.asset_host = 'https://boulder-food-rescue-robot.herokuapp.com'
+  config.action_mailer.asset_host = 'https://veggietables-tcfj.herokuapp.com'
 
   config.action_mailer.smtp_settings = {
     :port           => ENV['MAILGUN_SMTP_PORT'],
@@ -14,7 +14,7 @@ Webapp::Application.configure do
     :authentication => :plain,
   }
   # ActionMailer Config
-  #config.action_mailer.default_url_options = { :host => 'robot.boulderfoodrescue.org' }
+  #config.action_mailer.default_url_options = { :host => 'veggietables.tcfoodjustice.org' }
   config.action_mailer.default_url_options = { host: "#{ENV['DOMAIN_NAME']}" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true

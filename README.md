@@ -8,7 +8,7 @@ also logs how much food is rescued, and can automatically issue receipts for don
 
 # Who uses it? (And how can I?)
 
-Currently, the "Food Rescue Robot" is live at http://robot.boulderfoodrescue.org
+Currently, the "Food Rescue Robot" is live at http://veggietables.tcfoodjustice.org
 and is used by a number of food rescue organizations cities around the world. If you're keen to use it, shoot an email to caleb at boulder food rescue (dot) org, and I can set you up with an account. Alternatively, if you would like to fork the source and hack on it yourself you are welcome to. This code is licensed under a Beerware-style license:
 
   As long as you retain this notice you can do whatever you want with this stuff.
@@ -17,7 +17,7 @@ and is used by a number of food rescue organizations cities around the world. If
 
 # Who is responsible?
 
-Most of the code was written by Caleb Phillips, a co-founder of Boulder Food Rescue (http://www.boulderfoodrescue.org) and
+Most of the code was written by Caleb Phillips, a co-founder of Boulder Food Rescue (http://www.tcfoodjustice.org) and
 adjunct Computer Science professor at the University of Colorado, Boulder. There is a fork maintained in Boston by
 Rahul Bhargava (MIT Media Labs), and some early design work was done by University of Colorado interns Sean Weise
 and Zac Doyle under awards from the Casey Feldman Foundation. As of May 2016, Rylan Bowers (http://rylanbowers.com/) is leading
@@ -28,9 +28,9 @@ development on the master branch and we are growing a small team of hackers to m
 If you want to help with development, feel free to fork the project. If you have something
 to submit upstream, send a pull request from your fork. If you're trying to setup a dev environment, keep reading.
 
-Alternatively, if your OSS time is limited, you can [donate to Boulder Food Rescue](https://www.boulderfoodrescue.org/donate/) via several options. _Please include a note that indicates you are donating for Robot Development in the notes._
+Alternatively, if your OSS time is limited, you can [donate to Boulder Food Rescue](https://www.tcfoodjustice.org/donate/) via several options. _Please include a note that indicates you are donating for Robot Development in the notes._
 
-[<img src="https://www.boulderfoodrescue.org/wp-content/uploads/2011/09/partnership_donatebutton.jpg">](https://www.coloradogives.org/index.php?section=organizations&action=newDonation&fwID=37126)
+[<img src="https://www.tcfoodjustice.org/wp-content/uploads/2011/09/partnership_donatebutton.jpg">](https://www.coloradogives.org/index.php?section=organizations&action=newDonation&fwID=37126)
 
 # General Tech Overview
 

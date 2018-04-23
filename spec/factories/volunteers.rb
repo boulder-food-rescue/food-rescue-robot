@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :volunteer do
     sequence(:name) { |n| "John Doe the #{n.ordinalize}" }
-    sequence(:email) { |n| "user#{n}@boulderfoodrescue.org" }
+    sequence(:email) { |n| "user#{n}@tcfoodjustice.org" }
     phone '555-555-5555'
     password 'SomePassword'
     waiver_signed true

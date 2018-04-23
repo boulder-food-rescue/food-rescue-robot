@@ -41,6 +41,7 @@ Webapp::Application.routes.draw do
       get :stats_service
       get :stats
       get :export
+      get :select_location
     end
     member do
       get :take

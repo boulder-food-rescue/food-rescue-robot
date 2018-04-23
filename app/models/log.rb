@@ -175,16 +175,44 @@ class Log < ActiveRecord::Base
 
   def self.to_csv
     CSV.generate do |csv|
-      csv << ['id', 'Date', 'Item Types', 'Item Weights', 'Item Descriptions', 'Weight of Composted Food', 'Donor', 'Recipients', 'Volunteers', 'Scale', 'Transport', 'Hours Spent', 'Reminders Sent', 'Volunteer Notes']
+      csv << ['id', 'Date', 'Item Types', 'Item Weights', 'Item Descriptions', 'Weight of Composted Food', 'Donor', 'Is donor a farmer\'s market?', 'Vendor Name' , 'Recipients', 'Volunteers', 'Scale', 'Transport', 'Hours Spent', 'Reminders Sent', 'Volunteer Notes']
       all.each do |log|
         lps = log.log_parts
-        csv << [log.id, log.when, lps.collect{ |lp| lp.food_type.nil? ? 'Unknown' : lp.food_type.name }.join(':'),
-                lps.collect{ |lp| lp.weight }.join(':'),
-                lps.collect{ |lp| lp.description.nil? ? 'None' : lp.description }.join(':'),
-                lps.collect{ |lp| lp.compost_weight}.compact.sum, log.donor.nil? ? 'Unknown' : log.donor.name, log.recipients.collect{ |r| r.nil? ? 'Unknown' : r.name }.join(':'),
-                log.volunteers.collect{ |r| r.nil? ? 'Unknown' : r.name }.join(':'), log.scale_type.nil? ? 'Uknown' : log.scale_type.name,
-                log.transport_type.nil? ? 'Unknown' : log.transport_type.name, log.hours_spent, log.num_reminders, log.notes
-        ]
+        if log.donor.is_farmer_market
+          lps.each do |log_part|
+            csv << [log.id, log.when, log_part.food_type.name,
+                    log_part.weight,
+                    log_part.description.nil? ? 'None' : log_part.description,
+                    log_part.compost_weight,
+                    log.donor.nil? ? 'Unknown' : log.donor.name,
+                    'Yes',
+                    log_part.location_admin.name,
+                    log.recipients.collect{ |r| r.nil? ? 'Unknown' : r.name }.join(':'),
+                    log.volunteers.collect{ |r| r.nil? ? 'Unknown' : r.name }.join(':'),
+                    log.scale_type.nil? ? 'Uknown' : log.scale_type.name,
+                    log.transport_type.nil? ? 'Unknown' : log.transport_type.name,
+                    log.hours_spent/lps.count,
+                    log.num_reminders,
+                    log.notes
+            ]
+          end
+        else
+          csv << [log.id, log.when, lps.collect{ |lp| lp.food_type.nil? ? 'Unknown' : lp.food_type.name }.join(':'),
+                  lps.collect{ |lp| lp.weight }.join(':'),
+                  lps.collect{ |lp| lp.description.nil? ? 'None' : lp.description }.join(':'),
+                  lps.collect{ |lp| lp.compost_weight}.compact.sum,
+                  log.donor.nil? ? 'Unknown' : log.donor.name,
+                  'No',
+                  'N/A',
+                  log.recipients.collect{ |r| r.nil? ? 'Unknown' : r.name }.join(':'),
+                  log.volunteers.collect{ |r| r.nil? ? 'Unknown' : r.name }.join(':'),
+                  log.scale_type.nil? ? 'Uknown' : log.scale_type.name,
+                  log.transport_type.nil? ? 'Unknown' : log.transport_type.name,
+                  log.hours_spent,
+                  log.num_reminders,
+                  log.notes
+          ]
+        end
       end
     end
   end

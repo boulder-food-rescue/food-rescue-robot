@@ -36,8 +36,7 @@
           <%= f.text_field(:num_volunteers, class: "form-control") %>
         <% end %>
         <h5>Where are you picking up from?</h5>
-        <%= f.select :donor_id, (@region.locations.donors + @region.locations.hubs + @region.locations.sellers).collect {|d| [d.name, d.id]}, {include_blank: true}, {class: 'form-control select2'} %>
-
+        <%= f.select :donor_id, (@locations).collect {|d| [d.name, d.id]}, {include_blank: false, selected: @donor_id}, {class: 'form-control select2'} %>
         <h5>What is the drop off location?</h5>
         <div>
           <%= f.simple_fields_for :log_recipients do |log_recipient| %>
@@ -60,6 +59,8 @@
       </div>
       <br>
       <div class="mb-3">
+        <% if !@log_parts.blank? %>
+
         <% @log_parts.each {|lp| %>
           <%= fields_for :log_parts, lp, :index => "update_#{lp.id}" do |f2| %>
             <h4>Vendor <%= LocationAdmin.find(lp.location_admin_id).name %>: </h4>
@@ -76,6 +77,8 @@
                 <% end %>
                 <%= f2.hidden_field(:id) %>
                 <%= f2.hidden_field(:food_type_id) %>
+                <%= f2.hidden_field(:food_type_id) %>
+                <%= f2.hidden_field(:location_admin_id) %>
               </td>
               <br>
               <td>
@@ -85,12 +88,13 @@
             </tr>
           <% end %>
         <% } %>
+        <% end %>
 
 
           </tr>
         <div class="mb-3">
           <label for=total_compost_w>Total Weight of Compost (lbs.)</label> <br>
-          <input id="total_compost_w" class = "form-control" type="number" min = "0" >
+          <input id="total_compost_w" class = "form-control" type="number" min = "0" value = <%= @log_parts.collect{ |lp| lp.compost_weight}.compact.sum%> >
         </div>
 
       </div>

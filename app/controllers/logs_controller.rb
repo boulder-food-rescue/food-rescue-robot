@@ -147,13 +147,25 @@ class LogsController < ApplicationController
     @region = Region.find(params[:region_id])
     @log = Log.new
     food_type_id = @region.food_types.where('name'=>"Food")[0].id
-    @log_parts = [LogPart.new( 'food_type_id' => food_type_id)]
     @log.region = @region
     @action = 'create'
     authorize! :create, @log
     session[:my_return_to] = request.referer
     set_vars_for_form @region
-    render :new
+    if params['is_farmer_market'] == '1'
+      selected_location = Location.find(params['donor_id'])
+      @log_parts = []
+      selected_location.location_admins.each do |vendor|
+        l = LogPart.new('food_type_id': food_type_id, location_admin_id: vendor.id)
+        @log_parts.push(l)
+      end
+      @donor_id = selected_location.id
+      @locations = get_farmers_market_locations(@region)
+      render 'new_farmers_market'
+    else
+      @log_parts = [LogPart.new( 'food_type_id' => food_type_id)]
+      render :new
+    end
   end
 
   def create
@@ -208,6 +220,7 @@ class LogsController < ApplicationController
     session[:my_return_to] = request.referer
     set_vars_for_form @region
     if @log.donor.is_farmer_market
+      @locations = get_farmers_market_locations(@region)
       render 'logs/edit_farmers_market'
     else
       render :edit
@@ -219,6 +232,7 @@ class LogsController < ApplicationController
     @region = @log.region
     @log_parts = @log.log_parts
     @action = 'update'
+    @locations = get_farmers_market_locations(@region)
     set_vars_for_form @region
 
     unless can?(:update, @log)
@@ -415,6 +429,17 @@ class LogsController < ApplicationController
       end
     end
   end
+  def select_location
+    @region = Region.find(params[:region_id])
+    if params['is_farmer_market'] == '0'
+      redirect_to action: :new, region_id: @region.id
+    else
+      @region = Region.find(params[:region_id])
+      @locations = get_farmers_market_locations(@region)
+      render 'logs/select_location'
+    end
+  end
+
 
   private
 
@@ -429,6 +454,7 @@ class LogsController < ApplicationController
       log_part.weight = lpdata['weight'].to_f
       log_part.food_type_id = lpdata['food_type_id'].to_i
       log_part.compost_weight = lpdata['compost_weight'].to_f
+      log_part.location_admin_id = lpdata['location_admin_id']
       ret.push log_part
       log_part.save
     } unless params['log_parts'].nil?
@@ -450,5 +476,16 @@ class LogsController < ApplicationController
   def admin_only
     redirect_to(root_path) unless current_volunteer.any_admin?
   end
+
+  def get_farmers_market_locations(region)
+    locations = []
+    region.locations.each do |d|
+      if d.is_farmer_market
+        locations.push(d)
+      end
+    end
+    locations
+  end
+
 
 end

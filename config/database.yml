@@ -6,7 +6,7 @@
 test:
   adapter: postgresql
   database: bfr_webapp_db_test
-  username: <%= ENV['DB_TEST_USER'] %>
+  username: <%= ENV.fetch('DB_TEST_USER', 'bfr_webapp_db_test')  %>
   password: <%= ENV['DB_TEST_PASSWORD'] %>
   host: localhost
   pool: 5
@@ -15,7 +15,7 @@ test:
 development:
   adapter: postgresql
   database: bfr_webapp_db
-  username: <%= ENV['DB_DEV_USER'] %>
+  username: <%= ENV.fetch('DB_DEV_USER', 'bfr_webapp_db') %>
   password: <%= ENV['DB_DEV_PASSWORD'] %>
   host: localhost
   pool: 5

@@ -96,13 +96,13 @@
             <%= drop_down "Region Admin" do %>
               <%= menu_item "Donors", region_admin_donors_url %>
               <%= menu_item "Recipients", recipients_locations_path %>
-              <% if current_volunteer.main_region.has_sellers? %>
+              <% if current_volunteer.main_region.sellers? %>
                 <%= menu_item "Sellers", sellers_locations_path %>
               <% end %>
-              <% if current_volunteer.main_region.has_buyers? %>
+              <% if current_volunteer.main_region.buyers? %>
                 <%= menu_item "Buyers", buyers_locations_path %>
               <% end %>
-              <% if current_volunteer.main_region.has_hubs? %>
+              <% if current_volunteer.main_region.hubs? %>
                 <%= menu_item "Hubs", hubs_locations_path %>
               <% end %>
               <%= menu_item "Food Types", region_admin_food_types_url %>
@@ -133,7 +133,7 @@
           <% if volunteer_signed_in? %>
             <%= drop_down current_volunteer.name  do %>
               <% current_volunteer.regions.each do |region| %>
-                <%= menu_item "<i class='fa fa-external-link'></i> #{region.name} Handbook".html_safe, region.handbook_url, target: "_blank" if region.has_handbook? %>
+                <%= menu_item "<i class='fa fa-external-link'></i> #{region.name} Handbook".html_safe, region.handbook_url, target: "_blank" if region.handbook? %>
               <% end %>
               <%= menu_item "<i class='fa fa-cog'></i> Settings".html_safe, edit_volunteer_path(current_volunteer.id) %>
               <%= menu_item "<i class='fa fa-file-o'></i> Waiver".html_safe, new_waiver_url %>
@@ -152,7 +152,7 @@
     <% end %>
 
     <!-- header -->
-    <% if @region || (volunteer_signed_in? && current_volunteer.has_main_region?) %>
+    <% if @region || (volunteer_signed_in? && current_volunteer.main_region?) %>
       <div class="subhead">
         <div class="container-fluid">
           <div class="page-header">

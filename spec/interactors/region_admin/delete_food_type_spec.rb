@@ -37,9 +37,7 @@ RSpec.describe RegionAdmin::DeleteFoodType do
         end
 
         it 'soft deletes the food type' do
-          expect{
-            subject
-          }.to change {
+          expect { subject }.to change {
             food_type.reload.active
           }.from(true).to(false)
         end
@@ -56,9 +54,7 @@ RSpec.describe RegionAdmin::DeleteFoodType do
         end
 
         it 'soft deletes the food type' do
-          expect{
-            subject
-          }.to change {
+          expect { subject }.to change {
             food_type.reload.active
           }.from(true).to(false)
         end

@@ -54,8 +54,8 @@ class ScheduleChain < ActiveRecord::Base
   # does the schedule chain start with a pickup and end with a dropoff?
   def functional?
     !schedules.empty? &&
-      schedules.first.is_pickup_stop? &&
-      schedules.last.is_drop_stop?
+      schedules.first.pickup_stop? &&
+      schedules.last.drop_stop?
   end
 
   def mappable?
@@ -99,7 +99,7 @@ class ScheduleChain < ActiveRecord::Base
     schedules.collect(&:food_types).flatten.uniq
   end
 
-  def has_volunteers?
+  def volunteers?
     volunteers.count > 0
   end
 
@@ -117,7 +117,7 @@ class ScheduleChain < ActiveRecord::Base
     schedule_volunteers.collect { |sv| !sv.active ? sv.volunteer : nil }.compact
   end
 
-  def has_volunteer?(volunteer)
+  def volunteer?(volunteer)
     return false if volunteer.nil?
     volunteers.collect(&:id).include?(volunteer.id)
   end
@@ -169,11 +169,11 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def donor_stops
-    schedules.select(&:is_pickup_stop?)
+    schedules.select(&:pickup_stop?)
   end
 
   def recipient_stops
-    schedules.select(&:is_drop_stop?)
+    schedules.select(&:drop_stop?)
   end
 
   def donors

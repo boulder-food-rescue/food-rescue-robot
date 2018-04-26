@@ -23,27 +23,27 @@ class Region < ActiveRecord::Base
                     s3_credentials: { bucket: 'boulder-food-rescue-robot-region-photo' }
   validates_attachment_file_name :logo, matches: [/png\Z/, /jpe?g\Z/, /gif\Z/]
 
-  def self.has_any_handbooks?(region_list)
-    region_list.any?(&:has_handbook?)
+  def self.any_handbooks?(region_list)
+    region_list.any?(&:handbook?)
   end
 
   def active_volunteer_count
     schedule_chains.flat_map(&:volunteers).uniq.count
   end
 
-  def has_sellers?
+  def sellers?
     locations.where(location_type: Location::LOCATION_TYPES.invert['Seller']).any?
   end
 
-  def has_buyers?
+  def buyers?
     locations.where(location_type: Location::LOCATION_TYPES.invert['Buyer']).any?
   end
 
-  def has_hubs?
+  def hubs?
     locations.where(location_type: Location::LOCATION_TYPES.invert['Hub']).any?
   end
 
-  def has_handbook?
+  def handbook?
     handbook_url.present?
   end
 end

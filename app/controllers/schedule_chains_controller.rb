@@ -172,7 +172,7 @@ class ScheduleChainsController < ApplicationController
     schedule_chain = ScheduleChain.find(params[:id])
 
     if current_volunteer.in_region? schedule_chain.region_id
-      if schedule_chain.has_volunteer? current_volunteer
+      if schedule_chain.volunteer? current_volunteer
         volunteers = ScheduleVolunteer.where(volunteer_id: current_volunteer.id, schedule_chain_id: schedule_chain.id)
         volunteers.each{ |sv| sv.update_attributes({active: false}) }
         flash[:notice] = "You are no longer on the route ending at #{schedule_chain.from_to_name}."
@@ -188,7 +188,7 @@ class ScheduleChainsController < ApplicationController
   def take
     schedule = ScheduleChain.find(params[:id])
     if current_volunteer.in_region? schedule.region_id
-      if schedule.has_volunteer? current_volunteer
+      if schedule.volunteer? current_volunteer
         flash[:error] = 'You are already on this shift'
       else
         schedule_volunteer = ScheduleVolunteer.new(:volunteer_id=>current_volunteer.id, :schedule_chain_id=>schedule.id)

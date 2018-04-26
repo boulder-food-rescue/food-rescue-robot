@@ -10,7 +10,7 @@ RSpec.describe Region do
       end
 
       it 'returns true' do
-        expect(described_class.has_any_handbooks?([region])).to eq(true)
+        expect(described_class.any_handbooks?([region])).to eq(true)
       end
     end
 
@@ -20,7 +20,7 @@ RSpec.describe Region do
       end
 
       it 'returns false' do
-        expect(described_class.has_any_handbooks?([region])).to eq(false)
+        expect(described_class.any_handbooks?([region])).to eq(false)
       end
     end
   end
@@ -65,7 +65,7 @@ RSpec.describe Region do
     end
   end
 
-  describe '#has_sellers?' do
+  describe '#sellers?' do
     subject { create(:region) }
 
     let!(:hub) do
@@ -94,18 +94,18 @@ RSpec.describe Region do
       end
 
       it 'returns true' do
-        expect(subject.has_sellers?).to eq(true)
+        expect(subject.sellers?).to eq(true)
       end
     end
 
     context 'with no sellers' do
       it 'returns false' do
-        expect(subject.has_sellers?).to eq(false)
+        expect(subject.sellers?).to eq(false)
       end
     end
   end
 
-  describe '#has_buyers?' do
+  describe '#buyers?' do
     subject { create(:region) }
 
     let!(:hub) do
@@ -134,18 +134,18 @@ RSpec.describe Region do
       end
 
       it 'returns true' do
-        expect(subject.has_buyers?).to eq(true)
+        expect(subject.buyers?).to eq(true)
       end
     end
 
     context 'with no buyers' do
       it 'returns false' do
-        expect(subject.has_buyers?).to eq(false)
+        expect(subject.buyers?).to eq(false)
       end
     end
   end
 
-  describe '#has_hubs?' do
+  describe '#hubs?' do
     subject { create(:region) }
 
     let!(:seller) do
@@ -174,18 +174,18 @@ RSpec.describe Region do
       end
 
       it 'returns true' do
-        expect(subject.has_hubs?).to eq(true)
+        expect(subject.hubs?).to eq(true)
       end
     end
 
     context 'with no hubs' do
       it 'returns false' do
-        expect(subject.has_hubs?).to eq(false)
+        expect(subject.hubs?).to eq(false)
       end
     end
   end
 
-  describe '#has_handbook?' do
+  describe '#handbook?' do
     subject { described_class.new }
 
     context 'with a handbook url' do
@@ -194,7 +194,7 @@ RSpec.describe Region do
       end
 
       it 'returns true' do
-        expect(subject.has_handbook?).to eq(true)
+        expect(subject.handbook?).to eq(true)
       end
     end
 
@@ -204,7 +204,7 @@ RSpec.describe Region do
       end
 
       it 'returns false' do
-        expect(subject.has_handbook?).to eq(false)
+        expect(subject.handbook?).to eq(false)
       end
     end
   end

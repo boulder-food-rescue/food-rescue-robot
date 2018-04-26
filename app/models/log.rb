@@ -1,5 +1,5 @@
 class Log < ActiveRecord::Base
-  WhyZero = {1 => 'No Food', 2 => "Didn't Happen"}
+  WHY_ZER0 = {1 => 'No Food', 2 => "Didn't Happen"}
 
   belongs_to :schedule_chain
   belongs_to :donor, class_name: 'Location', foreign_key: 'donor_id'
@@ -59,7 +59,7 @@ class Log < ActiveRecord::Base
     end
   }
 
-  def has_volunteers?
+  def volunteers?
     self.volunteers.count > 0
   end
 
@@ -74,10 +74,10 @@ class Log < ActiveRecord::Base
   def covered?
     nv = self.num_volunteers
     nv = self.schedule_chain.num_volunteers if nv.nil? and not self.schedule_chain.nil?
-    nv.nil? ? self.has_volunteers? : self.volunteers.length >= nv
+    nv.nil? ? self.volunteers? : self.volunteers.length >= nv
   end
 
-  def has_volunteer? volunteer
+  def volunteer? volunteer
     return false if volunteer.nil?
     self.volunteers.collect { |v| v.id }.include? volunteer.id
   end

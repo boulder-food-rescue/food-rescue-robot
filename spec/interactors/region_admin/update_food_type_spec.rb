@@ -19,9 +19,7 @@ RSpec.describe RegionAdmin::UpdateFoodType do
         described_class.call(
           volunteer:    volunteer,
           food_type_id: food_type.id,
-          params: {
-            name: 'Canned'
-          }
+          params: { name: 'Canned' }
         )
       end
 
@@ -40,9 +38,7 @@ RSpec.describe RegionAdmin::UpdateFoodType do
         end
 
         it 'updates the food type' do
-          expect{
-            subject
-          }.to change{
+          expect { subject }.to change {
             food_type.reload.name
           }.from('Produce')
             .to('Canned')
@@ -60,9 +56,7 @@ RSpec.describe RegionAdmin::UpdateFoodType do
         end
 
         it 'updates the food type' do
-          expect{
-            subject
-          }.to change{
+          expect { subject }.to change{
             food_type.reload.name
           }.from('Produce')
             .to('Canned')
@@ -78,9 +72,7 @@ RSpec.describe RegionAdmin::UpdateFoodType do
           described_class.call(
             volunteer:    volunteer,
             food_type_id: food_type.id,
-            params: {
-              name: 'Canned'
-            }
+            params: { name: 'Canned' }
           )
         end
 

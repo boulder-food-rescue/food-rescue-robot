@@ -146,7 +146,7 @@ class Volunteer < ActiveRecord::Base
     region_admin?(region, false)
   end
 
-  def has_main_region?
+  def main_region?
     !main_region.nil?
   end
 

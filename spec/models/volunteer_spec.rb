@@ -39,7 +39,7 @@ RSpec.describe Volunteer do
       before do
         log_volunteer.log.complete = true
         log_volunteer.log.hours_spent = 1
-        log_volunteer.log.why_zero = Log::WhyZero.invert['No Food']
+        log_volunteer.log.why_zero = Log::WHY_ZER0.invert['No Food']
         log_volunteer.log.save!
       end
 

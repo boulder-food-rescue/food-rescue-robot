@@ -16,11 +16,11 @@ class Schedule < ActiveRecord::Base
   attr_accessible :food_type_ids, :location_id, :public_notes, :admin_notes, :expected_weight,
                   :schedule_chain_id, :position
 
-  def is_pickup_stop?
+  def pickup_stop?
     location.nil? ? false : Location::PICKUP_LOCATION_TYPES.include?(location.location_type)
   end
 
-  def is_drop_stop?
+  def drop_stop?
     location.nil? ? false : Location::DROP_LOCATION_TYPES.include?(location.location_type)
   end
 end

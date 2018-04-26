@@ -19,7 +19,7 @@ RSpec.describe DeDupLogVolunteers do
     }
 
     it 'does not delete any data' do
-      expect { subject }.not_to change { LogVolunteer.count }
+      expect { subject }.to change { LogVolunteer.count }.by(0)
     end
 
     it 'finds all active duplicates and sets all but the most recent to inactive' do

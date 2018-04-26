@@ -56,7 +56,7 @@ module FoodRobot
           eager_load(:location).
           where('position > ?', donor.position).
           select{ |s| s.location.present? }.
-          select(&:is_drop_stop?).
+          select(&:drop_stop?).
           map(&:location)
       end
 

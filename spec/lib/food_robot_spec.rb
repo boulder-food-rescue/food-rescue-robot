@@ -14,7 +14,7 @@ RSpec.describe FoodRobot do
         subject { described_class.generate_log_entries(monday) }
 
         it 'generates no logs' do
-          expect { subject }.not_to change { Log.count }
+          expect { subject }.to change { Log.count }.by(0)
         end
       end
 
@@ -26,7 +26,7 @@ RSpec.describe FoodRobot do
         subject { described_class.generate_log_entries(monday) }
 
         it 'generates no logs' do
-          expect { subject }.not_to change { Log.count }
+          expect { subject }.to change { Log.count }.by(0)
         end
       end
 
@@ -40,7 +40,7 @@ RSpec.describe FoodRobot do
           subject { described_class.generate_log_entries(tuesday) }
 
           it 'generates no logs' do
-            expect { subject }.not_to change { Log.count }
+            expect { subject }.to change { Log.count }.by(0)
           end
         end
 
@@ -207,7 +207,7 @@ RSpec.describe FoodRobot do
         subject { described_class.generate_log_entries(monday, absence) }
 
         it 'generates no logs' do
-          expect { subject }.not_to change { Log.count }
+          expect { subject }.to change { Log.count }.by(0)
         end
       end
 

@@ -125,7 +125,7 @@
           <td>
             <% foods = ""
                 schedule.schedules.each do |stops|
-                  if stops.is_pickup_stop?
+                  if stops.pickup_stop?
                     foods += "<li><em>" + (stops.location.name + ":</em> " + stops.food_types.collect{ |ft| ft.name }.join(", ") + "\n")
                   end
     		      end %>

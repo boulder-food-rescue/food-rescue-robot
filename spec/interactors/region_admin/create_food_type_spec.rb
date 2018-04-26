@@ -108,11 +108,9 @@ RSpec.describe RegionAdmin::CreateFoodType do
         end
 
         it 'does not create a food type' do
-          expect{
-            subject
-          }.to_not change {
+          expect { subject }.to change {
             FoodType.count
-          }
+          }.by(0)
         end
 
         it 'sets the food type' do

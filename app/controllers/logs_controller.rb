@@ -296,7 +296,7 @@ class LogsController < ApplicationController
     logs.each { |log| authorize! :leave, log }
 
     logs.each do |log|
-      if log.has_volunteer? current_volunteer
+      if log.volunteer? current_volunteer
         LogVolunteer.where(volunteer_id: current_volunteer.id, log_id: log.id).each{ |log_volunteer|
           log_volunteer.active = false
           log_volunteer.save

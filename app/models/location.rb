@@ -38,15 +38,13 @@ class Location < ActiveRecord::Base
                   :email, :phone, :equipment_storage_info, :food_storage_info, :entry_info, :exit_info,
                   :onsite_contact_info, :active, :location_type
 
-  def is_donor
+  def donor?
     location_type == LOCATION_TYPES.invert['Donor']
   end
-  alias donor? is_donor
 
-  def is_hub
+  def hub?
     location_type == LOCATION_TYPES.invert['Hub']
   end
-  alias hub? is_hub
 
   def gmaps4rails_title
     self.name

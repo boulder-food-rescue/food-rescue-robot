@@ -1,7 +1,7 @@
 <div class="nested_fields" style="display:table-row;">
   <div style="display:table-cell"><%= f.association :location, :collection => @region.locations, :as=>:select, :label=>false, :input_html => {class: 'form-control' } %>
   <% unless f.object.location.nil? %>
-    (<%= f.object.is_pickup_stop? ? "Donor" : "Recipient" %>)
+    (<%= f.object.pickup_stop? ? "Donor" : "Recipient" %>)
   <% end %>
   </div>
   <div style="display:table-cell"><%= f.text_field(:position, size:4, class: "form-control") %></div>

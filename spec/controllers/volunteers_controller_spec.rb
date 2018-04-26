@@ -201,12 +201,26 @@ RSpec.describe VolunteersController do
   end
 
   describe 'GET #need_training' do
-    subject { get :need_training }
+    before do
+      create(:log_volunteer)
+      needs_training_voluneer = create(:log_volunteer)
 
-    before { sign_in volunteer }
+      needs_training_voluneer.log.complete = false
+      needs_training_voluneer.log.save!
+
+      sign_in volunteer
+    end
 
     it 'renders the index template' do
+      get :need_training
       expect(subject).to render_template :index
+    end
+
+    it 'only shows volunteers that need training' do
+      allow_any_instance_of(Volunteer).to receive(:needs_training?).and_return(true)
+      get :need_training
+      expect(assigns(:volunteers)).to_not be_nil
+      expect(assigns(:volunteers).count).to eq(1)
     end
   end
 

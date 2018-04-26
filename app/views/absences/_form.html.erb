@@ -10,11 +10,7 @@ You can use the form below to schedule an absence. Note that any shift occuring 
             Volunteer:
           </label>
         </td>
-        <% if current_volunteer.super_admin? %>
-          <td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| [v.name, v.id]}, {}, { class: 'form-control' } ) %></td>
-        <% else %>
-          <td><%= f.select(:volunteer_id, Volunteer.all.collect{ |v| ((v.regions.collect{ |r| r.id } & current_volunteer.admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact, {class: "form-control"}) %></td>
-        <% end %>
+        <td><%= f.select(:volunteer_id, my_admin_volunteers.collect { |v| [v.name, v.id] }, {}, { class: 'form-control' } ) %></td>
       </tr>
     <% end %>
 

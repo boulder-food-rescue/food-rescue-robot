@@ -50,7 +50,7 @@ class VolunteersController < ApplicationController
   end
 
   def need_training
-    @volunteers = Volunteer.needing_training(current_volunteer.region_ids)
+    @volunteers = Volunteer.not_super_admin.needing_training(current_volunteer.region_ids)
     @header = 'Volunteers Needing Training'
     render :index
   end
@@ -59,11 +59,13 @@ class VolunteersController < ApplicationController
     @header = 'All Volunteers'
     @volunteers = Volunteer.joins(:assignments)
                            .where(assignments: {region_id: current_volunteer.region_ids})
+
     respond_to do |format|
       format.json {
-        render json: @volunteers.select('email,phone,volunteers.id id,name').to_json
+        render json: @volunteers.select('email,phone,volunteers.id id,name').to_a.uniq.to_json
       }
       format.html {
+        @volunteers.uniq!
         render :index
       }
     end
@@ -176,12 +178,6 @@ class VolunteersController < ApplicationController
   def region_admin
     @admin_region_ids = current_volunteer.admin_region_ids
     @my_admin_regions = current_volunteer.admin_regions
-
-    if current_volunteer.super_admin?
-      @my_admin_volunteers = Volunteer.includes(:regions).all
-    else
-      @my_admin_volunteers = unassigned_or_in_regions(@admin_region_ids)
-    end
   end
 
   # Admin only view, hence use of #admin_regions for region lookup
@@ -286,19 +282,4 @@ class VolunteersController < ApplicationController
 
     render :home
   end
-
-  private
-
-  # RB 3-23-2018: Return volunteers that are unassigned
-  # and only in the region ids that are passed in
-  # all super admins are filtered out for security purposes
-  def unassigned_or_in_regions(admin_region_ids)
-    unassigned = Volunteer.not_super_admin.unassigned
-
-    volunteers_in_regions = Volunteer.not_super_admin
-                                     .assigned_to_regions(admin_region_ids)
-
-    volunteers_in_regions + unassigned
-  end
-
 end

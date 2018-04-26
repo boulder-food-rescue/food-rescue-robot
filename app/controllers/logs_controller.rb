@@ -68,7 +68,6 @@ class LogsController < ApplicationController
                                 .complete
                                 .order('logs.when ASC')
                                 .limit(1)
-
     @pounds_per_year = Log.joins(:log_parts)
                           .select('extract(YEAR from logs.when) as year, sum(weight)')
                           .where(region_id: region_ids)
@@ -76,7 +75,6 @@ class LogsController < ApplicationController
                           .group('year')
                           .order('year ASC')
                           .collect{ |l| [l.year, l.sum] }
-
     @pounds_per_month = Log.joins(:log_parts)
                            .select("date_trunc('month',logs.when) as month, sum(weight)")
                            .where(region_id: region_ids)
@@ -84,7 +82,6 @@ class LogsController < ApplicationController
                            .group('month')
                            .order('month ASC')
                            .collect{ |log| [Date.parse(log.month).strftime('%Y-%m'), log.sum] }
-
     @transport_per_year = {}
     @transport_years = []
     @transport_data = Log.joins(:transport_type)
@@ -93,7 +90,6 @@ class LogsController < ApplicationController
                          .complete
                          .group('name, year')
                          .order('name, year ASC')
-
     @transport_data.each do |log|
       @transport_years << log.year unless @transport_years.include?(log.year)
       @transport_per_year[log.name] = [] if @transport_per_year[log.name].nil?
@@ -117,7 +113,7 @@ class LogsController < ApplicationController
         total = Log.joins(:log_parts).where('region_id = ? AND complete', region_id).sum('weight').to_f
         total += @region.prior_lbs_rescued.to_f unless @region.nil? or @region.prior_lbs_rescued.nil?
       end
-      render :text => total.to_s
+      render text: total.to_s
     when 'wordcloud'
       words = {}
       LogPart.select('description').where('description IS NOT NULL').each{ |log_part|
@@ -159,13 +155,11 @@ class LogsController < ApplicationController
 
   def new
     @region = Region.find(params[:region_id])
-    @log = Log.new
-    @log.region = @region
+    @log = Log.new(region: @region)
     @action = 'create'
     authorize! :create, @log
     session[:my_return_to] = request.referer
     set_vars_for_form @region
-    render :new
   end
 
   def create
@@ -174,7 +168,6 @@ class LogsController < ApplicationController
     @food_types = @region.food_types.collect{ |e| [e.name, e.id] }
     @scale_types = @region.scale_types.collect{ |e| [e.name, e.id] }
     @transport_types = TransportType.all.collect{ |e| [e.name, e.id] }
-
 
     if @scale_types.empty?
       flash[:error] = "You have no scale types for the 'Weighed With' field for #{@region.name}. Please get this set up for your region."
@@ -191,11 +184,7 @@ class LogsController < ApplicationController
 
     if @log.save
       flash[:notice] = 'Created successfully.'
-      unless session[:my_return_to].nil?
-        redirect_to(session[:my_return_to])
-      else
-        index
-      end
+      return session[:my_return_to].present ? redirect_to(session[:my_return_to]) : index
     else
       flash[:error] = "Didn't save successfully :(. #{@log.errors.full_messages.to_sentence}"
       render :new
@@ -258,20 +247,20 @@ class LogsController < ApplicationController
           flash[:warning] = "Saved, but some weights/counts still needed to complete this log. Finish it here: <a href=\"/logs/#{@log.id}/edit\">(Fill In)</a>".html_safe
         end
         respond_to do |format|
-          format.json { render json: {error: 0, message: flash[:notice] } }
+          format.json { render json: { error: 0, message: flash[:notice] } }
           format.html { render :edit }
         end
       else
         flash[:error] = 'Failed to mark as complete.'
         respond_to do |format|
-          format.json { render json: {error: 2, message: flash[:notice] } }
+          format.json { render json: { error: 2, message: flash[:notice] } }
           format.html { render :edit }
         end
       end
     else
       flash[:error] = "Didn't update successfully :(. #{@log.errors.full_messages.to_sentence}"
       respond_to do |format|
-        format.json { render json: {error: 1, message: flash[:notice] } }
+        format.json { render json: { error: 1, message: flash[:notice] } }
         format.html { render :edit }
       end
     end
@@ -279,28 +268,18 @@ class LogsController < ApplicationController
 
   # can be given a single id or a list of ids
   def take
-    logs = unless params[:ids].present?
-             [Log.find(params[:id])]
-           else
-             Log.find(params[:ids])
-           end
+    logs = params[:ids].present? ? Log.find(params[:ids]) : [Log.find(params[:id])]
 
     if logs.all? { |log| can?(:take, log) }
-      logs.each do |log|
-        LogVolunteer.create(volunteer: current_volunteer, covering: true, log: log)
-      end
+      logs.each { |log| LogVolunteer.create(volunteer: current_volunteer, covering: true, log: log) }
       flash[:notice] = "Successfully took a shift with #{logs.length} donor(s)."
     else
       flash[:notice] = "Cannot take shifts for regions that you aren't assigned to!"
     end
 
     respond_to do |format|
-      format.json {
-        render json: {error: 0, message: flash[:notice]}
-      }
-      format.html {
-        request.env['HTTP_REFERER'].present? ? redirect_to(:back) : redirect_to(open_logs_path)
-      }
+      format.json { render json: { error: 0, message: flash[:notice] } }
+      format.html { request.env['HTTP_REFERER'].present? ? redirect_to(:back) : redirect_to(open_logs_path) }
     end
 
   end
@@ -451,5 +430,4 @@ class LogsController < ApplicationController
   def admin_only
     redirect_to(root_path) unless current_volunteer.any_admin?
   end
-
 end

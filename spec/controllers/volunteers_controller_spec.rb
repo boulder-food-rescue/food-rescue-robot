@@ -378,11 +378,6 @@ RSpec.describe VolunteersController do
       subject
       expect(assigns(:my_admin_regions)).to be_empty
     end
-
-    it 'my_admin_volunteers is empty by default' do
-      subject
-      expect(assigns(:my_admin_volunteers)).to eq([])
-    end
   end
 
   describe 'GET #region_admin as admin' do
@@ -404,11 +399,6 @@ RSpec.describe VolunteersController do
       subject
       expect(assigns(:admin_region_ids)).to_not be_nil
       expect(assigns(:admin_region_ids).count).to eq(1)
-    end
-
-    it 'my_admin_volunteers is empty by default' do
-      subject
-      expect(assigns(:my_admin_volunteers)).to eq([admin])
     end
   end
 

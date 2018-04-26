@@ -155,7 +155,7 @@ class LogsController < ApplicationController
 
   def new
     @region = Region.find(params[:region_id])
-    @log = Log.new(region: @region)
+    @log = Log.new(region_id: @region.id)
     @action = 'create'
     authorize! :create, @log
     session[:my_return_to] = request.referer

@@ -50,7 +50,7 @@ class VolunteersController < ApplicationController
   end
 
   def need_training
-    @volunteers =  Volunteer.needing_training(current_volunteer.region_ids)
+    @volunteers = Volunteer.needing_training(current_volunteer.region_ids)
     @header = 'Volunteers Needing Training'
     render :index
   end

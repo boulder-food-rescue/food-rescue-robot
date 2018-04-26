@@ -10,6 +10,13 @@
 # Cop supports --auto-correct.
 # Configuration parameters: Include, TreatCommentsAsGroupSeparators.
 # Include: **/Gemfile, **/gems.rb
+AllCops:
+  Exclude:
+    - 'lib/tasks/data_lookups.rake'
+    - 'vendor/**/*'
+    - 'bin/**/*'
+    - 'script/**/*'
+
 Bundler/OrderedGems:
   Exclude:
     - 'Gemfile'

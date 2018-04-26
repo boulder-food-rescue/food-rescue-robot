@@ -1,5 +1,4 @@
 class LogVolunteer < ActiveRecord::Base
-
   belongs_to :log
   belongs_to :volunteer
 
@@ -8,6 +7,8 @@ class LogVolunteer < ActiveRecord::Base
   accepts_nested_attributes_for :volunteer
 
   validate :prevent_active_duplicates
+
+  private
 
   def prevent_active_duplicates
     existing_active = self.class.where(log_id: log_id, volunteer_id: volunteer_id, active: true)

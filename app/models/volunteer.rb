@@ -32,7 +32,11 @@ class Volunteer < ActiveRecord::Base
 
   has_many :log_volunteers
   has_many :logs, through: :log_volunteers,
-           conditions: { 'log_volunteers.active' => true }
+           conditions: { log_volunteers: { active: true } }
+  has_many :completed_logs, through: :log_volunteers,
+           conditions: { logs: { complete: true } },
+           class_name: 'Log', source: :log
+
   has_many :prior_logs, through: :log_volunteers,
            conditions: { 'log_volunteers.active' => false },
            class_name: 'Log'

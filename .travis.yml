@@ -1,0 +1,12 @@
+language: ruby
+rvm:
+  - 2.2.6
+script:
+  - bundle exec rake db:schema:load
+  - bundle exec rake db:test:prepare
+  - bundle exec rspec
+  - bundle exec rubocop
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database bfr_webapp_db_test;' -U postgres

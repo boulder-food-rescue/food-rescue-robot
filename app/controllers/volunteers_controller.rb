@@ -50,7 +50,7 @@ class VolunteersController < ApplicationController
   end
 
   def need_training
-    @volunteers =  Volunteer.needing_training(current_volunteer.region_ids)
+    @volunteers = Volunteer.needing_training(current_volunteer.region_ids)
     @header = 'Volunteers Needing Training'
     render :index
   end
@@ -120,10 +120,8 @@ class VolunteersController < ApplicationController
   end
 
   def edit
-    @volunteer = Volunteer.includes(:logs)
-                           .joins(:logs)
-                           .where("logs.complete = true")
-                           .find(params[:id])
+    @volunteer = Volunteer.includes(:completed_logs)
+                          .find(params[:id])
     return unless check_permissions(@volunteer)
     @regions = Region.all
     @my_admin_regions = current_volunteer.admin_regions

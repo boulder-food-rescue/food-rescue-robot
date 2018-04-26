@@ -9,9 +9,9 @@ class Log < ActiveRecord::Base
 
   has_many :log_volunteers
   has_many :volunteers, through: :log_volunteers,
-           conditions: {'log_volunteers.active' => true}
+                        conditions: {'log_volunteers.active' => true}
   has_many :inactive_volunteers, through: :log_volunteers,
-           conditions: {'log_volunteers.active' => false}
+                                 conditions: {'log_volunteers.active' => false}
   has_many :log_recipients
   has_many :recipients, through: :log_recipients
   has_many :log_parts
@@ -26,7 +26,7 @@ class Log < ActiveRecord::Base
   accepts_nested_attributes_for :schedule_chain
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 and a.why_zero == 2 },
-             message: "can't be blank if weights/counts are all zero: let us know what happened!" }
+                                message: "can't be blank if weights/counts are all zero: let us know what happened!" }
   validates :transport_type_id, presence: { if: :complete }
   validates :donor_id, presence: { if: :complete }
   validates :scale_type_id, presence: { if: :complete }

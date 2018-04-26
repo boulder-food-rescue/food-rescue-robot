@@ -7,7 +7,7 @@ class ScheduleChain < ActiveRecord::Base
 
   has_many :schedule_volunteers
   has_many :volunteers, through: :schedule_volunteers,
-           conditions: { 'schedule_volunteers.active' => true }
+                        conditions: { 'schedule_volunteers.active' => true }
 
   has_many :schedules
   has_many :locations, through: :schedules

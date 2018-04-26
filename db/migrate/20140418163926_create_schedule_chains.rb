@@ -40,11 +40,11 @@ class CreateScheduleChains < ActiveRecord::Migration
       original = Schedule.find(sid)
       puts "Converting #{sid}: #{n}/#{old_schedules.length}"
       sc = ScheduleChain.create(irregular: original.irregular, backup: original.backup,	frequency: original.frequency,
-                                 detailed_start_time: original.detailed_start_time, detailed_stop_time: original.detailed_stop_time,
-                                 detailed_date: original.detailed_date, hilliness: original.hilliness,
-                                 difficulty_rating: original.difficulty_rating,
-                                 region_id: original.region_id, day_of_week: original.day_of_week, expected_weight: original.expected_weight,
-                                 public_notes: original.public_notes, admin_notes: original.admin_notes, transport_type_id: original.transport_type_id)
+                                detailed_start_time: original.detailed_start_time, detailed_stop_time: original.detailed_stop_time,
+                                detailed_date: original.detailed_date, hilliness: original.hilliness,
+                                difficulty_rating: original.difficulty_rating,
+                                region_id: original.region_id, day_of_week: original.day_of_week, expected_weight: original.expected_weight,
+                                public_notes: original.public_notes, admin_notes: original.admin_notes, transport_type_id: original.transport_type_id)
       Schedule.create(food_type_ids: original.food_type_ids, location_id: original.donor_id, schedule_chain_id: sc.id, position: 0)
       Schedule.create(food_type_ids: original.food_type_ids, location_id: original.recipient_id, schedule_chain_id: sc.id, position: 1)
       original.schedule_volunteers.each{ |sv|

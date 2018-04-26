@@ -54,20 +54,20 @@ region = Region.create({
 
 volunteer = Volunteer.create({
   'email'=>'volunteer.bfr@gmail.com',
-   'name'=>'Volunteer',
-   'phone'=>'760-815-5555',
-   'password' => 'changeme!',
-   'password_confirmation' => 'changeme!',
-   'preferred_contact'=>'Text',
-   'has_car'=>true,
-   'is_disabled'=>false,
-   'on_email_list'=>true,
-   'transport_type_id'=>1,
-   'cell_carrier_id'=>6,
-   'sms_too'=>false,
-   'pre_reminders_too'=>false,
-   'get_sncs_email'=>true,
-   'assigned'=>true
+  'name'=>'Volunteer',
+  'phone'=>'760-815-5555',
+  'password' => 'changeme!',
+  'password_confirmation' => 'changeme!',
+  'preferred_contact'=>'Text',
+  'has_car'=>true,
+  'is_disabled'=>false,
+  'on_email_list'=>true,
+  'transport_type_id'=>1,
+  'cell_carrier_id'=>6,
+  'sms_too'=>false,
+  'pre_reminders_too'=>false,
+  'get_sncs_email'=>true,
+  'assigned'=>true
 })
 
 volunteer.waiver_signed = true
@@ -84,20 +84,20 @@ assignment.save!
 
 super_admin = Volunteer.create({
   'email'=>'superadmin.bfr@gmail.com',
-   'name'=>'Super Admin',
-   'password' => 'changeme!',
-   'password_confirmation' => 'changeme!',
-   'phone'=>'760-888-5555',
-   'preferred_contact'=>'Text',
-   'has_car'=>true,
-   'is_disabled'=>false,
-   'on_email_list'=>true,
-   'transport_type_id'=>1,
-   'cell_carrier_id'=>6,
-   'sms_too'=>false,
-   'pre_reminders_too'=>false,
-   'get_sncs_email'=>true,
-   'assigned'=>true
+  'name'=>'Super Admin',
+  'password' => 'changeme!',
+  'password_confirmation' => 'changeme!',
+  'phone'=>'760-888-5555',
+  'preferred_contact'=>'Text',
+  'has_car'=>true,
+  'is_disabled'=>false,
+  'on_email_list'=>true,
+  'transport_type_id'=>1,
+  'cell_carrier_id'=>6,
+  'sms_too'=>false,
+  'pre_reminders_too'=>false,
+  'get_sncs_email'=>true,
+  'assigned'=>true
 })
 
 super_admin.admin = true
@@ -109,20 +109,20 @@ super_admin.save
 
 region_admin = Volunteer.create({
   'email'=>'regionadmin.bfr@gmail.com',
-   'name'=>"Region Admin #{region.name}",
-   'phone'=>'760-888-5555',
-   'password' => 'changeme!',
-   'password_confirmation' => 'changeme!',
-   'preferred_contact'=>'Text',
-   'has_car'=>true,
-   'is_disabled'=>false,
-   'on_email_list'=>true,
-   'transport_type_id'=>1,
-   'cell_carrier_id'=>6,
-   'sms_too'=>false,
-   'pre_reminders_too'=>false,
-   'get_sncs_email'=>true,
-   'assigned'=>true
+  'name'=>"Region Admin #{region.name}",
+  'phone'=>'760-888-5555',
+  'password' => 'changeme!',
+  'password_confirmation' => 'changeme!',
+  'preferred_contact'=>'Text',
+  'has_car'=>true,
+  'is_disabled'=>false,
+  'on_email_list'=>true,
+  'transport_type_id'=>1,
+  'cell_carrier_id'=>6,
+  'sms_too'=>false,
+  'pre_reminders_too'=>false,
+  'get_sncs_email'=>true,
+  'assigned'=>true
 })
 
 region_admin.admin = false

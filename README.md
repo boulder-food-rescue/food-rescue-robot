@@ -63,86 +63,55 @@ can see the routes with ```rake routes```;
 
 ## Prerequisites
 
- * Ruby 2.1
- * Rails 3.2.16 and the rest of the dependencies in the Gemfile
+ * Ruby 2.2
  * Postgresql 9.3 or greater (runs on at least 9.4.4)
  * A reasonable operating system (e.g., Linux or Mac, Windows if you're saucy)
  * Various dependencies for the above
 
-
 ## Setup
 
-1. **Clone the repository to your machine.**
+Clone this repository:
 
+    git clone https://github.com/boulder-food-rescue/food-rescue-robot.git
 
-  ```
-  git clone https://github.com/boulder-food-rescue/food-rescue-robot.git
-  cd food-rescue-robot
-  bundle install
-  ```
-2. **You'll need to create a database and user:**
+`cd` into the directory:
 
-  ```
-  $ sudo su - postgres
-  $ psql
-  > CREATE DATABASE bfr_webapp_db;
-  > CREATE DATABASE bfr_webapp_db_test;
-  > CREATE ROLE bfr_webapp_user WITH LOGIN PASSWORD 'changeme';
-  > GRANT ALL ON DATABASE bfr_webapp_db TO bfr_webapp_user;
-  > GRANT ALL ON DATABASE bfr_webapp_db_test TO bfr_webapp_user;
-  > \q
-  $ exit
-  ```
+    cd food-rescue-robot
+### Linux or Mac
 
-3. **Create a `.env` file from `.env.example`**
+Set up your environment:
 
-  ```
-  cp .env.example .env
-  ```
+    bin/setup
 
-4. **Set local environment variables in your `.env` file:**
+This will check your system for prerequisites (e.g. Ruby version), install dependencies, create a `.env` file, create any missing databases and database users, load the database schema and seed development data.
 
-  Run `rake secret` from the command line to generate a secret key base for your app.
+### Manual or Windows
 
-  ```
-  SECRET_KEY_BASE=[Paste your secret key base here]
-  GMAPS_API_KEY=[Use your own Google maps API key (optional)]
-  DB_DEV_USER=bfr_webapp_user
-  DB_DEV_PASSWORD=[Use your local Postgres password, if any, for bfr_webapp_user]
-  DB_TEST_USER=bfr_webapp_user
-  DB_TEST_PASSWORD=[Use your local Postgres password, if any, for bfr_webapp_user]
-  ```
+Install dependencies:
 
+    bundle install
 
-5. **Load Development Database Schema:**
+Copy `.env.example` to `.env`, and replace `SECRET_KEY_BASE` with the value of:
 
-  ```
-  bundle exec rake db:schema:load
-  ```
+    rake secret
 
-  **Warning:** _`bundle exec rake db:migrate` currently does not work due to default scopes an improper order of columns added to the database with migrations. `bundle exec rake db:schema:load` will build your tables instead._
+Create a development and test Postgres database and user:
 
-6. **Seed Development Database**
+```sql
+CREATE ROLE bfr_webapp_db WITH LOGIN;
+CREATE ROLE bfr_webapp_db_test WITH LOGIN;
+CREATE DATABASE bfr_webapp_db OWNER bfr_webapp_db;
+CREATE DATABASE bfr_webapp_db_test OWNER bfr_webapp_db_test;
+```
 
-  ```
-  bundle exec rake db:seed
-  ```
-  **Note:** _This creates an admin volunteer and other required bits. You should look it over._
-
-7. **Load Test Database Schema**
-
-  ```
-  bundle exec rake db:schema:load RAILS_ENV=test
-  ```
-
+Load the datbase
 ## Running It
 
-You should be able to simply:
-```
-  $ bundle exec rails server
-```
+To start a server, run
 
-This starts a thin server on localhost:3000, which you can get at with your browser.
+    bundle exec rails server
+
+Open [http://localhost:3000](http://localhost:3000)
 
 Also, beware that some crucial functions, like generating log entries from the schedule, and sending emails
 are executed by cron, daily or weekly. If you want to work on those bits, you may be keen to run these:

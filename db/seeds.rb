@@ -55,21 +55,21 @@ log << "Created region #{region.name.inspect}"
 #assignment.attributes.slice('volunteer_id', 'region_id', 'admin')
 
 volunteer = Volunteer.create({
-  'email'=>'volunteer@example.com',
-   'name'=>'Volunteer',
-   'phone'=>'760-815-5555',
-   'password' => password,
-   'password_confirmation' => password,
-   'preferred_contact'=>'Text',
-   'has_car'=>true,
-   'is_disabled'=>false,
-   'on_email_list'=>true,
-   'transport_type_id'=>1,
-   'cell_carrier_id'=>6,
-   'sms_too'=>false,
-   'pre_reminders_too'=>false,
-   'get_sncs_email'=>true,
-   'assigned'=>true
+  'email'=>'volunteer.bfr@gmail.com',
+  'name'=>'Volunteer',
+  'phone'=>'760-815-5555',
+  'password' => 'changeme!',
+  'password_confirmation' => 'changeme!',
+  'preferred_contact'=>'Text',
+  'has_car'=>true,
+  'is_disabled'=>false,
+  'on_email_list'=>true,
+  'transport_type_id'=>1,
+  'cell_carrier_id'=>6,
+  'sms_too'=>false,
+  'pre_reminders_too'=>false,
+  'get_sncs_email'=>true,
+  'assigned'=>true
 })
 
 volunteer.waiver_signed = true
@@ -87,21 +87,21 @@ assignment.region_id = region.id
 assignment.save!
 
 super_admin = Volunteer.create({
-  'email'=>'admin@example.com',
-   'name'=>'Super Admin',
-   'password' => password,
-   'password_confirmation' => password,
-   'phone'=>'760-888-5555',
-   'preferred_contact'=>'Text',
-   'has_car'=>true,
-   'is_disabled'=>false,
-   'on_email_list'=>true,
-   'transport_type_id'=>1,
-   'cell_carrier_id'=>6,
-   'sms_too'=>false,
-   'pre_reminders_too'=>false,
-   'get_sncs_email'=>true,
-   'assigned'=>true
+  'email'=>'superadmin.bfr@gmail.com',
+  'name'=>'Super Admin',
+  'password' => 'changeme!',
+  'password_confirmation' => 'changeme!',
+  'phone'=>'760-888-5555',
+  'preferred_contact'=>'Text',
+  'has_car'=>true,
+  'is_disabled'=>false,
+  'on_email_list'=>true,
+  'transport_type_id'=>1,
+  'cell_carrier_id'=>6,
+  'sms_too'=>false,
+  'pre_reminders_too'=>false,
+  'get_sncs_email'=>true,
+  'assigned'=>true
 })
 
 super_admin.admin = true
@@ -113,21 +113,21 @@ super_admin.save!
 log << "Created admin #{super_admin.email.inspect} with password #{password.inspect}"
 
 region_admin = Volunteer.create({
-  'email'=>'regionadmin@example.com',
-   'name'=>"Region Admin #{region.name}",
-   'phone'=>'760-888-5555',
-   'password' => password,
-   'password_confirmation' => password,
-   'preferred_contact'=>'Text',
-   'has_car'=>true,
-   'is_disabled'=>false,
-   'on_email_list'=>true,
-   'transport_type_id'=>1,
-   'cell_carrier_id'=>6,
-   'sms_too'=>false,
-   'pre_reminders_too'=>false,
-   'get_sncs_email'=>true,
-   'assigned'=>true
+  'email'=>'regionadmin.bfr@gmail.com',
+  'name'=>"Region Admin #{region.name}",
+  'phone'=>'760-888-5555',
+  'password' => 'changeme!',
+  'password_confirmation' => 'changeme!',
+  'preferred_contact'=>'Text',
+  'has_car'=>true,
+  'is_disabled'=>false,
+  'on_email_list'=>true,
+  'transport_type_id'=>1,
+  'cell_carrier_id'=>6,
+  'sms_too'=>false,
+  'pre_reminders_too'=>false,
+  'get_sncs_email'=>true,
+  'assigned'=>true
 })
 
 region_admin.admin = false

@@ -92,10 +92,10 @@ class Location < ActiveRecord::Base
       prefix = 'day'+index.to_s
       write_day_info(prefix+'_status', params[prefix]['status'].to_i)
       write_day_info(prefix+'_start',
-        Time.find_zone(self.time_zone).parse( params[prefix]['start']['hour']+':'+params[prefix]['start']['minute'] )
+                     Time.find_zone(self.time_zone).parse( params[prefix]['start']['hour']+':'+params[prefix]['start']['minute'] )
       )
       write_day_info(prefix+'_end',
-        Time.find_zone(self.time_zone).parse( params[prefix]['end']['hour']+':'+params[prefix]['end']['minute'] )
+                     Time.find_zone(self.time_zone).parse( params[prefix]['end']['hour']+':'+params[prefix]['end']['minute'] )
       )
     end
     populate_detailed_hours_json_before_save

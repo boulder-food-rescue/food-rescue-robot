@@ -18,6 +18,6 @@ RSpec.describe LogVolunteer do
     expect do
       LogVolunteer.create!(log_id: log_id, volunteer_id: volunteer_id, active: false)
       LogVolunteer.create!(log_id: log_id, volunteer_id: volunteer_id, active: false)
-    end.not_to raise_error(ActiveRecord::RecordInvalid)
+    end.not_to raise_error
   end
 end

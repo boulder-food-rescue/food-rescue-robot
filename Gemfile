@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
-ruby File.read('.ruby-version')
+
+ruby File.read('.ruby-version').strip
 
 # the base rails libraries
 gem 'pg'

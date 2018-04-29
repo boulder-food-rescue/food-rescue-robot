@@ -63,7 +63,7 @@ can see the routes with ```rake routes```;
 
 ## Prerequisites
 
- * Ruby 2.2
+ * Ruby 2.3.7
  * Postgresql 9.3 or greater (runs on at least 9.4.4)
  * A reasonable operating system (e.g., Linux or Mac, Windows if you're saucy)
  * Various dependencies for the above

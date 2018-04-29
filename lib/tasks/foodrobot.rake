@@ -4,13 +4,8 @@ namespace :foodrobot do
 
   task(:generate_logs => :environment) do
     Rails.logger = Logger.new(STDOUT)
-    # Generate entries for the next few days (shouldn't duplicate...)
-    FoodRobot::generate_log_entries(Date.today)
-    FoodRobot::generate_log_entries(Date.today+1)
-    FoodRobot::generate_log_entries(Date.today+2)
-    FoodRobot::generate_log_entries(Date.today+3)
-    FoodRobot::generate_log_entries(Date.today+4)
-    FoodRobot::generate_log_entries(Date.today+5)
+    # RB 4-28-2018: Generate entries for the next 14 days (these shouldn't create duplicates)
+    15.times { |index| FoodRobot::generate_log_entries(Date.today+index) }
   end
 
   task(:send_reminders => :environment) do

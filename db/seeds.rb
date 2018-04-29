@@ -6,13 +6,13 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Emanuel', :city => cities.first)
 
+password = ENV.fetch('SEED_USERS_PASSWORD', 'password')
+
+log = []
+
 # Create global transport types
-[
-  {name: 'Bike'},
-  {name: 'Car'},
-  {name: 'Foot'}
-].each do |attrs|
-  TransportType.create(attrs)
+%w( Bike Car Foot ).each do |name|
+  TransportType.create(name: name)
 end
 
 # Create global cell phone carriers
@@ -24,7 +24,7 @@ end
   { name: 'Nextel', format: '%d@messaging.nextel.com' },
   { name: 'Sprint', format: '%d@messaging.sprintpcs.com' }
 ].each do |attrs|
-  CellCarrier.create(attrs)
+  carrier = CellCarrier.create(attrs)
 end
 
 #region.attributes.slice('lat', 'lng', 'name', 'website', 'address', 'notes', 'handbook_url', 'prior_lbs_rescued', 'prior_num_pickups', 'title', 'tagline', 'phone', 'tax_id', 'welcome_email_text', 'splash_html', 'weight_unit', 'time_zone', 'volunteer_coordinator_email', 'post_pickup_emails', 'unschedule_self' )
@@ -44,10 +44,12 @@ region = Region.create({
   'splash_html'=>'',
   'weight_unit'=>'pound',
   'time_zone'=>'',
-  'volunteer_coordinator_email'=>'volunteer@gmail.com',
+  'volunteer_coordinator_email'=>'volunteer@example.com',
   'post_pickup_emails'=>false,
   'unschedule_self'=>false
 })
+
+log << "Created region #{region.name.inspect}"
 
 #volunteer.attributes.slice('email', 'name', 'phone', 'preferred_contact', 'has_car', 'admin_notes', 'pickup_prefs', 'is_disabled', 'on_email_list', 'admin', 'transport_type_id', 'cell_carrier_id', 'sms_too', 'pre_reminders_too', 'get_sncs_email', 'waiver_signed', 'waiver_signed_at', 'assigned', 'requested_region_id', 'active')
 #assignment.attributes.slice('volunteer_id', 'region_id', 'admin')
@@ -74,6 +76,8 @@ volunteer.waiver_signed = true
 volunteer.waiver_signed_at = DateTime.now
 volunteer.active = true
 volunteer.save!
+
+log << "Created volunteer #{volunteer.email.inspect} with password #{password.inspect}"
 
 # Create volunteer assignment
 assignment = Assignment.new({admin: false})
@@ -104,8 +108,9 @@ super_admin.admin = true
 super_admin.waiver_signed = true
 super_admin.waiver_signed_at = DateTime.now
 super_admin.active = true
-super_admin.save
+super_admin.save!
 
+log << "Created admin #{super_admin.email.inspect} with password #{password.inspect}"
 
 region_admin = Volunteer.create({
   'email'=>'regionadmin.bfr@gmail.com',
@@ -129,7 +134,9 @@ region_admin.admin = false
 region_admin.waiver_signed = true
 region_admin.waiver_signed_at = DateTime.now
 region_admin.active = true
-region_admin.save
+region_admin.save!
+
+log << "Created region admin #{region_admin.email.inspect} with password #{password.inspect}"
 
 # Create region admin assignment
 admin_assignment = Assignment.new({admin: true})
@@ -137,3 +144,6 @@ admin_assignment = Assignment.new({admin: true})
 admin_assignment.volunteer_id = region_admin.id
 admin_assignment.region_id = region.id
 admin_assignment.save!
+
+puts "==> Database seeded:"
+puts log.map { |line| "  #{line}" }

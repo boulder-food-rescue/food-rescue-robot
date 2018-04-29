@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Exit if any command fails
+set -e
+
+function on_exit {
+  if [ "$?" != "0" ]; then
+    echo "==> Setup failed. If you cannot resolve the issue, please let us know using"
+    echo "    the link below. Be sure to include the output of this command."
+    echo
+    echo "    https://github.com/boulder-food-rescue/food-rescue-robot/issues/new"
+    echo
+  fi
+}
+
+trap on_exit EXIT
+
+if ! command -v ruby; then
+  target_ruby_version=`cat .ruby-version`
+
+  echo "==> Ruby not found. Please install Ruby $target_ruby_version: "
+  echo "    https://www.ruby-lang.org/en/documentation/installation/"
+  exit 1
+fi
+
+echo "==> Installing dependencies"
+command -v bundle || gem install bundler
+bundle check || bundle install
+
+echo "==> Checking environment"
+
+if [ -f ".env" ]; then
+  echo ".env file detected"
+else
+  printf "==> .env file missing. Would you like to create one? [Yn] "
+
+  read answer
+  lower_case_answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+
+  if [ "$lower_case_answer" != "n" ]; then
+    ruby bin/support/create-dot-env.rb
+  fi
+fi
+
+echo "==> Setting up database"
+ruby bin/support/bootstrap-database.rb
+
+echo "==> Loading database schema"
+bundle exec rake db:schema:load
+
+RAILS_ENV=test
+bundle exec rake db:schema:load
+
+echo "==> Seeding development database"
+RAILS_ENV=development
+SEED_USERS_PASSWORD=password
+bundle exec rake db:seed
+
+cat <<INSTRUCTIONS
+
+==> Congratulations! You're good to go.
+
+    To start the app, run:
+
+        bin/start
+
+    To run the tests:
+
+        bin/test
+
+INSTRUCTIONS

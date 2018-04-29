@@ -19,7 +19,7 @@
             <label for="volunteer_id">Volunteer:</label>
           </td>
           <td>
-            <%= select_tag(:volunteer_id, options_for_select(Volunteer.with_regions_for_select(@my_admin_volunteers)), { class: "form-control select2" }) %>
+            <%= select_tag(:volunteer_id, options_for_select(Volunteer.with_regions_for_select(my_admin_volunteers)), { class: "form-control select2" }) %>
           </td>
         </tr>
       </table>
@@ -111,7 +111,7 @@
             <label for="volunteer_id">Volunteer:</label>
           </td>
           <td>
-            <%= select_tag(:volunteer_id, options_for_select(Volunteer.with_regions_for_select(@my_admin_volunteers)), {class: "form-control select2"}) %>
+            <%= select_tag(:volunteer_id, options_for_select(Volunteer.with_regions_for_select(my_admin_volunteers)), {class: "form-control select2"}) %>
           </td>
         </tr>
         <tr>

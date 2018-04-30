@@ -77,8 +77,6 @@ class LocationsController < ApplicationController
     @location = Location.new
     @location.region_id = params[:region_id]
     @location_admins = LocationAdmin.where(region_id:  @location.region_id).sort_by{|l| l[:name]}
-    puts @location_admins
-    puts 'HERE!!!'
     @location.location_admins.build
     authorize! :create, @location
     @action = 'create'

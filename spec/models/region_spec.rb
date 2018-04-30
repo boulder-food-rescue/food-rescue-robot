@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Region do
-  describe '.has_any_handbooks?' do
+  describe '.any_handbooks?' do
     let(:region) { build(:region) }
 
     context 'for regions with a handbook' do

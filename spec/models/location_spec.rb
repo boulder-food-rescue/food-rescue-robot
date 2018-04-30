@@ -30,7 +30,7 @@ RSpec.describe Location do
     end
   end
 
-  describe 'is_hub' do
+  describe 'hub?' do
     let(:hub_type) do
       described_class::LOCATION_TYPES.invert['Hub']
     end

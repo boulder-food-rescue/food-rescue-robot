@@ -48,7 +48,7 @@
           <%= "<br />".html_safe+loc.email unless loc.email.nil? %>
         </td>
         <td><%= readable_hours loc %></td>
-        <td> <%= loc.is_donor ? loc.donor_type : loc.recip_category %>
+        <td> <%= loc.donor? ? loc.donor_type : loc.recip_category %>
         <td><small><%= word_wrap(loc.public_notes,:line_width => 30).gsub("\n","<br />").html_safe unless loc.public_notes.nil? %></small></td>
         <% if current_volunteer.any_admin? %>
           <td><small><%= word_wrap(loc.admin_notes,:line_width => 30).gsub("\n","<br />").html_safe unless loc.admin_notes.nil? or !(current_volunteer.any_admin?) %></small></td>

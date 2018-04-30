@@ -64,7 +64,7 @@ class Location < ActiveRecord::Base
 
   def gmaps4rails_marker_picture
     {
-      'picture' => self.is_donor ? 'http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-start.png' :
+      'picture' => self.donor? ? 'http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-start.png' :
                                    'http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-end.png'          # string,  mandatory
     }
   end

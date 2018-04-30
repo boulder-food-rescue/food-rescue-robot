@@ -80,7 +80,7 @@
               <% schedule.schedules.each do |stop| %>
                 <% next if stop.location.nil? %>
     						<%= link_to stop.location.name, stop.location %>
-        				<% if stop.location.is_donor %>
+        				<% if stop.location.donor? %>
               		(Donor)
     						<% else %>
     							(Recipient)

@@ -32,7 +32,7 @@
   </tbody>
 </table>
 
-<h2><%= @location.is_donor ? "Pick Up" : "Delivery" %> Log</h2>
+<h2><%= @location.donor? ? "Pick Up" : "Delivery" %> Log</h2>
 <br>
 Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><br><br>
 
@@ -42,7 +42,7 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
   <tr>
     <th> When </th>
     <th> Volunteer </th>
-    <% unless @location.is_donor %><th> Donor </th><% end %>
+    <% unless @location.donor? %><th> Donor </th><% end %>
     <th> Weight </th>
     <th> Transport Type </th>
     <th> Food Type </th>
@@ -55,7 +55,7 @@ Total poundage: <%= @logs.collect{ |l| l.summed_weight }.compact.reduce(:+) %><b
   <tr>
     <td> <%= shift.when %> </td>
     <td> <%= shift.volunteers.empty? ? "Unknown" : shift.volunteers.collect{ |v| v.name }.join(" and ") %>
-    <% unless @location.is_donor %><td> <%= shift.donor.nil? ? "Unknown" : shift.donor.name %><% end %>
+    <% unless @location.donor? %><td> <%= shift.donor.nil? ? "Unknown" : shift.donor.name %><% end %>
     <td> <%= shift.weight_sum %> </td>
     <td> <%= shift.transport_type.name unless shift.transport_type.nil? %>
     <td> <%= shift.log_parts.collect{ |lp| (!lp.food_type.nil? and !lp.weight.nil? and lp.weight > 0) ? "#{lp.food_type.name} (#{lp.weight} lb)" : nil }.compact.join(", ") %>

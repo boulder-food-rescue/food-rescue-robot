@@ -55,7 +55,7 @@
         <tr>
           <td>Hours
             <small>
-              <% if @location.is_donor %>
+              <% if @location.donor? %>
                 for <em>pickup</em> at this donor
               <% else %>
                 for <em>dropoff</em> at this recipient

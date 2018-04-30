@@ -80,7 +80,7 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def self.for_location(loc)
-    if loc.is_donor
+    if loc.donor?
       ScheduleChain.for_donor(loc)
     else
       ScheduleChain.for_recipient(loc)

@@ -5,7 +5,7 @@ class LocationsController < ApplicationController
     @location = Location.find(params[:id])
     if params[:key] == @location.receipt_key || (!current_volunteer.nil? && (current_volunteer.region_admin?(@location.region) || current_volunteer.super_admin?))
       @schedules = ScheduleChain.for_location(@location)
-      @logs = if @location.is_donor
+      @logs = if @location.donor?
                 Log.at(@location).last(500)
               else
                 Log.at(@location).last(500).keep_if{ |x| x.weight_sum.to_f > 0 }

@@ -11,7 +11,7 @@ task(:export_log_data => :environment) do
   CSV.open('orgs.csv', 'wb') do |csv|
     csv << %w(id name lat lng type)
     Location.where('region_id = ?', 1).each{ |l|
-      csv << [l.id, l.name, l.lat, l.lng, l.is_donor ? 'donor' : 'recipient']
+      csv << [l.id, l.name, l.lat, l.lng, l.donor? ? 'donor' : 'recipient']
     }
   end
 

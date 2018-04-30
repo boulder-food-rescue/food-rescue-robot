@@ -114,7 +114,7 @@ class Log < ActiveRecord::Base
   end
 
   def self.at(loc)
-    if loc.is_donor
+    if loc.donor?
       return Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where('donor_id = ?', loc.id).group('logs.id, logs.transport_type_id, logs.when').order('logs.when ASC')
     else
       return Log.joins(:food_types, :recipients).select("sum(weight) as weight_sum,

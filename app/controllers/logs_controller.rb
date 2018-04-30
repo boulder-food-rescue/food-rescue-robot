@@ -184,7 +184,7 @@ class LogsController < ApplicationController
 
     if @log.save
       flash[:notice] = 'Created successfully.'
-      return session[:my_return_to].present ? redirect_to(session[:my_return_to]) : index
+      return session[:my_return_to].present? ? redirect_to(session[:my_return_to]) : index
     else
       flash[:error] = "Didn't save successfully :(. #{@log.errors.full_messages.to_sentence}"
       render :new

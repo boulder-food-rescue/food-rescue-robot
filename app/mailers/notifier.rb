@@ -1,7 +1,6 @@
 class Notifier < ActionMailer::Base
   add_template_helper(ApplicationHelper)
-  default from: 'robot@boulderfoodrescue.org'
-  #ForceTo = "cphillips@smallwhitecube.com"
+  default from: 'admin@tcfoodjustice.org'
   ForceTo = nil
 
   def admin_emails_for_region(region)
@@ -20,7 +19,7 @@ class Notifier < ActionMailer::Base
     return nil if region.welcome_email_text.nil? or region.welcome_email_text.strip.length == 0
     @welcome_email_text = region.welcome_email_text
     to = ForceTo.nil? ? volunteer.email : ForceTo
-    mail(to: to, subject: '[FoodRobot] Welcome to the Food Rescue Robot!'){ |format| format.html }
+    mail(to: to, subject: '[FoodRobot] Welcome to the Veggietables!'){ |format| format.html }
   end
 
   def volunteer_log_reminder(volunteer, logs)

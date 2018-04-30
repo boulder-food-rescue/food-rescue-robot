@@ -212,7 +212,7 @@ class Volunteer < ActiveRecord::Base
   def auto_assign_region
     if Region.count == 1 && regions.count.zero?
       Assignment.add_volunteer_to_region self, Region.first
-      logger.info "Automatically assigned new user to region #{regions.first.name}"
+      logger.info "Automatically assigned new user to region #{Region.first.name}"
     end
   end
 

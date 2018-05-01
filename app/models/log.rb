@@ -68,30 +68,40 @@ class Log < ActiveRecord::Base
   end
 
   def covering_volunteers
-    self.log_volunteers.collect{ |lv| lv.covering ? lv.volunteer : nil }.compact
+    self.log_volunteers
+        .collect{ |lv| lv.covering ? lv.volunteer : nil }
+        .compact
   end
 
   def covered?
-    nv = self.num_volunteers
-    nv = self.schedule_chain.num_volunteers if nv.nil? and not self.schedule_chain.nil?
-    nv.nil? ? self.volunteers? : self.volunteers.length >= nv
+    num_vols = self.num_volunteers
+    num_vols = self.schedule_chain.num_volunteers if num_vols.nil? && !self.schedule_chain.nil?
+    num_vols.nil? ? self.volunteers? : self.volunteers.length >= num_vols
   end
 
-  def volunteer? volunteer
+  def volunteer?(volunteer)
     return false if volunteer.nil?
-    self.volunteers.collect { |v| v.id }.include? volunteer.id
+    volunteer_ids.include?(volunteer.id)
   end
 
   def summed_weight
-    self.log_parts.collect{ |lp| lp.weight }.compact.sum
+    self.log_parts
+        .collect{ |lp| lp.weight }
+        .compact
+        .sum
   end
 
   def summed_count
-    self.log_parts.collect{ |lp| lp.count }.compact.sum
+    self.log_parts
+        .collect{ |lp| lp.count }
+        .compact
+        .sum
   end
 
   def prior_volunteers
-    self.log_volunteers.collect{ |sv| (not sv.active) ? sv.volunteer : nil }.compact
+    self.log_volunteers
+        .collect{ |sv| (not sv.active) ? sv.volunteer : nil }
+        .compact
   end
 
   #### CLASS METHODS
@@ -115,11 +125,17 @@ class Log < ActiveRecord::Base
 
   def self.at(loc)
     if loc.donor?
-      return Log.joins(:food_types).select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when").where('donor_id = ?', loc.id).group('logs.id, logs.transport_type_id, logs.when').order('logs.when ASC')
+      return Log.joins(:food_types)
+                .select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when")
+                .where('donor_id = ?', loc.id)
+                .group('logs.id, logs.transport_type_id, logs.when')
+                .order('logs.when ASC')
     else
-      return Log.joins(:food_types, :recipients).select("sum(weight) as weight_sum,
-          string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.donor_id").
-          where('recipient_id=?', loc.id).group('logs.id, logs.transport_type_id, logs.when, logs.donor_id').order('logs.when ASC')
+      return Log.joins(:food_types, :recipients)
+                .select("sum(weight) as weight_sum, string_agg(food_types.name,', ') as food_types_combined, logs.id, logs.transport_type_id, logs.when, logs.donor_id")
+                .where('recipient_id=?', loc.id)
+                .group('logs.id, logs.transport_type_id, logs.when, logs.donor_id')
+                .order('logs.when ASC')
     end
   end
 
@@ -128,33 +144,56 @@ class Log < ActiveRecord::Base
     vq = volunteer_id.nil? ? nil : "log_volunteers.volunteer_id=#{volunteer_id}"
     rq = region_id.nil? ? nil : "logs.region_id=#{region_id}"
     aq = 'log_volunteers.active'
-    Log.joins(:log_volunteers, :log_parts).where([cq, vq, rq, aq].compact.join(' AND ')).sum(:weight).to_f
+    Log.joins(:log_volunteers, :log_parts)
+       .where([cq, vq, rq, aq].compact.join(' AND '))
+       .sum(:weight).to_f
   end
 
   def self.upcoming_for(volunteer_id)
-    Log.joins(:log_volunteers).where('active AND "when" >= ? AND volunteer_id = ?', Time.zone.today, volunteer_id).order('logs.when')
+    Log.joins(:log_volunteers)
+       .where('active AND "when" >= ? AND volunteer_id = ?', Time.zone.today, volunteer_id)
+       .order('logs.when')
   end
 
   def self.past_for(volunteer_id)
-    Log.joins(:log_volunteers).where('active AND "when" < ? AND volunteer_id = ?', Time.zone.today, volunteer_id).order('logs.when')
+    Log.joins(:log_volunteers)
+       .where('active AND "when" < ? AND volunteer_id = ?', Time.zone.today, volunteer_id)
+       .order('logs.when')
   end
 
   def self.needing_coverage(region_id_list=nil, days_away=nil, limit=nil)
     if region_id_list
       if days_away
-        Log.where('"when" >= ? AND "when" <= ?', Time.zone.today, Time.zone.today+days_away).where(:region_id=>region_id_list).order('logs.when').limit(limit).reject{ |l| l.covered? }
+        Log.where('"when" >= ? AND "when" <= ?', Time.zone.today, Time.zone.today + days_away)
+           .where(region_id: region_id_list)
+           .order('logs.when')
+           .limit(limit)
+           .reject{ |log| log.covered? }
       else
-        Log.where('"when" >= ?', Time.zone.today).where(:region_id=>region_id_list).order('logs.when').limit(limit).reject{ |l| l.covered? }
+        Log.where('"when" >= ?', Time.zone.today)
+           .where(region_id: region_id_list)
+           .order('logs.when')
+           .limit(limit)
+           .reject{ |log| log.covered? }
       end
     elsif days_away
-      Log.where('"when" >= ? AND "when" <= ?', Time.zone.today, Time.zone.today+days_away).order('logs.when').limit(limit).reject{ |l| l.covered? }
+      Log.where('"when" >= ? AND "when" <= ?', Time.zone.today, Time.zone.today + days_away)
+         .order('logs.when')
+         .limit(limit)
+         .reject{ |log| log.covered? }
     else
-      Log.where('"when" >= ?', Time.zone.today).order('logs.when').limit(limit).reject{ |l| l.covered? }
+      Log.where('"when" >= ?', Time.zone.today)
+         .order('logs.when')
+         .limit(limit)
+         .reject{ |log| log.covered? }
     end
   end
 
   def self.being_covered(region_id_list=nil)
-    Log.where('"when" >= ?', Time.zone.today).where(:region_id=>region_id_list).order('logs.when').reject{ |l| l.covering_volunteers.empty? }
+    Log.where('"when" >= ?', Time.zone.today)
+       .where(region_id: region_id_list)
+       .order('logs.when')
+       .reject{ |log| log.covering_volunteers.empty? }
   end
 
   def self.to_csv

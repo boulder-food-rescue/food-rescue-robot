@@ -134,8 +134,8 @@ class ScheduleChainsController < ApplicationController
   end
 
   def update
-    @schedule = ScheduleChain.find(params[:id])
-    authorize! :update, @schedule
+    @schedule_chain = ScheduleChain.find(params[:id])
+    authorize! :update, @schedule_chain
 
     delete_schedules = []
     unless params[:schedule_chain]['schedules_attributes'].nil?
@@ -151,19 +151,19 @@ class ScheduleChainsController < ApplicationController
       }
     end
 
-    if @schedule.update_attributes(params[:schedule_chain])
-      @schedule.schedules.each do |s|
-        s.delete if delete_schedules.include? s.id
+    if @schedule_chain.update_attributes(params[:schedule_chain])
+      @schedule_chain.schedules.each do |schedule|
+        schedule.delete if delete_schedules.include?(schedule.id)
       end
 
-      @schedule.schedule_volunteers.each do |s|
-        s.update_attributes({active: false}) if delete_volunteers.include? s.id
+      @schedule_chain.schedule_volunteers.each do |scheduled_vol|
+        scheduled_vol.update_attributes({ active: false }) if delete_volunteers.include?(scheduled_vol.id)
       end
 
       flash[:notice] = 'Updated Successfully'
       index
     else
-      flash[:error] = "Didn't update successfully :(. #{@schedule.errors.full_messages.to_sentence}"
+      flash[:error] = "Didn't update successfully :(. #{@schedule_chain.errors.full_messages.to_sentence}"
       render :edit
     end
   end

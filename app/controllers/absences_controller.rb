@@ -63,10 +63,10 @@ class AbsencesController < ApplicationController
     @absence = Absence.new(params[:absence])
     @absence.volunteer ||= current_volunteer
     volunteer = @absence.volunteer
-    vrids = volunteer.regions.collect{ |r| r.id }
-    adminrids = current_volunteer.admin_region_ids
+    vol_region_ids = volunteer.region_ids
+    admin_region_ids = current_volunteer.admin_region_ids
 
-    unless volunteer.id == current_volunteer.id || current_volunteer.super_admin? || !(vrids & adminrids).empty?
+    unless volunteer.id == current_volunteer.id || current_volunteer.super_admin? || !(vol_region_ids & admin_region_ids).empty?
       flash[:warning] = 'Cannot schedule an absence for that person, mmmmk.'
       return redirect_to(root_path)
     end

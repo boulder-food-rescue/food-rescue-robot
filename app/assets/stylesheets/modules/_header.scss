@@ -17,14 +17,16 @@
   text-align: center;
   font-family: "jaf-facitweb-1","jaf-facitweb-2",sans-serif;
 }
-
+.logo-wrap {
+  img {
+    width: 300px;
+}
+}
 .page-header{
   display: flex;
   justify-content: center;
   .logo-wrap {
-    img {
-      width: 100%;
-    }
+
     @media (max-width: $screen-md-max ){
         width: 400px;
     }

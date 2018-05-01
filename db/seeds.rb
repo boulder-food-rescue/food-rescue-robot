@@ -78,7 +78,7 @@ for vol in Volunteer.all
   6.times do |time|
     availability = Availability.create({
       volunteer_id: vol.id,
-      day: [0,1,2,4,5,6].sample,
+      day:  [0,1,2,4,5,6].sample,
       time: [0,1,2].sample,
     })
   end

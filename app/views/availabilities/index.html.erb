@@ -13,12 +13,17 @@
 
 <div>
  <table class="table table-striped" cellspacing="8" width="50%" id="table_of_availabilities">
-     <% @avails.each do |avail|  %>
-    <tr class="availability <%= @weekdays[avail.day - 1] %> <%= @timeslots[avail.time - 1] %>" >
-      <td><% avail.volunteer.id %></td>
-      <td> Name: <%= avail.volunteer.name %></td>
-      <td> Email: <%= avail.volunteer.email %></td>
+     <tr>
+       <td>Name</td>
+       <td>Email</td>
+     </tr>
+     <% @avails.each_with_index do |avail, index|  %>
+    <tr class="availability <%= @weekdays[avail.day - 1] %> <%= @timeslots[avail.time - 1] %>">
+      <td><%= avail.volunteer.name %></td>
+      <td class="email"><%= avail.volunteer.email %></td>
     </tr>
 <% end %>
 </table>
 </div>
+
+<button class="btn btn-info" id="btn-grab-emails">Grab Emails</button>

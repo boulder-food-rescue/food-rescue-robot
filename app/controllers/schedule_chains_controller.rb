@@ -157,7 +157,12 @@ class ScheduleChainsController < ApplicationController
       end
 
       @schedule_chain.schedule_volunteers.each do |scheduled_vol|
-        scheduled_vol.update_attributes({ active: false }) if delete_volunteers.include?(scheduled_vol.id)
+        if delete_volunteers.include?(scheduled_vol.id)
+          scheduled_vol.update_attributes({ active: false })
+          Log.upcoming_for(volunteer.id).each do |log|
+            log.log_volunteers.destroy_all
+          end
+        end
       end
 
       flash[:notice] = 'Updated Successfully'

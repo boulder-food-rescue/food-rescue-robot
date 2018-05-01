@@ -8,9 +8,8 @@
   <div class="col-sm-6">
     <h2> Switch to User </h2>
     <p>
-      Select a volunteer from the list below to swtich to.
-      After switching you will have logout and login to get back to your
-      real user.
+      Select a volunteer from the list below to switch to.
+      After switching you will have to logout and login to be <%= current_volunteer.name %> again!
     </p>
     <%= form_tag("/volunteers/switch_user", method: "get", class: "form-inline") do %>
       <table class="table">
@@ -18,10 +17,10 @@
           <td>
             <label for="volunteer_id">Volunteer:</label>
             <% if current_volunteer.super_admin? %>
-              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, order: 'name').collect{ |v|
                       ["#{v.name} ["+v.regions.collect{ |r| r.name }.join(",")+"]",v.id] }),{class: "form-control select2"}) %>
             <% else %>
-              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, :order => 'name').collect{ |v|
+              <%= select_tag(:volunteer_id, options_for_select(Volunteer.find(:all, order: 'name').collect{ |v|
                     ((v.regions.collect{ |r| r.id } & @admin_region_ids).length > 0 and !v.admin) ? [v.name,v.id] : nil }.compact),{class: "form-control select2"}) %>
             <% end %>
           </td>

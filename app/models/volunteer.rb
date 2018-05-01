@@ -190,10 +190,12 @@ class Volunteer < ActiveRecord::Base
   end
 
   def self.active(region_ids = nil, ndays = 90)
-    query = joins(:logs).group('volunteers.id').having('max(logs.when) > ?', Time.zone.today - ndays)
+    query = joins(:logs).group('volunteers.id')
+                        .having('max(logs.when) > ?', Time.zone.today - ndays)
 
     if region_ids.present?
-      query.joins(:regions).where(regions: { id: region_ids })
+      query.joins(:regions)
+           .where(regions: { id: region_ids })
     else
       query
     end

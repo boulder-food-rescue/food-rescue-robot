@@ -1,6 +1,6 @@
 class AbsencesController < ApplicationController
   before_filter :authenticate_volunteer!
-  before_filter :admin_only, :only => [:all]
+  before_filter :admin_only, only: [:all]
 
   def all
     absences = Absence.where('stop_date >= ?', Date.today).keep_if{ |a|

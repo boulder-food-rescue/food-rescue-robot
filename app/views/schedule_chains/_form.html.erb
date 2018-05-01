@@ -60,14 +60,21 @@
         <label for="schedule_chain_stops">Stops</label>
       </td>
 			<td>
-        <div style="display:table-row;">
-          <div style="display:table-cell;">Location</div>
-          <div style="display:table-cell;">Order</div>
-          <div style="display:table-cell;">Food Types</div>
-        </div>
-        <%= f.simple_fields_for :schedules do |s| %>
-          <%= render 'schedule_fields', :f => s %>
-        <% end %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Order</th>
+              <th>Food Types</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= f.simple_fields_for :schedules do |s| %>
+              <%= render 'schedule_fields', f: s %>
+            <% end %>
+          </tbody>
+        </table>
 
         <div id="add_stop_button">
           <%= link_to_add_association 'add another stop', f, :schedules, {class: 'btn', 'data-association-insertion-method' => 'before', 'data-association-insertion-node' => '#add_stop_button'} %>
@@ -79,8 +86,7 @@
         <label for="schedule_chain_hilliness">Hilliness</label>
       </td>
       <td>
-        <%= f.select(:hilliness, ScheduleChain::HILLINESS_OPTIONS.enum_for(:each_with_index).collect{ |x,i| [x,i] },{:include_blank => true},{class: "form-control"}) %>
-
+        <%= f.select(:hilliness, ScheduleChain::HILLINESS_OPTIONS.enum_for(:each_with_index).collect{ |x,i| [x,i] },{include_blank: true}, {class: "form-control"}) %>
       </td>
     </tr>
     <tr>

@@ -13,6 +13,7 @@
     <div class="header">
       <div>
         <h2 id="TCFJ_title">Veggietables by Twin Cities Food Justice</h2>
+        <h4>Food Rescue Tracking App</h4>
       </div>
     </div>
 
@@ -20,23 +21,54 @@
       <div class="info_section col-sm-7">
         <h2 class="section_title">What is Veggietables?</h2>
         <p>
-          Veggietables is a web-application for scheduling, routing, and tracking just-in-time food rescue.
-          It was originally developed by volunteers of Boulder Food Rescue,
-          an all volunteer non-profit organization located in Boulder, Colorado. This version of the app is maintained
-          by <a href="https://softwareforgood.com/">Software for Good</a>, a benefit corporation based in Minneapolis, Minnesota to support <a href="https://tcfoodjustice.org/">TC Food Justice</a>.
-        </p>
-
-        <p>
-          TC Food Justice rescues unsellable produce from grocery stores and farmer’s markets before it is thrown in the garbage and delivers this produce to hunger relief organizations that work with populations with barriers to accessing healthy and fresh food.
-
-          If you'd like to start a food rescue group in your town, send
-          an email to admin at tcfoodjustice dot org and we can set you up with an account on here.
-
-          If you're interested in contributing to the code for this project, or spinning up your own instance of the app,
-          you can find the open source project <a href="https://github.com/softwareforgood/food-rescue-robot">here</a>.
+          Veggietables by <a href="https://tcfoodjustice.org/">TC Food Justice</a> is a
+          web-application for scheduling, routing, and tracking food rescue data.
+          The app was originally developed by the volunteers of <a href="https://www.boulderfoodrescue.org/">
+            Boulder Food Rescue</a> and has been adapted by the geniuses at
+            <a href="https://softwareforgood.com/">Software for Good</a> to fit
+            TC Food Justice’s unique needs. If you’d like to hack on the source
+            code to build your own food rescue app, you can do that <a href="github.com/softwareforgood/food-rescue-robot">here</a>.
         </p>
 
         <% cache("login_page_stats",:expires_in => 12.hours) do %>
+        <ul class="unstyled">
+         <li>
+           <strong>Number of Cities Using the Robot:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Region.count) %>
+           </span>
+         </li>
+         <li>
+           <strong>Total Food Pickups To Date:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Log.complete.count) %> pickups
+           </span>
+         </li>
+         <li>
+           <strong>Total Food Rescued:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Log.complete.joins(:log_parts).sum(:weight)) %> lbs
+           </span>
+         </li>
+         <li>
+           <strong>Number of Volunteers:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Volunteer.count) %> volunteers
+           </span>
+         </li>
+         <li>
+           <strong>Number of Recipient Organizations:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Location.recipients.count) %>
+           </span>
+         </li>
+         <li>
+           <strong>Number of Donor Organizations:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Location.donors.count) %>
+           </span>
+         </li>
+       </ul>
         <% end %>
       </div>
 
@@ -49,7 +81,7 @@
     </div>
     <div class="push"></div>
     <div class="footer">
-      <p>Copyright (c) <a href="http://www.tcfoodjustice.org">Twin Cities Food Justice</a> <%= DateTime.now.year %></p>
+      <p>Copyright (c) <a href="http://www.tcfoodjustice.org">TC Food Justice</a> <%= DateTime.now.year %></p>
     </div>
   </div>
   <%= javascript_include_tag "application" %>

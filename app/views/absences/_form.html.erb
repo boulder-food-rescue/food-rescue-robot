@@ -10,7 +10,7 @@ You can use the form below to schedule an absence. Note that any shift occuring 
             Volunteer:
           </label>
         </td>
-        <td><%= f.select(:volunteer_id, my_admin_volunteers.collect { |v| [v.name, v.id] }, {}, { class: 'form-control' } ) %></td>
+        <td><%= f.select(:volunteer_id, adminable_active_volunteers.collect { |v| [v.name, v.id] }, {}, { class: 'form-control' } ) %></td>
       </tr>
     <% end %>
 

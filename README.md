@@ -1,15 +1,17 @@
 # What is this thing?
 
-The Food Rescue Robot is a Rails 3 web application for managing the logistics
+Veggietables is a Rails 3 web application for managing the logistics
 of just-in-time (i.e., warehouse-less) food rescue. It keeps track of donors,
 recipients, a pickup and delivery schedule, and all the volunteers responsible
 for doing the work. It sends reminders to users about their pickups. The site
 also logs how much food is rescued, and can automatically issue receipts for donations.
 
+The app was first developed by [Boulder Food Rescue](https://www.boulderfoodrescue.org/),
+and then forked to adapt it to the needs of [TC Food Justice](https://tcfoodjustice.org/). The code was originally written by Caleb Phillips, a co-founder of Boulder Food Rescue and adjunct Computer Science professor at the University of Colorado, Boulder.
+
 # Who uses it? (And how can I?)
 
-Currently, the "Food Rescue Robot" is live at http://veggietables.tcfoodjustice.org
-and is used by a number of food rescue organizations cities around the world. If you're keen to use it, shoot an email to caleb at boulder food rescue (dot) org, and I can set you up with an account. Alternatively, if you would like to fork the source and hack on it yourself you are welcome to. This code is licensed under a Beerware-style license:
+Currently, Veggietables is live at http://veggietables.tcfoodjustice.org If you're keen to use it, shoot an email to Hannah at  tc food justice (dot) org, and I can set you up with an account. Alternatively, if you would like to fork the source and hack on it yourself you are welcome to. This code is licensed under a Beerware-style license:
 
   As long as you retain this notice you can do whatever you want with this stuff.
   If we meet some day, and you think this stuff is worth it, you can buy me a
@@ -17,20 +19,15 @@ and is used by a number of food rescue organizations cities around the world. If
 
 # Who is responsible?
 
-Most of the code was written by Caleb Phillips, a co-founder of Boulder Food Rescue (http://www.tcfoodjustice.org) and
-adjunct Computer Science professor at the University of Colorado, Boulder. There is a fork maintained in Boston by
-Rahul Bhargava (MIT Media Labs), and some early design work was done by University of Colorado interns Sean Weise
-and Zac Doyle under awards from the Casey Feldman Foundation. As of May 2016, Rylan Bowers (http://rylanbowers.com/) is leading
-development on the master branch and we are growing a small team of hackers to maintain and improve the codebase.
+This version of the app was forked and developed by a team of interns at [Software for Good](https://softwareforgood.com/) as a part of SfG's [Giving Program](https://softwareforgood.com/giving-program/).
+Software for Good continues to maintain this code to support Twin Cities Food Justice.
 
 # How can I help?
 
 If you want to help with development, feel free to fork the project. If you have something
 to submit upstream, send a pull request from your fork. If you're trying to setup a dev environment, keep reading.
 
-Alternatively, if your OSS time is limited, you can [donate to Boulder Food Rescue](https://www.tcfoodjustice.org/donate/) via several options. _Please include a note that indicates you are donating for Robot Development in the notes._
-
-[<img src="https://www.tcfoodjustice.org/wp-content/uploads/2011/09/partnership_donatebutton.jpg">](https://www.coloradogives.org/index.php?section=organizations&action=newDonation&fwID=37126)
+You can also [donate to Twin Cities Food Justice](https://www.tcfoodjustice.org/donate/).
 
 # General Tech Overview
 
@@ -76,7 +73,7 @@ can see the routes with ```rake routes```;
 
 
   ```
-  git clone https://github.com/boulder-food-rescue/food-rescue-robot.git
+  git clone https://github.com/softwareforgood/food-rescue-robot.git
   cd food-rescue-robot
   bundle install
   ```
@@ -159,7 +156,7 @@ The seeds command generates a regular volunteer and an admin volunteer for you. 
 
 ```
 $ rails console
-region = Region.create(name: "Boulder")
+region = Region.create(name: "Twin Cities")
 
 volunteer = Volunteer.new(email: "you.email@gmail.com", password: "changeme", password_confirmation: "changeme", assigned: true)
 volunteer.admin = true
@@ -186,7 +183,7 @@ Run:
 The current production version is hosted via Heroku, collaborators can push to/pull from Heroku once their repository has been setup. To do this, first install the Heroku tool belt, then add the remote git location:
 
 ```
-$ heroku git:remote -a boulder-food-rescue-robot
+$ heroku git:remote -a veggietables-tcfj
 ```
 
 You can pull a copy of the current live database with these commands ('make datasync' will also do this):

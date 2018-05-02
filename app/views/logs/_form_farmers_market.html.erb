@@ -63,20 +63,24 @@
 
         <% @log_parts.each_with_index {|lp, index| %>
           <%= fields_for :log_parts, lp, :index => "update_#{index}" do |f2| %>
-            <h4>Vendor <%= LocationAdmin.find(lp.location_admin_id).name %>: </h4>
+
             <tr class="log_part" style="background: <%= lp.required ? "lightgrey" : "white" %>;">
               <td>
+                <%= label_tag(:location_admin_id, 'Select Vendor:') %>
+                <%= f2.select(:location_admin_id,  @vendors.collect{|v| [v.name, v.id]}, {:include_blank => false}, {class: "form-control select-vendor"}) %>
+              </td>
+              <br>
+              <td>
                 <%= f2.label_tag(:weight, 'Weight of Food(lbs.):') %>
-                <%= f2.number_field(:weight, size: 5, class: "form-control", min: 0) %>
+                <%= f2.number_field(:weight, size: 5, class: "form-control food-weight", min: 0) %>
               </td>
               <br>
               <td>
                 <%= label_tag(:description, "Summary of food types:") %>
-                <%= f2.text_field(:description, size: 20, class: "form-control") %>
+                <%= f2.text_area(:description, size: "20x2", class: "form-control") %>
                 <%= f2.hidden_field(:id) %>
                 <%= f2.hidden_field(:food_type_id) %>
-                <%= f2.hidden_field(:food_type_id) %>
-                <%= f2.hidden_field(:location_admin_id) %>
+
               </td>
               <br>
               <td>
@@ -88,8 +92,12 @@
         <% } %>
         <% end %>
 
+        <div>
+          <%= link_to_add_association 'Add another vendor', f, :log_parts, class: 'btn btn-primary change-num-vendors'%>
+        </div>
 
-          </tr>
+
+        <br>
         <div class="mb-3">
           <label for=total_compost_w>Total Weight of Compost (lbs.)</label> <br>
           <input id="total_compost_w" class = "form-control" type="number" min = "0" value = <%= @log_parts.collect{ |lp| lp.compost_weight}.compact.sum%> >
@@ -142,6 +150,7 @@
           var compost_for_vendors = $( "input[id$='compost_weight']");
           compost_for_vendors.each(function(i){
               $(this).val(t/compost_for_vendors.size())
+              console.log(t/compost_for_vendors.size())
           });
       }
 
@@ -151,6 +160,18 @@
 
           $("#total_compost_w").on("change",function(){
               update_compost_weight();
+          });
+
+          $( ".select-vendor").each(function(i){
+              $(self).on("change",function(){
+                  update_compost_weight();
+              });
+          });
+
+          $( "input[type='submit']").each(function(i){
+              $(self).on("click",function(){
+                  update_compost_weight();
+              });
           });
 
       });

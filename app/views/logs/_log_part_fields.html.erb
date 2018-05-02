@@ -1,0 +1,28 @@
+<div class="nested-fields">
+    <tr class="log_part">
+      <td>
+        <%= f.label_tag(:location_admin_id, 'Select Vendor:') %>
+        <%= f.select(:location_admin_id,  @vendors.collect{|p| [p.name, p.id]}, {:include_blank => false}, {class: "form-control select-vendor"}) %>
+      </td>
+      <br>
+      <td>
+        <%= f.label_tag(:weight, 'Weight of Food(lbs.):') %>
+        <%= f.number_field(:weight, size: 5, class: "form-control food-weight", min: 0) %>
+      </td>
+      <br>
+      <td>
+        <%= label_tag(:description, "Summary of food types:") %>
+        <%= f.text_area(:description, size: "20x2", class: "form-control") %>
+        <%= f.hidden_field(:id) %>
+
+        <%= f.hidden_field(:food_type_id, value:1) %>
+      </td>
+      <td> <%= link_to_remove_association "Remove", f , class: 'btn btn-danger change-num-vendors'%></td>
+      <br>
+      <td>
+        <%= f.hidden_field(:compost_weight, min: 0) %>
+      </td>
+      <br>
+    </tr>
+
+</div>

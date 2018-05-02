@@ -2,7 +2,7 @@ require 'csv'
 require 'json'
 
 namespace :past_data do
-  task :import_past_data => [:environment, :import_volunteers, :import_locations, :import_farmers_market, :import_farmers_market_data]  do
+  task :import => [:environment, :import_volunteers, :import_locations, :import_farmers_market_data]  do
     csv_text = File.read('./lib/tasks/data/TC Food Justice Rescue Log (Responses) For Real - Form Responses 1.csv')
     completed_file = File.read('./lib/tasks/data/completed.json')
     csv = CSV.parse(csv_text, :headers => true)
@@ -162,10 +162,13 @@ namespace :past_data do
           )
           break if v.nil?
           region = Region.where('name': 'TC Food Justice')[0]
-          Assignment.create(
-              'volunteer_id' => v.id,
-              'region_id' => region.id
-          )
+          if Region.all.count > 1
+            Assignment.create(
+                'volunteer_id' => v.id,
+                'region_id' => region.id
+            )
+          end
+        
         end
     end
   end
@@ -219,8 +222,8 @@ namespace :past_data do
         )
       end
       vendor_name = vendors_by_name[row['Vendor']]
-      vendor = LocationAdmin.where('name': vendor_name)
-      if vendor.blank?
+      vendor = LocationAdmin.where('name': vendor_name)[0]
+      if vendor.nil?
         market.location_admins.build(
             'name' => vendor_name,
             'email' => 'vendor' + DateTime.now.strftime('%Q') + '@example.com',
@@ -228,16 +231,17 @@ namespace :past_data do
             'password' => SecureRandom.hex
         ).save
       else
-        market.location_admins << vendor
+        if !market.location_admins.include?(vendor)
+            market.location_admins << vendor
+        end
       end
     end
   end
-  task :import_farmers_market_data  => :environment do
+  task :import_farmers_market_data  => [:environment, :import_farmers_market] do
     csv_text = File.read('./lib/tasks/data/Market Rescues 2016-2017.csv')
     completed_file = File.read('./lib/tasks/data/completed_farmers_market.json')
     csv = CSV.parse(csv_text, :headers => true)
     vendors_by_name = get_vendors
-    region = Region.where('name': 'TC Food Justice')[0]
     skipped = {} #keeps track of which rows were skipped due to missing info in the DB
     completed = JSON.parse(completed_file) #keeps track of which rows were successfully added to the db
     index = 1

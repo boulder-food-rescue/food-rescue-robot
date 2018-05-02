@@ -152,19 +152,15 @@ class LogsController < ApplicationController
     authorize! :create, @log
     session[:my_return_to] = request.referer
     set_vars_for_form @region
+    @log_parts = [LogPart.new( 'food_type_id' => food_type_id)]
     if params['is_farmer_market'] == '1'
       selected_location = Location.find(params['donor_id'])
-      @log_parts = []
-      selected_location.location_admins.each do |vendor|
-        l = LogPart.new('food_type_id': food_type_id, location_admin_id: vendor.id)
-        @log_parts.push(l)
-      end
       @donor_id = selected_location.id
       @locations = get_donor_locations(@region, is_farmers_market = true)
+      @vendors = selected_location.location_admins.sort_by!{|v| v.name }
       render 'new_farmers_market'
     else
       @locations = get_donor_locations(@region, is_farmers_market = false)
-      @log_parts = [LogPart.new( 'food_type_id' => food_type_id)]
       render :new
     end
   end
@@ -223,6 +219,7 @@ class LogsController < ApplicationController
     set_vars_for_form @region
     if @log.donor.is_farmer_market
       @locations = get_donor_locations(@region, is_farmers_market = true)
+      @vendors = @log.donor.location_admins.sort_by!{|v| v.name }
       render 'logs/edit_farmers_market'
     else
       @locations = get_donor_locations(@region, is_farmers_market = false)
@@ -261,6 +258,7 @@ class LogsController < ApplicationController
           format.json { render json: {error: 0, message: flash[:notice] } }
           format.html { if @log.donor.is_farmer_market
                           @locations = get_donor_locations(@region, is_farmers_market = true)
+                          @vendors = @log.donor.location_admins.sort_by!{|v| v.name }
                           render 'logs/edit_farmers_market'
                         else
                           @locations = get_donor_locations(@region, is_farmers_market = false)
@@ -274,6 +272,7 @@ class LogsController < ApplicationController
           format.html {
             if @log.donor.is_farmer_market
               @locations = get_donor_locations(@region, is_farmers_market = true)
+              @vendors = @log.donor.location_admins.sort_by!{|v| v.name }
               render 'logs/edit_farmers_market'
             else
               @locations = get_donor_locations(@region, is_farmers_market = false)
@@ -289,6 +288,7 @@ class LogsController < ApplicationController
         format.html {
           if @log.donor.is_farmer_market
             @locations = get_donor_locations(@region, is_farmers_market = true)
+            @vendors = @log.donor.location_admins.sort_by!{|v| v.name }
             render 'logs/edit_farmers_market'
           else
             @locations = get_donor_locations(@region, is_farmers_market = false)

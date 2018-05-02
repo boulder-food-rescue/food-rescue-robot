@@ -24,6 +24,7 @@ class Log < ActiveRecord::Base
   accepts_nested_attributes_for :log_recipients
   accepts_nested_attributes_for :log_volunteers
   accepts_nested_attributes_for :schedule_chain
+  accepts_nested_attributes_for :log_parts
 
   validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 and a.why_zero == 2 },
              message: "can't be blank if weights/counts are all zero: let us know what happened!" }
@@ -32,14 +33,13 @@ class Log < ActiveRecord::Base
   validates :scale_type_id, presence: { if: :complete }
   validates :when, presence: true
   validates :hours_spent, presence: { if: :complete }
-  validates :why_zero, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 } }
 
   attr_accessible :region_id, :donor_id, :why_zero,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes,
                   :num_reminders, :transport, :when, :scale_type_id, :hours_spent,
                   :log_volunteers_attributes, :weight_unit, :volunteers_attributes,
                   :schedule_chain_id, :recipients_attributes, :log_recipients_attributes, :log_volunteers_attributes,
-                  :id, :created_at, :updated_at, :complete, :recipient_ids, :volunteer_ids, :num_volunteers
+                  :id, :created_at, :updated_at, :complete, :recipient_ids, :volunteer_ids, :num_volunteers, :log_parts_attributes
 
   # units conversion on scale type --- we always store in lbs in the database
   before_save { |record|
@@ -175,9 +175,10 @@ class Log < ActiveRecord::Base
 
   def self.to_csv
     CSV.generate do |csv|
-      csv << ['id', 'Date', 'Item Types', 'Item Weights', 'Item Descriptions', 'Weight of Composted Food', 'Donor', 'Is donor a farmer\'s market?', 'Vendor Name' , 'Recipients', 'Volunteers', 'Scale', 'Transport', 'Hours Spent', 'Reminders Sent', 'Volunteer Notes']
+      csv << ['id', 'Date', 'Item Types', 'Item Weights', 'Item Descriptions', 'Weight of Composted Food', 'Donor', 'Farmer\'s market?', 'Vendor Name' , 'Recipients', 'Volunteers', 'Scale', 'Transport', 'Hours Spent', 'Reminders Sent', 'Volunteer Notes']
       all.each do |log|
         lps = log.log_parts
+        puts log.donor.is_farmer_market
         if log.donor.is_farmer_market
           lps.each do |log_part|
             csv << [log.id, log.when, log_part.food_type.name,

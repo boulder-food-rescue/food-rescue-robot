@@ -70,7 +70,7 @@
               <br>
               <td>
                 <%= label_tag(:description, "Summary of food types:") %>
-                <%= f2.text_field(:description, size: 20, class: "form-control") %>
+                <%= f2.text_area(:description, size: "20x2", class: "form-control") %>
                 <%= f2.hidden_field(:id) %>
                 <%= f2.hidden_field(:food_type_id) %>
               </td>

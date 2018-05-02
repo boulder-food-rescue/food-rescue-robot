@@ -54,7 +54,7 @@ region = Region.create({
 volunteer = nil
 20.times do |time|
   volunteer = Volunteer.create({
-    'email'=>"volunteer#{time}.bfr@gmail.com",
+    'email'=>"volunteer#{time}@gmail.com",
      'name'=>"Volunteer#{time}",
      'phone'=>"760-815-555#{time}",
      'password' => 'changeme!',
@@ -78,7 +78,7 @@ for vol in Volunteer.all
   6.times do |time|
     availability = Availability.create({
       volunteer_id: vol.id,
-      day: [0,1,2,4,5,6].sample,
+      day:  [0,1,2,4,5,6].sample,
       time: [0,1,2].sample,
     })
   end
@@ -98,7 +98,7 @@ assignment.region_id = region.id
 assignment.save!
 
 super_admin = Volunteer.create({
-  'email'=>'superadmin.bfr@gmail.com',
+  'email'=>'superadmin@gmail.com',
    'name'=>'Super Admin',
    'password' => 'changeme!',
    'password_confirmation' => 'changeme!',
@@ -123,7 +123,7 @@ super_admin.save
 
 
 region_admin = Volunteer.create({
-  'email'=>'regionadmin.bfr@gmail.com',
+  'email'=>'regionadmin@gmail.com',
    'name'=>"Region Admin #{region.name}",
    'phone'=>'760-888-5555',
    'password' => 'changeme!',

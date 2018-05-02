@@ -12,64 +12,63 @@
   <div class="container">
     <div class="header">
       <div>
-        <h2 id="TCFJ_title">Veggietables by TCFJ</h2>
-        <h4>Just-in-Time Food Rescue Tracking</h4>
+        <h2 id="TCFJ_title">Veggietables by Twin Cities Food Justice</h2>
+        <h4>Food Rescue Tracking App</h4>
       </div>
     </div>
 
     <div class="wrap">
       <div class="info_section col-sm-7">
-        <h2 class="section_title">About The Robot</h2>
+        <h2 class="section_title">What is Veggietables?</h2>
         <p>
-          The robot is a web-application for scheduling, routing, and tracking just-in-time food rescue.
-          It was originally developed by volunteers of Boulder Food Rescue,
-          an all volunteer non-profit organization located in Boulder, Colorado. Although originally used exclusively
-          by Boulder Food Rescue, the robot is now used by multiple organizations around the world, fighting malnutrition
-          and food waste with love, community, and bicycles. If you'd like to start a food rescue group in your town, shoot
-          an email to info at boulder food rescue dot org and we can set you up with an account on here. If you're a super-diy
-          sort and want to hack on the source <a href="https://github.com/boulder-food-rescue/food-rescue-robot">you can do that too</a>.
+          Veggietables by <a href="https://tcfoodjustice.org/">TC Food Justice</a> is a
+          web-application for scheduling, routing, and tracking food rescue data.
+          The app was originally developed by the volunteers of <a href="https://www.boulderfoodrescue.org/">
+            Boulder Food Rescue</a> and has been adapted by the geniuses at
+            <a href="https://softwareforgood.com/">Software for Good</a> to fit
+            TC Food Justice’s unique needs. If you’d like to hack on the source
+            code to build your own food rescue app, you can do that <a href="github.com/softwareforgood/food-rescue-robot">here</a>.
         </p>
 
-        <h2 class="section_title">Facts</h2>
         <% cache("login_page_stats",:expires_in => 12.hours) do %>
-          <ul class="unstyled">
-            <li>
-              <strong>Number of Cities Using the Robot:</strong>
-              <span class="label label-success">
-                <%= number_to_human(Region.count) %>
-              </span>
-            </li>
-            <li>
-              <strong>Total Food Pickups To Date:</strong>
-              <span class="label label-success">
-                <%= number_to_human(Log.complete.count) %> pickups
-              </span>
-            </li>
-            <li>
-              <strong>Total Food Rescued:</strong>
-              <span class="label label-success">
-                <%= number_to_human(Log.complete.joins(:log_parts).sum(:weight)) %> lbs
-              </span>
-            </li>
-            <li>
-              <strong>Number of Volunteers:</strong>
-              <span class="label label-success">
-                <%= number_to_human(Volunteer.count) %> volunteers
-              </span>
-            </li>
-            <li>
-              <strong>Number of Recipient Organizations:</strong>
-              <span class="label label-success">
-                <%= number_to_human(Location.recipients.count) %>
-              </span>
-            </li>
-            <li>
-              <strong>Number of Donor Organizations:</strong>
-              <span class="label label-success">
-                <%= number_to_human(Location.donors.count) %>
-              </span>
-            </li>
-          </ul>
+        <ul class="unstyled">
+         <li>
+           <strong>Number of Cities Using the Robot:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Region.count) %>
+           </span>
+         </li>
+         <li>
+           <strong>Total Food Pickups To Date:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Log.complete.count) %> pickups
+           </span>
+         </li>
+         <li>
+           <strong>Total Food Rescued:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Log.complete.joins(:log_parts).sum(:weight)) %> lbs
+           </span>
+         </li>
+         <li>
+           <strong>Number of Volunteers:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Volunteer.count) %> volunteers
+           </span>
+         </li>
+         <li>
+           <strong>Number of Recipient Organizations:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Location.recipients.count) %>
+           </span>
+         </li>
+         <li>
+           <strong>Number of Donor Organizations:</strong>
+           <span class="label label-success">
+             <%= number_to_human(Location.donors.count) %>
+           </span>
+         </li>
+       </ul>
         <% end %>
       </div>
 
@@ -82,7 +81,7 @@
     </div>
     <div class="push"></div>
     <div class="footer">
-      <p>Copyright (c) <a href="http://www.tcfoodjustice.org">Boulder Food Rescue</a> <%= DateTime.now.year %></p>
+      <p>Copyright (c) <a href="http://www.tcfoodjustice.org">TC Food Justice</a> <%= DateTime.now.year %></p>
     </div>
   </div>
   <%= javascript_include_tag "application" %>

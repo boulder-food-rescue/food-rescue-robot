@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= content_for?(:title) ? yield(:title) : "Food Rescue Robot" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : "Veggietables" %></title>
 
     <%= csrf_meta_tags %>
 
@@ -38,8 +38,10 @@
   </head>
 
   <body>
-
     <%= nav_bar brand: 'Veggietables by TCFJ', responsive: true, fluid: true do %>
+    <div class = "logo-wrap">
+    <%= image_tag "logo-no-words-or-background.png" %>
+    </div>
       <%= menu_group do %>
         <%= menu_item "Home", root_path %>
 
@@ -163,9 +165,6 @@
         <div class="container-fluid">
           <div class="page-header" id = "img">
             <% current_region = volunteer_signed_in? ? current_volunteer.main_region : @region %>
-            <div class="logo-wrap">
-              <%= image_tag "Logo - No background.png" %>
-            </div>
           </div>
         </div>
       </div>

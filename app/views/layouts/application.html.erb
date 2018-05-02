@@ -148,6 +148,8 @@
 
               <%= menu_item "<i class='fa fa-sign-out'></i> Logout".html_safe, destroy_volunteer_session_path, {}, {:"data-method" => :delete } %>
             <% end %>
+          <% elsif  location_admin_signed_in? %>
+            <%= menu_item "<i class='fa fa-cog'></i> Settings".html_safe, edit_location_admin_path(current_location_admin.id) %>
           <% else %>
             <%= menu_item "<i class='fa fa-sign-in'></i> Login".html_safe, '/volunteers/sign_in' %>
           <% end %>

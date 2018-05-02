@@ -1,5 +1,6 @@
 Webapp::Application.routes.draw do
 
+
   resources :assignments, only: [:new] do
     collection do
       get :knight
@@ -40,6 +41,7 @@ Webapp::Application.routes.draw do
       get :stats_service
       get :stats
       get :export
+      get :select_location
     end
     member do
       get :take
@@ -137,5 +139,4 @@ Webapp::Application.routes.draw do
       root to: 'sessions#new', as: :unauthenticated_root
     end
   end
-
 end

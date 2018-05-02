@@ -1,0 +1,29 @@
+<h2>Sign up</h2>
+
+<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+  <%= devise_error_messages! %>
+
+  <div><%= f.label :name %><br />
+  <%= f.text_field :name %></div>
+
+  <div><%= f.label :email %><br />
+  <%= f.email_field :email %></div>
+
+  <div><%= f.label :password %><br />
+  <%= f.password_field :password %></div>
+
+  <div><%= f.label :password_confirmation %><br />
+  <%= f.password_field :password_confirmation %></div>
+
+  <div><%= f.label :region %><br />
+  <%= f.select(:region_id,Region.all.collect{ |r| [r.name,r.id] }) %></div>
+  <br>
+  <br />
+
+  <div><%= f.submit "Sign up" %></div>
+<% end %>
+
+<% flash[:notice] = "Thanks for signing up! You will recieve an email once a regional
+			administrator has approved you for access." %>
+
+<%= render "devise/shared/links" %>

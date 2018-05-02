@@ -1,8 +1,8 @@
-<%= form_for @location, url: {action: @action } do |f| %>
+<%= form_for @location, url: {action: @action} do |f| %>
 
-<%= hidden_field_tag "location[region_id]", @location.region_id %>
-<div class="row">
-  <div class="col-sm-8">
+  <%= hidden_field_tag "location[region_id]", @location.region_id %>
+  <div class="row">
+    <div class="col-sm-8">
       <table class="table">
         <tr>
           <td colspan="2">
@@ -21,7 +21,25 @@
             <%= f.select(:location_type, Location::LOCATION_TYPES.invert.to_a, {}, {class: 'form-control'}) %>
           </td>
         </tr>
+        <tr>
+          <td>Is this location a farmers' market?<br><span class="subtext">Farmers' market have a different form for logging rescues.</span>
+          </td>
+          <td>
+            <%= f.check_box(:is_farmer_market, {class: 'form-control'}) %>
+          </td>
+        </tr>
+        <tr class="add_vendor">
+          <td>Select Vendors<br><span class="subtext"></span></td>
+          <td>
+            <%= f.select :location_admin_ids, @location_admins.collect{|p| [p.name, p.id]}, {:class => 'form-control select2'},{:multiple => true,size: 5} %>
+          </td>
+        </tr>
+      </table>
 
+        <div class="add_vendor">
+            <%= link_to_add_association 'Add New Vendors', f, :location_admins%>
+        </div>
+          <table class="table">
         <tr>
           <td>Address</td>
           <td><%= f.text_area(:address, :size => "30x6", class: 'form-control') %></td>
@@ -64,17 +82,17 @@
           </td>
           <td>
             <% Date::DAYNAMES.each_with_index do |day_name, index|
-                day_html_prefix = "day"+index.to_s
-            %>
-              <div id="<%=day_html_prefix%>" data-day="<%=index%>" class="day-wrapper">
+              day_html_prefix = "day"+index.to_s
+ %>
+              <div id="<%= day_html_prefix %>" data-day="<%= index %>" class="day-wrapper">
                 <%= day_name %>:
-                <%= select_tag( day_html_prefix+"[status]", options_for_select([["closed",0],["open",1]],
-                  @location.read_day_info(day_html_prefix+"_status")) )%>
-                <span id="<%=day_html_prefix%>-times">
+                <%= select_tag(day_html_prefix + "[status]", options_for_select([["closed", 0], ["open", 1]],
+                                                                                @location.read_day_info(day_html_prefix + "_status"))) %>
+                <span id="<%= day_html_prefix %>-times">
                   from
-                  <%= select_time @location.read_day_info(day_html_prefix+"_start"),:minute_step=>30, :ampm=>true, :prefix=>day_html_prefix+"[start]" %>
+                  <%= select_time @location.read_day_info(day_html_prefix + "_start"), :minute_step => 30, :ampm => true, :prefix => day_html_prefix + "[start]" %>
                   to
-                  <%= select_time @location.read_day_info(day_html_prefix+"_end"),:minute_step=>30, :ampm=>true, :prefix=>day_html_prefix+"[end]" %>
+                  <%= select_time @location.read_day_info(day_html_prefix + "_end"), :minute_step => 30, :ampm => true, :prefix => day_html_prefix + "[end]" %>
                 </span>
               </div>
             <% end %>
@@ -84,13 +102,14 @@
         <tr>
           <td>Donor Type<br><span class="subtext">If applicable (i.e., if a donor or seller)</span></td>
           <td>
-            <%= f.select(:donor_type, [["Grocer","Grocer"],["Bakery","Bakery"],["Caterer","Caterer"],["Restaurant","Restaurant"],["Cafeteria","Cafeteria"],["Cafe","Cafe"],["Market","Market"],["Farm","Farm"],["Community Garden","Community Garden"],["Individual","Individual"],["Other","Other"]],{include_blank: true}, {class: 'form-control'}) %>
+            <%= f.select(:donor_type, [["Grocer", "Grocer"], ["Bakery", "Bakery"], ["Caterer", "Caterer"], ["Restaurant", "Restaurant"], ["Cafeteria", "Cafeteria"], ["Cafe", "Cafe"], ["Market", "Market"], ["Farm", "Farm"], ["Community Garden", "Community Garden"], ["Individual", "Individual"], ["Other", "Other"]], {include_blank: true}, {class: 'form-control'}) %>
           </td>
         </tr>
 
         <tr>
-          <td>Recipient Category<br><span class="subtext">If applicable (i.e., if a nonprofit-type recipient)</span></td>
-          <td><%= f.select(:recip_category, [["A (High)","A"],["B (Medium)","B"],["C (Low)","C"],["D (Very Low)","D"]],{include_blank: true}, {class: 'form-control'}) %></td>
+          <td>Recipient Category<br><span class="subtext">If applicable (i.e., if a nonprofit-type recipient)</span>
+          </td>
+          <td><%= f.select(:recip_category, [["A (High)", "A"], ["B (Medium)", "B"], ["C (Low)", "C"], ["D (Very Low)", "D"]], {include_blank: true}, {class: 'form-control'}) %></td>
         </tr>
 
         <tr>
@@ -105,13 +124,14 @@
             <h4>
               Pickup/Drop Logistics
             </h4>
-            <hr />
+            <hr/>
           </td>
         </tr>
 
         <tr>
           <td>
-            Equipment Info<br><span class="subtext">If applicable, where our equipment is stored and how to get/use it.</span>
+            Equipment
+            Info<br><span class="subtext">If applicable, where our equipment is stored and how to get/use it.</span>
           </td>
           <td><%= f.text_area(:equipment_storage_info, size: "30x3", class: 'form-control') %></td>
         </tr>
@@ -127,7 +147,8 @@
         </tr>
 
         <tr>
-          <td>Food Storage Info<br><span class="subtext">If applicable, where food is stored and how to get it.</span></td>
+          <td>Food Storage Info<br><span class="subtext">If applicable, where food is stored and how to get it.</span>
+          </td>
           <td><%= f.text_area(:food_storage_info, size: "30x3", class: 'form-control') %></td>
         </tr>
 
@@ -164,21 +185,36 @@
 
 <% content_for :scripts do %>
   <script type="text/javascript">
-    $(function(){
-      $('.day-wrapper').each(function(idx,el){
-        var day = $(el).attr('data-day');
-        var statusSelect = $('#day'+day+'_status');
-        statusSelect.bind('change',function(){
-          var dayIndex = $(this).parent().attr('data-day');
-          var timesWrapper = $('#day'+dayIndex+"-times");
-          if ($(this).find(':selected').val()==0) {
-            timesWrapper.hide();
-          } else {
-            timesWrapper.show();
-          }
-        })
-        statusSelect.change();
+      $(function () {
+          $('.day-wrapper').each(function (idx, el) {
+              var day = $(el).attr('data-day');
+              var statusSelect = $('#day' + day + '_status');
+              statusSelect.bind('change', function () {
+                  var dayIndex = $(this).parent().attr('data-day');
+                  var timesWrapper = $('#day' + dayIndex + "-times");
+                  if ($(this).find(':selected').val() == 0) {
+                      timesWrapper.hide();
+                  } else {
+                      timesWrapper.show();
+                  }
+              });
+              statusSelect.change();
+          });
       });
-    })
+      show_vendors = function () {
+          if ($("input[id='location_is_farmer_market']").is(':checked')){
+              $(".add_vendor").show();  // checked
+          }
+          else{
+              $(".add_vendor").hide();
+          }
+      };
+      jQuery(document).ready(function () {
+          show_vendors();
+              $("input[id='location_is_farmer_market']").on("change",function(){
+                  show_vendors();
+              });
+          });
+
   </script>
 <% end %>

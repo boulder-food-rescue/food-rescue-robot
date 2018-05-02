@@ -53,18 +53,19 @@ module FoodRobot
 
       def recipients
         schedule_chain.schedules.
-          eager_load(:location).
-          where('position > ?', donor.position).
-          select{ |s| s.location.present? }.
-          select(&:is_drop_stop?).
-          map(&:location)
+            eager_load(:location).
+            where('position > ?', donor.position).
+            select {|s| s.location.present?}.
+            select(&:is_drop_stop?).
+            map(&:location)
       end
 
       def log_parts
         donor.schedule_parts.map do |sp|
           LogPart.new(
-            food_type_id: sp.food_type_id,
-            required: sp.required
+              food_type_id: sp.food_type_id,
+              required: sp.required,
+              location_admin_id: sp.location_admin_id
           )
         end
       end

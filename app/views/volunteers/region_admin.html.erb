@@ -49,10 +49,16 @@
             </td>
           <% else %>
           <td>
-            <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{@admin_region_ids.join(",")})").collect{ |l|
-                    [l.name,l.id] })) %>
+            <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{@admin_region_ids.join(",")}) AND location_type != '0'").collect{ |l|
+                    [l.name,l.id] }), {class: "form-control select2", data:{farmers_market_locations: @farmers_market_locations}}) %>
           </td>
-          <% end %>
+    <% end %>
+        </tr>
+        <tr class = "vendors">
+          <td> <label for="location_id">Vendor:</label></td>
+          <td>
+            <%= select_tag(:location_admin_id,[],{class: "form-control select2", data:{vendors_by_location: @vendors_by_location}}) %>
+          </td>
         </tr>
         <tr>
           <td>
@@ -112,3 +118,31 @@
     <% end %>
   </div>
 </div>
+<% content_for :scripts do %>
+  <script type="text/javascript" charset="utf-8">
+      function show_vendors(){
+          var farmers_market_location = $('#location_id').data('farmersMarketLocations');
+          var current_selected_location = parseInt($('#location_id').val());
+          if(farmers_market_location.indexOf(current_selected_location) !== -1){
+              var vendors_by_location = $('#location_admin_id').data('vendorsByLocation');
+              var options = "";
+              for(var i = 0; i < vendors_by_location[current_selected_location].length; i++){
+                  options += "<option value=" + vendors_by_location[current_selected_location][i]['location_admin_id'] + ">"
+                      + vendors_by_location[current_selected_location][i]['location_admin_name'] + "</option>"
+              }
+              $('#location_admin_id').html(options);
+              $('.vendors').show()
+          } else{
+              $('.vendors').hide()
+          }
+      }
+
+      jQuery(document).ready(function() {
+          show_vendors();
+          $('#location_id').on("change",function(){
+                  show_vendors();
+          });
+      });
+  </script>
+<% end %>
+

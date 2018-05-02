@@ -147,25 +147,35 @@ class LogsController < ApplicationController
     @region = Region.find(params[:region_id])
     @log = Log.new
     food_type_id = @region.food_types.where('name'=>"Food")[0].id
-    @log_parts = [LogPart.new( 'food_type_id' => food_type_id)]
     @log.region = @region
     @action = 'create'
     authorize! :create, @log
     session[:my_return_to] = request.referer
     set_vars_for_form @region
-    render :new
+    @log_parts = [LogPart.new( 'food_type_id' => food_type_id)]
+    if params['is_farmer_market'] == '1'
+      selected_location = Location.find(params['donor_id'])
+      @donor_id = selected_location.id
+      @locations = get_donor_locations(@region, is_farmers_market = true)
+      @vendors = selected_location.location_admins.sort_by!{|v| v.name }
+      render 'new_farmers_market'
+    else
+      @locations = get_donor_locations(@region, is_farmers_market = false)
+      render :new
+    end
   end
+
 
   def create
     @log = Log.new(params[:log])
     @region = @log.region
     @transport_types = TransportType.all.collect{ |e| [e.name, e.id] }
-
     authorize! :create, @log
     @log.save
     parse_and_create_log_parts(params, @log)
     @log = Log.find(@log.id)
     finalize_log(@log)
+    @action = 'create'
 
     if @log.save
       flash[:notice] = 'Created successfully.'
@@ -176,7 +186,7 @@ class LogsController < ApplicationController
       end
     else
       flash[:error] = "Didn't save successfully :(. #{@log.errors.full_messages.to_sentence}"
-      render :new
+       redirect_to action: :edit, id: @log.id
     end
   end
 
@@ -207,7 +217,14 @@ class LogsController < ApplicationController
     @action = 'update'
     session[:my_return_to] = request.referer
     set_vars_for_form @region
-    render :edit
+    if @log.donor.is_farmer_market
+      @locations = get_donor_locations(@region, is_farmers_market = true)
+      @vendors = @log.donor.location_admins.sort_by!{|v| v.name }
+      render 'logs/edit_farmers_market'
+    else
+      @locations = get_donor_locations(@region, is_farmers_market = false)
+      render :edit
+    end
   end
 
   def update
@@ -239,20 +256,45 @@ class LogsController < ApplicationController
         end
         respond_to do |format|
           format.json { render json: {error: 0, message: flash[:notice] } }
-          format.html { render :edit }
+          format.html { if @log.donor.is_farmer_market
+                          @locations = get_donor_locations(@region, is_farmers_market = true)
+                          @vendors = @log.donor.location_admins.sort_by!{|v| v.name }
+                          render 'logs/edit_farmers_market'
+                        else
+                          @locations = get_donor_locations(@region, is_farmers_market = false)
+                          render :edit
+                        end }
         end
       else
         flash[:error] = 'Failed to mark as complete.'
         respond_to do |format|
           format.json { render json: {error: 2, message: flash[:notice] } }
-          format.html { render :edit }
+          format.html {
+            if @log.donor.is_farmer_market
+              @locations = get_donor_locations(@region, is_farmers_market = true)
+              @vendors = @log.donor.location_admins.sort_by!{|v| v.name }
+              render 'logs/edit_farmers_market'
+            else
+              @locations = get_donor_locations(@region, is_farmers_market = false)
+              render :edit
+            end
+          }
         end
       end
     else
       flash[:error] = "Didn't update successfully :(. #{@log.errors.full_messages.to_sentence}"
       respond_to do |format|
         format.json { render json: {error: 1, message: flash[:notice] } }
-        format.html { render :edit }
+        format.html {
+          if @log.donor.is_farmer_market
+            @locations = get_donor_locations(@region, is_farmers_market = true)
+            @vendors = @log.donor.location_admins.sort_by!{|v| v.name }
+            render 'logs/edit_farmers_market'
+          else
+            @locations = get_donor_locations(@region, is_farmers_market = false)
+            render :edit
+          end
+        }
       end
     end
   end
@@ -293,9 +335,7 @@ class LogsController < ApplicationController
       else
         params[:ids].collect{ |id| Log.find(id) }
       end
-
     logs.each { |log| authorize! :leave, log }
-
     logs.each do |log|
       if log.has_volunteer? current_volunteer
         LogVolunteer.where(volunteer_id: current_volunteer.id, log_id: log.id).each{ |log_volunteer|
@@ -324,55 +364,68 @@ class LogsController < ApplicationController
     end
 
     @location = Location.find(params[:location_id])
-
-    authorize! :receipt, @location
-
     @logs = Log.where('logs.when >= ? AND logs.when <= ? AND donor_id = ? AND complete', @start_date, @stop_date, @location.id)
 
+    if @location.is_farmer_market
+      @contact_name = LocationAdmin.find(params[:location_admin_id]).name
+      @data = get_logs_for_vendor(params[:location_admin_id], @logs)
+
+    else
+      @contact_name = @location.contact
+      sum = 0.0
+      @data = @logs.collect{ |l|
+        sum += l.summed_weight
+        l.summed_weight == 0 ? nil : [l.when.strftime("%m/%d/%y"), l.log_parts.collect{ |lp| lp.description.nil? ? "" : lp.description }.compact.join(','), l.summed_weight]
+      }.compact + [['Total:', '', sum]]
+
+    end
+    authorize! :receipt, @location
     respond_to do |format|
       format.html
       format.pdf do
         pdf = Prawn::Document.new
         pdf.font_size 20
-        pdf.text @location.region.title, :align => :center
-
-        unless @location.region.tagline.nil?
-          pdf.move_down 10
-          pdf.font_size 12
-          pdf.text @location.region.tagline, :align => :center
-        end
+        top_pos = pdf.cursor
+        image_size = 120
+        dimensions = pdf.image('app/assets/images/Logo - No background.png', fit: [image_size, image_size], align: :left)
+        bottom_pos = pdf.cursor
 
         unless @location.region.address.nil?
+          pdf.move_cursor_to(top_pos - image_size/3)
           pdf.font_size 10
           pdf.font 'Times-Roman'
-          pdf.move_down 10
-          pdf.text "#{@location.region.address.tr("\n", ', ')}", :align => :center
+          overflow = pdf.text_box("#{@location.region.address}\nFederal Tax-ID: #{@location.region.tax_id}\n#{@location.region.phone}",
+                                  :at => [dimensions.scaled_width + 20 - pdf.font.line_gap, pdf.cursor], :height => dimensions.scaled_height + 20)
+          pdf.move_cursor_to(bottom_pos + pdf.font.line_gap*2 - 20)
+          pdf.text(overflow)
         end
+        pdf.move_down 12
+        pdf.text(Time.now.strftime("%B %d, %Y"), align: :left)
+        pdf.text("#{@contact_name}", align: :left)
+        pdf.text("#{@location.address}", align: :left)
+        pdf.move_down 12
+        pdf.text("Dear #{@contact_name},", align: :left)
+        pdf.move_down 12
+        msg_body_1 = "Thank you for your donation of excess produce to #{@location.region.name} throughout" +
+            "#{@start_date.year}. #{@location.region.name} was formed to combat hunger issues and reduce food" +
+            "waste in the greater Twin Cities area by being a link between those willing to help and those in need." +
+            "Your generous donation of produce is vital to our mission of reducing food waste and providing our" +
+            "neighbors in need with access to healthy food. \n\n" +
+            "Below is a receipt of your  #{@start_date.year} produce donations. #{@location.region.name} " +
+            "is a 501(c)3 organization. Your contribution is tax deductible to the extent allowed by law. " +
+            "No goods or services were provided in exchange for your generous donation. "
+        pdf.text(msg_body_1)
+        pdf.move_down 10
 
-        unless @location.region.website.nil?
-          pdf.move_down 5
-          pdf.text "#{@location.region.website}", :align => :center
-        end
-        unless @location.region.phone.nil?
-          pdf.move_down 5
-          pdf.text "#{@location.region.phone}", :align => :center
-        end
+        pdf.table([['Date', 'Description', 'Weight (lbs)']] + @data)
         pdf.move_down 10
-        pdf.text "Federal Tax-ID: #{@location.region.tax_id}", :align => :right
-        pdf.text "Receipt period: #{@start_date} to #{@stop_date}", :align => :left
-        pdf.move_down 5
-        pdf.text "Receipt for: #{@location.name}", :align => :center
+        msg_body_2 = "Please keep this written acknowledgment of your donation for your tax records. "+
+            "Again, thank you for your support."
+        pdf.text(msg_body_2)
         pdf.move_down 10
-        pdf.font 'Helvetica'
-        sum = 0.0
-        pdf.table([['Date', 'Description', 'Log #', 'Weight (lbs)']] + @logs.collect{ |l|
-          sum += l.summed_weight
-          l.summed_weight == 0 ? nil : [l.when, l.log_parts.collect{ |lp| lp.food_type.nil? ? nil : lp.food_type.name }.compact.join(','), l.id, l.summed_weight]
-        }.compact + [['Total:', '', '', sum]])
-        pdf.move_down 20
-        pdf.font_size 10
-        pdf.font 'Courier', :style => :italic
-        pdf.text "This receipt was generated by The Food Rescue Robot at #{Time.zone.now}. Beep beep mrrrp!", :align => :center
+        pdf.text("Sincerely,")
+        pdf.move_down 10
+        pdf.text("#{current_volunteer.name}\nTreasurer\n#{@location.region.name}")
         send_data pdf.render
       end
     end
@@ -396,6 +449,18 @@ class LogsController < ApplicationController
     end
   end
 
+  def select_location
+    @region = Region.find(params[:region_id])
+    if params['is_farmer_market'] == '0'
+      redirect_to action: :new, region_id: @region.id
+    else
+      @region = Region.find(params[:region_id])
+      @locations = get_donor_locations(@region, is_farmers_market = true)
+      render 'logs/select_location'
+    end
+  end
+
+
   private
 
   def parse_and_create_log_parts(params, log)
@@ -409,6 +474,7 @@ class LogsController < ApplicationController
       log_part.weight = lpdata['weight'].to_f
       log_part.food_type_id = lpdata['food_type_id'].to_i
       log_part.compost_weight = lpdata['compost_weight'].to_f
+      log_part.location_admin_id = lpdata['location_admin_id']
       ret.push log_part
       log_part.save
     } unless params['log_parts'].nil?
@@ -431,4 +497,28 @@ class LogsController < ApplicationController
     redirect_to(root_path) unless current_volunteer.any_admin?
   end
 
+  def get_donor_locations(region, is_farmers_market)
+    locations = []
+    region.locations.each do |d|
+      if d.is_farmer_market == is_farmers_market && d.location_type != 0
+        locations.push(d)
+      end
+    end
+    locations
+  end
+
+  def get_logs_for_vendor(vendor_id, logs)
+    vendor_logs = []
+    sum = 0
+     logs.each do |l|
+       l.log_parts.each do |lp|
+         if lp.location_admin_id.to_s == vendor_id
+           vendor_logs.push([l.when.strftime("%m/%d/%y"), lp.description.nil? ? "" : lp.description, lp.weight])
+           sum += lp.weight
+         end
+       end
+     end
+    vendor_logs.push(['Total:', '', sum])
+    vendor_logs
+  end
 end

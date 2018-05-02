@@ -207,6 +207,9 @@ class VolunteersController < ApplicationController
         (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0) ? volunteer : nil
       end.compact
 
+      @farmers_market_locations = Location.where(is_farmer_market: true).collect{|l| l.id}
+      @vendors_by_location = getVendorsByLocation
+
     end
 
     @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
@@ -288,7 +291,6 @@ class VolunteersController < ApplicationController
     unless current_volunteer.waiver_signed?
       return redirect_to new_waiver_url
     end
-
     if current_volunteer.region_admin?
       @volunteers_need_signed_waiver = Volunteer.need_driver_waiver_signed_by_admin(current_volunteer.region_ids)
     end
@@ -328,5 +330,18 @@ class VolunteersController < ApplicationController
       assignment.admin? && assignment.region.present? ? assignment.region.name : nil
     end.compact.join(", ")
     assignment_names
+  end
+
+  def getVendorsByLocation
+    vendors = {}
+    LocationAssociation.all.each do |x|
+      if vendors.has_key?(x.location_id)
+        vendors[x.location_id].push( {'location_admin_id' => x.location_admin_id, 'location_admin_name' => LocationAdmin.find(x.location_admin_id).name })
+      else
+        vendors[x.location_id] =
+            [{'location_admin_id' => x.location_admin_id, 'location_admin_name' => LocationAdmin.find(x.location_admin_id).name}]
+      end
+    end
+    vendors
   end
 end

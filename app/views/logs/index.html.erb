@@ -3,9 +3,10 @@
 <div class="row">
   <% if current_volunteer.any_admin? %>
     <div class="col-sm-6 text-left">
-      <%= form_tag("/logs/new", method: "get", class: "form-inline") do %>
+      <%= form_tag("/logs/select_location", method: "get", class: "form-inline") do %>
         <%= label_tag :region_id, 'New Log For:' %>
         <%= select_tag(:region_id, options_for_select(@my_admin_regions.collect{ |r| [r.name,r.id] }), {class: 'form-control'} ) %>
+        <%= select_tag(:is_farmer_market, options_for_select({'Standard Form' => 0 , 'Farmer\'s Market Form' => 1 }), {class: 'form-control'} ) %>
         <%= submit_tag("Go") %>
       <% end %>
     </div>

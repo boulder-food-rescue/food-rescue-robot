@@ -76,6 +76,8 @@ class LocationsController < ApplicationController
   def new
     @location = Location.new
     @location.region_id = params[:region_id]
+    @location_admins = LocationAdmin.where(region_id:  @location.region_id).sort_by{|l| l[:name]}
+    @location.location_admins.build
     authorize! :create, @location
     @action = 'create'
     session[:my_return_to] = request.referer
@@ -102,6 +104,7 @@ class LocationsController < ApplicationController
 
   def edit
     @location = Location.find(params[:id])
+    @location_admins = LocationAdmin.where(region_id:  @location.region_id).sort_by{|l| l[:name]}
     authorize! :update, @location
     @action = 'update'
     session[:my_return_to] = request.referer

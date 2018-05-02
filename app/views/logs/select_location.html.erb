@@ -1,0 +1,15 @@
+<%= form_tag("/logs/new", method: "get") do %>
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <%= label_tag(:donor_id, 'Select Farmer\'s Market') %>
+      <%= select_tag :donor_id, options_for_select((@locations).collect {|d| [d.name, d.id]}), {class: 'form-control select2'} %>
+      <%= hidden_field_tag :region_id, @region.id %>
+      <%= hidden_field_tag 'is_farmer_market', 1 %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <%= submit_tag "Use this location" %>
+    </div>
+  </div>
+<% end %>

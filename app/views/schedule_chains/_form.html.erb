@@ -70,8 +70,8 @@
             </tr>
           </thead>
           <tbody>
-            <%= f.simple_fields_for :schedules do |s| %>
-              <%= render 'schedule_fields', f: s %>
+            <%= f.simple_fields_for :schedules do |schedule| %>
+              <%= render 'schedule_fields', f: schedule %>
             <% end %>
           </tbody>
         </table>

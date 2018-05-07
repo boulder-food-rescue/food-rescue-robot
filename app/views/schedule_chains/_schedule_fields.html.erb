@@ -12,7 +12,7 @@
     <%= f.select :food_type_ids, @region.food_types.collect {|ft| [ft.name, ft.id]}, {}, multiple: true, class: 'form-control' %>
   </td>
   <td>
-    <button onclick="$(this).parent().remove();" class="btn btn-sm btn-danger">
+    <button onclick="$(this).parents('.nested_fields').remove();" class="btn btn-sm btn-danger">
       <i class="fa fa-remove"></i>
       Remove
     </button>

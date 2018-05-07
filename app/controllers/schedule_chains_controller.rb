@@ -33,10 +33,9 @@ class ScheduleChainsController < ApplicationController
     schedules = @schedule.schedules
 
     # prep the google maps embed request
-    api_key = ENV['GMAPS_API_KEY']
     embed_parameters = ''
-    f_l_scheds = [schedules.first, schedules.last]
-    trimmed_stops = schedules.select { |stop| !(f_l_scheds.include? stop) }
+    first_last_schedules = [schedules.first, schedules.last]
+    trimmed_stops = schedules.select { |stop| !(first_last_schedules.include?(stop)) }
 
     unless schedules.empty? || schedules.first.location.nil?
       sched = schedules.first
@@ -56,8 +55,7 @@ class ScheduleChainsController < ApplicationController
       end
     end
 
-    embed_parameters += '&mode=bicycling'
-    @embed_request_url = ('https://www.google.com/maps/embed/v1/directions' + '?key=' + api_key + embed_parameters)
+    @embed_request_url = ("https://www.google.com/maps/embed/v1/directions?key=#{ENV['GMAPS_API_KEY']}#{embed_parameters}&mode=bicycling")
 
     # This can apparently be nil, so have to do a funky sort fix
     @sorted_related_shifts = @schedule.related_shifts.sort{ |x, y|

@@ -134,7 +134,7 @@ class Location < ActiveRecord::Base
   end
 
   def clean_address
-    address.gsub(/\r/, ' ').gsub(/\n/, ' ')
+    address.nil? ? '' : address.gsub(/\r/, ' ').gsub(/\n/, ' ')
   end
 
   def mappable_address

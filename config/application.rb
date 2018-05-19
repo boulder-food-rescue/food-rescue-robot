@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require File.expand_path('../boot', __FILE__)
+require File.expand_path('boot', __dir__)
 
 require 'rails/all'
 
@@ -13,7 +11,6 @@ end
 
 module Webapp
   class Application < Rails::Application
-
     # Generator settings
     config.generators do |g|
       g.assets         = false

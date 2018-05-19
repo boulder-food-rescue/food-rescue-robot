@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module DeviseHelper
-
   def devise_error_messages!
     flash_alerts = []
     error_key = 'errors.messages.not_saved'
@@ -35,5 +34,4 @@ module DeviseHelper
 
     html.html_safe
   end
-
 end

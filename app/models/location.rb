@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Location < ActiveRecord::Base
-
   # MOVE TO ENUM
   LOCATION_TYPES = {
     0 => 'Recipient',
@@ -17,7 +16,7 @@ class Location < ActiveRecord::Base
   belongs_to :region
   has_many :log_recipients
 
-  geocoded_by :address, latitude: :lat, longitude: :lng   # can also be an IP address
+  geocoded_by :address, latitude: :lat, longitude: :lng # can also be an IP address
   acts_as_gmappable process_geocoding: false, lat: 'lat', lng: 'lng', address: 'address'
 
   after_initialize :init_detailed_hours
@@ -67,7 +66,7 @@ class Location < ActiveRecord::Base
   def gmaps4rails_marker_picture
     {
       'picture' => self.donor? ? 'http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-start.png' :
-                                   'http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-end.png'          # string,  mandatory
+                                   'http://maps.gstatic.com/intl/en_ALL/mapfiles/dd-end.png' # string,  mandatory
     }
   end
 
@@ -82,7 +81,7 @@ class Location < ActiveRecord::Base
   end
 
   def hours_on_day(index)
-    [ read_day_info('day'+index.to_s+'_start') , read_day_info('day'+index.to_s+'_end') ]
+    [read_day_info("day#{index}_start"), read_day_info("day#{index}_end")]
   end
 
   def open_on_day?(index)
@@ -95,10 +94,10 @@ class Location < ActiveRecord::Base
       write_day_info(prefix+'_status', params[prefix]['status'].to_i)
       write_day_info(prefix+'_start',
                      Time.find_zone(self.time_zone).parse( params[prefix]['start']['hour']+':'+params[prefix]['start']['minute'] )
-      )
+                    )
       write_day_info(prefix+'_end',
                      Time.find_zone(self.time_zone).parse( params[prefix]['end']['hour']+':'+params[prefix]['end']['minute'] )
-      )
+                    )
     end
     populate_detailed_hours_json_before_save
   end
@@ -136,14 +135,18 @@ class Location < ActiveRecord::Base
 
   private
 
+  def day_length
+    hours_on_day(index).reduce(:-)
+  end
+
+  def wrong_day_order?(index)
+    open_on_day?(index) && day_length(index).negative?
+  end
+
   def detailed_hours_cannot_end_before_start
     (0..6).each do |index|
-      if open_on_day? index
-        prefix = 'day'+index.to_s
-        if read_day_info(prefix + '_start') > read_day_info(prefix + '_end')
-          errors.add(prefix+'_status', 'must have an end time AFTER the start time')
-        end
-      end
+      message = 'must have an end time AFTER the start time'
+      errors.add("day#{index}_status", message) if wrong_day_order?(index)
     end
   end
 

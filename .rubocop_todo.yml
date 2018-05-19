@@ -6,131 +6,11 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: Include, TreatCommentsAsGroupSeparators.
-# Include: **/Gemfile, **/gems.rb
-Bundler/OrderedGems:
-  Exclude:
-    # - 'Gemfile'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Layout/ClosingParenthesisIndentation:
-  Exclude:
-    - 'app/models/location.rb'
-
-# Offense count: 35
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: leading, trailing
-Layout/DotPosition:
-  Exclude:
-    - 'Rakefile'
-    - 'app/controllers/volunteers_controller.rb'
-    - 'app/models/log.rb'
-    - 'app/models/volunteer.rb'
-    - 'app/presenters/volunteer_stats_presenter.rb'
-    - 'app/presenters/volunteer_stats_presenter/pickup_stats_presenter.rb'
-    - 'lib/food_robot/log_generator/existing_logs.rb'
-    - 'lib/food_robot/log_generator/log_builder.rb'
-    - 'lib/food_robot/log_generator/schedule_chain_decorator.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Layout/ElseAlignment:
-  Exclude:
-    - 'app/controllers/schedule_chains_controller.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Layout/EmptyLineAfterMagicComment:
   Exclude:
     - 'db/schema.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Layout/EmptyLines:
-  Exclude:
-    - 'app/controllers/schedule_chains_controller.rb'
-    - 'config/environments/production.rb'
-    - 'db/migrate/20120625205247_add_devise_to_volunteers.rb'
-
-# Offense count: 15
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Layout/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'Rakefile'
-    - 'config/environments/production.rb'
-    - 'config/initializers/devise.rb'
-    - 'config/routes.rb'
-    - 'db/schema.rb'
-    - 'lib/tasks/foodrobot.rake'
-    - 'spec/factories/log_parts.rb'
-    - 'spec/factories/logs.rb'
-    - 'spec/features/api_spec.rb'
-    - 'spec/features/region_admin/donors_spec.rb'
-
-# Offense count: 17
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, empty_lines_except_namespace, empty_lines_special, no_empty_lines
-Layout/EmptyLinesAroundClassBody:
-  Exclude:
-    - 'app/controllers/absences_controller.rb'
-    - 'app/controllers/application_controller.rb'
-    - 'app/controllers/assignments_controller.rb'
-    - 'app/controllers/schedule_chains_controller.rb'
-    - 'app/controllers/transport_types_controller.rb'
-    - 'app/models/assignment.rb'
-    - 'app/models/location.rb'
-    - 'app/models/log.rb'
-    - 'app/models/log_recipient.rb'
-    - 'app/models/schedule_volunteer.rb'
-    - 'config/application.rb'
-    - 'db/migrate/20131226160442_create_schedule_volunteers.rb'
-    - 'db/migrate/20140408172606_create_log_volunteers.rb'
-    - 'db/migrate/20140418163926_create_schedule_chains.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Layout/EmptyLinesAroundMethodBody:
-  Exclude:
-    - 'app/controllers/logs_controller.rb'
-
-# Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, empty_lines_except_namespace, empty_lines_special, no_empty_lines
-Layout/EmptyLinesAroundModuleBody:
-  Exclude:
-    - 'app/helpers/application_helper.rb'
-    - 'app/helpers/devise_helper.rb'
-    - 'app/helpers/locations_helper.rb'
-    - 'app/helpers/regions_helper.rb'
-    - 'lib/food_robot.rb'
-
-# Offense count: 22
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment, ForceEqualSignAlignment.
-Layout/ExtraSpacing:
-  Exclude:
-    - 'app/models/location.rb'
-    - 'app/models/region.rb'
-    - 'config/environments/test.rb'
-    - 'config/initializers/food_rescue_robot.rb'
-    - 'db/schema.rb'
-    - 'script/rails'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: consistent, special_for_inner_method_call, special_for_inner_method_call_in_parentheses
-Layout/FirstParameterIndentation:
-  Exclude:
-    - 'spec/models/volunteer_spec.rb'
 
 # Offense count: 8
 # Cop supports --auto-correct.
@@ -149,27 +29,13 @@ Layout/IndentHeredoc:
     - 'bin/support/create-dot-env.rb'
     - 'lib/de_dup_log_volunteers.rb'
 
-# Offense count: 15
-# Cop supports --auto-correct.
-Layout/LeadingCommentSpace:
-  Exclude:
-    - 'Gemfile'
-    - 'app/controllers/schedule_chains_controller.rb'
-    - 'app/mailers/notifier.rb'
-    - 'config/environments/development.rb'
-    - 'config/environments/production.rb'
-    - 'config/routes.rb'
-    - 'db/migrate/20120625205247_add_devise_to_volunteers.rb'
-    - 'db/seeds.rb'
-    - 'spec/factories/logs.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: symmetrical, new_line, same_line
 Layout/MultilineArrayBraceLayout:
   Exclude:
-    - 'app/models/log.rb'
+    # - 'app/models/log.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -257,13 +123,6 @@ Layout/SpaceInLambdaLiteral:
 Layout/SpaceInsideBlockBraces:
   Exclude:
     - 'spec/features/take_one_time_shift.rb'
-
-# Offense count: 6
-# Cop supports --auto-correct.
-Layout/SpaceInsideBrackets:
-  Exclude:
-    - 'app/models/location.rb'
-    - 'config/initializers/devise.rb'
 
 # Offense count: 23
 # Cop supports --auto-correct.
@@ -383,15 +242,6 @@ Naming/VariableName:
     - 'db/migrate/20131226160442_create_schedule_volunteers.rb'
     - 'db/migrate/20140408172606_create_log_volunteers.rb'
     - 'lib/food_robot.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: AutoCorrect.
-Performance/HashEachMethods:
-  Exclude:
-    - 'app/controllers/logs_controller.rb'
-    - 'bin/support/bootstrap-database.rb'
-    - 'spec/features/api_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.

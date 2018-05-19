@@ -187,21 +187,20 @@ class VolunteersController < ApplicationController
     @regions = current_volunteer.admin_regions
     region_ids = @regions.collect{ |region| region.id }.join(',')
     @logs_per_volunteer_year =
-      Log.joins(:log_parts, :volunteers).
-        select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').
-        where("complete AND region_id IN (#{region_ids}) and logs.when > ?", Date.today-12.months).
-        group('volunteers.id, volunteers.name').order('sum DESC')
+      Log.joins(:log_parts, :volunteers)
+      .select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)')
+      .where("complete AND region_id IN (#{region_ids}) and logs.when > ?", Date.today-12.months)
+      .group('volunteers.id, volunteers.name').order('sum DESC')
     @logs_per_volunteer_month =
-      Log.joins(:log_parts, :volunteers).
-        select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)').
-        where("complete AND region_id IN (#{region_ids}) and logs.when > ?", Date.today-1.month).
-        group('volunteers.id, volunteers.name').order('sum DESC')
-
+      Log.joins(:log_parts, :volunteers)
+      .select('volunteers.id, volunteers.name, sum(weight), count(DISTINCT logs.id)')
+      .where("complete AND region_id IN (#{region_ids}) and logs.when > ?", Date.today-1.month)
+      .group('volunteers.id, volunteers.name').order('sum DESC')
     @lazy_volunteers =
-      Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date').
-            joins(:logs, :log_volunteers).
-            where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(',')})").
-            group('volunteers.id, name, email')
+      Volunteer.select('volunteers.id, name, email, count(*) as count, max("when") as last_date')
+      .joins(:logs, :log_volunteers)
+      .where("volunteers.id=log_volunteers.volunteer_id and logs.region_id IN (#{current_volunteer.admin_region_ids.join(',')})")
+      .group('volunteers.id, name, email')
   end
 
   def shift_stats

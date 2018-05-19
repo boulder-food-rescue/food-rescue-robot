@@ -4,7 +4,7 @@ Webapp::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
   config.time_zone = 'Mountain Time (US & Canada)'
 
-  #Asset Mailer Host!
+  # Asset Mailer Host!
   config.action_mailer.asset_host = 'https://boulder-food-rescue-robot.herokuapp.com'
 
   config.action_mailer.smtp_settings = {
@@ -17,12 +17,11 @@ Webapp::Application.configure do
     password: ENV['SENDGRID_PASSWORD']
   }
   # ActionMailer Config
-  #config.action_mailer.default_url_options = { :host => 'robot.boulderfoodrescue.org' }
+  # config.action_mailer.default_url_options = { :host => 'robot.boulderfoodrescue.org' }
   config.action_mailer.default_url_options = { host: "#{ENV['DOMAIN_NAME']}" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-
 
   # Code is not reloaded between requests
   config.cache_classes = true
@@ -105,5 +104,4 @@ Webapp::Application.configure do
     url: ':s3_domain_url',
     path: '/:class/:attachment/:id_partition/:style/:filename'
   }
-
 end

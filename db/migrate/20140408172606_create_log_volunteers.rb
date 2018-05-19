@@ -46,5 +46,4 @@ class CreateLogVolunteers < ActiveRecord::Migration
     add_column(:logs, :volunteer_id, :integer)
     add_column(:logs, :orig_volunteer_id, :integer)
   end
-
 end

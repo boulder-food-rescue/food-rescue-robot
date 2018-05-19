@@ -54,12 +54,12 @@ module FoodRobot
       end
 
       def recipients
-        schedule_chain.schedules.
-          eager_load(:location).
-          where('position > ?', donor.position).
-          select{ |s| s.location.present? }.
-          select(&:drop_stop?).
-          map(&:location)
+        schedule_chain.schedules
+                      .eager_load(:location)
+                      .where('position > ?', donor.position)
+                      .select{ |s| s.location.present? }
+                      .select(&:drop_stop?)
+                      .map(&:location)
       end
 
       def log_parts

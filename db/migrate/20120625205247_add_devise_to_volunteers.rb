@@ -4,7 +4,7 @@ class AddDeviseToVolunteers < ActiveRecord::Migration
   def self.up
     change_table(:volunteers) do |t|
       ## Database authenticatable
-      #t.string :email,              :null => false, :default => ""
+      # t.string :email,              :null => false, :default => ""
       t.string :encrypted_password, :null => false, :default => ''
 
       ## Recoverable
@@ -34,7 +34,6 @@ class AddDeviseToVolunteers < ActiveRecord::Migration
 
       ## Token authenticatable
       # t.string :authentication_token
-
 
       # Uncomment below if timestamps were not included in your original model.
       # t.timestamps

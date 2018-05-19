@@ -27,7 +27,7 @@ class SampleData
             detailed_start_time: times[:start],
             detailed_stop_time: times[:stop],
             detailed_date: 100.days.from_now - rand(600).days,
-            difficulty_rating: [true, false].sample ? 1 + rand(3) : nil,
+            difficulty_rating: [true, false].sample ? rand(1..3) : nil,
             hilliness: [true, false].sample ? rand(5) : nil,
             frequency: frequency,
             day_of_week: frequency == 'weekly' ? rand(7) : nil,
@@ -45,11 +45,11 @@ class SampleData
       end
 
       def random_start_stop_times
-        start = 9 + rand(10)
+        start = rand(9...20)
 
         {
           start: "#{start}:00:00",
-          stop: "#{start + 1 + rand(3)}:00:00"
+          stop: "#{start + rand(1...4)}:00:00"
         }
       end
 

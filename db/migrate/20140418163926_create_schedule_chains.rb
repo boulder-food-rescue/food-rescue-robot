@@ -41,7 +41,7 @@ class CreateScheduleChains < ActiveRecord::Migration
     old_schedules.each{ |sid|
       original = Schedule.find(sid)
       puts "Converting #{sid}: #{n}/#{old_schedules.length}"
-      sc = ScheduleChain.create(irregular: original.irregular, backup: original.backup,	frequency: original.frequency,
+      sc = ScheduleChain.create(irregular: original.irregular, backup: original.backup, frequency: original.frequency,
                                 detailed_start_time: original.detailed_start_time, detailed_stop_time: original.detailed_stop_time,
                                 detailed_date: original.detailed_date, hilliness: original.hilliness,
                                 difficulty_rating: original.difficulty_rating,
@@ -98,5 +98,4 @@ class CreateScheduleChains < ActiveRecord::Migration
       l.remove :recipient_id
     end
   end
-
 end

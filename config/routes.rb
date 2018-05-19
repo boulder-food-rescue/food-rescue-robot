@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 Webapp::Application.routes.draw do
-
   resources :assignments, only: [] do
     collection do
       get :knight
@@ -66,9 +65,9 @@ Webapp::Application.routes.draw do
       get :create
       get :destroy
     end
-    #member do
+    # member do
     #  get :show
-    #end
+    # end
   end
 
   resources :locations do
@@ -135,5 +134,4 @@ Webapp::Application.routes.draw do
       root to: 'sessions#new', as: :unauthenticated_root
     end
   end
-
 end

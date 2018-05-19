@@ -59,6 +59,6 @@ Webapp::Application.configure do
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
 
-  #Show it all!
+  # Show it all!
   config.log_level = :debug
 end

@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Region Admin Donors' do
-
   feature 'Viewing the list of donors' do
     let(:boulder) { create(:region) }
     let(:denver)  { create(:region) }

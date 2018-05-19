@@ -4,12 +4,11 @@
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
-require File.expand_path('../config/application', __FILE__)
+require File.expand_path('config/application', __dir__)
 
 Webapp::Application.load_tasks
 
 task(:export_log_data => :environment) do
-
   CSV.open('orgs.csv', 'wb') do |csv|
     csv << %w(id name lat lng type)
     Location.where('region_id = ?', 1).each{ |l|
@@ -24,8 +23,8 @@ task(:export_log_data => :environment) do
               schedule_id)
     ntotal = Log.where('region_id = ? AND complete', 1).count
     Log.where('region_id = ? AND complete', 1).each{ |l|
-      lp = LogPart.select('log_parts.id,food_types.name,weight,count').where('log_id = ?', l.id).
-        joins('LEFT JOIN food_types ON log_parts.food_type_id=food_types.id')
+      lp = LogPart.select('log_parts.id,food_types.name,weight,count').where('log_id = ?', l.id)
+      .joins('LEFT JOIN food_types ON log_parts.food_type_id=food_types.id')
       tt = l.transport_type.nil? ? '' : l.transport_type.name
       st = l.scale_type.nil? ? '' : l.scale_type.name
       csv << [l.id, l.when, l.volunteers.collect{ |v| v.id }.join(':'), l.donor_id, l.recipients.collect{ |r| r.id }.join(':'),
@@ -38,5 +37,4 @@ task(:export_log_data => :environment) do
       end
     }
   end
-
 end

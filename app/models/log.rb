@@ -76,9 +76,9 @@ class Log < ActiveRecord::Base
   end
 
   def covered?
-    num_vols = self.num_volunteers
-    num_vols = self.schedule_chain.num_volunteers if num_vols.nil? && !self.schedule_chain.nil?
-    num_vols.nil? ? self.volunteers? : self.volunteers.length >= num_vols
+    num_vols = num_volunteers || schedule_chain.num_volunteers if schedule_chain
+    return volunteers.count >= num_vols if num_vols
+    volunteers?
   end
 
   def volunteer?(volunteer)
@@ -113,10 +113,10 @@ class Log < ActiveRecord::Base
   end
 
   def self.picked_up_by(volunteer_id, complete=true, limit=nil)
-    logs = joins(:log_volunteers).
-      where('log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active', volunteer_id, complete).
-      order('"logs"."when" DESC').
-      uniq
+    logs = joins(:log_volunteers)
+    .where('log_volunteers.volunteer_id = ? AND logs.complete=? AND log_volunteers.active', volunteer_id, complete)
+    .order('"logs"."when" DESC')
+    .uniq
 
     if limit.present?
       logs.limit(limit.to_i)
@@ -208,10 +208,8 @@ class Log < ActiveRecord::Base
                 lps.collect{ |lp| lp.description.nil? ? 'None' : lp.description }.join(':'),
                 log.summed_weight, log.donor.nil? ? 'Unknown' : log.donor.name, log.recipients.collect{ |r| r.nil? ? 'Unknown' : r.name }.join(':'),
                 log.volunteers.collect{ |r| r.nil? ? 'Unknown' : r.name }.join(':'), log.scale_type.nil? ? 'Uknown' : log.scale_type.name,
-                log.transport_type.nil? ? 'Unknown' : log.transport_type.name, log.hours_spent, log.num_reminders, log.notes
-        ]
+                log.transport_type.nil? ? 'Unknown' : log.transport_type.name, log.hours_spent, log.num_reminders, log.notes]
       end
     end
   end
-
 end

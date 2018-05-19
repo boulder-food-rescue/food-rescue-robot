@@ -40,9 +40,9 @@ class VolunteerStatsPresenter
                 :time
 
     def human_powered_pickups
-      @human_powered_logs ||= logs.
-        joins('LEFT OUTER JOIN "transport_types" ON "transport_types"."id" = "logs"."transport_type_id"').
-        where("transport_types.name IS NULL OR NOT transport_types.name ILIKE '%car%'")
+      @human_powered_pickups ||= logs
+      .joins('LEFT OUTER JOIN "transport_types" ON "transport_types"."id" = "logs"."transport_type_id"')
+      .where("transport_types.name IS NULL OR NOT transport_types.name ILIKE '%car%'")
     end
 
     def weeks_since_first

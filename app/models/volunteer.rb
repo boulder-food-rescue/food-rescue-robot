@@ -214,9 +214,9 @@ class Volunteer < ActiveRecord::Base
   end
 
   def self.all_for_region(region_id)
-    includes(:regions).
-      where(regions: { id: region_id }).
-      compact
+    includes(:regions)
+      .where(regions: { id: region_id })
+      .compact
   end
 
   def self.active_but_shiftless(region_ids)

@@ -3,7 +3,7 @@
 class Notifier < ActionMailer::Base
   add_template_helper(ApplicationHelper)
   default from: 'robot@boulderfoodrescue.org'
-  #ForceTo = "cphillips@smallwhitecube.com"
+  # ForceTo = "cphillips@smallwhitecube.com"
   FORCE_TO = nil
 
   def admin_emails_for_region(region)

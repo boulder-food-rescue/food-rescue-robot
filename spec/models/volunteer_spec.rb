@@ -170,17 +170,17 @@ RSpec.describe Volunteer do
 
       expect(volunteers.length).to eq(3)
 
-      expect(volunteers.include?(
+      expect(volunteers).to include(
         ["#{volunteer_with_shifts.name} ['#{boulder.name}']", volunteer_with_shifts.id]
-      )).to eq(true)
+      )
 
-      expect(volunteers.include?(
+      expect(volunteers).to include(
         ["#{shiftless_volunteer_denver.name} ['#{denver.name}']", shiftless_volunteer_denver.id]
-      )).to eq(true)
+      )
 
-      expect(volunteers.include?(
+      expect(volunteers).to include(
         ["#{shiftless_volunteer.name} ['#{boulder.name}']", shiftless_volunteer.id]
-      )).to eq(true)
+      )
     end
   end
 

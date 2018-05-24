@@ -76,7 +76,7 @@ class Log < ActiveRecord::Base
   end
 
   def covered?
-    num_vols = num_volunteers || schedule_chain.num_volunteers if schedule_chain
+    num_vols = num_volunteers || schedule_chain&.num_volunteers
     return volunteers.count >= num_vols if num_vols
     volunteers?
   end

@@ -48,13 +48,14 @@ ruby bin/support/bootstrap-database.rb
 echo "==> Loading database schema"
 bundle exec rake db:schema:load
 
-RAILS_ENV=test
-bundle exec rake db:schema:load
 
 echo "==> Seeding development database"
 RAILS_ENV=development
 SEED_USERS_PASSWORD=password
 bundle exec rake db:seed
+
+RAILS_ENV=test bundle exec rake db:create
+RAILS_ENV=test bundle exec rake db:schema:load
 
 cat <<INSTRUCTIONS
 

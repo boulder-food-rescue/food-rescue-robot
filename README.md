@@ -85,6 +85,10 @@ Set up your environment:
 
 This will check your system for prerequisites (e.g. Ruby version), install dependencies, create a `.env` file, create any missing databases and database users, load the database schema and seed development data.
 
+You may need to insert the secret key manually. Check the `.env` file's SECRET_KEY_BASE. If absent, generate a secret key by using the command below:
+
+`bundle exec rake secret`
+
 ### Manual or Windows
 
 Install dependencies:

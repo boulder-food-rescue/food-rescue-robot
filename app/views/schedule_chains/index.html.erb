@@ -13,7 +13,7 @@
 
 <% if current_volunteer.assignments.length == 0 %>
   <p>You haven't been assigned to any regions, so you can't see anything yet. Ask a coordinator for your region to assign you!</p>
-<% elsif @schedules.length == 0 %>
+<% elsif @chains.length == 0 %>
   <p>Local schedule list is empty.</p>
 <% elsif current_volunteer.regions.length == 0 %>
   <p>You aren't assigned to any regions, so you can't see anything yet. Ask a coordinator in your region to assign you!</p>
@@ -44,7 +44,7 @@
     </thead>
     <tbody>
       <%
-        @schedules.each do |schedule|
+        @chains.each do |schedule|
           row_bgcolor = nil
           if schedule.no_volunteers?
             row_bgcolor = "pink"

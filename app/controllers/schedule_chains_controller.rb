@@ -3,14 +3,14 @@ class ScheduleChainsController < ApplicationController
   before_filter :admin_only, :only => [:today, :tomorrow, :yesterday]
 
   def open
-    @schedules = ScheduleChain.open_in_regions current_volunteer.region_ids
+    @chains = ScheduleChain.open_in_regions current_volunteer.region_ids
     @my_admin_regions = current_volunteer.admin_regions
     @page_title = 'Open Shifts'
     render :index
   end
 
   def mine
-    @schedules = current_volunteer.schedule_chains
+    @chains = current_volunteer.schedule_chains
     @my_admin_regions = current_volunteer.admin_regions
     @page_title = 'My Regular Shifts'
     render :index
@@ -22,15 +22,15 @@ class ScheduleChainsController < ApplicationController
            else
              "day_of_week = #{day_of_week.to_i}"
            end
-    @schedules = ScheduleChain.where(region_id: current_volunteer.region_ids).where(dowq)
+    @chains = ScheduleChain.where(region_id: current_volunteer.region_ids).where(dowq)
     @my_admin_regions = current_volunteer.admin_regions
     @page_title = title
     render :index
   end
 
   def show
-    @schedule = ScheduleChain.includes(:schedules).find(params[:id])
-    schedules = @schedule.schedules
+    @chain = ScheduleChain.includes(:schedules).find(params[:id])
+    schedules = @chain.schedules
 
     # prep the google maps embed request
     embed_parameters = ''
@@ -58,7 +58,7 @@ class ScheduleChainsController < ApplicationController
     @embed_request_url = ("https://www.google.com/maps/embed/v1/directions?key=#{ENV['GMAPS_API_KEY']}#{embed_parameters}&mode=bicycling")
 
     # This can apparently be nil, so have to do a funky sort fix
-    @sorted_related_shifts = @schedule.related_shifts.sort{ |x, y|
+    @sorted_related_shifts = @chain.related_shifts.sort{ |x, y|
       x.schedule_chain.day_of_week && y.schedule_chain.day_of_week ?
         x.schedule_chain.day_of_week <=> y.schedule_chain.day_of_week : x.schedule_chain.day_of_week ? -1 : 1
     }
@@ -98,10 +98,10 @@ class ScheduleChainsController < ApplicationController
 
   def new
     @region = Region.find(params[:region_id])
-    @schedule = ScheduleChain.new
-    @schedule.volunteers.build
-    @schedule.region = @region
-    authorize! :create, @schedule
+    @chain = ScheduleChain.new
+    @chain.volunteers.build
+    @chain.region = @region
+    authorize! :create, @chain
 
     set_vars_for_form @region
     @action = 'create'
@@ -109,25 +109,25 @@ class ScheduleChainsController < ApplicationController
   end
 
   def create
-    @schedule = ScheduleChain.new(params[:schedule_chain])
-    authorize! :create, @schedule
+    @chain = ScheduleChain.new(params[:schedule_chain])
+    authorize! :create, @chain
 
-    if CreateScheduleChain.call(schedule_chain: @schedule).success?
+    if CreateScheduleChain.call(schedule_chain: @chain).success?
       flash[:notice] = 'Created successfully'
       index
     else
-      flash[:error] = "Didn't save successfully :(. #{@schedule.errors.full_messages.to_sentence}"
+      flash[:error] = "Didn't save successfully :(. #{@chain.errors.full_messages.to_sentence}"
       render :new
     end
   end
 
   def edit
-    @schedule = ScheduleChain.find(params[:id])
-    authorize! :update, @schedule
+    @chain = ScheduleChain.find(params[:id])
+    authorize! :update, @chain
 
-    @region = @schedule.region
+    @region = @chain.region
     set_vars_for_form @region
-    @inactive_volunteers = @schedule.schedule_volunteers.select { |sched_vol| sched_vol.active == false }
+    @inactive_volunteers = @chain.schedule_volunteers.select { |sched_vol| sched_vol.active == false }
     @action = 'update'
   end
 

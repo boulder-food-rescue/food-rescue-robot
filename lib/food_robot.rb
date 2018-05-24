@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logger'
 require 'csv'
 
@@ -127,7 +129,7 @@ module FoodRobot
         if @@DontDeliverEmails
           puts msg
         else
-          msg.deliver unless msg.nil?
+          msg&.deliver
         end
       end
     end
@@ -142,7 +144,7 @@ module FoodRobot
       biggest = nil
       num_logs = Log.where('region_id = ? AND "when" > ? AND "when" < ?', r.id, Time.zone.today-7, Time.zone.today).count
       num_entered = 0
-      next unless num_logs > 0
+      next unless num_logs.positive?
       puts num_logs
       zero_logs = []
 

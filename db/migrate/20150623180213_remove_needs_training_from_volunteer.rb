@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveNeedsTrainingFromVolunteer < ActiveRecord::Migration
   # obsolete fields
   def up

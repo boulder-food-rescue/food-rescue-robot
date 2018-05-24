@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RegionsController < ApplicationController
   before_filter :authenticate_volunteer!
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RegionAdmin
   class FoodTypesController < ApplicationController
     before_filter :authenticate_volunteer!

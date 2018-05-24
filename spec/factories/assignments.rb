@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryGirl.define do
   factory :assignment do
     volunteer { (Volunteer.all.count >= 5 ? Volunteer.all.sort_by{ rand }.first : create(:volunteer)) }

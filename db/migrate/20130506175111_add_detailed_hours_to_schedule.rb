@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddDetailedHoursToSchedule < ActiveRecord::Migration
   def change
     change_table :schedules do |t|

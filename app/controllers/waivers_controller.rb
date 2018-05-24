@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WaiversController < ApplicationController
   before_filter :authenticate_volunteer!
 

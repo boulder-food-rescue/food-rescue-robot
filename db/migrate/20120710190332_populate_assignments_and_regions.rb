@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PopulateAssignmentsAndRegions < ActiveRecord::Migration
   def up
     rb = Region.new

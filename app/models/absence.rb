@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Absence < ActiveRecord::Base
   belongs_to :volunteer
   has_and_belongs_to_many :logs

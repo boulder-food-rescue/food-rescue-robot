@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ScheduleChain < ActiveRecord::Base
   default_scope { where(active: true) }
 
@@ -100,7 +102,7 @@ class ScheduleChain < ActiveRecord::Base
   end
 
   def volunteers?
-    volunteers.count > 0
+    volunteers.count.positive?
   end
 
   def no_volunteers?

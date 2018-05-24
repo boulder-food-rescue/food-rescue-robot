@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TransportTypesController < ApplicationController
   before_filter :authenticate_volunteer!
 

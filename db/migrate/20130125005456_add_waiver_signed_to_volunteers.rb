@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddWaiverSignedToVolunteers < ActiveRecord::Migration
   def up
     add_column :volunteers, :waiver_signed, :boolean, :null => false, :default => false

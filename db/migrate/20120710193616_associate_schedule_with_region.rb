@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AssociateScheduleWithRegion < ActiveRecord::Migration
   def up
     change_table :schedules do |t|

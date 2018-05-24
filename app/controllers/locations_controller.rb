@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LocationsController < ApplicationController
   before_filter :authenticate_volunteer!, except: [:hud]
 
@@ -8,7 +10,7 @@ class LocationsController < ApplicationController
       @logs = if @location.donor?
                 Log.at(@location).last(500)
               else
-                Log.at(@location).last(500).keep_if{ |x| x.weight_sum.to_f > 0 }
+                Log.at(@location).last(500).keep_if{ |x| x.weight_sum.to_f.positive? }
               end
       render :hud
     else

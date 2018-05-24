@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateScheduleVolunteers < ActiveRecord::Migration
 
   def up

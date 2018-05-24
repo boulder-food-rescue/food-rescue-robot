@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddEmailToTextEmailToVolunteer < ActiveRecord::Migration
   def up
     create_table :cell_carriers do |t|

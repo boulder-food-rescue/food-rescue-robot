@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ScheduleVolunteer < ActiveRecord::Base
 
   belongs_to :schedule_chain

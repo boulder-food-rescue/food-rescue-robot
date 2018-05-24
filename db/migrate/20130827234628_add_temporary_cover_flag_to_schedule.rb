@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddTemporaryCoverFlagToSchedule < ActiveRecord::Migration
   def change
     change_table :schedules do |t|

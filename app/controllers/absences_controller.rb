@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AbsencesController < ApplicationController
   before_filter :authenticate_volunteer!
   before_filter :admin_only, only: [:all]

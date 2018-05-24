@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'food_robot/log_generator/existing_logs'
 require 'food_robot/log_generator/log_builder'
 require 'food_robot/log_generator/schedule_chain_decorator'

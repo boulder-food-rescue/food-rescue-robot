@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddFieldsToRegion < ActiveRecord::Migration
   def change
     add_column :regions, :volunteer_coordinator_email, :string

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddDonorAndRecipientToLog < ActiveRecord::Migration
   def change
     add_column :logs, :donor_id, :integer

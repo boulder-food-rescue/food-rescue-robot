@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LocationsHelper
 
   def readable_hours location
@@ -7,7 +9,7 @@ module LocationsHelper
   private
 
   def readable_simple_hours loc
-    loc.hours.gsub("\n", '<br>').html_safe unless loc.hours.nil?
+    loc.hours&.gsub("\n", '<br>')&.html_safe
   end
 
   def readable_detailed_hours location

@@ -1,0 +1,3 @@
+test:
+  adapter: postgresql
+  database: bfr_webapp_db_test

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddUnitsToFoodTypes < ActiveRecord::Migration
   def change
     add_column :regions, :weight_unit, :string, :null => false, :default => 'pound'

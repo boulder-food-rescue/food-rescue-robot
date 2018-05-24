@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Schedule < ActiveRecord::Base
   include RankedModel
 

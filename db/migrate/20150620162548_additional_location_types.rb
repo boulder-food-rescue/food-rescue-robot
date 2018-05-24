@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AdditionalLocationTypes < ActiveRecord::Migration
   def up
     change_table :locations do |t|

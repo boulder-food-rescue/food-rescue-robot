@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NewFieldsForRegion < ActiveRecord::Migration
   def up
     change_table :regions do |t|

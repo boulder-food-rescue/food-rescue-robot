@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples_for 'an authenticated showable resource' do
   context 'when not authenticated' do
     context 'GET #show' do

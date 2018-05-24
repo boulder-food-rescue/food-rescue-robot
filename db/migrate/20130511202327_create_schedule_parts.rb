@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateScheduleParts < ActiveRecord::Migration
   def up
     create_table :schedule_parts do |t|

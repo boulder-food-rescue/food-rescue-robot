@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveDuplicatesInLogs < ActiveRecord::Migration
   def up
     kill_count = 0

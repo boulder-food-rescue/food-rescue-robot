@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LogVolunteer < ActiveRecord::Base
   belongs_to :log
   belongs_to :volunteer

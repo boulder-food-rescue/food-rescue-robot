@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VolunteerStatsPresenter
   class LbsByMonthGraphPresenter
     def initialize(date_range, logs)

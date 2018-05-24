@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RegionAdmin
   class DonorsController < ApplicationController
     before_filter :authenticate_volunteer!

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UseFoodTypesAndTransportTypes < ActiveRecord::Migration
   def up
     create_table :food_types_schedules do |t|

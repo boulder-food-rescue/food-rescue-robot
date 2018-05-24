@@ -26,7 +26,7 @@ end
   { name: 'Nextel', format: '%d@messaging.nextel.com' },
   { name: 'Sprint', format: '%d@messaging.sprintpcs.com' }
 ].each do |attrs|
-  carrier = CellCarrier.create(attrs)
+  CellCarrier.create(attrs)
 end
 
 #region.attributes.slice('lat', 'lng', 'name', 'website', 'address', 'notes', 'handbook_url', 'prior_lbs_rescued', 'prior_num_pickups', 'title', 'tagline', 'phone', 'tax_id', 'welcome_email_text', 'splash_html', 'weight_unit', 'time_zone', 'volunteer_coordinator_email', 'post_pickup_emails', 'unschedule_self' )
@@ -148,4 +148,4 @@ admin_assignment.region_id = region.id
 admin_assignment.save!
 
 puts '==> Database seeded:'
-puts log.map { |line| "  #{line}" }
+puts(log.map { |line| "  #{line}" })

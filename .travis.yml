@@ -10,6 +10,7 @@ script:
 services:
   - postgresql
 before_script:
-  - psql -c 'create database bfr_webapp_db_test;' -U postgres
+  - psql -c 'CREATE DATABASE bfr_webapp_db_test;' -U postgres
+  - cp config/database.yml.travis config/database.yml
 env:
   - SECRET_KEY_BASE=fb47a2efcd8645d903faa139247ad88179cd91a07548e2f126034efc867c6bed082c6313a4568006f391630c4896f119e94d74887b102c1b2f12d8bdc0ea53df

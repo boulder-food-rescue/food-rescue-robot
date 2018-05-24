@@ -112,7 +112,7 @@ class ScheduleChainsController < ApplicationController
     @schedule = ScheduleChain.new(params[:schedule_chain])
     authorize! :create, @schedule
 
-    if @schedule.save
+    if CreateScheduleChain.call(schedule_chain: @schedule).success?
       flash[:notice] = 'Created successfully'
       index
     else
@@ -249,5 +249,4 @@ class ScheduleChainsController < ApplicationController
   def admin_only
     redirect_to(root_path) unless current_volunteer.any_admin?
   end
-
 end

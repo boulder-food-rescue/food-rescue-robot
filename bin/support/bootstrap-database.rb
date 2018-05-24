@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def run_command(*args)
   command = args.join(" ")
   puts command

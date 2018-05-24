@@ -21,7 +21,7 @@ def locate_psql_command
 end
 
 def each_sql_statement
-  ActiveRecord::Base.configurations.each_value do |_environment, settings|
+  ActiveRecord::Base.configurations.each_value do |settings|
     database = settings.fetch('database')
     username = settings.fetch('username')
     password = settings['password']

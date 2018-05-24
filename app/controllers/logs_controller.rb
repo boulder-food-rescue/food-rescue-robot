@@ -392,7 +392,7 @@ class LogsController < ApplicationController
 
   def parse_and_create_log_parts(params, log)
     ret = []
-    params['log_parts'].each_value{ |_dc, lpdata|
+    params['log_parts'].each_value{ |lpdata|
       lpdata['weight'] = nil if lpdata['weight'].strip == ''
       lpdata['count'] = nil if lpdata['count'].strip == ''
       next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?

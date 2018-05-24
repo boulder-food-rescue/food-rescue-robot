@@ -93,9 +93,9 @@ xdescribe 'api' do
     expect(last_response.status).to eq(200)
     json = JSON.parse(last_response.body)
     pp json
-    json['log_parts'].each_key{ |i, _lp|
-      json['log_parts'][i][:weight] = 42.0
-      json['log_parts'][i][:count] = 5
+    json['log_parts'].each_key{ |key|
+      json['log_parts'][key][:weight] = 42.0
+      json['log_parts'][key][:count] = 5
     }
     put "/logs/#{l.id}.json", auth_params.merge(json)
     pp last_response.body

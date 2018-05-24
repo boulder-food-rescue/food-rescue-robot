@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddAssignedToVolunteer < ActiveRecord::Migration
   def up
     add_column :volunteers, :assigned, :boolean, :default => false, :null => false

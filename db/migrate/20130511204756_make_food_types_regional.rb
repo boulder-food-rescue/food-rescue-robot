@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MakeFoodTypesRegional < ActiveRecord::Migration
   def up
     change_table :food_types do |t|

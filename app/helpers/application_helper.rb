@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
 
   def all_admin_region_volunteer_tuples(whom)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VolunteersHelper
   def volunteer_photo_column(record)
     return '' if record.photo_file_name.nil?

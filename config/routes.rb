@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Webapp::Application.routes.draw do
 
   resources :assignments, only: [] do

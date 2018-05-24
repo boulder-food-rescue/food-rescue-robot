@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddPreReminders < ActiveRecord::Migration
   def up
     change_table :volunteers do |t|

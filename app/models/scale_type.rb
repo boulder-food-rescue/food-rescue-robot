@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ScaleType < ActiveRecord::Base
   attr_accessible :name, :region_id, :weight_unit
   has_many :logs

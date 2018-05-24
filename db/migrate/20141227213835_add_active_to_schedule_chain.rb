@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddActiveToScheduleChain < ActiveRecord::Migration
   def change
     add_column :schedule_chains, :active, :boolean, :null => false, :default => true

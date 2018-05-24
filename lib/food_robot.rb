@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logger'
 require 'csv'
 
@@ -127,7 +129,7 @@ module FoodRobot
         if @@DontDeliverEmails
           puts msg
         else
-          msg.deliver unless msg.nil?
+          msg&.deliver
         end
       end
     end

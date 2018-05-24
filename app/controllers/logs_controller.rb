@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'prawn/table'
 
 class LogsController < ApplicationController
@@ -399,7 +401,7 @@ class LogsController < ApplicationController
 
   def parse_and_create_log_parts(params, log)
     ret = []
-    params['log_parts'].each{ |_dc, lpdata|
+    params['log_parts']&.each{ |_dc, lpdata|
       lpdata['weight'] = nil if lpdata['weight'].strip == ''
       lpdata['count'] = nil if lpdata['count'].strip == ''
       next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?
@@ -411,7 +413,7 @@ class LogsController < ApplicationController
       log_part.weight = lpdata['weight'].to_f
       ret.push log_part
       log_part.save
-    } unless params['log_parts'].nil?
+    }
     ret
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VolunteersController < ApplicationController
   before_filter :authenticate_volunteer!
   before_filter :admin_only, :only => [:knight, :unassigned, :shiftless, :shiftless_old, :admin, :switch_user, :stats]
@@ -24,7 +26,7 @@ class VolunteersController < ApplicationController
       Assignment.add_volunteer_to_region(volunteer, region)
       unless params[:send_welcome_email].nil? || params[:send_welcome_email].to_i != 1
         message = Notifier.region_welcome_email(region, volunteer)
-        message.deliver unless message.nil?
+        message&.deliver
       end
       volunteer.save
     end

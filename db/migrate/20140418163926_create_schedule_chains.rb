@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateScheduleChains < ActiveRecord::Migration
   def change
     create_table :schedule_chains do |c|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateLogVolunteers < ActiveRecord::Migration
   def up
     # make the new one-to-many table

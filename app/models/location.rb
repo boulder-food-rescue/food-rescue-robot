@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Location < ActiveRecord::Base
 
   # MOVE TO ENUM

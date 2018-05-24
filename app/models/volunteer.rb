@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Volunteer is the god object for BFR Robot
 class Volunteer < ActiveRecord::Base
   default_scope { order('volunteers.name ASC').where(active: true) }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddPhotoToVolunteers < ActiveRecord::Migration
   def up
     add_attachment :volunteers, :photo

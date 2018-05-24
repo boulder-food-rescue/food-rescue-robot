@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddPickupInfo < ActiveRecord::Migration
   def change
     change_table :locations do |t|

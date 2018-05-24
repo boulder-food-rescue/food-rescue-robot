@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MoveNeedsTrainingToVolunteer < ActiveRecord::Migration
   def up
     change_table :volunteers do |t|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateAbsences < ActiveRecord::Migration
   def up
     create_table :absences do |t|

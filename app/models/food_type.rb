@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FoodType < ActiveRecord::Base
   belongs_to :region
 

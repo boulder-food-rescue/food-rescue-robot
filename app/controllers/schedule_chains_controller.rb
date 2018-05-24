@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ScheduleChainsController < ApplicationController
   before_filter :authenticate_volunteer!
   before_filter :admin_only, :only => [:today, :tomorrow, :yesterday]
@@ -35,7 +37,7 @@ class ScheduleChainsController < ApplicationController
     # prep the google maps embed request
     embed_parameters = ''
     first_last_schedules = [schedules.first, schedules.last]
-    trimmed_stops = schedules.select { |stop| !(first_last_schedules.include?(stop)) }
+    trimmed_stops = schedules.select { |stop| !first_last_schedules.include?(stop) }
 
     unless schedules.empty? || schedules.first.location.nil?
       sched = schedules.first
@@ -55,7 +57,7 @@ class ScheduleChainsController < ApplicationController
       end
     end
 
-    @embed_request_url = ("https://www.google.com/maps/embed/v1/directions?key=#{ENV['GMAPS_API_KEY']}#{embed_parameters}&mode=bicycling")
+    @embed_request_url = "https://www.google.com/maps/embed/v1/directions?key=#{ENV['GMAPS_API_KEY']}#{embed_parameters}&mode=bicycling"
 
     # This can apparently be nil, so have to do a funky sort fix
     @sorted_related_shifts = @schedule.related_shifts.sort{ |x, y|
@@ -136,18 +138,14 @@ class ScheduleChainsController < ApplicationController
     authorize! :update, @schedule_chain
 
     delete_schedules = []
-    unless params[:schedule_chain]['schedules_attributes'].nil?
-      params[:schedule_chain]['schedules_attributes'].collect{ |_k, v|
-        delete_schedules << v['id'].to_i if v['food_type_ids'].nil?
-      }
-    end
+    params[:schedule_chain]['schedules_attributes']&.collect{ |_k, v|
+      delete_schedules << v['id'].to_i if v['food_type_ids'].nil?
+    }
 
     delete_volunteers = []
-    unless params[:schedule_chain]['schedule_volunteers_attributes'].nil?
-      params[:schedule_chain]['schedule_volunteers_attributes'].collect{ |_k, v|
-        delete_volunteers << v['id'].to_i if v['volunteer_id'].nil?
-      }
-    end
+    params[:schedule_chain]['schedule_volunteers_attributes']&.collect{ |_k, v|
+      delete_volunteers << v['id'].to_i if v['volunteer_id'].nil?
+    }
 
     if @schedule_chain.update_attributes(params[:schedule_chain])
       @schedule_chain.schedules.each do |schedule|
@@ -155,14 +153,12 @@ class ScheduleChainsController < ApplicationController
       end
 
       @schedule_chain.schedule_volunteers.each do |scheduled_vol|
-        if delete_volunteers.include?(scheduled_vol.id)
-          scheduled_vol.update_attributes({ active: false })
-          Log.upcoming_for(scheduled_vol.id).each do |log|
-            log.log_volunteers.destroy_all
-          end
+        next unless delete_volunteers.include?(scheduled_vol.id)
+        scheduled_vol.update_attributes({ active: false })
+        Log.upcoming_for(scheduled_vol.id).each do |log|
+          log.log_volunteers.destroy_all
         end
       end
-
 
       flash[:notice] = 'Updated Successfully'
       index

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LoginHelpers
   def login(volunteer)
     visit '/volunteers/sign_in'

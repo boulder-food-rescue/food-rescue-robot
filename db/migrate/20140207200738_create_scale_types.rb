@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateScaleTypes < ActiveRecord::Migration
   def up
     create_table :scale_types do |t|

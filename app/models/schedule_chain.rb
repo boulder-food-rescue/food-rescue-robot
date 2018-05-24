@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ScheduleChain < ActiveRecord::Base
   default_scope { where(active: true) }
 

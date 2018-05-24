@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddIrregularToSchedule < ActiveRecord::Migration
   def change
     add_column :schedules, :irregular, :boolean

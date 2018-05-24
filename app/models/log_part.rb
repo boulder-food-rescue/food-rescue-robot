@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LogPart < ActiveRecord::Base
   belongs_to :log
   belongs_to :food_type

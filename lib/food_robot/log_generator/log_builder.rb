@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Run manually with:
 # schedule_chain = ScheduleChain.find()
 # chain = FoodRobot::LogGenerator::ScheduleChainDecorator.new(schedule_chain)

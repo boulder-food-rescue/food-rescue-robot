@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -11,7 +13,7 @@ password = ENV.fetch('SEED_USERS_PASSWORD', 'password')
 log = []
 
 # Create global transport types
-%w( Bike Car Foot ).each do |name|
+%w[Bike Car Foot].each do |name|
   TransportType.create(name: name)
 end
 
@@ -145,5 +147,5 @@ admin_assignment.volunteer_id = region_admin.id
 admin_assignment.region_id = region.id
 admin_assignment.save!
 
-puts "==> Database seeded:"
+puts '==> Database seeded:'
 puts log.map { |line| "  #{line}" }

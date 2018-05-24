@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveTimeStartAndTimeStop < ActiveRecord::Migration
   def up
     remove_column :schedules, :time_start

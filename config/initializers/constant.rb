@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # add some useful functions to the array class
 class Array
   def mean

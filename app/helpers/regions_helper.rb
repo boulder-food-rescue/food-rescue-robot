@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RegionsHelper
 
   def region_logo_column(record)

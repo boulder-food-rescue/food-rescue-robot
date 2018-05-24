@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VolunteerStatsPresenter
   class PickupStatsPresenter
     attr_reader :first_pickup_date

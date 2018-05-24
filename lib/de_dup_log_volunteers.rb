@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DeDupLogVolunteers
   def self.de_duplicate
     ActiveRecord::Base.connection.execute <<-SQL

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VolunteerStatsPresenter
   def initialize(volunteer, time = Time.zone.now)
     @volunteer = volunteer

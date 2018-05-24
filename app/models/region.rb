@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Region < ActiveRecord::Base
   has_many :assignments
   has_many :volunteers, through: :assignments

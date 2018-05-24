@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryGirl.define do
   factory :region do
     sequence(:title) { |n| "#{n.ordinalize} Title" }

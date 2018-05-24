@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sample_data/region_data/admin_data'
 require 'sample_data/region_data/donor_data'
 require 'sample_data/region_data/food_type_data'

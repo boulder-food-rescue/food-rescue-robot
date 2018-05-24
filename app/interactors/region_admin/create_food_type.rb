@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RegionAdmin
   class CreateFoodType
     include Interactor

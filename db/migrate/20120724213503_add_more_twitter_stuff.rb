@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddMoreTwitterStuff < ActiveRecord::Migration
   def change
     change_table :regions do |t|

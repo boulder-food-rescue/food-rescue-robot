@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sample_data/region_data'
 
 class SampleData

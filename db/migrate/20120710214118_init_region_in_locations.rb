@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InitRegionInLocations < ActiveRecord::Migration
   def up
     br = Region.where('name = ?', 'Boulder').shift

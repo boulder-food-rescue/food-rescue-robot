@@ -6,7 +6,6 @@ require 'csv'
 require 'food_robot/log_generator'
 
 module FoodRobot
-
   # Set to true to disable emailing and just print the emails to STDOUT
   @@DontDeliverEmails = false
 
@@ -26,7 +25,7 @@ module FoodRobot
   # Sends an email to any volunteer who has a outstanding log entry
   # from n or more days ago. Also sends an email to the admin summarizing
   # all logs that have seen at least r reminders.
-  def self.send_reminder_emails(n=2, r=3)
+  def self.send_reminder_emails(max_days_past=2, reminder_level=3)
     naughty_list = {}
     reminder_list = {}
     short_term_cover_list = {}
@@ -51,7 +50,7 @@ module FoodRobot
       # PAST reminders...
       next if log.volunteers.empty?
       days_past = (Time.zone.today - log.when).to_i
-      next unless days_past >= n
+      next unless days_past >= max_days_past
 
       log.num_reminders = 0 if log.num_reminders.nil?
       log.num_reminders += 1
@@ -61,7 +60,7 @@ module FoodRobot
         reminder_list[vol] = [] if reminder_list[vol].nil?
         reminder_list[vol].push(log)
 
-        if log.num_reminders >= r
+        if log.num_reminders >= reminder_level
           naughty_list[log.region] = [] if naughty_list[log.region].nil?
           naughty_list[log.region].push(log)
         end
@@ -167,5 +166,4 @@ module FoodRobot
       end
     end
   end
-
 end

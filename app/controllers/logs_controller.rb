@@ -96,7 +96,7 @@ class LogsController < ApplicationController
       @transport_years << log.year unless @transport_years.include?(log.year)
       @transport_per_year[log.name] = [] if @transport_per_year[log.name].nil?
     end
-    @transport_per_year.keys.each do |key|
+    @transport_per_year.each_key do |key|
       @transport_per_year[key] = @transport_years.collect{ |_y| 0 }
     end
     @transport_data.each do |log|
@@ -132,14 +132,8 @@ class LogsController < ApplicationController
     when 'transport'
       rq = ''
       wq = ''
-      unless params[:region_id].nil?
-        rq = "AND region_id=#{params[:region_id].to_i}"
-      end
-      unless params[:timespan].nil?
-        if params[:timespan] == 'month'
-          wq = "AND \"when\" > NOW() - interval '1 month'"
-        end
-      end
+      rq = "AND region_id=#{params[:region_id].to_i}" if params[:region_id]
+      wq = "AND \"when\" > NOW() - interval '1 month'" if params[:timespan] == 'month'
       noncar = Log.where("complete AND transport_type_id IN (SELECT id FROM transport_types WHERE name != 'Car') #{rq} #{wq}").count.to_f
       car = Log.where("complete AND transport_type_id IN (SELECT id FROM transport_types WHERE name = 'Car') #{rq} #{wq}").count.to_f
       render :text => "#{100.0*noncar/(noncar+car)} #{100.0*car/(noncar+car)}"
@@ -176,9 +170,7 @@ class LogsController < ApplicationController
       render :new and return
     end
 
-    if @scale_types.any? && @log.scale_type_id.nil?
-      @log.scale_type_id = @region.scale_types.first.id
-    end
+    @log.scale_type_id ||= @region.scale_types.first.id if @scale_types.any?
 
     authorize! :create, @log
     parse_and_create_log_parts(params, @log)
@@ -283,7 +275,6 @@ class LogsController < ApplicationController
       format.json { render json: { error: 0, message: flash[:notice] } }
       format.html { request.env['HTTP_REFERER'].present? ? redirect_to(:back) : redirect_to(open_logs_path) }
     end
-
   end
 
   # can be given a single id or a list of ids
@@ -401,7 +392,7 @@ class LogsController < ApplicationController
 
   def parse_and_create_log_parts(params, log)
     ret = []
-    params['log_parts']&.each{ |_dc, lpdata|
+    params['log_parts'].each_value{ |lpdata|
       lpdata['weight'] = nil if lpdata['weight'].strip == ''
       lpdata['count'] = nil if lpdata['count'].strip == ''
       next if lpdata['id'].nil? and lpdata['weight'].nil? and lpdata['count'].nil?

@@ -30,5 +30,4 @@ class Assignment < ActiveRecord::Base
     volunteer.save
     return true
   end
-
 end

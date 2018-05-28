@@ -220,13 +220,13 @@ class ScheduleChainsController < ApplicationController
               notice += if index == (schedule.recipient_stops.length-1)
                           ('and ' + stop.location.name + '.')
                         else
-                          (stop.location.name + ', ') #oxford comma
+                          (stop.location.name + ', ') # oxford comma
                         end
             end
           end
           flash[:notice] = notice
-       else
-         flash[:error] = "Hrmph. That didn't work..."
+        else
+          flash[:error] = "Hrmph. That didn't work..."
         end
       end
     else
@@ -245,5 +245,4 @@ class ScheduleChainsController < ApplicationController
   def admin_only
     redirect_to(root_path) unless current_volunteer.any_admin?
   end
-
 end

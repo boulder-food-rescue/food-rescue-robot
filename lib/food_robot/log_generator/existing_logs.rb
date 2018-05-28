@@ -16,10 +16,10 @@ module FoodRobot
       attr_reader :date
 
       def logs
-        @logs ||= Log.
-          where(when: date).
-          map { |l| ["#{l.schedule_chain_id}:#{l.donor_id}", l] }.
-          to_h
+        @logs ||= Log
+        .where(when: date)
+        .map { |l| ["#{l.schedule_chain_id}:#{l.donor_id}", l] }
+        .to_h
       end
     end
   end

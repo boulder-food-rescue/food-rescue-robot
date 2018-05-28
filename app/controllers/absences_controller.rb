@@ -11,9 +11,9 @@ class AbsencesController < ApplicationController
     index(absences, 'All Absences')
   end
 
-  def index(a=nil, header='Absences')
-    @absences = a.nil? ? Absence.where('stop_date >= ? AND volunteer_id=?', Date.today, current_volunteer.id) : a
-    @header = header.nil? ? 'Absences' : header
+  def index(absence=nil, header='Absences')
+    @absences = absence || Absence.where('stop_date >= ? AND volunteer_id=?', Date.today, current_volunteer.id)
+    @header = header || 'Absences'
     respond_to do |format|
       format.html { render :index } # index.html.erb
     end
@@ -110,5 +110,4 @@ class AbsencesController < ApplicationController
   def admin_only
     redirect_to(root_path) unless current_volunteer.any_admin?
   end
-
 end

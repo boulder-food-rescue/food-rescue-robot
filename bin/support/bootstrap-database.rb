@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def run_command(*args)
   command = args.join(" ")
   puts command
@@ -8,7 +10,7 @@ def locate_psql_command
   bin_location = `command -v psql`.strip
 
   if bin_location.empty?
-    puts <<-WARNING
+    puts <<~WARNING
 ==> Error: database connection could not be established and "psql" command could
     not be found. Do you have Postgres installed?
     WARNING
@@ -19,7 +21,7 @@ def locate_psql_command
 end
 
 def each_sql_statement
-  ActiveRecord::Base.configurations.each do |_environment, settings|
+  ActiveRecord::Base.configurations.each_value do |settings|
     database = settings.fetch('database')
     username = settings.fetch('username')
     password = settings['password']

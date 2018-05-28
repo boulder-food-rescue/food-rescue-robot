@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CreateScheduleVolunteers < ActiveRecord::Migration
-
   def up
     # make the new one-to-many table
     create_table :schedule_volunteers do |t|
@@ -46,5 +45,4 @@ class CreateScheduleVolunteers < ActiveRecord::Migration
     add_column(:schedules, :volunteer_id, :integer)
     add_column(:schedules, :prior_volunteer_id, :integer)
   end
-
 end

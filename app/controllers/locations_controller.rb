@@ -5,7 +5,7 @@ class LocationsController < ApplicationController
 
   def hud
     @location = Location.find(params[:id])
-    if params[:key] == @location.receipt_key || (!current_volunteer.nil? && (current_volunteer.region_admin?(@location.region) || current_volunteer.super_admin?))
+    if params[:key] == @location.receipt_key || (current_volunteer && (current_volunteer.region_admin?(@location.region) || current_volunteer.super_admin?))
       @schedules = ScheduleChain.for_location(@location)
       @logs = if @location.donor?
                 Log.at(@location).last(500)

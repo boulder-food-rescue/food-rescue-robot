@@ -29,7 +29,7 @@ end
   CellCarrier.create(attrs)
 end
 
-#region.attributes.slice('lat', 'lng', 'name', 'website', 'address', 'notes', 'handbook_url', 'prior_lbs_rescued', 'prior_num_pickups', 'title', 'tagline', 'phone', 'tax_id', 'welcome_email_text', 'splash_html', 'weight_unit', 'time_zone', 'volunteer_coordinator_email', 'post_pickup_emails', 'unschedule_self' )
+# region.attributes.slice('lat', 'lng', 'name', 'website', 'address', 'notes', 'handbook_url', 'prior_lbs_rescued', 'prior_num_pickups', 'title', 'tagline', 'phone', 'tax_id', 'welcome_email_text', 'splash_html', 'weight_unit', 'time_zone', 'volunteer_coordinator_email', 'post_pickup_emails', 'unschedule_self' )
 region = Region.create({
   'lat'=> 41.5409097,
   'lng'=> -72.9990631,
@@ -53,8 +53,8 @@ region = Region.create({
 
 log << "Created region #{region.name.inspect}"
 
-#volunteer.attributes.slice('email', 'name', 'phone', 'preferred_contact', 'has_car', 'admin_notes', 'pickup_prefs', 'is_disabled', 'on_email_list', 'admin', 'transport_type_id', 'cell_carrier_id', 'sms_too', 'pre_reminders_too', 'get_sncs_email', 'waiver_signed', 'waiver_signed_at', 'assigned', 'requested_region_id', 'active')
-#assignment.attributes.slice('volunteer_id', 'region_id', 'admin')
+# volunteer.attributes.slice('email', 'name', 'phone', 'preferred_contact', 'has_car', 'admin_notes', 'pickup_prefs', 'is_disabled', 'on_email_list', 'admin', 'transport_type_id', 'cell_carrier_id', 'sms_too', 'pre_reminders_too', 'get_sncs_email', 'waiver_signed', 'waiver_signed_at', 'assigned', 'requested_region_id', 'active')
+# assignment.attributes.slice('volunteer_id', 'region_id', 'admin')
 
 volunteer = Volunteer.create({
   'email'=>'volunteer.bfr@gmail.com',

@@ -32,9 +32,9 @@ class VolunteerStatsPresenter
               :time
 
   def logs
-    @logs ||= Log.picked_up_by(volunteer.id).
-      where('"logs"."when" < ?', time).
-      includes(:log_parts)
+    @logs ||= Log.picked_up_by(volunteer.id)
+    .where('"logs"."when" < ?', time)
+    .includes(:log_parts)
   end
 
   def today

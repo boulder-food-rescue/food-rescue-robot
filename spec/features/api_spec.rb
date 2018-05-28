@@ -4,30 +4,29 @@ require 'rails_helper'
 require 'pp'
 
 xdescribe 'api' do
-
-  def get_auth_params(u)
-    data = {email: u.email, password: u.password}
+  def get_auth_params(user)
+    data = {email: user.email, password: user.password}
     post '/volunteers/sign_in.json', data
     expect(last_response.status).to eq(201)
     json = JSON.parse(last_response.body)
-    {'volunteer_token' => json['authentication_token'], 'volunteer_email' => u.email }
+    {'volunteer_token' => json['authentication_token'], 'volunteer_email' => user.email }
   end
 
   it 'can sign in' do
-    v = create(:volunteer_with_assignment)
-    auth_params = get_auth_params(v)
+    volunteer = create(:volunteer_with_assignment)
+    auth_params = get_auth_params(volunteer)
     auth_params['volunteer_token'].should_not be_nil
   end
 
   it 'can sign out' do
-    v = create(:volunteer_with_assignment)
-    auth_params = get_auth_params(v)
+    volunteer = create(:volunteer_with_assignment)
+    auth_params = get_auth_params(volunteer)
     auth_params['volunteer_token'].should_not be_nil
 
     delete '/volunteers/sign_out.json', auth_params
     last_response.status.should eq(204)
 
-    auth_params2 = get_auth_params(v)
+    auth_params2 = get_auth_params(volunteer)
     auth_params2['volunteer_token'].should_not be_nil
     auth_params2['volunteer_token'].should_not eq(auth_params['volunteer_token'])
   end
@@ -35,8 +34,8 @@ xdescribe 'api' do
   # GET /logs.json
   it 'can get a list of logs' do
     create(:log)
-    v = create(:volunteer_with_assignment)
-    auth_params = get_auth_params(v)
+    volunteer = create(:volunteer_with_assignment)
+    auth_params = get_auth_params(volunteer)
     get '/logs.json', auth_params
     expect(last_response.status).to eq(200)
     json = JSON.parse(last_response.body)
@@ -46,11 +45,11 @@ xdescribe 'api' do
 
   # GET /logs/:id.json
   it 'can look up a log' do
-    v = create(:volunteer_with_assignment)
-    r = v.assignments.first.region
-    l = create(:log, region: r)
-    auth_params = get_auth_params(v)
-    get "/logs/#{l.id}.json", auth_params
+    volunteer = create(:volunteer_with_assignment)
+    region = volunteer.assignments.first.region
+    log = create(:log, region: region)
+    auth_params = get_auth_params(volunteer)
+    get "/logs/#{log.id}.json", auth_params
     expect(last_response.status).to eq(200)
     json = JSON.parse(last_response.body)
     json.should be_an(Hash)
@@ -59,14 +58,14 @@ xdescribe 'api' do
 
   # GET /logs/:id/take.json
   it 'can cover a shift' do
-    v = create(:volunteer_with_assignment)
-    r = v.assignments.first.region
-    l = create(:log, region: r)
-    auth_params = get_auth_params(v)
-    get "/logs/#{l.id}/take.json", auth_params
+    volunteer = create(:volunteer_with_assignment)
+    region = volunteer.assignments.first.region
+    log = create(:log, region: region)
+    auth_params = get_auth_params(volunteer)
+    get "/logs/#{log.id}/take.json", auth_params
     expect(last_response.status).to eq(200)
-    l2 = Log.find(l.id)
-    expect(l2.volunteers.include?(v)).to eq(true)
+    l2 = Log.find(log.id)
+    expect(l2.volunteers.include?(volunteer)).to eq(true)
   end
 
   # GET /schedule_chains/:id/take.json
@@ -89,14 +88,14 @@ xdescribe 'api' do
     l.volunteers << v
     l.save
 
-    auth_params = get_a uth_params(v)
+    auth_params = get_auth_params(v)
     get "/logs/#{l.id}.json", auth_params
     expect(last_response.status).to eq(200)
     json = JSON.parse(last_response.body)
     pp json
-    json['log_parts'].each{ |i, _lp|
-      json['log_parts'][i][:weight] = 42.0
-      json['log_parts'][i][:count] = 5
+    json['log_parts'].each_key{ |key|
+      json['log_parts'][key][:weight] = 42.0
+      json['log_parts'][key][:count] = 5
     }
     put "/logs/#{l.id}.json", auth_params.merge(json)
     pp last_response.body
@@ -126,5 +125,4 @@ xdescribe 'api' do
     get '/logs.json'
     expect(last_response.status).to eq(401)
   end
-
 end

@@ -9,10 +9,10 @@ module FoodRobot
 
       def donors
         @donors ||= begin
-          donors = schedules.
-            where('location_id IS NOT NULL').
-            includes(:location).
-            select(&:pickup_stop?)
+          donors = schedules
+          .where('location_id IS NOT NULL')
+          .includes(:location)
+          .select(&:pickup_stop?)
 
           donors.pop if donors.last.location.hub?
 
@@ -21,12 +21,12 @@ module FoodRobot
       end
 
       def summary
-        @summary ||= schedules.
-          includes(:location).
-          select { |s| s.location.present? }.
-          map { |s| "#{s.pickup_stop? ? 'D' : 'R'}#{s.location_id}" }.
-          compact.
-          join(' -> ')
+        @summary ||= schedules
+        .includes(:location)
+        .select { |s| s.location.present? }
+        .map { |s| "#{s.pickup_stop? ? 'D' : 'R'}#{s.location_id}" }
+        .compact
+        .join(' -> ')
       end
 
       private

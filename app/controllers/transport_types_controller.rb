@@ -8,5 +8,4 @@ class TransportTypesController < ApplicationController
       format.json { render json: TransportType.all.to_json }
     end
   end
-
 end

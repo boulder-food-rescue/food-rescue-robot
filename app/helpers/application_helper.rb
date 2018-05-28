@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
-
   def all_admin_region_volunteer_tuples(whom)
     admin_rids = whom.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
     Volunteer.all.collect{ |v|
@@ -10,20 +9,17 @@ module ApplicationHelper
     }.compact
   end
 
+  def days_ago(shift_date)
+    return 'today' if shift_date.today?
+    distance = distance_of_time_in_words(Time.zone.today, shift_date)
+    return "#{distance} ago" if shift_date.past?
+    return "#{distance} from now" if shift_date.future?
+  end
+
   def readable_time_until shift
-    ret = shift.when.strftime('%a %b %e') + ' ('
-    if shift.when == Time.zone.today
-      ret += 'today'
-    elsif shift.when < Time.zone.today
-      ret += (Time.zone.today - shift.when).to_i.to_s + ' days ago'
-    elsif shift.when > Time.zone.today
-      ret += (shift.when - Time.zone.today).to_i.to_s + ' days from now'
-    end
-    ret += ')'
-    unless shift.schedule_chain.nil?
-      ret += " <br>between #{readable_start_time(shift.schedule_chain)} and #{readable_stop_time(shift.schedule_chain)}"
-    end
-    ret.html_safe
+    time = "#{shift.when.strftime('%a %b %e')} (#{days_ago(shift.when)})}"
+    time += "\n#{readable_start_time(shift.schedule_chain)} and #{readable_stop_time(shift.schedule_chain)}" if shift.schedule_chain
+    time
   end
 
   def readable_start_time schedule
@@ -53,5 +49,4 @@ module ApplicationHelper
     str+= readable_stop_time schedule
     str
   end
-
 end

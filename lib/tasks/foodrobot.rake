@@ -3,7 +3,6 @@
 require 'food_robot'
 
 namespace :foodrobot do
-
   task(:generate_logs => :environment) do
     Rails.logger = Logger.new(STDOUT)
     # RB 4-28-2018: Generate entries for the next 14 days (these shouldn't create duplicates)
@@ -21,5 +20,4 @@ namespace :foodrobot do
       FoodRobot::send_weekly_pickup_summary # email pickup summary on sunday
     end
   end
-
 end

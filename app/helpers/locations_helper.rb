@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module LocationsHelper
-
   def readable_hours location
     readable_detailed_hours location
   end
@@ -23,8 +22,7 @@ module LocationsHelper
     str.html_safe
   end
 
-  def format_time t
-    t.to_s(:clean_time)
+  def format_time time
+    time.to_s(:clean_time)
   end
-
 end

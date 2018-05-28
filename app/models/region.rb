@@ -11,7 +11,7 @@ class Region < ActiveRecord::Base
 
   scope :all_admin, ->(volunteer) { where(id: volunteer.admin_region_ids) }
 
-  geocoded_by :address, latitude:  :lat, longitude:  :lng # can also be an IP address
+  geocoded_by :address, latitude: :lat, longitude: :lng # can also be an IP address
   after_validation :geocode
 
   attr_accessible :address, :lat, :lng, :name, :notes, :website, :handbook_url, :welcome_email_text,

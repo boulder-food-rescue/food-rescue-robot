@@ -104,4 +104,11 @@ Webapp::Application.configure do
     url: ':s3_domain_url',
     path: '/:class/:attachment/:id_partition/:style/:filename'
   }
+
+  # Set in config vars
+  if ENV["BASIC_AUTH_USER"].present?
+    config.middleware.insert_after(::Rack::Runtime, ::Rack::Auth::Basic, "BFR Staging") do |u, p|
+      [u, p] == [ ENV['BASIC_AUTH_USER'], ENV['BASIC_AUTH_PASS'] ]
+    end
+  end
 end

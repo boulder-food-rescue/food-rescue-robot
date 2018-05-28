@@ -1,4 +1,4 @@
-<%= simple_form_for @schedule, url: {action: @action }, class: 'form-horizontal' do |f| %>
+<%= simple_form_for @chain, url: {action: @action }, class: 'form-horizontal' do |f| %>
 
   <%= hidden_field_tag "schedule_chain[region_id]", @region.id %>
 
@@ -44,7 +44,7 @@
         </div>
       </td>
     </tr>
-    <% if current_volunteer.any_admin?(@schedule.region) %>
+    <% if current_volunteer.any_admin?(@chain.region) %>
       <tr>
         <td>
           <label for="schedule_chain_num_volunteers">Needed Volunteers</label>
@@ -93,7 +93,7 @@
       <td>
         <label for="schedule_chain_expected_weight">Expected Weight</label>
         <div class="subtext">
-          Typical weight observed on pickup. Current mean = <%= @schedule.mean_weight.nil? ? "Unknown" : @schedule.mean_weight.round %>, max = <%= @schedule.max_weight.nil? ? "Unknown" : @schedule.max_weight.round %>.
+          Typical weight observed on pickup. Current mean = <%= @chain.mean_weight.nil? ? "Unknown" : @chain.mean_weight.round %>, max = <%= @chain.max_weight.nil? ? "Unknown" : @chain.max_weight.round %>.
         </div>
       </td>
       <td>

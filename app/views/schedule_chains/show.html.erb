@@ -4,15 +4,15 @@
 
     <h2>
       <i class='fa fa-location-arrow'></i>
-      <%= if @schedule.functional?
-              if @schedule.recipient_stops.length == 1
-			    "Delivery to " + @schedule.schedules.last.location.name
+      <%= if @chain.functional?
+              if @chain.recipient_stops.length == 1
+			    "Delivery to " + @chain.schedules.last.location.name
               else
                 routename = "Deliveries to "
-                @schedule.recipient_stops.each do |stop|
+                @chain.recipient_stops.each do |stop|
  		              next if stop.location.nil?
                   routename += stop.location.name
-                  if stop != @schedule.recipient_stops.last
+                  if stop != @chain.recipient_stops.last
                     routename += ", "
                   end
                 end
@@ -22,36 +22,36 @@
 			    "Underspecified Schedule"
 		    end%></h2>
 
-    <% unless @schedule.next_pickup_time.nil? or not @schedule.functional? %>
+    <% unless @chain.next_pickup_time.nil? or not @chain.functional? %>
       <div class="pull-right">
         <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=
-            <%=u "Food Rescue: #{(@schedule.schedules.empty? or @schedule.schedules.first.location.nil?) ? "Unknown" : @schedule.schedules.first.location.name} -> #{(@schedule.schedules.empty? or @schedule.schedules.last.location.nil?) ? "Unknown" : @schedule.schedules.last.location.name}" %>
-            &dates=<%=u @schedule.next_pickup_time[:start].gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @schedule.next_pickup_time[:stop].gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @schedule.public_notes%>&location=<%=u @schedule.schedules.first.location.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
+            <%=u "Food Rescue: #{(@chain.schedules.empty? or @chain.schedules.first.location.nil?) ? "Unknown" : @chain.schedules.first.location.name} -> #{(@chain.schedules.empty? or @chain.schedules.last.location.nil?) ? "Unknown" : @chain.schedules.last.location.name}" %>
+            &dates=<%=u @chain.next_pickup_time[:start].gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @chain.next_pickup_time[:stop].gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @chain.public_notes%>&location=<%=u @chain.schedules.first.location.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
       </div>
     <% end %>
 
     <p>
-      <%= readable_pickup_timespan @schedule %>
-      <% unless @schedule.next_pickup_time.nil? %>
-        (next pickup <%= @schedule.next_pickup_time[:start].to_s(:long_ordinal) %>)
+      <%= readable_pickup_timespan @chain %>
+      <% unless @chain.next_pickup_time.nil? %>
+        (next pickup <%= @chain.next_pickup_time[:start].to_s(:long_ordinal) %>)
       <% end %>
       .
     </p>
 
-    <% unless @schedule.public_notes.nil? or @schedule.public_notes.strip == "" %>
-      <p><b>Notes:</b> <%= word_wrap(@schedule.public_notes,:line_width => 80).gsub("\n","<br>").html_safe %></p>
+    <% unless @chain.public_notes.nil? or @chain.public_notes.strip == "" %>
+      <p><b>Notes:</b> <%= word_wrap(@chain.public_notes,:line_width => 80).gsub("\n","<br>").html_safe %></p>
     <% end %>
 
-    <% unless @schedule.expected_weight.nil? or @schedule.max_weight.nil? or @schedule.mean_weight.nil? %>
-      <p><b>Expected Weight:</b> <%= @schedule.expected_weight %> <em>(current mean = <%= @schedule.mean_weight.round %>, max = <%= @schedule.max_weight.round %>)</em></p>
+    <% unless @chain.expected_weight.nil? or @chain.max_weight.nil? or @chain.mean_weight.nil? %>
+      <p><b>Expected Weight:</b> <%= @chain.expected_weight %> <em>(current mean = <%= @chain.mean_weight.round %>, max = <%= @chain.max_weight.round %>)</em></p>
     <% end %>
 
-    <% unless @schedule.hilliness.nil? %>
-      <p><b>Hilliness:</b> <%= ScheduleChain::HILLINESS_OPTIONS[@schedule.hilliness] %></p>
+    <% unless @chain.hilliness.nil? %>
+      <p><b>Hilliness:</b> <%= ScheduleChain::HILLINESS_OPTIONS[@chain.hilliness] %></p>
     <% end %>
 
-    <% unless @schedule.difficulty_rating.nil? %>
-      <p><b>Overall Difficulty:</b> <%= ScheduleChain::DIFFICULTY_OPTIONS[@schedule.difficulty_rating] %></p>
+    <% unless @chain.difficulty_rating.nil? %>
+      <p><b>Overall Difficulty:</b> <%= ScheduleChain::DIFFICULTY_OPTIONS[@chain.difficulty_rating] %></p>
     <% end %>
 
     <h3>
@@ -59,16 +59,16 @@
       Current Volunteers
     </h3>
     <p>
-      <% if @schedule.volunteers.count == 0 %>
+      <% if @chain.volunteers.count == 0 %>
         No volunteers yet...
-        <%=link_to take_schedule_chains_path(id: @schedule), confirm: "Are you sure you want to sign up for this weekly pickup?", class: 'btn btn-primary' do %>
+        <%=link_to take_schedule_chains_path(id: @chain), confirm: "Are you sure you want to sign up for this weekly pickup?", class: 'btn btn-primary' do %>
           <i class="fa fa-hand-rock-o"></i>
           <strong>Signup for this <u>weekly</u> pickup now!</strong>
         <% end %>
 
       <% else %>
         <ul>
-          <% @schedule.volunteers.each do |volunteer| %>
+          <% @chain.volunteers.each do |volunteer| %>
             <li><%= link_to volunteer.name, "mailto:#{volunteer.email}" %><%= volunteer.phone.nil? ? "" : ": #{volunteer.phone}" %></li>
           <% end %>
         </ul>
@@ -107,7 +107,7 @@
 
   <div class="col-sm-6">
 
-    <% if @schedule.mappable? %>
+    <% if @chain.mappable? %>
       <h2>
         <i class='fa fa-bicycle'></i>
         Bicycling Directions
@@ -128,10 +128,10 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <% if @schedule.functional? %>
+    <% if @chain.functional? %>
       <h3>Stops:</h3>
       <p>
-  	  <% @schedule.schedules.each do |stop|
+  	  <% @chain.schedules.each do |stop|
         next if stop.nil? or stop.location.nil? %>
 
         <div class="col-sm-6">

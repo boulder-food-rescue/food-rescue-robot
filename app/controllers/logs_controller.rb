@@ -406,12 +406,12 @@ class LogsController < ApplicationController
         pdf.move_down 12
         pdf.text("Dear #{@contact_name},", align: :left)
         pdf.move_down 12
-        msg_body_1 = "Thank you for your donation of excess produce to #{@location.region.name} throughout" +
-            "#{@start_date.year}. #{@location.region.name} was formed to combat hunger issues and reduce food" +
+        msg_body_1 = "Thank you for your donation of excess produce to #{@location.region.name} throughout " +
+            "#{@start_date.year}. #{@location.region.name} was formed to combat hunger issues and reduce food " +
             "waste in the greater Twin Cities area by being a link between those willing to help and those in need." +
             "Your generous donation of produce is vital to our mission of reducing food waste and providing our" +
             "neighbors in need with access to healthy food. \n\n" +
-            "Below is a receipt of your  #{@start_date.year} produce donations. #{@location.region.name} " +
+            "Below is a receipt of your #{@start_date.year} produce donations. #{@location.region.name} " +
             "is a 501(c)3 organization. Your contribution is tax deductible to the extent allowed by law. " +
             "No goods or services were provided in exchange for your generous donation. "
         pdf.text(msg_body_1)

@@ -43,7 +43,7 @@ class Notifier < ActionMailer::Base
     return nil if volunteer.nil?
     return nil if volunteer.sms_email.nil?
     to = ForceTo.nil? ? volunteer.sms_email : ForceTo
-    mail(to: to, subject: '[Food Robot]'){ |format| format.text }
+    mail(to: to, subject: '[Veggietables]'){ |format| format.text }
   end
 
   def volunteer_log_sms_pre_reminder(volunteer, logs)

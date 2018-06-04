@@ -3,7 +3,7 @@ Webapp::Application.configure do
   config.time_zone = 'Mountain Time (US & Canada)'
 
   #Asset Mailer Host!
-  config.action_mailer.asset_host = 'https://veggietables-tcfj.herokuapp.com'
+  config.action_mailer.asset_host = 'https://veggietables.tcfoodjustice.org'
 
   config.action_mailer.smtp_settings = {
     :port           => ENV['MAILGUN_SMTP_PORT'],

@@ -1,7 +1,7 @@
 <% if @total_shifts_needing_cov > 0 %>
   <div class="alert fade in alert-danger" onclick="window.location='<%= open_logs_path %>';" style="cursor:pointer;">
     <i class="fa fa-exclamation-triangle"></i>
-    <%= @total_shifts_needing_cov %> Shifts Need Covering Soon: <%= link_to "Pick one up here.", open_logs_path %>
+    <%= @total_shifts_needing_cov %> Absences that Need Covering Soon: <%= link_to "Pick one up here.", open_logs_path %>
   </div>
 <% end %>
 

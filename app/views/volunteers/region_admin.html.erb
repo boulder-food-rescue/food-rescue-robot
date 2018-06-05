@@ -45,7 +45,7 @@
           <% if current_volunteer.super_admin? %>
             <td>
               <%= select_tag(:location_id, options_for_select(Location.where("region_id IN (#{current_volunteer.regions.collect{ |r|
-                     r.id }.join(",")})").collect{ |v| [v.name,v.id] }),{class: "form-control select2"}) %>
+                     r.id }.join(",")})").collect{ |v| [v.name,v.id] }),{class: "form-control select2", data:{farmers_market_locations: @farmers_market_locations}}) %>
             </td>
           <% else %>
           <td>
@@ -55,8 +55,9 @@
     <% end %>
         </tr>
         <tr class = "vendors">
-          <td> <label for="location_id">Vendor:</label></td>
+          <td> <label for="location_admin_id">Vendor:</label></td>
           <td>
+
             <%= select_tag(:location_admin_id,[],{class: "form-control select2", data:{vendors_by_location: @vendors_by_location}}) %>
           </td>
         </tr>
@@ -145,4 +146,3 @@
       });
   </script>
 <% end %>
-

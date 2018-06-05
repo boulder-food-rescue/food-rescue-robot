@@ -207,11 +207,10 @@ class VolunteersController < ApplicationController
         (admin_region_ids & volunteer.regions.collect { |region| region.id }).length > 0) ? volunteer : nil
       end.compact
 
-      @farmers_market_locations = Location.where(is_farmer_market: true).collect{|l| l.id}
-      @vendors_by_location = getVendorsByLocation
-
     end
 
+    @farmers_market_locations = Location.where(is_farmer_market: true).collect{|l| l.id}
+    @vendors_by_location = getVendorsByLocation
     @admin_region_ids = current_volunteer.assignments.collect{ |a| a.admin ? a.region.id : nil }.compact
   end
 

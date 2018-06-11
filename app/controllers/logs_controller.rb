@@ -425,7 +425,7 @@ class LogsController < ApplicationController
         pdf.move_down 10
         pdf.text("Sincerely,")
         pdf.move_down 10
-        pdf.text("#{current_volunteer.name}\nTreasurer\n#{@location.region.name}")
+        pdf.text("Scott Zastoupil\nTreasurer\n#{@location.region.name}")
         send_data pdf.render
       end
     end

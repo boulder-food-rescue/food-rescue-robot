@@ -81,7 +81,7 @@ Clone this repository:
 
 Set up your environment:
 
-    bin/setup
+    bundle exec bin/setup
 
 This will check your system for prerequisites (e.g. Ruby version), install dependencies, create a `.env` file, create any missing databases and database users, load the database schema and seed development data.
 

@@ -5,8 +5,9 @@ class AbsencesController < ApplicationController
   before_filter :admin_only, only: [:all]
 
   def all
-    absences = Absence.where('stop_date >= ?', Date.today).keep_if{ |a|
-      !(a.volunteer.region_ids & current_volunteer.admin_region_ids).empty?
+    absences = Absence.where('stop_date >= ?', Date.today).keep_if{ |absence|
+      next if absence.volunteer.nil?
+      (absence.volunteer.region_ids & current_volunteer.admin_region_ids).any?
     }
     index(absences, 'All Absences')
   end

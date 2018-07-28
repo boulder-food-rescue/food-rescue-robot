@@ -20,8 +20,7 @@ class Volunteer < ActiveRecord::Base
   belongs_to :cell_carrier
   belongs_to :requested_region, class_name: 'Region'
 
-  has_many :absences
-
+  has_many :absences, dependent: :destroy
   has_many :assignments
   has_many :regions, through: :assignments
 

@@ -16,9 +16,20 @@
 
     <%= stylesheet_link_tag :application, media: "all" %>
 
+    <!-- For third-generation iPad with high-resolution Retina display: -->
+    <%= favicon_link_tag 'apple-icon-144x144.png', rel: 'apple-touch-icon-precomposed', type: 'image/png', sizes: '144x144' %>
+    <!-- For iPhone with high-resolution Retina display: -->
+    <%= favicon_link_tag 'apple-icon-114x114.png', rel: 'apple-touch-icon-precomposed', type: 'image/png', sizes: '114x114' %>
+    <!-- For first- and second-generation iPad: -->
+    <%= favicon_link_tag 'apple-icon-72x72.png', rel: 'apple-touch-icon-precomposed', type: 'image/png', sizes: '72x72' %>
+
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <!-- Size should be 57 x 57 pixels -->
+    <%= favicon_link_tag 'apple-icon-57x57.png', rel: 'apple-touch-icon-precomposed', type: 'image/png' %>
+
     <!-- For all other devices -->
     <!-- Size should be 32 x 32 pixels -->
-    <%= favicon_link_tag 'favicon.png', :rel => 'shortcut icon' %>
+    <%= favicon_link_tag 'favicon-32x32.png', rel: 'shortcut icon' %>
   </head>
 
   <body>

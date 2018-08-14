@@ -22,10 +22,10 @@
 			    "Underspecified Schedule"
 		    end%></h2>
 
-    <% unless @chain.next_pickup_time.nil? or not @chain.functional? %>
+    <% unless @chain.next_pickup_time.nil? || !@chain.functional? %>
       <div class="pull-right">
         <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=
-            <%=u "Food Rescue: #{(@chain.schedules.empty? or @chain.schedules.first.location.nil?) ? "Unknown" : @chain.schedules.first.location.name} -> #{(@chain.schedules.empty? or @chain.schedules.last.location.nil?) ? "Unknown" : @chain.schedules.last.location.name}" %>
+            <%=u "Food Rescue: #{(@chain.schedules.empty? || @chain.schedules.first.location.nil?) ? "Unknown" : @chain.schedules.first.location.name} -> #{(@chain.schedules.empty? || @chain.schedules.last.location.nil?) ? "Unknown" : @chain.schedules.last.location.name}" %>
             &dates=<%=u @chain.next_pickup_time[:start].gmtime.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @chain.next_pickup_time[:stop].gmtime.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @chain.public_notes%>&location=<%=u @chain.schedules.first.location.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
       </div>
     <% end %>
@@ -38,11 +38,11 @@
       .
     </p>
 
-    <% unless @chain.public_notes.nil? or @chain.public_notes.strip == "" %>
+    <% unless @chain.public_notes.nil? || @chain.public_notes.strip == "" %>
       <p><b>Notes:</b> <%= word_wrap(@chain.public_notes,:line_width => 80).gsub("\n","<br>").html_safe %></p>
     <% end %>
 
-    <% unless @chain.expected_weight.nil? or @chain.max_weight.nil? or @chain.mean_weight.nil? %>
+    <% unless @chain.expected_weight.nil? || @chain.max_weight.nil? || @chain.mean_weight.nil? %>
       <p><b>Expected Weight:</b> <%= @chain.expected_weight %> <em>(current mean = <%= @chain.mean_weight.round %>, max = <%= @chain.max_weight.round %>)</em></p>
     <% end %>
 
@@ -61,7 +61,7 @@
     <p>
       <% if @chain.volunteers.count == 0 %>
         No volunteers yet...
-        <%=link_to take_schedule_chains_path(id: @chain), confirm: "Are you sure you want to sign up for this weekly pickup?", class: 'btn btn-primary' do %>
+        <%= link_to take_schedule_chains_path(id: @chain), confirm: "Are you sure you want to sign up for this weekly pickup?", class: 'btn btn-primary' do %>
           <i class="fa fa-hand-rock-o"></i>
           <strong>Signup for this <u>weekly</u> pickup now!</strong>
         <% end %>
@@ -132,7 +132,7 @@
       <h3>Stops:</h3>
       <p>
   	  <% @chain.schedules.each do |stop|
-        next if stop.nil? or stop.location.nil? %>
+        next if stop.nil? || stop.location.nil? %>
 
         <div class="col-sm-6">
           <div class="well">

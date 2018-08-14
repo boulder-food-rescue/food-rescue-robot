@@ -5,8 +5,8 @@ class AbsencesController < ApplicationController
   before_filter :admin_only, only: [:all]
 
   def all
-    absences = Absence.where('stop_date >= ?', Date.today).keep_if{ |a|
-      !(a.volunteer.region_ids & current_volunteer.admin_region_ids).empty?
+    absences = Absence.where('stop_date >= ?', Date.today).keep_if{ |absence|
+      (absence.volunteer.region_ids & current_volunteer.admin_region_ids).any?
     }
     index(absences, 'All Absences')
   end
@@ -75,7 +75,7 @@ class AbsencesController < ApplicationController
 
     if (@absence.start_date <= Date.today+2) && !current_volunteer.any_admin?
       emails = current_volunteer.admin_regions.collect{ |r| r.volunteer_coordinator_email }.compact
-      flash[:warning] = "You cannot schedule an absence within 48 hours. If you will be unable to do your shift, please contact your volunteer coordinator(s)#{emails.empty? ? '' : ': '+emails.join(', ')}."
+      flash[:warning] = "You cannot schedule an absence within 48 hours. If you will be unable to do your shift, please contact your volunteer coordinator(s)#{emails.empty? ? '' : ': ' + emails.join(', ')}."
       return redirect_to :back
     end
 

@@ -135,7 +135,7 @@ class Location < ActiveRecord::Base
 
   private
 
-  def day_length
+  def day_length(index)
     hours_on_day(index).reduce(:-)
   end
 

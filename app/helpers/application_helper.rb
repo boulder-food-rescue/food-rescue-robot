@@ -17,7 +17,7 @@ module ApplicationHelper
   end
 
   def readable_time_until shift
-    time = "#{shift.when.strftime('%a %b %e')} (#{days_ago(shift.when)})}"
+    time = "#{shift.when.strftime('%a %b %e')} (#{days_ago(shift.when)})"
     time += "\n#{readable_start_time(shift.schedule_chain)} and #{readable_stop_time(shift.schedule_chain)}" if shift.schedule_chain
     time
   end

@@ -138,20 +138,11 @@ class Location < ActiveRecord::Base
   def detailed_hours_cannot_end_before_start
     (0..6).each do |index|
       if open_on_day?(index)
-        prefix = 'day' + index.to_s
-        if read_day_info(prefix + '_start') > read_day_info(prefix + '_end')
-          errors.add(prefix+'_status', 'must have an end time AFTER the start time')
+        if read_day_info("day#{index}_start") > read_day_info("day#{index}_end")
+          errors.add("day#{index}_status", 'must have an end time AFTER the start time')
         end
       end
     end
-  end
-
-  def day_length(index)
-    hours_on_day(index).reduce(:-)
-  end
-
-  def wrong_day_order?(index)
-    open_on_day?(index) && day_length(index).negative?
   end
 
   def populate_receipt_key
@@ -161,15 +152,15 @@ class Location < ActiveRecord::Base
   def populate_detailed_hours_json_before_save
     hours_info = {}
     (0..6).each do |index|
-      prefix = 'day'+index.to_s+'_'
-      start = read_day_info(prefix+'start')
-      stop = read_day_info(prefix+'end')
-      next if start.nil? or stop.nil?
+      prefix = 'day' + index.to_s + '_'
+      start = read_day_info(prefix + 'start')
+      stop = read_day_info(prefix + 'end')
+      next if start.nil? || stop.nil?
       hours_info[index] = {
-        :status => read_day_info(prefix+'status').to_s,
+        status: read_day_info(prefix+'status').to_s,
         # save these with the timezone on them!
-        :start => start.to_formatted_s(:rfc822),
-        :end => stop.to_formatted_s(:rfc822)
+        start: start.to_formatted_s(:rfc822),
+        end: stop.to_formatted_s(:rfc822)
       }
     end
     self.detailed_hours_json = hours_info.to_json

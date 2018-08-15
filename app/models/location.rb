@@ -135,19 +135,23 @@ class Location < ActiveRecord::Base
 
   private
 
+  def detailed_hours_cannot_end_before_start
+    (0..6).each do |index|
+      if open_on_day?(index)
+        prefix = 'day' + index.to_s
+        if read_day_info(prefix + '_start') > read_day_info(prefix + '_end')
+          errors.add(prefix+'_status', 'must have an end time AFTER the start time')
+        end
+      end
+    end
+  end
+
   def day_length(index)
     hours_on_day(index).reduce(:-)
   end
 
   def wrong_day_order?(index)
     open_on_day?(index) && day_length(index).negative?
-  end
-
-  def detailed_hours_cannot_end_before_start
-    (0..6).each do |index|
-      message = 'must have an end time AFTER the start time'
-      errors.add("day#{index}_status", message) if wrong_day_order?(index)
-    end
   end
 
   def populate_receipt_key

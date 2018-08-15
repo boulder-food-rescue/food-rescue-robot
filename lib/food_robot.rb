@@ -23,8 +23,8 @@ module FoodRobot
   end
 
   # Sends an email to any volunteer who has a outstanding log entry
-  # from n or more days ago. Also sends an email to the admin summarizing
-  # all logs that have seen at least r reminders.
+  # from max_days_past or more days ago. Also sends an email to the admin summarizing
+  # all logs that have seen at least reminder_level reminders.
   def self.send_reminder_emails(max_days_past=2, reminder_level=3)
     naughty_list = {}
     reminder_list = {}

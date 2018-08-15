@@ -39,8 +39,7 @@ module FoodRobot
 
     private
 
-    attr_reader :date,
-                :absence
+    attr_reader :date, :absence
 
     def decorated_schedule_chains
       chains = if absence.present?

@@ -52,7 +52,7 @@ class ScheduleChainsController < ApplicationController
     unless trimmed_stops.empty?
       embed_parameters += '&waypoints='
       trimmed_stops.each do |stop|
-        embed_parameters += stop.location.mappable_address
+        embed_parameters += stop.location&.mappable_address
         embed_parameters += '|' unless stop == trimmed_stops.last
       end
     end

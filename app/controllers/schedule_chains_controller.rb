@@ -50,11 +50,8 @@ class ScheduleChainsController < ApplicationController
     end
 
     unless trimmed_stops.empty?
-      embed_parameters += '&waypoints='
-      trimmed_stops.each do |stop|
-        embed_parameters += stop.location&.mappable_address
-        embed_parameters += '|' unless stop == trimmed_stops.last
-      end
+      stops = trimmed_stops.map { |stop| stop.location&.mappable_address }.compact.join('|')
+      embed_parameters = "#{embed_parameters}&waypoints=#{stops}"
     end
 
     @embed_request_url = "https://www.google.com/maps/embed/v1/directions?key=#{ENV['GMAPS_API_KEY']}#{embed_parameters}&mode=bicycling"

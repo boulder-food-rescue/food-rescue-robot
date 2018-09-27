@@ -106,23 +106,14 @@
   </div>
 
   <div class="col-sm-6">
-
     <% if @chain.mappable? %>
       <h2>
         <i class='fa fa-bicycle'></i>
         Bicycling Directions
-      </h2>
-      <br/>
-      <div style="width: 465px;">
-        <iframe
-        width="600"
-        height="450"
-        frameborder="0" style="border:0"
-        src=<%= @embed_request_url %>>
-        </iframe>
-      </div>
+      </h2><br/>
+      <iframe width="600" height="450"frameborder="0" style="border: 0;" src=<%= @embed_request_url %>></iframe>
+      <div><em>NOTE: This may not include ALL stops if a stop has an invalid address.</em></div>
     <% end %>
-
   </div>
 </div>
 

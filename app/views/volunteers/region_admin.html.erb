@@ -134,15 +134,5 @@
     <% end %>
   </div>
 </div>
-<script>
-  $(document).ready(function() {
-    console.log("datepicker loaded!");
-      flatpickr(".datepicker", {
-        "dateFormat":"Y-n-j",
-        "allowInput":false,
-        "onOpen": function(selectedDates, dateStr, instance) {
-          instance.setDate(instance.input.value, false);
-        }
-      });
-    });
-</script>
+
+<%= javascript_include_tag "datepicker_footer" %>

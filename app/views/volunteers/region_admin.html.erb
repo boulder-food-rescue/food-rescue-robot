@@ -1,3 +1,8 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <div class="row">
   <div class="col-sm-12">
     <h2 class="section-head first">Region Admin Controls</h2>
@@ -48,7 +53,7 @@
           </td>
           <td>
             <div class="form-inline">
-              <%= select_date Time.zone.today, { prefix: :start_date, order: [:month, :day, :year] }, {class: "form-control select2"} %>
+              <%= text_field_tag :start_date, "", class: 'datepicker', value: Time.zone.today %>
             </div>
           </td>
         </tr>
@@ -58,7 +63,7 @@
           </td>
           <td>
             <div class="form-inline">
-              <%= select_date Time.zone.today, {prefix: :stop_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+              <%= text_field_tag :stop_date, "", class: 'datepicker', value: Time.zone.today %>
             </div>
           </td>
         </tr>
@@ -81,7 +86,7 @@
           </td>
           <td>
             <div class="form-inline">
-              <%= select_date Time.zone.today, {prefix: :start_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+              <%= text_field_tag :start_date, "", class: 'datepicker', value: Time.zone.today %>
             </div>
           </td>
         </tr>
@@ -91,7 +96,7 @@
           </td>
           <td>
             <div class="form-inline">
-              <%= select_date Time.zone.today, {prefix: :stop_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+              <%= text_field_tag :stop_date, "", class: 'datepicker', value: Time.zone.today %>
             </div>
           </td>
         </tr>
@@ -127,3 +132,15 @@
     <% end %>
   </div>
 </div>
+<script>
+  $(document).ready(function() {
+    console.log("datepicker loaded!");
+      flatpickr(".datepicker", {
+        "dateFormat":"Y-n-j",
+        "allowInput":false,
+        "onOpen": function(selectedDates, dateStr, instance) {
+          instance.setDate(instance.input.value, false);
+        }
+      });
+    });
+</script>

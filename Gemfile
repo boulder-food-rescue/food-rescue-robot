@@ -22,6 +22,7 @@ gem 'simple_form'
 gem 'therubyracer', platforms: :ruby
 gem 'twitter-bootstrap-rails'
 gem 'uglifier', '>= 1.0.3'
+gem 'flatpickr'
 
 group :development do
   gem 'better_errors'

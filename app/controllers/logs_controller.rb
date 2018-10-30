@@ -390,10 +390,10 @@ class LogsController < ApplicationController
     start_date = Date.parse(start_date_string)
     stop_date = Date.parse(stop_date_string)
 
-    start_date_hash = Hash[:month => start_date.month.to_s, :day => start_date.day.to_s, :year => start_date.year.to_s]
+    start_date_hash = Hash[month: start_date.month.to_s, day: start_date.day.to_s, year: start_date.year.to_s]
     params['start_date'] = start_date_hash
 
-    stop_date_hash = Hash[:month => stop_date.month.to_s, :day => stop_date.day.to_s, :year => stop_date.year.to_s]
+    stop_date_hash = Hash[month: stop_date.month.to_s, day: stop_date.day.to_s, year: stop_date.year.to_s]
     params['stop_date'] = stop_date_hash
   end
 

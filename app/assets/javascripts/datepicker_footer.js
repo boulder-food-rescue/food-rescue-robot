@@ -1,8 +1,7 @@
 $(document).ready(function() {
-  console.log("datepicker laodaed");
   flatpickr(".datepicker", {
-    "dateFormat":"Y-n-j",
-    "allowInput":false,
+    "dateFormat": "Y-n-j",
+    "allowInput": false,
     "onOpen": function(selectedDates, dateStr, instance) {
       instance.setDate(instance.input.value, false);
     }

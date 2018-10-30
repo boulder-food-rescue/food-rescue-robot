@@ -303,19 +303,8 @@ class LogsController < ApplicationController
   def receipt
     parse_start_stop_date(params)
 
-    if Date.valid_date?(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
-      @start_date = Date.new(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
-    else
-      flash[:notice] = 'Invalid Date Set for Start Date. Please try again!'
-      return redirect_to(request.referer || root_path)
-    end
-
-    if Date.valid_date?(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
-      @stop_date = Date.new(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
-    else
-      flash[:notice] = 'Invalid Date Set for End Date. Please try again!'
-      return redirect_to(request.referer || root_path)
-    end
+    @start_date = Date.new(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
+    @stop_date = Date.new(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
 
     @location = Location.find(params[:location_id])
 
@@ -395,18 +384,17 @@ class LogsController < ApplicationController
   private
 
   def parse_start_stop_date(params)
-
-    start_date_string = params["start_date"]
-    stop_date_string = params["stop_date"]
+    start_date_string = params['start_date']
+    stop_date_string = params['stop_date']
 
     start_date = Date.parse(start_date_string)
     stop_date = Date.parse(stop_date_string)
 
     start_date_hash = Hash[:month => start_date.month.to_s, :day => start_date.day.to_s, :year => start_date.year.to_s]
-    params["start_date"] = start_date_hash
+    params['start_date'] = start_date_hash
 
     stop_date_hash = Hash[:month => stop_date.month.to_s, :day => stop_date.day.to_s, :year => stop_date.year.to_s]
-    params["stop_date"] = stop_date_hash
+    params['stop_date'] = stop_date_hash
   end
 
   def parse_and_create_log_parts(params, log)

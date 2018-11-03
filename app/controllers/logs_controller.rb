@@ -301,10 +301,7 @@ class LogsController < ApplicationController
   end
 
   def receipt
-    parse_start_stop_date(params)
-
-    @start_date = Date.new(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
-    @stop_date = Date.new(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
+    parse_and_set_start_stop_dates(params)
 
     @location = Location.find(params[:location_id])
 
@@ -362,7 +359,7 @@ class LogsController < ApplicationController
   end
 
   def export
-    parse_start_stop_date(params)
+    parse_and_set_start_stop_dates(params)
 
     start_date = Date.new(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
     stop_date = Date.new(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
@@ -383,18 +380,15 @@ class LogsController < ApplicationController
 
   private
 
-  def parse_start_stop_date(params)
-    start_date_string = params['start_date']
-    stop_date_string = params['stop_date']
+  def parse_and_set_start_stop_dates(params)
+    start_date = Date.parse(params['start_date'])
+    stop_date = Date.parse(params['stop_date'])
 
-    start_date = Date.parse(start_date_string)
-    stop_date = Date.parse(stop_date_string)
+    params['start_date'] = Hash[month: start_date.month, day: start_date.day, year: start_date.year]
+    params['stop_date'] = Hash[month: stop_date.month, day: stop_date.day, year: stop_date.year]
 
-    start_date_hash = Hash[month: start_date.month.to_s, day: start_date.day.to_s, year: start_date.year.to_s]
-    params['start_date'] = start_date_hash
-
-    stop_date_hash = Hash[month: stop_date.month.to_s, day: stop_date.day.to_s, year: stop_date.year.to_s]
-    params['stop_date'] = stop_date_hash
+    @start_date = Date.new(params['start_date']['year'], params['start_date']['month'], params['start_date']['day'])
+    @stop_date = Date.new(params['stop_date']['year'], params['stop_date']['month'], params['stop_date']['day'])
   end
 
   def parse_and_create_log_parts(params, log)

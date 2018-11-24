@@ -361,11 +361,9 @@ class LogsController < ApplicationController
   def export
     parse_and_set_start_stop_dates(params)
 
-    start_date = Date.parse(params['start_date'])
-    stop_date = Date.parse(params['stop_date'])
     regions = current_volunteer.admin_regions
 
-    logs = Log.where('logs.when >= ? AND logs.when <= ?', start_date, stop_date).where(
+    logs = Log.where('logs.when >= ? AND logs.when <= ?', @start_date, @stop_date).where(
       complete: true,
       region_id: regions.map(&:id)
     )

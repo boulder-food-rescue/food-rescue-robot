@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Log < ActiveRecord::Base
-  WHY_ZER0 = {1 => 'No Food', 2 => "Didn't Happen"}
+  WHY_ZER0 = { 1 => 'No Food', 2 => "Didn't Happen" }
 
   belongs_to :schedule_chain
   belongs_to :donor, class_name: 'Location', foreign_key: 'donor_id'

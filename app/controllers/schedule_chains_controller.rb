@@ -46,7 +46,7 @@ class ScheduleChainsController < ApplicationController
 
     unless schedules.empty? || schedules.last.location.nil?
       addr = schedules.last.location.mappable_address
-      embed_parameters += '&destination=' + addr
+      embed_parameters = "#{embed_parameters}&destination=#{addr}"
     end
 
     unless trimmed_stops.empty?

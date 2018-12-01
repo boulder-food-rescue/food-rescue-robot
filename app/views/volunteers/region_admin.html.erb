@@ -1,3 +1,5 @@
+<%= render partial: "datepicker" %>
+
 <div class="row">
   <div class="col-sm-12">
     <h2 class="section-head first">Region Admin Controls</h2>
@@ -48,7 +50,7 @@
           </td>
           <td>
             <div class="form-inline">
-              <%= select_date Time.zone.today, { prefix: :start_date, order: [:month, :day, :year] }, {class: "form-control select2"} %>
+              <%= text_field_tag :start_date, "", class: 'datepicker', value: Time.zone.today %>
             </div>
           </td>
         </tr>
@@ -58,7 +60,7 @@
           </td>
           <td>
             <div class="form-inline">
-              <%= select_date Time.zone.today, {prefix: :stop_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+              <%= text_field_tag :stop_date, "", class: 'datepicker', value: Time.zone.today %>
             </div>
           </td>
         </tr>
@@ -81,7 +83,7 @@
           </td>
           <td>
             <div class="form-inline">
-              <%= select_date Time.zone.today, {prefix: :start_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+              <%= text_field_tag :start_date, "", class: 'datepicker', value: Time.zone.today %>
             </div>
           </td>
         </tr>
@@ -91,7 +93,7 @@
           </td>
           <td>
             <div class="form-inline">
-              <%= select_date Time.zone.today, {prefix: :stop_date, order: [:month, :day, :year]}, {class: "form-control select2"} %>
+              <%= text_field_tag :stop_date, "", class: 'datepicker', value: Time.zone.today %>
             </div>
           </td>
         </tr>
@@ -127,3 +129,6 @@
     <% end %>
   </div>
 </div>
+
+<%= javascript_include_tag "datepicker_footer" %>
+

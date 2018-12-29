@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Location < ActiveRecord::Base
-  # MOVE TO ENUM
+  # TODO: MOVE TO ENUM
   LOCATION_TYPES = {
     0 => 'Recipient',
     1 => 'Donor',
@@ -22,7 +22,7 @@ class Location < ActiveRecord::Base
   after_initialize :init_detailed_hours
   before_save :populate_detailed_hours_json_before_save
   before_save :populate_receipt_key
-  after_validation :geocode
+  after_validation :geocode, on: :create
   validate :detailed_hours_cannot_end_before_start
 
   default_scope { order('locations.name ASC').where(active: true) }

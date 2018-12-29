@@ -116,7 +116,7 @@
                 <% end %>
               </td>
 
-              <% unless current_page?(controller: "logs", action: "open") %>
+              <% unless current_page?(controller: 'logs', action: 'open') %>
                 <td>
                   <%= shift.complete? ? shift.summed_weight.round : "?" %> lbs.
                 </td>

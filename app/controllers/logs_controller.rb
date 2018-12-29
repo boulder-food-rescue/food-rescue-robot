@@ -301,19 +301,7 @@ class LogsController < ApplicationController
   end
 
   def receipt
-    if Date.valid_date?(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
-      @start_date = Date.new(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
-    else
-      flash[:notice] = 'Invalid Date Set for Start Date. Please try again!'
-      return redirect_to(request.referer || root_path)
-    end
-
-    if Date.valid_date?(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
-      @stop_date = Date.new(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
-    else
-      flash[:notice] = 'Invalid Date Set for End Date. Please try again!'
-      return redirect_to(request.referer || root_path)
-    end
+    parse_and_set_start_stop_dates(params)
 
     @location = Location.find(params[:location_id])
 
@@ -371,14 +359,13 @@ class LogsController < ApplicationController
   end
 
   def export
-    start_date = Date.new(params[:start_date][:year].to_i, params[:start_date][:month].to_i, params[:start_date][:day].to_i)
-    stop_date = Date.new(params[:stop_date][:year].to_i, params[:stop_date][:month].to_i, params[:stop_date][:day].to_i)
-    regions = current_volunteer.admin_regions
+    parse_and_set_start_stop_dates(params)
 
-    logs = Log.where('logs.when >= ? AND logs.when <= ?', start_date, stop_date).where(
-      complete: true,
-      region_id: regions.map(&:id)
-    )
+    region_ids = current_volunteer.admin_region_ids
+
+    logs = Log.where('logs.when >= ? AND logs.when <= ?', @start_date, @stop_date)
+              .where(complete: true, region_id: region_ids)
+              .includes(:region, :donor, :recipients, :scale_type, :transport_type, :recipients)
 
     respond_to do |format|
       format.html
@@ -389,6 +376,14 @@ class LogsController < ApplicationController
   end
 
   private
+
+  def parse_and_set_start_stop_dates(params)
+    start_date = Date.parse(params['start_date'])
+    stop_date = Date.parse(params['stop_date'])
+
+    @start_date = Date.new(start_date.year, start_date.month, start_date.day)
+    @stop_date = Date.new(stop_date.year, stop_date.month, stop_date.day)
+  end
 
   def parse_and_create_log_parts(params, log)
     ret = []

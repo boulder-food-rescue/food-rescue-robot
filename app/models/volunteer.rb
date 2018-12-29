@@ -160,15 +160,12 @@ class Volunteer < ActiveRecord::Base
   end
 
   def admin_regions(strict = false)
-    if super_admin? && !strict
-      Region.all
-    else
-      assignments
-        .eager_load(:region)
-        .where(admin: true)
-        .collect(&:region)
-        .compact
-    end
+    return Region.all if super_admin? && !strict
+
+    assignments.eager_load(:region)
+               .where(admin: true)
+               .collect(&:region)
+               .compact
   end
 
   def in_region?(region_id)

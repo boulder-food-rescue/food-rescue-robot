@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Location < ActiveRecord::Base
-  # TODO MOVE TO ENUM
+  # TODO: MOVE TO ENUM
   LOCATION_TYPES = {
     0 => 'Recipient',
     1 => 'Donor',

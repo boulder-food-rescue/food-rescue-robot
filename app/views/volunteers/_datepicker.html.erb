@@ -4,6 +4,16 @@
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/ie.css">
   <![endif]-->
 
-  <%= javascript_include_tag "datepicker_head" %>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    $(document).ready(function() {
+      flatpickr(".datepicker", {
+        "dateFormat": "Y-n-j",
+        "allowInput": false,
+        "onOpen": function(selectedDates, dateStr, instance) {
+          instance.setDate(instance.input.value, false);
+        }
+      });
+    });
+  </script>
 </head>

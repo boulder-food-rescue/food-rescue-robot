@@ -361,12 +361,11 @@ class LogsController < ApplicationController
   def export
     parse_and_set_start_stop_dates(params)
 
-    regions = current_volunteer.admin_regions
+    region_ids = current_volunteer.admin_region_ids
 
-    logs = Log.where('logs.when >= ? AND logs.when <= ?', @start_date, @stop_date).where(
-      complete: true,
-      region_id: regions.map(&:id)
-    )
+    logs = Log.where('logs.when >= ? AND logs.when <= ?', @start_date, @stop_date)
+              .where(complete: true, region_id: region_ids)
+              .includes(:region, :donor, :recipients, :scale_type, :transport_type, :recipients)
 
     respond_to do |format|
       format.html

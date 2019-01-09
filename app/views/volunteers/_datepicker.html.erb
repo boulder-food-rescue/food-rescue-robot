@@ -1,9 +1,20 @@
-<head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/themes/airbnb.css">
-  <!--[if IE 9]>
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/ie.css">
-  <![endif]-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/themes/airbnb.css">
+<!--[if IE 9]>
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/ie.css">
+<![endif]-->
 
-  <%= javascript_include_tag "datepicker_head" %>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      flatpickr(".datepicker", {
+        "dateFormat": "Y-n-j",
+        "allowInput": false,
+        "onOpen": function(selectedDates, dateStr, instance) {
+          instance.setDate(instance.input.value, false);
+        }
+      });
+    });
+  </script>
+<% end %>

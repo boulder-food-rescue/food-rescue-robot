@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :location do
     address { '710 31st St., Boulder, CO, 80303' }
     sequence(:name) { |n| "Some place #{n}" }

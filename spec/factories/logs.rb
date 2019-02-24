@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :log do
     notes 'Log Notes Testing123'
     weight_unit 'lb'

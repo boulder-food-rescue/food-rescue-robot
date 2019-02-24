@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :volunteer do
     sequence(:name) { |n| "John Doe the #{n.ordinalize}" }
     sequence(:email) { |n| "user#{n}@boulderfoodrescue.org" }

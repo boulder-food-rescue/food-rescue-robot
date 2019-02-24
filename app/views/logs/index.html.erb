@@ -141,7 +141,7 @@
                 <td>
                   <% shift.logs.each do |log| %>
                     <%= link_to "edit log #{log.id}", edit_log_path(log), class: 'btn btn-primary' %><br />
-                   <%= link_to "delete log #{log.id}", log, class: 'btn btn-danger', confirm: "Are you sure you want to delete this shift's log?", method: :delete %><br />
+                   <%= link_to "delete log #{log.id}", log, class: 'btn btn-danger', data: { confirm: "Are you sure you want to delete this shift's log?" }, method: :delete %><br />
                   <% end %>
                 </td>
               <% end %>

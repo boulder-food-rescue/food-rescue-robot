@@ -60,7 +60,7 @@
             <%= link_to edit_region_url(region), class: 'btn btn-primary' do %>
               <i class="fa fa-pencil"></i>
             <% end %>
-            <%= link_to region_url(region), class: 'btn btn-danger', confirm: "Are you sure?", method: :delete do %>
+            <%= link_to region_url(region), class: 'btn btn-danger', data: { confirm: "Are you sure?" }, method: :delete do %>
               <i class="fa fa-trash-o"></i>
             <% end %>
           </td>

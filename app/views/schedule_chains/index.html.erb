@@ -136,7 +136,7 @@
           <td>
             <% if current_volunteer.any_admin? %>
               <%= link_to 'edit', edit_schedule_chain_path(schedule) %><br>
-              <%= link_to "delete", schedule, confirm: "Are you sure?", method: :delete %>
+              <%= link_to "delete", schedule, data: { confirm: "Are you sure?" }, method: :delete %>
             <% end %>
           </td>
         </tr>

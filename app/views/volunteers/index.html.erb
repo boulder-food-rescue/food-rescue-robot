@@ -53,7 +53,7 @@
               <%= link_to edit_volunteer_path(v), class: 'btn btn-primary' do %>
                 <i class="fa fa-pencil"></i>
               <% end %>
-               <%= link_to v, confirm: "Are you sure?", method: :delete, class: 'btn btn-danger' do %>
+               <%= link_to v, data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-danger' do %>
                 <i class="fa fa-trash-o"></i>
                <% end %>
                <% unless v.active %>

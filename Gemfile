@@ -6,7 +6,7 @@ ruby File.read('.ruby-version').strip
 
 # the base rails libraries
 gem 'pg', '~> 0.21.0'
-gem 'rails', '~> 3.2.16'
+gem 'rails', '~> 4.0.13'
 gem 'rails_12factor'
 gem 'thin'
 
@@ -14,6 +14,7 @@ gem 'thin'
 gem 'json'
 
 gem 'bootstrap-sass', '~> 3.2.0'
+gem 'protected_attributes'
 gem 'font-awesome-sass', '~> 4.4.0'
 gem 'jquery-rails', '2.1.4'
 gem 'sass-rails', '~> 3.2.6'
@@ -50,9 +51,6 @@ group :test do
   gem 'rack-test'
   gem 'rspec-rails', '~> 3.5'
 end
-# Temporary fix: https://stackoverflow.com/questions/13828889/rails-3-heroku-cannot-load-such-file-test-unit-testcase-loaderror
-# Remove after upgrade of Rails from 3.2 is complete.
-gem 'test-unit', '~> 3.0'
 
 # dynamic in-place editing for some admin tables
 gem 'active_scaffold'

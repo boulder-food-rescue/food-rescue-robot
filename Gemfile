@@ -89,7 +89,8 @@ gem 'jquery-datatables-rails', git: 'https://github.com/rweng/jquery-datatables-
 gem 'cocoon'
 
 # set timezone to browser timezone
-gem 'browser-timezone-rails', '~> 0.2.00'
+gem 'browser-timezone-rails', '~> 1.0'
+gem 'js_cookie_rails'
 gem 'ranked-model'
 
 # Send email when exception occurs.

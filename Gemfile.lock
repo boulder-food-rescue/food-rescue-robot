@@ -74,10 +74,9 @@ GEM
       debug_inspector (>= 0.0.1)
     bootstrap-sass (3.2.0.2)
       sass (~> 3.2)
-    browser-timezone-rails (0.2.00)
-      jquery-cookie-rails
-      jquery-rails
-      jstz-rails
+    browser-timezone-rails (1.0.3)
+      js_cookie_rails
+      jstz-rails3-plus
       rails (>= 3.1)
     buftok (0.2.0)
     builder (3.0.4)
@@ -180,14 +179,14 @@ GEM
     jaro_winkler (1.5.2)
     jmespath (1.4.0)
     journey (1.0.4)
-    jquery-cookie-rails (1.3.1.1)
-      railties (>= 3.2.0, < 5.0)
     jquery-rails (2.1.4)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
+    js_cookie_rails (2.2.0)
+      railties (>= 3.1)
     json (2.2.0)
-    jstz-rails (1.0.4.1)
-      railties (~> 3.1)
+    jstz-rails3-plus (1.0.5)
+      railties (>= 3.1)
     launchy (2.4.3)
       addressable (~> 2.3)
     less (2.6.0)
@@ -411,7 +410,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootstrap-sass (~> 3.2.0)
-  browser-timezone-rails (~> 0.2.00)
+  browser-timezone-rails (~> 1.0)
   cancancan (~> 1.15.0)
   capybara
   capybara-screenshot
@@ -431,6 +430,7 @@ DEPENDENCIES
   interactor
   jquery-datatables-rails!
   jquery-rails (= 2.1.4)
+  js_cookie_rails
   json
   newrelic_rpm
   paperclip!

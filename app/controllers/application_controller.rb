@@ -8,6 +8,9 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate_user_from_token!
 
   respond_to :html, :json
+  layout :layout_by_resource
+
+  alias_method :current_user, :current_volunteer
 
   def setup_headers
     headers['Access-Control-Allow-Origin'] = '*'
@@ -35,18 +38,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  alias_method :current_user, :current_volunteer
-
-  layout :layout_by_resource
-
   protected
 
   def layout_by_resource
-    if devise_controller?
-      'custom_devise'
-    else
-      'application'
-    end
+    return 'custom_devise' if devise_controller?
+    'application'
   end
 
   private

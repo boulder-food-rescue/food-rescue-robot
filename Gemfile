@@ -8,7 +8,7 @@ ruby File.read('.ruby-version').strip
 gem 'pg', '~> 0.21.0'
 gem 'rails', '~> 4.0.13'
 gem 'rails_12factor'
-gem 'thin'
+gem 'puma'
 
 # for handling json objects with ruby
 gem 'json'

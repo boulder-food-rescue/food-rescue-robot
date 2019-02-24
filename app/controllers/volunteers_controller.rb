@@ -25,8 +25,7 @@ class VolunteersController < ApplicationController
     else
       Assignment.add_volunteer_to_region(volunteer, region)
       unless params[:send_welcome_email].nil? || params[:send_welcome_email].to_i != 1
-        message = Notifier.region_welcome_email(region, volunteer)
-        message&.deliver
+        Notifier.region_welcome_email(region, volunteer)&.deliver
       end
       volunteer.save
     end
@@ -34,7 +33,8 @@ class VolunteersController < ApplicationController
   end
 
   def shiftless
-    @volunteers = Volunteer.active_but_shiftless(current_volunteer.region_ids)
+    @volunteers = Volunteer.includes(:absences, :transport_type, :regions)
+                           .active_but_shiftless(current_volunteer.region_ids)
     @header = 'Shiftless Volunteers'
     render :index
   end
@@ -52,7 +52,8 @@ class VolunteersController < ApplicationController
   end
 
   def need_training
-    @volunteers = Volunteer.not_super_admin.needing_training(current_volunteer.region_ids)
+    @volunteers = Volunteer.not_super_admin
+                           .needing_training(current_volunteer.region_ids)
     @header = 'Volunteers Needing Training'
     render :index
   end

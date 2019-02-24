@@ -16,6 +16,15 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
-@import "modules/**";
+@import "modules/buttons";
+@import "modules/charts";
+@import "modules/day_times";
+@import "modules/footer";
+@import "modules/forms";
+@import "modules/header";
+@import "modules/scrollbars";
+@import "modules/select2_bootstrap";
+@import "modules/tables";
+@import "modules/typography";
 
-@import "pages/**";
+@import "pages/home";

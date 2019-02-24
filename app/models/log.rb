@@ -10,10 +10,8 @@ class Log < ActiveRecord::Base
   belongs_to :region
 
   has_many :log_volunteers
-  has_many :volunteers, through: :log_volunteers,
-                        conditions: {'log_volunteers.active' => true}
-  has_many :inactive_volunteers, through: :log_volunteers,
-                                 conditions: {'log_volunteers.active' => false}
+  has_many :volunteers, -> { where(log_volunteers: { active: true }) }, through: :log_volunteers
+  has_many :inactive_volunteers, -> { where(log_volunteers: { active: false }) }, through: :log_volunteers
   has_many :log_recipients
   has_many :recipients, through: :log_recipients
   has_many :log_parts
@@ -27,14 +25,14 @@ class Log < ActiveRecord::Base
   accepts_nested_attributes_for :log_volunteers
   accepts_nested_attributes_for :schedule_chain
 
-  validates :notes, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 and a.why_zero == 2 },
+  validates :notes, presence: { if: Proc.new{ |a| a.complete && a.summed_weight == 0 && a.summed_count == 0 && a.why_zero == 2 },
                                 message: "can't be blank if weights/counts are all zero: let us know what happened!" }
   validates :transport_type_id, presence: { if: :complete }
   validates :donor_id, presence: { if: :complete }
   validates :scale_type_id, presence: { if: :complete }
   validates :when, presence: true
   validates :hours_spent, presence: { if: :complete }
-  validates :why_zero, presence: { if: Proc.new{ |a| a.complete and a.summed_weight == 0 and a.summed_count == 0 } }
+  validates :why_zero, presence: { if: Proc.new{ |a| a.complete && a.summed_weight == 0 && a.summed_count == 0 } }
 
   attr_accessible :region_id, :donor_id, :why_zero,
                   :food_type_id, :transport_type_id, :flag_for_admin, :notes,
@@ -46,7 +44,7 @@ class Log < ActiveRecord::Base
   # units conversion on scale type --- we always store in lbs in the database
   before_save { |record|
     return if record.region.nil?
-    record.scale_type = record.region.scale_types.first if record.scale_type.nil? and record.region.scale_types.length == 1
+    record.scale_type = record.region.scale_types.first if record.scale_type.nil? && record.region.scale_types.length == 1
     unless record.scale_type.nil?
       record.weight_unit = record.scale_type.weight_unit if record.weight_unit.nil?
       record.log_parts.each{ |lp|

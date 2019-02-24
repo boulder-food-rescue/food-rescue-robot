@@ -4,6 +4,6 @@ FactoryBot.define do
   factory :schedule_volunteer do
     association :volunteer
     association :schedule_chain
-    active true
+    active { true }
   end
 end

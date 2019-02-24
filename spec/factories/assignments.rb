@@ -6,7 +6,7 @@ FactoryBot.define do
     region { (Region.all.count >= 3 ? Region.all.sample : create(:region)) }
 
     trait :admin do
-      admin true
+      admin { true }
     end
 
     factory :admin_volunteer, traits: [:admin]

@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :log do
-    notes 'Log Notes Testing123'
-    weight_unit 'lb'
+    notes { 'Log Notes Testing123' }
+    weight_unit { 'lb' }
     region { (Region.all.count >= 5 ? Region.all.sample : create(:region)) }
     self.when { Date.today + (rand > 0.5 ? -1 : 1)*rand(10) } # have to do self. since when is a reserved word in ruby
     donor { Location.donors.count >= 5 ? Location.donors.sample : create(:donor) }

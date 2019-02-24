@@ -5,7 +5,7 @@
   <link rel="stylesheet" type="text/css" href="//yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
   <link href='//fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-  <%= stylesheet_link_tag "application", :media => "all" %>
+  <%= stylesheet_link_tag "application", media: "all" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
@@ -31,7 +31,7 @@
         </p>
 
         <h2 class="section_title">Facts</h2>
-        <% cache("login_page_stats",:expires_in => 12.hours) do %>
+        <% cache("login_page_stats", expires_in: 12.hours) do %>
           <ul class="unstyled">
             <li>
               <strong>Number of Cities Using the Robot:</strong>

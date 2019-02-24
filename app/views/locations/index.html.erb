@@ -65,7 +65,7 @@
               <i class="fa fa-pencil"></i>
               edit
             <% end %><br /><br />
-            <%= link_to loc, confirm: "Are you sure?", method: :delete, class: 'btn btn-danger' do %>
+            <%= link_to loc, data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-danger' do %>
               <i class="fa fa-trash-o"></i>
               delete
             <% end %>

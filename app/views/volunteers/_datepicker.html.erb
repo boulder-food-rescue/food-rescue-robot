@@ -9,10 +9,12 @@
   <script type="text/javascript">
     $(document).ready(function() {
       flatpickr(".datepicker", {
-        "dateFormat": "Y-n-j",
-        "allowInput": false,
-        "onOpen": function(selectedDates, dateStr, instance) {
-          instance.setDate(instance.input.value, false);
+        dateFormat: "Y-n-j",
+        allowInput: true,
+        altInput: true,
+        altFormat: "F j, Y",
+        onOpen: function(selectedDates, dateStr, instance) {
+          instance.setDate(instance.input.value, true);
         }
       });
     });

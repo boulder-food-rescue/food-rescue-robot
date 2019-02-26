@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 ruby File.read('.ruby-version').strip
 
 # the base rails libraries
-gem 'pg'
+gem 'pg', '~> 0.21.0'
 gem 'rails', '~> 3.2.16'
 gem 'rails_12factor'
 gem 'thin'
@@ -89,13 +89,13 @@ gem 'jquery-datatables-rails', git: 'https://github.com/rweng/jquery-datatables-
 gem 'cocoon'
 
 # set timezone to browser timezone
-gem 'browser-timezone-rails' # '~> 0.0.9'
+gem 'browser-timezone-rails', '~> 0.2.00'
 gem 'ranked-model'
 
 # Send email when exception occurs.
 gem 'exception_notification', '~> 3.0.1'
 gem 'exception_notification-rake', '~> 0.0.6'
 
-gem 'cancancan'
+gem 'cancancan', '~> 1.15.0'
 gem 'interactor'
 gem 'newrelic_rpm'

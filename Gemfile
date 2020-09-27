@@ -15,7 +15,7 @@ gem 'json'
 
 gem 'bootstrap-sass', '~> 3.2.0'
 gem 'coffee-rails', '~> 3.2.1'
-gem 'font-awesome-sass', '~> 4.4.0'
+gem 'font-awesome-sass', '~> 4.6.0'
 gem 'jquery-rails', '2.1.4'
 gem 'sass-rails', '~> 3.2.6'
 gem 'simple_form'

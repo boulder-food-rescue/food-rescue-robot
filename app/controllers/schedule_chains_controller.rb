@@ -31,7 +31,7 @@ class ScheduleChainsController < ApplicationController
   end
 
   def show
-    @chain = ScheduleChain.includes(:schedules).find(params[:id])
+    @chain = ScheduleChain.includes(:schedules, :region).find(params[:id])
     schedules = @chain.schedules
 
     # prep the google maps embed request

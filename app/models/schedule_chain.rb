@@ -146,7 +146,7 @@ class ScheduleChain < ActiveRecord::Base
 
     next_pickup = Time.zone.today
     next_pickup += 1 if day_of_week == next_pickup.wday &&
-                        detailed_start_time.strftime('%H%m').to_i < Time.zone.now.strftime('%H%m').to_i
+                        detailed_start_time.strftime('%H%m').to_i < Time.current.strftime('%H%m').to_i
 
     while next_pickup.wday != day_of_week
       next_pickup += 1
@@ -159,14 +159,14 @@ class ScheduleChain < ActiveRecord::Base
         next_pickup.day,
         detailed_start_time.hour,
         detailed_start_time.min
-      ),
+      ).in_time_zone(region.time_zone),
       stop: Time.new(
         next_pickup.year,
         next_pickup.month,
         next_pickup.day,
         detailed_stop_time.hour,
         detailed_stop_time.min
-      )
+      ).in_time_zone(region.time_zone)
     }
   end
 

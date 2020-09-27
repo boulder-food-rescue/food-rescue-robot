@@ -24,9 +24,7 @@
 
     <% unless @chain.next_pickup_time.nil? || !@chain.functional? %>
       <div class="pull-right">
-        <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=
-            <%=u "#{@chain.region.name} Food Rescue: #{(@chain.schedules.empty? || @chain.schedules.first.location.nil?) ? "Unknown" : @chain.schedules.first.location.name} -> #{(@chain.schedules.empty? || @chain.schedules.last.location.nil?) ? "Unknown" : @chain.schedules.last.location.name}" %>
-            &dates=<%=u @chain.next_pickup_time[:start].utc.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @chain.next_pickup_time[:stop].utc.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @chain.public_notes%>&location=<%=u @chain.schedules.first.location.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
+        <a href="http://www.google.com/calendar/event?action=TEMPLATE&text=<%=u "#{@chain.region.name} Food Rescue: #{(@chain.schedules.empty? || @chain.schedules.first.location.nil?) ? "Unknown" : @chain.schedules.first.location.name} -> #{(@chain.schedules.empty? || @chain.schedules.last.location.nil?) ? "Unknown" : @chain.schedules.last.location.name}" %>&dates=<%=u @chain.next_pickup_time[:start].utc.strftime("%Y%m%dT%H%M%SZ") %>/<%=u @chain.next_pickup_time[:stop].utc.strftime("%Y%m%dT%H%M%SZ") %>&details=<%=u @chain.public_notes%>&location=<%=u @chain.schedules.first.location.address%>&trp=true&sprop=http%3A%2F%2Fboulderfoodrescue.org&sprop=name:Boulder%20Food%20Rescue" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button6.gif" border=0></a>
       </div>
     <% end %>
 

@@ -152,21 +152,11 @@ class ScheduleChain < ActiveRecord::Base
       next_pickup += 1
     end
 
+    start_time_fmt = "#{detailed_start_time.hour}:#{detailed_start_time.min}" # i.e. 15:00
+    stop_time_fmt = "#{detailed_stop_time.hour}:#{detailed_stop_time.min}" # i.e. 16:00
     {
-      start: Time.new(
-        next_pickup.year,
-        next_pickup.month,
-        next_pickup.day,
-        detailed_start_time.hour,
-        detailed_start_time.min
-      ).in_time_zone(region.time_zone),
-      stop: Time.new(
-        next_pickup.year,
-        next_pickup.month,
-        next_pickup.day,
-        detailed_stop_time.hour,
-        detailed_stop_time.min
-      ).in_time_zone(region.time_zone)
+      start: Time.zone.parse("#{next_pickup.year}-#{next_pickup.month}-#{next_pickup.day} #{start_time_fmt}"),
+      stop: Time.zone.parse("#{next_pickup.year}-#{next_pickup.month}-#{next_pickup.day} #{stop_time}")
     }
   end
 

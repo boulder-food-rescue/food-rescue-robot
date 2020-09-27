@@ -62,11 +62,11 @@ class Log < ActiveRecord::Base
   }
 
   def volunteers?
-    self.volunteers.count > 0
+    self.volunteers.count.positive?
   end
 
   def no_volunteers?
-    self.volunteers.count == 0
+    self.volunteers.count.zero?
   end
 
   def covering_volunteers

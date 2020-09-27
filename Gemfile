@@ -13,7 +13,7 @@ gem 'thin'
 # for handling json objects with ruby
 gem 'json'
 
-gem 'bootstrap-sass', '~> 3.2.0'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'coffee-rails', '~> 3.2.1'
 gem 'font-awesome-sass', '~> 4.6.0'
 gem 'jquery-rails', '2.1.4'

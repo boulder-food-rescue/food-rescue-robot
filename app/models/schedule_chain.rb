@@ -156,7 +156,7 @@ class ScheduleChain < ActiveRecord::Base
     stop_time_fmt = "#{detailed_stop_time.hour}:#{detailed_stop_time.min}" # i.e. 16:00
     {
       start: Time.zone.parse("#{next_pickup.year}-#{next_pickup.month}-#{next_pickup.day} #{start_time_fmt}"),
-      stop: Time.zone.parse("#{next_pickup.year}-#{next_pickup.month}-#{next_pickup.day} #{stop_time}")
+      stop: Time.zone.parse("#{next_pickup.year}-#{next_pickup.month}-#{next_pickup.day} #{stop_time_fmt}")
     }
   end
 

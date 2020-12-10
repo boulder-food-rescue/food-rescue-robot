@@ -432,7 +432,7 @@ DEPENDENCIES
   json
   newrelic_rpm
   paperclip!
-  pg
+  pg (~> 0.18.4)
   poltergeist (~> 1.12)
   prawn (~> 2.1.0)
   prawn-table (~> 0.2.2)

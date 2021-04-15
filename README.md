@@ -68,6 +68,8 @@ can see the routes with ```rake routes```;
  * A reasonable operating system (e.g., Linux or Mac, Windows if you're saucy)
  * Various dependencies for the above
 
+*Detailed instructions for setting up prerequisites on a Mac platform are below. 
+
 ## Setup
 
 Clone this repository:
@@ -79,7 +81,29 @@ Clone this repository:
     cd food-rescue-robot
 ### Linux or Mac
 
-Set up your environment:
+#### Configuring 'prerequisites'
+
+ * Ruby 2.3.7:
+ 
+ You will need to have 'gpg tools' for the next step; use the command `brew install gnupg` to install it (if you have homebrew). To download it from source, refer to https://gnupg.org/download/index.html
+ 
+[Install RVM](https://rvm.io/rvm/install):
+ 
+    gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+ 
+    \curl -sSL https://get.rvm.io | bash -s stable
+    
+ Install OpenSSL: `rvm pkg install openssl`
+ 
+ Finally, install Ruby 2.3.7:
+ 
+    rvm install ruby-2.3.7 --with-openssl-dir=$rvm_path/usr
+    
+ * PostgreSQL: 
+
+  Although not the only option, it may be easiest to handle this requirement using Postgres.app: https://postgresapp.com/
+
+#### Set up your environment:
 
     bundle exec bin/setup
 
@@ -108,7 +132,7 @@ CREATE DATABASE bfr_webapp_db OWNER bfr_webapp_db;
 CREATE DATABASE bfr_webapp_db_test OWNER bfr_webapp_db_test;
 ```
 
-Load the datbase
+Load the database
 ## Running It
 
 To start a server, run

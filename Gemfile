@@ -6,18 +6,17 @@ ruby File.read('.ruby-version').strip
 
 # the base rails libraries
 gem 'pg', '~> 0.21.0'
-gem 'rails', '~> 3.2.16'
+gem 'rails', '~> 4.0.13'
 gem 'rails_12factor'
-gem 'thin'
+gem 'puma'
 
 # for handling json objects with ruby
 gem 'json'
-
-gem 'bootstrap-sass', '~> 3.2.0'
-gem 'coffee-rails', '~> 3.2.1'
+gem 'protected_attributes'
+gem 'bootstrap-sass', '~> 3.4.0'
 gem 'font-awesome-sass', '~> 4.4.0'
 gem 'jquery-rails', '2.1.4'
-gem 'sass-rails', '~> 3.2.6'
+gem 'sass-rails', '~> 5.0'
 gem 'simple_form'
 gem 'therubyracer', platforms: :ruby
 gem 'twitter-bootstrap-rails'
@@ -46,17 +45,14 @@ end
 group :test do
   gem 'capybara'
   gem 'capybara-screenshot'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'poltergeist', '~> 1.12'
   gem 'rack-test'
   gem 'rspec-rails', '~> 3.5'
 end
-# Temporary fix: https://stackoverflow.com/questions/13828889/rails-3-heroku-cannot-load-such-file-test-unit-testcase-loaderror
-# Remove after upgrade of Rails from 3.2 is complete.
-gem 'test-unit', '~> 3.0'
 
 # dynamic in-place editing for some admin tables
-gem 'active_scaffold'
+gem 'active_scaffold', '~> 3.4.43'
 
 # handles authentication
 gem 'devise', '~> 3.2.0'
@@ -71,7 +67,7 @@ gem 'paperclip', git: 'https://github.com/thoughtbot/paperclip',
                  ref: '523bd46c768226893f23889079a7aa9c73b57d68'
 
 # generate pdfs
-gem 'prawn', '~> 2.1.0'
+gem 'prawn', '~> 2.2.0'
 gem 'prawn-table', '~> 0.2.2'
 
 # used to geo-locate locations
@@ -89,12 +85,13 @@ gem 'jquery-datatables-rails', git: 'https://github.com/rweng/jquery-datatables-
 gem 'cocoon'
 
 # set timezone to browser timezone
-gem 'browser-timezone-rails', '~> 0.2.00'
+gem 'browser-timezone-rails', '~> 1.0'
+gem 'js_cookie_rails'
 gem 'ranked-model'
 
 # Send email when exception occurs.
-gem 'exception_notification', '~> 3.0.1'
-gem 'exception_notification-rake', '~> 0.0.6'
+gem 'exception_notification', '~> 4.0.1'
+gem 'exception_notification-rake', '~> 0.1.3'
 
 gem 'cancancan', '~> 1.15.0'
 gem 'interactor'

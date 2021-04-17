@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :schedule do
-    position 3
+    position { 3 }
     location { Location.all.count >= 5 ? Location.all.sample : create(:location) }
 
     factory :donation_schedule do

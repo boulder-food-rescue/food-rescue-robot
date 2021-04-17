@@ -39,7 +39,7 @@ RSpec.configure do |config|
     Warden.test_reset!
   end
 
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
 
   config.include ActionDispatch::TestProcess
 

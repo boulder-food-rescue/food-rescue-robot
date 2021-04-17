@@ -8,6 +8,9 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate_user_from_token!
 
   respond_to :html, :json
+  layout :layout_by_resource
+
+  alias_method :current_user, :current_volunteer
 
   def setup_headers
     headers['Access-Control-Allow-Origin'] = '*'
@@ -35,18 +38,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  alias_method :current_user, :current_volunteer
-
-  layout :layout_by_resource
-
   protected
 
   def layout_by_resource
-    if devise_controller?
-      'custom_devise'
-    else
-      'application'
-    end
+    return 'custom_devise' if devise_controller?
+    'application'
   end
 
   private
@@ -54,8 +50,8 @@ class ApplicationController < ActionController::Base
   # add in the variables needed by the form partial for schedules and logs
   def set_vars_for_form(region)
     @volunteers = Volunteer.all_for_region(region.id).collect{ |v| [v.name, v.id] }
-    @donors = Location.donors.where(:region_id=>region.id).collect{ |d| [d.name, d.id] }
-    @recipients = Location.recipients.where(:region_id=>region.id).collect{ |r| [r.name, r.id] }
+    @donors = Location.donors.where(region_id: region.id).collect{ |d| [d.name, d.id] }
+    @recipients = Location.recipients.where(region_id: region.id).collect{ |r| [r.name, r.id] }
     @transport_types = TransportType.all.collect{ |tt| [tt.name, tt.id] }
 
     @food_types = region.food_types.collect { |food_type| [food_type.name, food_type.id] }

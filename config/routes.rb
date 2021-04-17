@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+
 Webapp::Application.routes.draw do
   resources :assignments, only: [] do
     collection do
@@ -65,9 +66,6 @@ Webapp::Application.routes.draw do
       get :create
       get :destroy
     end
-    # member do
-    #  get :show
-    # end
   end
 
   resources :locations do
@@ -88,7 +86,7 @@ Webapp::Application.routes.draw do
     end
   end
 
-  devise_for :volunteers, :controllers => { :sessions => 'sessions' }
+  devise_for :volunteers, controllers: { sessions: 'sessions' }
 
   resources :volunteers do
     collection do

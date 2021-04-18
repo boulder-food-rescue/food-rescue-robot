@@ -67,8 +67,9 @@ gem 'yaml_db'
 
 # smart image attachment management
 gem 'aws-sdk', '~> 2.3'
-gem 'paperclip', git: 'https://github.com/thoughtbot/paperclip',
-                 ref: '523bd46c768226893f23889079a7aa9c73b57d68'
+## using a customized version of paperclip v4.3.1 to resolve a dependency error
+gem 'paperclip', git: 'https://github.com/phyninja/paperclip',
+                 ref: 'e6ea46192d2a0e27e79db144a49307e2af2a9341'
 
 # generate pdfs
 gem 'prawn', '~> 2.1.0'

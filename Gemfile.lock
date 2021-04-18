@@ -1,4 +1,16 @@
 GIT
+  remote: https://github.com/phyninja/paperclip
+  revision: e6ea46192d2a0e27e79db144a49307e2af2a9341
+  ref: e6ea46192d2a0e27e79db144a49307e2af2a9341
+  specs:
+    paperclip (4.3.1)
+      activemodel (>= 3.2.0)
+      activesupport (>= 3.2.0)
+      cocaine (~> 0.5.5)
+      mime-types
+      mimemagic (= 0.3.10)
+
+GIT
   remote: https://github.com/rweng/jquery-datatables-rails.git
   revision: b8e6b6fa51e0074ea44b4771a68b1817a14023fc
   specs:
@@ -7,18 +19,6 @@ GIT
       jquery-rails
       railties (>= 3.1)
       sass-rails
-
-GIT
-  remote: https://github.com/thoughtbot/paperclip
-  revision: 523bd46c768226893f23889079a7aa9c73b57d68
-  ref: 523bd46c768226893f23889079a7aa9c73b57d68
-  specs:
-    paperclip (4.3.1)
-      activemodel (>= 3.2.0)
-      activesupport (>= 3.2.0)
-      cocaine (~> 0.5.5)
-      mime-types
-      mimemagic (= 0.3.0)
 
 GEM
   remote: https://rubygems.org/
@@ -91,8 +91,7 @@ GEM
       capybara (>= 1.0, < 3)
       launchy
     choice (0.2.0)
-    climate_control (0.0.3)
-      activesupport (>= 3.0)
+    climate_control (0.2.0)
     cliver (0.3.2)
     cocaine (0.5.8)
       climate_control (>= 0.0.3, < 1.0)
@@ -208,7 +207,9 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     method_source (0.8.2)
     mime-types (1.25.1)
-    mimemagic (0.3.0)
+    mimemagic (0.3.10)
+      nokogiri (~> 1)
+      rake
     mini_portile2 (2.0.0)
     multi_json (1.15.0)
     multipart-post (2.0.0)

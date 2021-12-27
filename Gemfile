@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.2.6'
 
 # the base rails libraries
-gem 'pg'
+gem 'pg', '~> 0.18.4'
 gem 'rails', '~> 3.2.16'
 gem 'rails_12factor'
 gem 'thin'

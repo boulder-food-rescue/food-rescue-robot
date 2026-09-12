@@ -266,7 +266,7 @@ class VolunteersController < ApplicationController
     @total_shifts_needing_cov = Log.needing_coverage(current_volunteer.region_ids, 7).length
 
     # To Do Pickup Reports
-    @to_do_reports = Log.picked_up_by(current_volunteer.id, false)
+    @to_do_reports = Log.picked_up_by(current_volunteer.id, false).reorder('"logs"."when" ASC')
 
     @by_month = {}
     Log.picked_up_by(current_volunteer.id).each do |log|
